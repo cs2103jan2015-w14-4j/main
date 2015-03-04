@@ -1,7 +1,7 @@
 
-public class TaskList {
+public class TaskManager {
 	//dummy
-	public TaskList() {
+	public TaskManager() {
 		//dummy
 	}
 	

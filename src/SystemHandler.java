@@ -1,12 +1,12 @@
 import java.util.Scanner;
 
-public class SystemControl {
+public class SystemHandler {
 	
 	//dummy string acting like UI prompt
 	public static final String MSG_ASK_FILENAME = "Please enter the name of your file";
 	public static final String MSG_ASK_INPUT = "Please enter your command";
 	
-	private TaskList myTaskList;
+	private TaskManager myTaskList;
 	private Customize myCustomizedList;
 	private Shortcut myShortcut;
 	private String fileName;
@@ -16,7 +16,7 @@ public class SystemControl {
 		return fileName;
 	}
 	
-	public SystemControl (String fileName) {
+	public SystemHandler (String fileName) {
 		this.fileName = fileName;
 		initializeSystem(fileName);
 	}
@@ -26,7 +26,7 @@ public class SystemControl {
 
 		Scanner sc = new Scanner(System.in);
 		String myFile = dummyUI(MSG_ASK_FILENAME, sc);
-		SystemControl mySystemControl = new SystemControl(myFile);
+		SystemHandler mySystemControl = new SystemHandler(myFile);
 		mySystemControl.executeCommandUntilExit(sc);
 		sc.close();
 	}
@@ -58,7 +58,7 @@ public class SystemControl {
 	private boolean initializeSystem(String fileName) {
 		
 		boolean isInitProperly = false;
-		myTaskList = new TaskList();
+		myTaskList = new TaskManager();
 		if(isInitProperly) {
 			return true;	
 		}
@@ -74,9 +74,9 @@ public class SystemControl {
 		String[] parsedCommand;
 		
 		do {
-			inputFromUser = SystemControl.dummyUI(MSG_ASK_INPUT, sc);
+			inputFromUser = SystemHandler.dummyUI(MSG_ASK_INPUT, sc);
 			parsedCommand = Parser.parseString(inputFromUser);
-			COMMAND_TYPE_GROUP commandGroupType = SystemControl.getCommandGroupType(parsedCommand[0]);
+			COMMAND_TYPE_GROUP commandGroupType = SystemHandler.getCommandGroupType(parsedCommand[0]);
 			
 			switch(commandGroupType) {
 				case TASK_MANAGER:
