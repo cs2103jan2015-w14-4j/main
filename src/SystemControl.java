@@ -29,10 +29,12 @@ public class SystemControl {
 	
 
 	public static void main(String[] args) {
-		
-		String myFile = dummyUI(MSG_ASK_FILENAME);
+
+		Scanner sc = new Scanner(System.in);
+		String myFile = dummyUI(MSG_ASK_FILENAME, sc);
 		SystemControl mySystemControl = new SystemControl(myFile);
-		mySystemControl.executeCommandUntilExit();
+		mySystemControl.executeCommandUntilExit(sc);
+		sc.close();
 	}
 
 
@@ -53,11 +55,9 @@ public class SystemControl {
 		return null;
 	}
 	
-	private static String dummyUI(String msg) {
+	private static String dummyUI(String msg, Scanner sc) {
 		System.out.println(msg);
-		Scanner sc = new Scanner(System.in);
 		String commandFromUser = sc.nextLine();
-		sc.close();
 		return commandFromUser;
 	}
 	
@@ -73,13 +73,14 @@ public class SystemControl {
 		}
 	}
 	
-	private void executeCommandUntilExit() {
+	private void executeCommandUntilExit(Scanner sc) {
+
 		
-		String inputFromUser = SystemControl.dummyUI(MSG_ASK_INPUT);
+		String inputFromUser;
 		String[] parsedCommand;
 		
 		do {
-			
+			inputFromUser = SystemControl.dummyUI(MSG_ASK_INPUT, sc);
 			parsedCommand = Parser.parseString(inputFromUser);
 			COMMAND_TYPE commandGroupType = SystemControl.getCommandGroupType(parsedCommand[0]);
 			
@@ -115,6 +116,7 @@ public class SystemControl {
 	
 	private void outputResultToUser(String[] result) {
 		//dummy
+		System.out.println("DUMMY OUTPUT");
 	}
 
 	
