@@ -2,7 +2,7 @@ import java.util.Scanner;
 
 public class SystemControl {
 	
-	//dummy
+	//dummy string acting like UI prompt
 	public static final String MSG_ASK_FILENAME = "Please enter the name of your file";
 	public static final String MSG_ASK_INPUT = "Please enter your command";
 	
@@ -15,12 +15,6 @@ public class SystemControl {
 	public String getFileName() {
 		return fileName;
 	}
-
-	enum COMMAND_TYPE {
-		TASK_MANAGER, SHORTCUT_MANAGER, CUSTOMIZED_MANAGER
-	}
-	
-	
 	
 	public SystemControl (String fileName) {
 		this.fileName = fileName;
@@ -38,19 +32,19 @@ public class SystemControl {
 	}
 
 
-	private static COMMAND_TYPE getCommandGroupType(String commandType) {
+	private static COMMAND_TYPE_GROUP getCommandGroupType(String commandType) {
 		switch(commandType) {
 			case "add":
 			case "view":
 			case "delete":
 			case "edit":
-				return COMMAND_TYPE.TASK_MANAGER;
+				return COMMAND_TYPE_GROUP.TASK_MANAGER;
 			//dummy command keyword
 			case "addShort":
-				return COMMAND_TYPE.SHORTCUT_MANAGER;
+				return COMMAND_TYPE_GROUP.SHORTCUT_MANAGER;
 			//dummy command keyword
 			case "addCustomized":
-				return COMMAND_TYPE.CUSTOMIZED_MANAGER;
+				return COMMAND_TYPE_GROUP.CUSTOMIZED_MANAGER;
 		}
 		return null;
 	}
@@ -61,7 +55,7 @@ public class SystemControl {
 		return commandFromUser;
 	}
 	
-	public boolean initializeSystem(String fileName) {
+	private boolean initializeSystem(String fileName) {
 		
 		boolean isInitProperly = false;
 		myTaskList = new TaskList();
@@ -82,7 +76,7 @@ public class SystemControl {
 		do {
 			inputFromUser = SystemControl.dummyUI(MSG_ASK_INPUT, sc);
 			parsedCommand = Parser.parseString(inputFromUser);
-			COMMAND_TYPE commandGroupType = SystemControl.getCommandGroupType(parsedCommand[0]);
+			COMMAND_TYPE_GROUP commandGroupType = SystemControl.getCommandGroupType(parsedCommand[0]);
 			
 			switch(commandGroupType) {
 				case TASK_MANAGER:
