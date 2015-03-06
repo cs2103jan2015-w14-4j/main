@@ -27,8 +27,9 @@ public class TaskManager {
     }
 
     private ArrayList<Task> _tasks;
-    private ArrayList<String[]> _handledTasks = new ArrayList<String[]>();
-
+    //private ArrayList<String[]> _handledTasks = new ArrayList<String[]>();
+    private int _IDCounter;
+    
     public TaskManager() {
         this._tasks = new ArrayList<Task>();
     }
@@ -49,9 +50,12 @@ public class TaskManager {
             }
             break;
         }
-
         return returingTasks;
     }
+    
+    private 
+    
+    
 
     private COMMAND_TYPE_TASK_MANAGER obtainCommand (String command) {
         COMMAND_TYPE_TASK_MANAGER commandObtained;
@@ -88,16 +92,6 @@ public class TaskManager {
 
     private ArrayList<Task> viewTasks() {
         return _tasks;
-    }
-
-    private boolean isAbleToDeleteTask(int TID) {
-        boolean isTIDFound = TID_IS_NOT_FOUND;
-        for(Task task : _tasks) {
-            if(task.getTID() == TID) {
-                isTIDFound = TID_IS_FOUND;
-            }
-        }
-        return isTIDFound;
     }
 
     //+undoAddTask(): boolean
