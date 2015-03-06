@@ -135,18 +135,6 @@ public class TaskManager {
         return newTID;
     }
 
-    //dummy
-    private boolean isAbleToAddTask(String[] input) {
-        //if ID is not a number, then add to _handledTasks
-        //if ID is a valid number, then do not add to _handledTasks
-        return false;
-    }
-
-    //dummy
-    private boolean isAbleToEditTask(String[] input) {
-        return false;
-    }
-
     private ArrayList<Task> viewTasks() {
         return _tasks;
     }
