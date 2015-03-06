@@ -9,6 +9,7 @@ public class TaskManager {
     //almost valid, 
     //
 
+    //null indicate nonexistence
     private static final int COMMAND_TYPE = 0;
     private static final int TID = 1;
     private static final int NAME = 2;
@@ -85,12 +86,8 @@ public class TaskManager {
         return false;
     }
 
-    private boolean isAbleToView() {
-        if(_tasks != null){
-            return false;
-        } else {
-            return true;
-        }
+    private ArrayList<Task> viewTasks() {
+        return _tasks;
     }
 
     private boolean isAbleToDeleteTask(int TID) {
