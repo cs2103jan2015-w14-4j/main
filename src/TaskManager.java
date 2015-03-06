@@ -65,8 +65,11 @@ public class TaskManager {
 
     private int getNewTID() {
         int newTID;
-
-        newTID = _tasks.get(_tasks.size()).getTID() + 1;
+        if(_tasks.isEmpty()) {
+            newTID = INITIAL_TID + 1;
+        } else {
+        newTID = _tasks.get(_tasks.size() - 1).getTID() + 1;
+        }
 
         return newTID;
     }
