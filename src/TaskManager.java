@@ -14,6 +14,7 @@ public class TaskManager {
     //
     
     //for edit task, are you gonna send me what is being edited in the String[]
+    //yes
 
     //null indicate nonexistence
     private static final int COMMAND_TYPE = 0;
@@ -28,6 +29,7 @@ public class TaskManager {
     private static final boolean TID_IS_NOT_FOUND = false;
     private static final boolean TID_IS_FOUND = true;
     private static final int INITIAL_TID = 1000;
+    private static final String EMPTY_INPUT = "null";
 
     private enum COMMAND_TYPE_TASK_MANAGER {
         add, edit, view, delete, init, undo, redo, invalid
@@ -42,41 +44,41 @@ public class TaskManager {
     }
 
     @SuppressWarnings("incomplete-switch")
-    public ArrayList<Task> processTM(String[] input) throws ParseException {
-        COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(input[COMMAND_TYPE]);
+    public ArrayList<Task> processTM(String[] inputs) throws ParseException {
+        COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
         ArrayList<Task> returningTasks = new ArrayList<Task>();
 
         switch(commandObtained) {
         case add: 
-            returningTasks = new ArrayList<Task>(addATask(input));
+            returningTasks = new ArrayList<Task>(addATask(inputs));
             break;
         case edit: 
-            returningTasks = new ArrayList<Task>(editATask(getIntType(input[TID]), input));
+            returningTasks = new ArrayList<Task>(editATask(getIntType(inputs[TID]), inputs));
             break;
         case view: 
             returningTasks = new ArrayList<Task>(viewTasks()); 
             break;
         case delete: 
-            returningTasks = new ArrayList<Task>(deleteATask(getIntType(input[TID])));
+            returningTasks = new ArrayList<Task>(deleteATask(getIntType(inputs[TID])));
             break;
         }
         
         return returningTasks;
     }
     
-    private ArrayList<Task> addATask(String[] input) throws ParseException {
+    private ArrayList<Task> addATask(String[] inputs) throws ParseException {
         ArrayList<Task> returningTasks = new ArrayList<Task>();
-        Task newTask = new Task(getNewTID(), input[TASK_NAME], 
-                getDateObject(input[DATE_FROM]), getDateObject(input[DATE_TO]), 
-                getDateObject(input[DEADLINE]), input[LOCATION], input[DETAILS], 
-                getIntType(input[PRIORITY]));
+        Task newTask = new Task(getNewTID(), inputs[TASK_NAME], 
+                getDateObject(inputs[DATE_FROM]), getDateObject(inputs[DATE_TO]), 
+                getDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
+                getIntType(inputs[PRIORITY]));
         _tasks.add(newTask);
         returningTasks.add(newTask);
         return returningTasks;
     }
     
     private Date getDateObject(String dateString) throws ParseException {
-        DateFormat format = new SimpleDateFormat("DD/MM/YYYY HH:mm");
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         Date date = format.parse(dateString);
         return date;
     }
@@ -86,19 +88,48 @@ public class TaskManager {
         return intType;
     }
     
-    private ArrayList<Task> editATask(int TID, String[] input) {
+    private ArrayList<Task> editATask(int TID, String[] inputs) throws ParseException {
         ArrayList<Task> returningTasks = new ArrayList<Task>();
         for(Task task : _tasks) {
             if(TID == task.getTID()) {
-                task.setTaskName(taskName);
-                task.setDateFrom(dateFrom);
-                task.setDateTo(dateTo);
-                task.setDeadline(deadline);
-                task.setLocation(location);
-                task.setDetail(location);
+                for(int i = TASK_NAME; i < inputs.length; i++) {
+                    if(!inputs[i].equals(EMPTY_INPUT)) {
+                        switch(i) {
+                        case TASK_NAME: task.setDetails(inputs[TASK_NAME]); break;
+                        case DATE_FROM: 
+                            Date newDateFrom = getDateObject(inputs[DATE_FROM]);
+                            task.setDateFrom(newDateFrom);
+                            break;
+                        case DATE_TO:
+                            Date newDateTo = getDateObject(inputs[DATE_TO]);
+                            task.setDateFrom(newDateTo);
+                            break;
+                        case DEADLINE: 
+                            Date newDeadline = getDateObject(inputs[DEADLINE]);
+                            task.setDateFrom(newDeadline);
+                            break;
+                        case LOCATION: task.setLocation(inputs[LOCATION]); break;
+                        case DETAILS: task.setDetails(inputs[DETAILS]); break;
+                        case PRIORITY: 
+                            int newPriority = getIntType(inputs[PRIORITY]);
+                            task.setPriority(newPriority);
+                            break;
+                        }
+                    }
+                }
+                returningTasks.add(task);
             }
         }
+        return returningTasks;
     }
+    
+    /*private String getStringFromInt() {
+        
+    }
+    
+    private String getStringFromDate() {
+        
+    }*/
 
 
 
@@ -106,6 +137,7 @@ public class TaskManager {
         ArrayList<Task> returningTasks = new ArrayList<Task>(viewTasks());
         for(Task task : _tasks) {
             if(TID == task.getTID()) {
+                
                 returningTasks.add(task);
             }
         }
