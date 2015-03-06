@@ -1,4 +1,8 @@
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class TaskManager {
     //what format of time do you provide and
@@ -8,16 +12,19 @@ public class TaskManager {
     //can I assume all commands are valid, no invalid commands?
     //almost valid, 
     //
+    
+    //for edit task, are you gonna send me what is being edited in the String[]
 
     //null indicate nonexistence
     private static final int COMMAND_TYPE = 0;
     private static final int TID = 1;
-    private static final int NAME = 2;
-    private static final int DATEFROM = 3;
-    private static final int DATETO = 4;
+    private static final int TASK_NAME = 2;
+    private static final int DATE_FROM = 3;
+    private static final int DATE_TO = 4;
     private static final int DEADLINE = 5;
     private static final int LOCATION = 6;
-    private static final int DEATAIL = 7;
+    private static final int DETAILS = 7;
+    private static final int PRIORITY = 8;
     private static final boolean TID_IS_NOT_FOUND = false;
     private static final boolean TID_IS_FOUND = true;
     private static final int INITIAL_TID = 1000;
@@ -35,27 +42,65 @@ public class TaskManager {
     }
 
     @SuppressWarnings("incomplete-switch")
-    public ArrayList<Task> processTM(String[] input) {
+    public ArrayList<Task> processTM(String[] input) throws ParseException {
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(input[COMMAND_TYPE]);
         ArrayList<Task> returningTasks = new ArrayList<Task>();
 
         switch(commandObtained) {
-        case add: break;
-        case edit: break;
+        case add: 
+            returningTasks = new ArrayList<Task>(addATask(input));
+            break;
+        case edit: 
+            returningTasks = new ArrayList<Task>(editATask(getIntType(input[TID]), input));
+            break;
         case view: 
             returningTasks = new ArrayList<Task>(viewTasks()); 
             break;
         case delete: 
-            returningTasks = new ArrayList<Task>(deleteATask(getTIDFromStringArray(input)));
+            returningTasks = new ArrayList<Task>(deleteATask(getIntType(input[TID])));
             break;
         }
+        
         return returningTasks;
     }
-
-    private int getTIDFromStringArray(String[] input) {
-        int currentTID = Integer.parseInt(input[TID]);
-        return currentTID;
+    
+    private ArrayList<Task> addATask(String[] input) throws ParseException {
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
+        Task newTask = new Task(getNewTID(), input[TASK_NAME], 
+                getDateObject(input[DATE_FROM]), getDateObject(input[DATE_TO]), 
+                getDateObject(input[DEADLINE]), input[LOCATION], input[DETAILS], 
+                getIntType(input[PRIORITY]));
+        _tasks.add(newTask);
+        returningTasks.add(newTask);
+        return returningTasks;
     }
+    
+    private Date getDateObject(String dateString) throws ParseException {
+        DateFormat format = new SimpleDateFormat("DD/MM/YYYY HH:mm");
+        Date date = format.parse(dateString);
+        return date;
+    }
+    
+    private int getIntType(String intString) {
+        int intType = Integer.parseInt(intString);
+        return intType;
+    }
+    
+    private ArrayList<Task> editATask(int TID, String[] input) {
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
+        for(Task task : _tasks) {
+            if(TID == task.getTID()) {
+                task.setTaskName(taskName);
+                task.setDateFrom(dateFrom);
+                task.setDateTo(dateTo);
+                task.setDeadline(deadline);
+                task.setLocation(location);
+                task.setDetail(location);
+            }
+        }
+    }
+
+
 
     private ArrayList<Task> deleteATask(int TID) {
         ArrayList<Task> returningTasks = new ArrayList<Task>(viewTasks());
