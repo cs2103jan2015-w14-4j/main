@@ -29,7 +29,7 @@ public class TaskManager {
     private ArrayList<Task> _tasks;
     //private ArrayList<String[]> _handledTasks = new ArrayList<String[]>();
     private int _IDCounter;
-    
+
     public TaskManager() {
         this._tasks = new ArrayList<Task>();
     }
@@ -37,25 +37,37 @@ public class TaskManager {
     @SuppressWarnings("incomplete-switch")
     public ArrayList<Task> processTM(String[] input) {
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(input[COMMAND_TYPE]);
-        ArrayList<Task> returingTasks = new ArrayList<Task>();
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
 
         switch(commandObtained) {
         case add: break;
         case edit: break;
-        case view: returingTasks = viewTasks(); break;
+        case view: 
+            returningTasks = new ArrayList<Task>(viewTasks()); 
+            break;
         case delete: 
-            //0 is a dummy
-            if(isAbleToDeleteTask(0)) {
-
-            }
+            returningTasks = new ArrayList<Task>(deleteATask(getTIDFromStringArray(input)));
             break;
         }
-        return returingTasks;
+        return returningTasks;
     }
-    
-    private 
-    
-    
+
+    private int getTIDFromStringArray(String[] input) {
+        int currentTID = Integer.parseInt(input[TID]);
+        return currentTID;
+    }
+
+    private ArrayList<Task> deleteATask(int TID) {
+        ArrayList<Task> returningTasks = new ArrayList<Task>(viewTasks());
+        for(Task task : _tasks) {
+            if(TID == task.getTID()) {
+                returningTasks.add(task);
+            }
+        }
+        return returningTasks;
+    }
+
+
 
     private COMMAND_TYPE_TASK_MANAGER obtainCommand (String command) {
         COMMAND_TYPE_TASK_MANAGER commandObtained;
@@ -72,7 +84,7 @@ public class TaskManager {
         if(_tasks.isEmpty()) {
             newTID = INITIAL_TID + 1;
         } else {
-        newTID = _tasks.get(_tasks.size() - 1).getTID() + 1;
+            newTID = _tasks.get(_tasks.size() - 1).getTID() + 1;
         }
 
         return newTID;
