@@ -33,18 +33,15 @@ public class TaskManager {
         this._tasks = new ArrayList<Task>();
     }
 
+    @SuppressWarnings("incomplete-switch")
     public ArrayList<Task> processTM(String[] input) {
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(input[COMMAND_TYPE]);
-        ArrayList<Task> resultTasks = new ArrayList<Task>();
+        ArrayList<Task> returingTasks = new ArrayList<Task>();
 
         switch(commandObtained) {
         case add: break;
         case edit: break;
-        case view: 
-            if(isAbleToView()) {
-                resultTasks = new ArrayList<Task>(_tasks);
-            }
-            break;
+        case view: returingTasks = viewTasks(); break;
         case delete: 
             //0 is a dummy
             if(isAbleToDeleteTask(0)) {
@@ -53,7 +50,7 @@ public class TaskManager {
             break;
         }
 
-        return resultTasks;
+        return returingTasks;
     }
 
     private COMMAND_TYPE_TASK_MANAGER obtainCommand (String command) {
