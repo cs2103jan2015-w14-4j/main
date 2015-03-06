@@ -1,8 +1,10 @@
+import java.util.ArrayList;
 
 public class TaskManager {
-	//dummy
+	private ArrayList<Task> _tasks;
+    
 	public TaskManager() {
-		//dummy
+		
 	}
 	
 	public String[] processTaskCommand(String[] command) {
