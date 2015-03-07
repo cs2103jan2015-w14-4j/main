@@ -184,12 +184,15 @@ public class TaskManager {
             newTID = INITIAL_TID + 1;
         } else {
             newTID = _IDCounter + 1;
+            increaseIDCounterByOne();
         }
 
         return newTID;
     }
     
-    
+    private void increaseIDCounterByOne() {
+        ++_IDCounter;
+    }
 
     private ArrayList<Task> viewTasks() {
         return _tasks;
