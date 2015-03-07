@@ -67,6 +67,11 @@ public class TaskManager {
         case delete: 
             returningTasks = new ArrayList<Task>(deleteATask(getIntType(inputs[TID])));
             break;
+        case init:
+            //call Wei Quan first
+            //then he calls me back
+            //then I add one by one and view it at the end
+            break;
         }
 
         return returningTasks;
