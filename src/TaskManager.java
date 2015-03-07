@@ -72,6 +72,7 @@ public class TaskManager {
             //then he calls me back
             //then I add one by one and view it at the end
             break;
+        
         }
 
         return returningTasks;
@@ -120,34 +121,66 @@ public class TaskManager {
         for(Task task : _tasks) {
             if(TID == task.getTID()) {
                 for(int i = TASK_NAME; i < inputs.length; i++) {
-                    if(!inputs[i].equals(EMPTY_INPUT)) {
-                        switch(i) {
-                        case TASK_NAME: task.setDetails(inputs[TASK_NAME]); break;
-                        case DATE_FROM: 
-                            Date newDateFrom = getDateObject(inputs[DATE_FROM]);
-                            task.setDateFrom(newDateFrom);
-                            break;
-                        case DATE_TO:
-                            Date newDateTo = getDateObject(inputs[DATE_TO]);
-                            task.setDateFrom(newDateTo);
-                            break;
-                        case DEADLINE: 
-                            Date newDeadline = getDateObject(inputs[DEADLINE]);
-                            task.setDateFrom(newDeadline);
-                            break;
-                        case LOCATION: task.setLocation(inputs[LOCATION]); break;
-                        case DETAILS: task.setDetails(inputs[DETAILS]); break;
-                        case PRIORITY: 
-                            int newPriority = getIntType(inputs[PRIORITY]);
-                            task.setPriority(newPriority);
-                            break;
-                        }
+                    if(!isInputEmpty(inputs, i)) {
+                        editTaskInfo(inputs, task, i);
                     }
                 }
                 returningTasks.add(task);
             }
         }
         return returningTasks;
+    }
+
+    private void editTaskInfo(String[] inputs, Task task, int i)
+            throws ParseException {
+        switch(i) {
+        case TASK_NAME: editTaskName(inputs, task); break;
+        case DATE_FROM: editTaskDateFrom(inputs, task); break;
+        case DATE_TO: editTaskDateTo(inputs, task); break;
+        case DEADLINE: editTaskDeadline(inputs, task); break;
+        case LOCATION: editTaskLocation(inputs, task); break;
+        case DETAILS: editTaskDetails(inputs, task); break;
+        case PRIORITY: editTaskPriority(inputs, task); break;
+        }
+    }
+
+    private void editTaskPriority(String[] inputs, Task task) {
+        int newPriority = getIntType(inputs[PRIORITY]);
+        task.setPriority(newPriority);
+    }
+
+    private void editTaskDetails(String[] inputs, Task task) {
+        task.setDetails(inputs[DETAILS]);
+    }
+
+    private void editTaskLocation(String[] inputs, Task task) {
+        task.setLocation(inputs[LOCATION]);
+    }
+
+    private void editTaskDeadline(String[] inputs, Task task)
+            throws ParseException {
+        Date newDeadline = getDateObject(inputs[DEADLINE]);
+        task.setDeadline(newDeadline);
+    }
+
+    private void editTaskDateTo(String[] inputs, Task task)
+            throws ParseException {
+        Date newDateTo = getDateObject(inputs[DATE_TO]);
+        task.setDateTo(newDateTo);
+    }
+
+    private void editTaskDateFrom(String[] inputs, Task task)
+            throws ParseException {
+        Date newDateFrom = getDateObject(inputs[DATE_FROM]);
+        task.setDateFrom(newDateFrom);
+    }
+
+    private void editTaskName(String[] inputs, Task task) {
+        task.setTaskName(inputs[TASK_NAME]);
+    }
+
+    private boolean isInputEmpty(String[] inputs, int i) {
+        return inputs[i].equals(EMPTY_INPUT);
     }
 
     /*private String getStringFromInt() {
