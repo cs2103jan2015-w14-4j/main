@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.text.ParseException;
 
 public class SystemHandler {
 	
@@ -27,10 +29,12 @@ public class SystemHandler {
 		Scanner sc = new Scanner(System.in);
 		String myFile = dummyUI(MSG_ASK_FILENAME, sc);
 		SystemHandler mySystemControl = new SystemHandler(myFile);
-		mySystemControl.executeCommandUntilExit(sc);
 		sc.close();
 	}
-
+	
+	public ArrayList<Task> rawUserInput(String userInput) {
+		return processUserInput(userInput);
+	}
 
 	private static COMMAND_TYPE_GROUP getCommandGroupType(String commandType) {
 		switch(commandType) {
@@ -67,51 +71,44 @@ public class SystemHandler {
 		}
 	}
 	
-	private void executeCommandUntilExit(Scanner sc) {
-
+	private ArrayList<Task> processUserInput(String inputFromUser) {
 		
-		String inputFromUser;
-		String[] parsedCommand;
+		 String[] parsedCommand = Parser.parseString(inputFromUser);
+		COMMAND_TYPE_GROUP commandGroupType = SystemHandler.getCommandGroupType(parsedCommand[0]);
 		
-		do {
-			inputFromUser = SystemHandler.dummyUI(MSG_ASK_INPUT, sc);
-			parsedCommand = Parser.parseString(inputFromUser);
-			COMMAND_TYPE_GROUP commandGroupType = SystemHandler.getCommandGroupType(parsedCommand[0]);
-			
-			switch(commandGroupType) {
-				case TASK_MANAGER:
-					executeTaskManager(parsedCommand);
-					break;
-				case SHORTCUT_MANAGER:
-					executeShortcutManager(parsedCommand);
-					break;
-				case CUSTOMIZED_MANAGER:
-					executeCustomizer(parsedCommand);
-					break;
-			}
-			
-		} while(!inputFromUser.equals("exit"));
+		switch(commandGroupType) {
+			case TASK_MANAGER:
+				return executeTaskManager(parsedCommand);
+			case SHORTCUT_MANAGER:
+				executeShortcutManager(parsedCommand);
+			case CUSTOMIZED_MANAGER:
+				executeCustomizer(parsedCommand);
+		}
+		
+		return null;
+		
 	}
 	
-	private void executeTaskManager(String[] command) {
-		String[] result = myTaskList.processTaskCommand(command);
-		outputResultToUser(result);
+	private ArrayList<Task> executeTaskManager(String[] command) {
+		try {
+			ArrayList<Task> result = myTaskList.processTM(command);
+			return result;
+		} catch (ParseException e){
+			System.out.println(e);
+		}
+		
+		return null;
 	}
 	
 	private void executeShortcutManager(String[] command) {
-		String[] result = myShortcut.processShortcutCommand(command);
-		outputResultToUser(result);
+		myShortcut.processShortcutCommand(command);
+
 	}
 	
 	private void executeCustomizer(String[] command) {
-		String[] result = myCustomizedList.processCustomizingCommand(command);
-		outputResultToUser(result);
+		myCustomizedList.processCustomizingCommand(command);
+		
 	}
 	
-	private void outputResultToUser(String[] result) {
-		//dummy
-		System.out.println("DUMMY OUTPUT");
-	}
-
 	
 }
