@@ -183,11 +183,13 @@ public class TaskManager {
         if(_tasks.isEmpty()) {
             newTID = INITIAL_TID + 1;
         } else {
-            newTID = _tasks.get(_tasks.size() - 1).getTID() + 1;
+            newTID = _IDCounter + 1;
         }
 
         return newTID;
     }
+    
+    
 
     private ArrayList<Task> viewTasks() {
         return _tasks;
