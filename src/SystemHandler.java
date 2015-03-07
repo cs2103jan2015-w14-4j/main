@@ -8,6 +8,8 @@ public class SystemHandler {
 	public static final String MSG_ASK_FILENAME = "Please enter the name of your file";
 	public static final String MSG_ASK_INPUT = "Please enter your command";
 	
+	public static final int LENGTH_COMMAND = 8;
+	
 	private TaskManager myTaskList;
 	private Customize myCustomizedList;
 	private Shortcut myShortcut;
@@ -72,32 +74,31 @@ public class SystemHandler {
 	}
 	
 	private ArrayList<Task> processUserInput(String inputFromUser) {
-		
-		 String[] parsedCommand = Parser.parseString(inputFromUser);
-		COMMAND_TYPE_GROUP commandGroupType = SystemHandler.getCommandGroupType(parsedCommand[0]);
-		
-		switch(commandGroupType) {
-			case TASK_MANAGER:
-				return executeTaskManager(parsedCommand);
-			case SHORTCUT_MANAGER:
-				executeShortcutManager(parsedCommand);
-			case CUSTOMIZED_MANAGER:
-				executeCustomizer(parsedCommand);
+		try {
+			String[] parsedCommand = Parser.parseString(inputFromUser);
+			if(parsedCommand.length != LENGTH_COMMAND)
+				throw new ParseException("Invalid length of parsed command", parsedCommand.length - LENGTH_COMMAND);
+			COMMAND_TYPE_GROUP commandGroupType = SystemHandler.getCommandGroupType(parsedCommand[0]);
+			
+			switch(commandGroupType) {
+				case TASK_MANAGER:
+					return executeTaskManager(parsedCommand);
+				case SHORTCUT_MANAGER:
+					executeShortcutManager(parsedCommand);
+				case CUSTOMIZED_MANAGER:
+					executeCustomizer(parsedCommand);
+			}
+			
+		} catch(ParseException e) {
+			System.out.println(e);
 		}
-		
 		return null;
 		
 	}
 	
-	private ArrayList<Task> executeTaskManager(String[] command) {
-		try {
-			ArrayList<Task> result = myTaskList.processTM(command);
-			return result;
-		} catch (ParseException e){
-			System.out.println(e);
-		}
-		
-		return null;
+	private ArrayList<Task> executeTaskManager(String[] command) throws ParseException {
+		ArrayList<Task> result = myTaskList.processTM(command);
+		return result;
 	}
 	
 	private void executeShortcutManager(String[] command) {
