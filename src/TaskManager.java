@@ -43,7 +43,7 @@ public class TaskManager {
 
     private ArrayList<Task> _tasks;
     //private ArrayList<String[]> _handledTasks = new ArrayList<String[]>();
-    private int _IDCounter;
+    private int _IDCounter = INITIAL_TID;
 
     public TaskManager() {
         this._tasks = new ArrayList<Task>();
@@ -87,9 +87,16 @@ public class TaskManager {
                     getDateObject(inputs[DATE_FROM]), getDateObject(inputs[DATE_TO]), 
                     getDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
                     getIntType(inputs[PRIORITY]));
+            updateIDCounter(inputs[TID]);
             _tasks.add(newTask);
         }
         return returningTasks;
+    }
+    
+    private void updateIDCounter(String currentID) {
+        if(_IDCounter < getIntType(currentID)){
+            _IDCounter = getIntType(currentID);
+        }
     }
 
     private Date getDateObject(String dateString) throws ParseException {
