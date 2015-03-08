@@ -86,15 +86,15 @@ public class UserInterface {
 				String input = textField.getText();
 				textField.selectAll();
 				//Actual
-//				ArrayList<Task> result = mainHandler.rawUserInput(input);
-//				printOutput(result);
+				ArrayList<Task> result = mainHandler.rawUserInput(input);
 				//outputArea.setCaretPosition(outputArea.getDocument().getLength());		
 
 				//Dummy
-				ArrayList<Task> result = new ArrayList<Task>();
-				Task testTask = new Task(1, input + " (The rest are dummies)", new Date(115,3,8,14,0) , 
-						new Date(115,3,8,17,0), null, "HOME", null, 0);
-				result.add(testTask);
+//				ArrayList<Task> result = new ArrayList<Task>();
+//				Task testTask = new Task(1, input + " (The rest are dummies)", new Date(115,3,8,14,0) , 
+//						new Date(115,3,8,17,0), null, "HOME", null, 0);
+//				result.add(testTask);
+				
 				printOutput(result);
 				
 				outputArea.append(MSG_ASK_INPUT + newline);
@@ -139,6 +139,7 @@ public class UserInterface {
 	}
 	
 	private void printOutput(ArrayList<Task> returnedOutput){
+		if(returnedOutput == null) return;
 		for(int i = 0; i < returnedOutput.size(); i++){
 			Task nextTask = returnedOutput.get(i);
 			outputArea.append("Added(dummy) the following:"+newline);

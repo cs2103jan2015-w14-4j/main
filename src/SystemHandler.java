@@ -103,7 +103,11 @@ public class SystemHandler {
 	
 	private ArrayList<Task> processUserInput(String inputFromUser) {
 		try {
-			String[] parsedCommand = Parser.parseString(inputFromUser);
+			//Parse command
+			FlexiParser parser = new FlexiParser(inputFromUser);
+			String[] parsedCommand = parser.getStringArray();
+			System.out.println(parsedCommand);
+			
 			if(parsedCommand.length != LENGTH_COMMAND)
 				throw new ParseException("Invalid length of parsed command", parsedCommand.length - LENGTH_COMMAND);
 			COMMAND_TYPE_GROUP commandGroupType = SystemHandler.getCommandGroupType(parsedCommand[0]);
