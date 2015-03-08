@@ -41,7 +41,6 @@ public class TaskManager {
     private static final int PRIORITY = 8;
     private static final int INITIAL_TID = 1000;
     private static final int DEFAULT_SIZE = 9;
-    private static final String EMPTY_INPUT = "null";
     private static final String CLEAR_INFO_INDICATOR = "";
     private static final String INVALID_COMMAND_MESSAGE = "The command is invalid.\n";
     private static final boolean TID_IS_NOT_FOUND = false;
@@ -73,7 +72,7 @@ public class TaskManager {
     public void processAddForInitialization(String[] inputs) throws ParseException {
         addATask(inputs);
     }
-    
+
     //MUNAW
     public ArrayList<Task> processTM(String[] inputs, FileStorage externalStorage) throws ParseException {
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
@@ -255,7 +254,7 @@ public class TaskManager {
     }
 
     private boolean isInputEmpty(String[] inputs, int i) {
-        return inputs[i].equals(EMPTY_INPUT);
+        return inputs[i] == null;
     }
 
     private void editTaskInfo(String[] inputs, Task task, int i)
@@ -323,7 +322,7 @@ public class TaskManager {
     }
 
     private void clearTaskName(Task task) {
-        task.setTaskName(EMPTY_INPUT);
+        task.setTaskName(null);
     }
 
     private void clearTaskDateFrom(Task task) {
@@ -339,11 +338,11 @@ public class TaskManager {
     }
 
     private void clearTaskLocation(Task task) {
-        task.setLocation(EMPTY_INPUT);
+        task.setLocation(null);
     }
 
     private void clearTaskDetails(Task task) {
-        task.setDetails(EMPTY_INPUT);
+        task.setDetails(null);
     }
 
     private void clearTaskPriority(Task task) {
@@ -403,7 +402,7 @@ public class TaskManager {
         getStringArrayFromTask(taskToEdit, strForStack);
 
         for(int i = TASK_NAME; i < DEFAULT_SIZE; ++i) {
-            if(strForStack[i].equals(EMPTY_INPUT) && !inputs[i].equals(EMPTY_INPUT)) {
+            if(strForStack[i] == null && inputs[i] != null) {
                 strForStack[i] = CLEAR_INFO_INDICATOR;
             }
         }
@@ -467,23 +466,33 @@ public class TaskManager {
         if(task.getDateFrom() != null) {
             strArray[DATE_FROM] = convertToStringFromDate(task.getDateFrom());
         } else {
-            strArray[DATE_FROM] = EMPTY_INPUT;
+            strArray[DATE_FROM] = null;
         }
 
         if(task.getDateTo() != null) {
             strArray[DATE_TO] = convertToStringFromDate(task.getDateTo());
         } else {
-            strArray[DATE_TO] = EMPTY_INPUT;
+            strArray[DATE_TO] = null;
         }
 
         if(task.getDeadline() != null) {
             strArray[DEADLINE] = convertToStringFromDate(task.getDeadline());
         } else {
-            strArray[DEADLINE] = EMPTY_INPUT;
+            strArray[DEADLINE] = null;
         }
 
-        strArray[LOCATION] = task.getLocation();
-        strArray[DETAILS] = task.getDetails();
+        if(task.getLocation() != null) {
+            strArray[LOCATION] = task.getLocation();
+        } else {
+            strArray[LOCATION] = null;
+        }
+
+        if(task.getDetails() != null) {
+            strArray[DETAILS] = task.getDetails();
+        } else {
+            strArray[DETAILS] = null;
+        }
+
         strArray[PRIORITY] = convertToStringFromInt(task.getPriority());
     }
 
