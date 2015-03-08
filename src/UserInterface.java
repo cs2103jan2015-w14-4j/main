@@ -77,6 +77,8 @@ public class UserInterface {
 			public void actionPerformed(ActionEvent arg0) {
 				String input = textField.getText();
 				textField.selectAll();
+				ArrayList<Task> result = mainHandler.rawUserInput(input);
+				printOutput(result);
 				//outputArea.setCaretPosition(outputArea.getDocument().getLength());		
 			
 			}
