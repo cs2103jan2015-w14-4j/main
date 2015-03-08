@@ -16,12 +16,18 @@ import java.awt.Insets;
 
 public class UserInterface {
 
-	private JFrame frame;
+	public JFrame frame;
 	private JTextField textField;
 	private JTextArea outputArea;
     private final static String newline = "\n";
     private JScrollPane scrollPane;
-    private ArrayList<Task> outputArray = new arrayList<Task>;
+    private ArrayList<Task> outputArray;
+    
+    private SystemHandler mainHandler;
+    
+    public static final String MSG_ASK_FILENAME = "Please enter the name of your file";
+	public static final String MSG_ASK_INPUT = "Please enter your command";
+	
 	/**
 	 * Launch the application.
 	 */
@@ -29,6 +35,7 @@ public class UserInterface {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+
 					UserInterface window = new UserInterface();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
@@ -49,6 +56,11 @@ public class UserInterface {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		outputArray = new ArrayList<Task>();
+		
+		
+		
+		
 		frame = new JFrame();
 		frame.setBounds(100, 100, 552, 357);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -60,11 +72,10 @@ public class UserInterface {
 		frame.getContentPane().setLayout(gridBagLayout);
 		
 		textField = new JTextField();
+		
 		textField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				String input = textField.getText();
-				outputArray = rawUserInput(input);
-				printOutput(outputArray);
 				textField.selectAll();
 				//outputArea.setCaretPosition(outputArea.getDocument().getLength());		
 			
@@ -90,15 +101,40 @@ public class UserInterface {
 		gbc_textField.gridy = 1;
 		frame.getContentPane().add(textField, gbc_textField);
 		textField.setColumns(10);
+		
+		
+		//Init system handler with filename
+		outputArea.append(MSG_ASK_FILENAME + newline);
+		String fileName = "default.txt";
+		mainHandler = new SystemHandler(fileName);
+		
+		
 	}
 	
 	private void printOutput(ArrayList<Task> returnedOutput){
 		
-		for(String nextLine: returnedOutput){
-			
-			outputArea.append(nextLine + newline);
-			
+		for(Task nextTask: returnedOutput){
+			outputArea.append("Added(dummy) the following:"+newline);
+			outputArea.append("ID    : "+ nextTask.getTID() + newline);
+			outputArea.append("Name  : "+ nextTask.getTaskName() + newline);
+			if(nextTask.getLocation() != null) {
+				outputArea.append("Location  : "+nextTask.getLocation() + newline);
 			}
+			if(nextTask.getDateFrom() != null) {
+				outputArea.append("Date From  : "+nextTask.getDateFrom().toString() + newline);
+			}
+			if(nextTask.getDateTo() != null) {
+				outputArea.append("Date To  : "+nextTask.getDateTo().toString() + newline);
+			}
+			
+			if(nextTask.getDeadline() != null) {
+				outputArea.append("ID  : "+nextTask.getDeadline() + newline);
+			}
+			if(nextTask.getDetails() != null) {
+				outputArea.append("Detail  : "+nextTask.getDetails() + newline);
+			}
+			
+		}
 		
 	}
 	

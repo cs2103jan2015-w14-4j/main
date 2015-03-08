@@ -1,5 +1,7 @@
 import java.util.Scanner;
 import java.util.ArrayList;
+
+import java.awt.EventQueue;
 import java.text.ParseException;
 
 public class SystemHandler {
@@ -14,7 +16,8 @@ public class SystemHandler {
 	private Customize myCustomizedList;
 	private Shortcut myShortcut;
 	private String fileName;
-	
+	private FileStorage externalStorage;
+	private UserInterface window;
 	
 	public String getFileName() {
 		return fileName;
@@ -23,18 +26,42 @@ public class SystemHandler {
 	public SystemHandler (String fileName) {
 		this.fileName = fileName;
 		initializeSystem(fileName);
+		System.out.println("INITED with ("+fileName+")...");
 	}
 	
+	public SystemHandler () {
+		String fileName = "default.txt";
+		initializeSystem(fileName);
+		
+	}
 
 	public static void main(String[] args) {
 
 		Scanner sc = new Scanner(System.in);
 		String myFile = dummyUI(MSG_ASK_FILENAME, sc);
 		SystemHandler mySystemControl = new SystemHandler(myFile);
+		mySystemControl.activateUI();
 		sc.close();
 	}
 	
+	private void activateUI() {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					
+					window = new UserInterface();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	
+	
 	public ArrayList<Task> rawUserInput(String userInput) {
+		System.out.println("Executing '"+ userInput+"'");
 		return processUserInput(userInput);
 	}
 
@@ -97,7 +124,7 @@ public class SystemHandler {
 	}
 	
 	private ArrayList<Task> executeTaskManager(String[] command) throws ParseException {
-		ArrayList<Task> result = myTaskList.processTM(command);
+		ArrayList<Task> result = myTaskList.processTM(command, externalStorage);
 		return result;
 	}
 	
