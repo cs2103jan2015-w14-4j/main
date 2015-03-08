@@ -175,7 +175,7 @@ public class TaskManager {
     }
 
     private boolean hasTID(String[] inputs) {
-        return inputs[TID].equals(EMPTY_INPUT);
+        return inputs[TID] == null;
     }
 
     private void updateIDCounter(String currentID) {
