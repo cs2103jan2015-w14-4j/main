@@ -17,7 +17,7 @@ public class TaskManager {
 
     //for edit task, are you gonna send me what is being edited in the String[]
     //yes
-    
+
     //what should I return if I can't carry the action. 
     //Eg edit 1134, delete 1135; but there are no 1134 1135?
     //return null
@@ -50,7 +50,7 @@ public class TaskManager {
     private enum COMMAND_TYPE_TASK_MANAGER {
         add, edit, view, delete, init, undo, redo, invalid
     }
-    
+
     private ArrayList<Task> _tasks;
     //private ArrayList<String[]> _handledTasks = new ArrayList<String[]>();
     private int _IDCounter = INITIAL_TID;
@@ -83,7 +83,9 @@ public class TaskManager {
             returningTasks = viewTasks(); 
             break;
         case delete: 
-            returningTasks = deleteATask(convertToIntType(inputs[TID]));
+            int TIDToDelete = getTaskTID(inputs);
+            Task taskToDelete = getTaskFromTID(TIDToDelete);
+            returningTasks = deleteATask(TIDToDelete);
             break;
         case init:
             //call Wei Quan first
@@ -135,17 +137,17 @@ public class TaskManager {
         }
         return newTID;
     }
-    
+
     private boolean hasTID(String[] inputs) {
         return inputs[TID].equals(EMPTY_INPUT);
     }
-    
+
     private void updateIDCounter(String currentID) {
         if(_IDCounter < convertToIntType(currentID)){
             _IDCounter = convertToIntType(currentID);
         }
     }
-    
+
     //assume dateString is as this format "dd/MM/yyyy HH:mm"
     private Date convertToDateObject(String dateString) throws ParseException {
         DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
@@ -157,17 +159,17 @@ public class TaskManager {
         int intType = Integer.parseInt(intString);
         return intType;
     }
-    
+
     private boolean isAbleToEdit(String[] inputs) {
         int TaskTID = getTaskTID(inputs);
         return isTIDFound(TaskTID);
     }
-    
+
     private int getTaskTID(String[] inputs) {
         int TaskTID = convertToIntType(inputs[TID]);
         return TaskTID;
     }
-    
+
     private boolean isTIDFound(int TID) {
         boolean isTIDFound = TID_IS_NOT_FOUND;
         for(Task task : _tasks) {
@@ -178,7 +180,7 @@ public class TaskManager {
         }
         return isTIDFound;
     }
-    
+
     private Task getTaskFromTID(int TID) {
         Task taskFound = null;
         for(Task task : _tasks) {
@@ -189,11 +191,11 @@ public class TaskManager {
         }
         return taskFound;
     }
-    
+
     private ArrayList<Task> editATask(Task taskToEdit, String[] inputs) 
             throws ParseException {
         ArrayList<Task> returningTasks = null;
-        
+
         for(int i = TASK_NAME; i < inputs.length; ++i) {
             if(!isInputEmpty(inputs, i)) {
                 editTaskInfo(inputs, taskToEdit, i);
@@ -208,11 +210,11 @@ public class TaskManager {
 
         return returningTasks;
     }
-    
+
     private boolean isInputEmpty(String[] inputs, int i) {
         return inputs[i].equals(EMPTY_INPUT);
     }
-    
+
     private void editTaskInfo(String[] inputs, Task task, int i)
             throws ParseException {
         switch(i) {
@@ -225,7 +227,7 @@ public class TaskManager {
         case PRIORITY: editTaskPriority(inputs, task); break;
         }
     }
-    
+
     private void editTaskPriority(String[] inputs, Task task) {
         int newPriority = convertToIntType(inputs[PRIORITY]);
         task.setPriority(newPriority);
@@ -260,11 +262,11 @@ public class TaskManager {
     private void editTaskName(String[] inputs, Task task) {
         task.setTaskName(inputs[TASK_NAME]);
     }
-    
+
     private boolean isContentToBeClear(String[] inputs, int i) {
         return inputs[i].equals(CLEAR_INFO_INDICATOR);
     }
-    
+
     private void clearTaskInfo(Task task, int i) throws ParseException {
         switch(i) {
         case TASK_NAME: clearTaskName(task); break;
@@ -304,11 +306,17 @@ public class TaskManager {
     private void clearTaskPriority(Task task) {
         task.setPriority(0);
     }
-    
+
     private ArrayList<Task> viewTasks() {
         return _tasks;
     }
     
+    
+    private boolean isAbleToDelete(String[] inputs) {
+        int TaskTID = getTaskTID(inputs);
+        return isTIDFound(TaskTID);
+    }
+
     private ArrayList<Task> deleteATask(int TID) {
         ArrayList<Task> returningTasks = null;
         Iterator<Task> iterator = _tasks.iterator();
@@ -322,11 +330,11 @@ public class TaskManager {
         }
         return returningTasks;
     }
-    
 
 
 
-    
+
+
 
 
 
