@@ -106,6 +106,7 @@ public class TaskManager {
             undoAnOperation();
             break;
         case redo:
+            redoAnOperation();
             break;
         case invalid:
             System.out.print(INVALID_COMMAND_MESSAGE);
@@ -470,5 +471,32 @@ public class TaskManager {
     
     private void updateRedoStack() {
         _redoStack.push(_undoStack.pop());
+    }
+    
+    
+    private ArrayList<Task> redoAnOperation() throws ParseException {
+        ArrayList<Task> returningTasks = null;
+        if(!_redoStack.isEmpty()) {
+            String[] redoOperation = _redoStack.peek();
+            COMMAND_TYPE_TASK_MANAGER commandUndo = obtainCommand(redoOperation[COMMAND_TYPE]);
+            switch(commandUndo) {
+            case add:
+                returningTasks = addATask(redoOperation);
+                break;
+            case delete:
+                int TIDToDelete = getTaskTID(redoOperation);
+                returningTasks = deleteATask(TIDToDelete);
+                break;
+            case edit:
+                int TIDToEdit = getTaskTID(redoOperation);
+                Task taskToEdit = getTaskFromTID(TIDToEdit);
+                returningTasks = editATaskForRedo(taskToEdit, redoOperation);
+                break;
+            default:
+                break;
+            }
+            updateUndoStackFromRedoOperation();
+        }
+        return returningTasks;
     }
 }
