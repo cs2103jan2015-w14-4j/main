@@ -92,16 +92,7 @@ public class UserInterface {
 		textField.setColumns(10);
 	}
 	
-	protected String rawUserInput(ActionEvent arg0, String input) {
-	
-		
-		String rawUserInput  = input;
-		System.out.println("inside rawUI");
-		System.out.println(input);
-		return rawUserInput;
-	}
-	
-	private void printOutput(ArrayList<String> returnedOutput){
+	private void printOutput(ArrayList<Task> returnedOutput){
 		
 		for(String nextLine: returnedOutput){
 			
