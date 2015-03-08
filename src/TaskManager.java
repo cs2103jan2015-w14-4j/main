@@ -338,8 +338,13 @@ public class TaskManager {
         task.setPriority(0);
     }
 
+    
     private ArrayList<Task> viewTasks() {
-        return _tasks;
+        if(_tasks.isEmpty()){
+            return null;
+        } else {
+            return _tasks;
+        }
     }
 
 
