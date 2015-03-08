@@ -90,7 +90,8 @@ public class TaskManager {
             }
             break;
         case init:
-            
+            initializeTasks();
+            returningTasks = viewTasks();
             break;
         case undo:
             break;
