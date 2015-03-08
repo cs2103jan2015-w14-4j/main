@@ -16,11 +16,16 @@ public class TaskManager {
 
     //for edit task, are you gonna send me what is being edited in the String[]
     //yes
-
-    //-------------unsolved-----------
-
+    
     //what should I return if I can't carry the action. 
     //Eg edit 1134, delete 1135; but there are no 1134 1135?
+    //return null
+
+    //if there is a detail associated with a task previously, now you wanna remove the detail
+    //how to pass me the edit array String?
+    //pass me a ""
+
+    //-------------unsolved-----------
 
     private static final int COMMAND_TYPE = 0;
     private static final int TID = 1;
@@ -39,15 +44,20 @@ public class TaskManager {
     private enum COMMAND_TYPE_TASK_MANAGER {
         add, edit, view, delete, init, undo, redo, invalid
     }
-
+    
     private ArrayList<Task> _tasks;
     //private ArrayList<String[]> _handledTasks = new ArrayList<String[]>();
     private int _IDCounter = INITIAL_TID;
 
+    //------------constructor-------
     public TaskManager() {
         this._tasks = new ArrayList<Task>();
     }
 
+    //------------getter------------
+    public ArrayList<Task> getTasks() {return _tasks;}
+
+    //------------other methods------------
     @SuppressWarnings("incomplete-switch")
     public ArrayList<Task> processTM(String[] inputs) throws ParseException {
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
