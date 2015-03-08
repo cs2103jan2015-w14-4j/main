@@ -69,13 +69,13 @@ public class TaskManager {
             returningTasks = new ArrayList<Task>(addATask(inputs));
             break;
         case edit: 
-            returningTasks = new ArrayList<Task>(editATask(getIntType(inputs[TID]), inputs));
+            returningTasks = new ArrayList<Task>(editATask(convertToIntType(inputs[TID]), inputs));
             break;
         case view: 
             returningTasks = new ArrayList<Task>(viewTasks()); 
             break;
         case delete: 
-            returningTasks = new ArrayList<Task>(deleteATask(getIntType(inputs[TID])));
+            returningTasks = new ArrayList<Task>(deleteATask(convertToIntType(inputs[TID])));
             break;
         case init:
             //call Wei Quan first
@@ -101,14 +101,14 @@ public class TaskManager {
             Task newTask = new Task(getNewTID(), inputs[TASK_NAME], 
                     convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
                     convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
-                    getIntType(inputs[PRIORITY]));
+                    convertToIntType(inputs[PRIORITY]));
             _tasks.add(newTask);
             returningTasks.add(newTask);
         } else {
-            Task newTask = new Task(getIntType(inputs[TID]), inputs[TASK_NAME], 
+            Task newTask = new Task(convertToIntType(inputs[TID]), inputs[TASK_NAME], 
                     convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
                     convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
-                    getIntType(inputs[PRIORITY]));
+                    convertToIntType(inputs[PRIORITY]));
             updateIDCounter(inputs[TID]);
             _tasks.add(newTask);
         }
@@ -116,8 +116,8 @@ public class TaskManager {
     }
     
     private void updateIDCounter(String currentID) {
-        if(_IDCounter < getIntType(currentID)){
-            _IDCounter = getIntType(currentID);
+        if(_IDCounter < convertToIntType(currentID)){
+            _IDCounter = convertToIntType(currentID);
         }
     }
     
@@ -129,7 +129,7 @@ public class TaskManager {
         return date;
     }
 
-    private int getIntType(String intString) {
+    private int convertToIntType(String intString) {
         int intType = Integer.parseInt(intString);
         return intType;
     }
@@ -163,7 +163,7 @@ public class TaskManager {
     }
 
     private void editTaskPriority(String[] inputs, Task task) {
-        int newPriority = getIntType(inputs[PRIORITY]);
+        int newPriority = convertToIntType(inputs[PRIORITY]);
         task.setPriority(newPriority);
     }
 
