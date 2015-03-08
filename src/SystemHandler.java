@@ -66,6 +66,7 @@ public class SystemHandler {
 
 	private static COMMAND_TYPE_GROUP getCommandGroupType(String commandType) {
 		switch(commandType) {
+			case "init":	
 			case "add":
 			case "view":
 			case "delete":

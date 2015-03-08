@@ -21,7 +21,7 @@ public class FileStorage {
 	private static final int DETAILS = 7;
 	private static final int PRIORITY = 8;
 	
-	private static final String EMPTY_INPUT = "";
+	private static final String EMPTY_INPUT = "null";
 		
 	private static File textFile;
     
@@ -60,13 +60,29 @@ public class FileStorage {
     	textFile.delete();
 		textFile.createNewFile();
 		BufferedWriter bw = new BufferedWriter(new FileWriter(textFile));
-		String newLine="\n";
-        for (int i = 0; i < taskList.size(); i++) {
+		for (int i = 0; i < taskList.size(); i++) {
             
         	Task tempTask = taskList.get(i);
         	String[] taskArray = taskToStrArray(tempTask);
         	for(int j = 0; j < taskArray.length; j++) {
-        	    bw.write(taskArray[j]);
+        		
+        		
+        		
+        		if ( j != taskArray.length-1) {
+        			
+        			taskArray[j] += (",");
+        			bw.write(taskArray[j]);
+        			
+        		}
+        		
+        		else {
+        			
+        			bw.write(taskArray[j]);
+        			
+        		}
+        		
+        	}
+        	bw.newLine();
         }
 
         bw.close();
@@ -85,26 +101,91 @@ public class FileStorage {
     	
     	String[] strArr = new String[8];
     	//NO ERROR CATCHING FOR NULL ITEM
+    	
+    	
     	strArr[0] = IntegerToString(tempTask.getTID());
+    	
     	strArr[1] =	tempTask.getTaskName();
     	
     	Date temp = tempTask.getDateFrom();
+    	
     	if(temp != null) {
-        	strArr[2] =	dateToString(temp);	
+        	
+    		strArr[2] =	dateToString(temp);	
+    	
     	}
+    	
+    	else {
+    		
+    		strArr[2] = null;
+    		
+    	}
+    	
     	temp = tempTask.getDateTo();
+    	
     	if(temp != null) {
+    		
     		strArr[3] = dateToString(temp);
+    	
     	}
+    	
+    	else {
+    		
+    		strArr[3] = null;
+    		
+    	}
+    	
     	temp = tempTask.getDeadline();
+    	
     	if(temp != null) {
+    		
     		strArr[4] = dateToString(temp);
+    	
     	}
-    	strArr[5] = tempTask.getLocation();
-    	strArr[6] = tempTask.getDetails();
+    	
+    	else {
+    		
+    	    strArr[4] = null;
+    		
+    	}
+    	
+    	if(tempTask.getLocation() != null) {
+    	
+    		strArr[5] = tempTask.getLocation();
+    	
+    	}
+    	
+    	else {
+    		
+    		strArr[5] = null;
+    		
+    	}
+    	
+    	if(tempTask.getDetails() != null) {
+    	
+    		strArr[6] = tempTask.getDetails();
+    	
+    	}
+    	
+    	else {
+    		
+    		strArr[6] = null;
+    		
+    	}
+    	
     	int tempInt = tempTask.getPriority();
     	
-    	strArr[7] = IntegerToString(tempInt);
+    	if(IntegerToString(tempInt) != null) {
+    	
+    		strArr[7] = IntegerToString(tempInt);
+    	
+    	}
+    	
+    	else {
+    		
+    		strArr[7] = null;
+    		
+    	}
     	
     	return strArr;
     	
@@ -118,16 +199,12 @@ public class FileStorage {
     
     private String dateToString(Date date) {
     	
-    	Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	Format formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     	String dateString = formatter.format(date);
     	return dateString;
     }
-    
     //return add,.. same as parse format;
     public void readFromFile(TaskManager tm) throws ParseException {
-        
-    	String[] inputs = new String[9];
-        inputs[COMMAND_TYPE] = "add";
         
         if(textFile.exists()) {
            
@@ -136,30 +213,96 @@ public class FileStorage {
         		Scanner sc = new Scanner(textFile);
                 
                 while (sc.hasNextLine()) {
-                    
-                	inputs[TASK_ID] = sc.next();
-                    inputs[TASK_NAME] = sc.next();
-                    inputs[DATE_FROM] = sc.next();
-                    if(!inputs[DATE_FROM].equals(EMPTY_INPUT)) {
-                        inputs[DATE_FROM] += " " + sc.next();
+                	String[] inputs = new String[9];
+                	String[] tempStringArray = new String[8];
+                	tempStringArray = sc.nextLine().split("\\s*,\\s*");
+                	System.out.println(tempStringArray.length);
+                	for(int i=0; i<tempStringArray.length;i++) {
+                		
+                		System.out.println(tempStringArray[i]);
+                		
+                	}
+                	             	
+                	inputs[COMMAND_TYPE] = "add";
+                	inputs[TASK_ID] = tempStringArray[0];
+ 
+                	
+                	inputs[TASK_NAME] = tempStringArray[1];
+                 
+                    if(!tempStringArray[2].equals(EMPTY_INPUT)) {
+                    	
+                    	inputs[DATE_FROM] = tempStringArray[2];
                     
                     }
                     
-                    inputs[DATE_TO] = sc.next();
-                    if(!inputs[DATE_TO].equals(EMPTY_INPUT)) {
-                        inputs[DATE_TO] += " " + sc.next();
+                    else {
+                    	
+                    	inputs[DATE_FROM] = null;
+                    	
+                    }
+                                       
+                    if(!tempStringArray[3].equals(EMPTY_INPUT)) {
+                        
+                    	inputs[DATE_TO] = tempStringArray[3];
+                    
                     }
                     
-                    inputs[DEADLINE] = sc.next();
-                    if(!inputs[DEADLINE].equals(EMPTY_INPUT)) {
-                        inputs[DEADLINE] += " " + sc.next();
+                    else {
+                    	
+                    	inputs[DATE_TO] = null;
+                    	
+                    }
+                    
+                    
+                    if(!tempStringArray[4].equals(EMPTY_INPUT)) {
+                        
+                    	inputs[DEADLINE] = tempStringArray[4];
                     
                     }
                     
-                    inputs[LOCATION] = sc.next();
-                    inputs[DETAILS] = sc.next();
-                    inputs[PRIORITY] = sc.next();
+                    else {
+                    	
+                    	inputs[DEADLINE] = null;
+                    	
+                    }
                     
+                    if(!tempStringArray[5].equals(EMPTY_INPUT)) {
+                        
+                    	inputs[LOCATION] = tempStringArray[5];
+                    
+                    }
+                    
+                    else {
+                    	
+                    	inputs[LOCATION] = null;
+                    	
+                    }
+
+                    if(!tempStringArray[6].equals(EMPTY_INPUT)) {
+                        
+                    	inputs[DETAILS] = tempStringArray[6];
+                    
+                    }
+                    
+                    else {
+                    	
+                    	inputs[DETAILS] = null;
+                    	
+                    }
+                    
+                    
+                    if(!tempStringArray[7].equals(EMPTY_INPUT)) {
+                        
+                    	inputs[PRIORITY] = tempStringArray[7];
+                    	
+                    }
+                    
+                    else {
+                    	
+                    	inputs[PRIORITY] = null;
+                    	
+                    }
+                  
                     tm.processAddForInitialization(inputs);       
                 }
                 

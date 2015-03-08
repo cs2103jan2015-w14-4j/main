@@ -146,6 +146,7 @@ public class UserInterface {
 			
 			if (!hasFilename){		
 				mainHandler = new SystemHandler(input);
+				mainHandler.rawUserInput("init");
 				hasFilename = true;
 				outputArea.append(String.format(MSG_ECHO_FILENAME, mainHandler.getFileName()) + newline);
 				outputArea.append(MSG_ASK_INPUT + newline);
@@ -191,7 +192,7 @@ public class UserInterface {
 			}
 			
 			if(nextTask.getDeadline() != null) {
-				outputArea.append("ID  : "+nextTask.getDeadline() + newline);
+				outputArea.append("Deadline  : "+nextTask.getDeadline() + newline);
 			}
 			if(nextTask.getDetails() != null) {
 				outputArea.append("Detail  : "+nextTask.getDetails() + newline);
