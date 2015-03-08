@@ -116,6 +116,10 @@ public class TaskManager {
         return returningTasks;
     }
     
+    private boolean hasTID(String[] inputs) {
+        return inputs[TID].equals(EMPTY_INPUT);
+    }
+    
     private void updateIDCounter(String currentID) {
         if(_IDCounter < convertToIntType(currentID)){
             _IDCounter = convertToIntType(currentID);
