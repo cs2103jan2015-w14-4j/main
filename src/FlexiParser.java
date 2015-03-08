@@ -56,6 +56,7 @@ public class FlexiParser {
 				case COMMAND_VIEW:
 					break;
 			}
+			
 			inputArray = outputArray;
 //			
 //			

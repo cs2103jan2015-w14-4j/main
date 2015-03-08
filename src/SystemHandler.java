@@ -1,6 +1,5 @@
 import java.util.Scanner;
 import java.util.ArrayList;
-
 import java.awt.EventQueue;
 import java.text.ParseException;
 
@@ -66,6 +65,7 @@ public class SystemHandler {
 	}
 
 	private static COMMAND_TYPE_GROUP getCommandGroupType(String commandType) {
+		System.out.println("DEFINE CMD "+commandType);
 		switch(commandType) {
 			case "add":
 			case "view":
@@ -106,12 +106,22 @@ public class SystemHandler {
 			//Parse command
 			FlexiParser parser = new FlexiParser(inputFromUser);
 			String[] parsedCommand = parser.getStringArray();
-			System.out.println(parsedCommand);
+			
+			//For checking purposes
+			String[] temp = parsedCommand;
+			
+	    	for(int i = 0; i < temp.length; ++i) {
+	    		System.out.print((temp[i] == null)? "NULL":temp[i].toString());
+	    		System.out.print("| ");
+	    	}
+			
 			
 			if(parsedCommand.length != LENGTH_COMMAND)
-				throw new ParseException("Invalid length of parsed command", parsedCommand.length - LENGTH_COMMAND);
-			COMMAND_TYPE_GROUP commandGroupType = SystemHandler.getCommandGroupType(parsedCommand[0]);
+				throw new ParseException("Invalid length of parsed command", 
+						parsedCommand.length - LENGTH_COMMAND);
 			
+			
+			COMMAND_TYPE_GROUP commandGroupType = SystemHandler.getCommandGroupType(parsedCommand[0]);
 			switch(commandGroupType) {
 				case TASK_MANAGER:
 					return executeTaskManager(parsedCommand);
