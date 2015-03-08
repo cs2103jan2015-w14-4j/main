@@ -9,7 +9,7 @@ public class SystemHandler {
 	public static final String MSG_ASK_FILENAME = "Please enter the name of your file";
 	public static final String MSG_ASK_INPUT = "Please enter your command";
 	
-	public static final int LENGTH_COMMAND = 8;
+	public static final int LENGTH_COMMAND = 9;
 	
 	private TaskManager myTaskList;
 	private Customize myCustomizedList;
@@ -65,7 +65,6 @@ public class SystemHandler {
 	}
 
 	private static COMMAND_TYPE_GROUP getCommandGroupType(String commandType) {
-		System.out.println("DEFINE CMD "+commandType);
 		switch(commandType) {
 			case "add":
 			case "view":
@@ -112,7 +111,7 @@ public class SystemHandler {
 			
 	    	for(int i = 0; i < temp.length; ++i) {
 	    		System.out.print((temp[i] == null)? "NULL":temp[i].toString());
-	    		System.out.print("| ");
+	    		System.out.print("|");
 	    	}
 			
 			

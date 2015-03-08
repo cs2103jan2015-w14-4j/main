@@ -88,15 +88,27 @@ public class FileStorage {
     private String[] taskToStrArray(Task tempTask) {
     	
     	String[] strArr = new String[8];
-    	
+    	//NO ERROR CATCHING FOR NULL ITEM
     	strArr[0] = IntegerToString(tempTask.getTID());
     	strArr[1] =	tempTask.getTaskName();
-    	strArr[2] =	dateToString(tempTask.getDateFrom());	
-    	strArr[3] = dateToString(tempTask.getDateTo());
-        strArr[4] = dateToString(tempTask.getDeadline());
+    	
+    	Date temp = tempTask.getDateFrom();
+    	if(temp != null) {
+        	strArr[2] =	dateToString(temp);	
+    	}
+    	temp = tempTask.getDateTo();
+    	if(temp != null) {
+    		strArr[3] = dateToString(temp);
+    	}
+    	temp = tempTask.getDeadline();
+    	if(temp != null) {
+    		strArr[4] = dateToString(temp);
+    	}
     	strArr[5] = tempTask.getLocation();
     	strArr[6] = tempTask.getDetails();
-    	strArr[7] = IntegerToString(tempTask.getPriority());
+    	int tempInt = tempTask.getPriority();
+    	
+    	strArr[7] = IntegerToString(tempInt);
     	
     	return strArr;
     	

@@ -2,7 +2,7 @@ public class FlexiParser {
 	private static String[] inputArray;
 	//private static final int regexForSplit = 2; 
 
-	public static final int LENGTH_COMMAND = 8;
+	public static final int LENGTH_COMMAND = 9;
 
 
     private static final String COMMAND_ADD = "add";
@@ -98,8 +98,10 @@ public class FlexiParser {
 				outputArray[LOCATION] = inputArray[++i];
 			}
 		}
-		outputArray[DATE_FROM] = dateF + " " + timeF;
-		outputArray[DATE_TO] = dateT + " " + timeT;
+		if(dateF != null && timeF != null)
+			outputArray[DATE_FROM] = dateF + " " + timeF;
+		if(dateT != null && timeT != null)
+			outputArray[DATE_TO] = dateT + " " + timeT;
 	}
 	
 	private void editCommand(String[] input,String[] outputArray) {
