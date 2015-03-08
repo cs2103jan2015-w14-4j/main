@@ -60,6 +60,7 @@ public class TaskManager {
     //------------constructor-------
     public TaskManager() {
         TaskManager._tasks = new ArrayList<Task>();
+        TaskManager._IDCounter = INITIAL_TID;
     }
 
     //------------getter------------
