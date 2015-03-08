@@ -242,12 +242,11 @@ public class TaskManager {
     private int getNewTID() {
         int newTID;
         if(_tasks.isEmpty()) {
-            newTID = INITIAL_TID + 1;
+            newTID = INITIAL_TID;
         } else {
-            newTID = _IDCounter + 1;
-            increaseIDCounterByOne();
+            ++_IDCounter;
+            newTID = _IDCounter;
         }
-
         return newTID;
     }
     
