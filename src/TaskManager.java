@@ -243,7 +243,7 @@ public class TaskManager {
                 editTaskInfo(inputs, taskToEdit, i);
             }
 
-            if(isContentToBeClear(inputs, i)) {
+            if(isContentToClear(inputs, i)) {
                 clearTaskInfo(taskToEdit, i);
             }
         }
@@ -305,7 +305,7 @@ public class TaskManager {
         task.setTaskName(inputs[TASK_NAME]);
     }
 
-    private boolean isContentToBeClear(String[] inputs, int i) {
+    private boolean isContentToClear(String[] inputs, int i) {
         return inputs[i].equals(CLEAR_INFO_INDICATOR);
     }
 
