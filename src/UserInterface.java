@@ -1,6 +1,7 @@
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.Scrollbar;
 
 import javax.swing.JTextArea;
 
@@ -18,14 +20,17 @@ import java.awt.Insets;
 public class UserInterface {
 
 	public JFrame frame;
+	public JPanel panel;
 	private JTextField textField;
 	private JTextArea outputArea;
     private final static String newline = "\n";
+    private JScrollPane scrollBar;
     private JScrollPane scrollPane;
     private ArrayList<Task> outputArray;
     
     private SystemHandler mainHandler;
     
+    public static final String APP_NAME = "Flexi Tracker";
     public static final String MSG_ASK_FILENAME = "Please enter the name of your file";
 	public static final String MSG_ASK_INPUT = "Please enter your command";
 	public static final String MSG_ECHO_FILENAME = "File location: %1$s";
@@ -63,8 +68,8 @@ public class UserInterface {
 		
 		
 		
-		
-		frame = new JFrame();
+		panel = new JPanel();
+		frame = new JFrame(APP_NAME);
 		frame.setBounds(100, 100, 552, 357);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -96,26 +101,30 @@ public class UserInterface {
 			}
 		});
 		
-		scrollPane = new JScrollPane(); 
+		
+		scrollBar = new JScrollPane(panel,
+	            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+	            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		outputArea = new JTextArea();
+		scrollPane = new JScrollPane(outputArea); 
 		outputArea.setColumns(30);
 		outputArea.setTabSize(10);
 		outputArea.setRows(10);
 		outputArea.setLineWrap(true);
-	//	textArea_1.setEditable(false);
+		outputArea.setEditable(false);
 		GridBagConstraints gbc_outputArea = new GridBagConstraints();
 		gbc_outputArea.insets = new Insets(0, 0, 5, 0);
 		gbc_outputArea.fill = GridBagConstraints.BOTH;
 		gbc_outputArea.gridx = 0;
 		gbc_outputArea.gridy = 0;
-		frame.getContentPane().add(outputArea, gbc_outputArea);
+		frame.getContentPane().add(scrollPane, gbc_outputArea);
 		GridBagConstraints gbc_textField = new GridBagConstraints();
 		gbc_textField.fill = GridBagConstraints.BOTH;
 		gbc_textField.gridx = 0;
 		gbc_textField.gridy = 1;
 		frame.getContentPane().add(textField, gbc_textField);
 		textField.setColumns(10);
-		
+ 
 		
 		//Init system handler with filename
 		outputArea.append(MSG_ASK_FILENAME + newline);
