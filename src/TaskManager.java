@@ -405,4 +405,31 @@ public class TaskManager {
 
         _undoStack.push(strForUndoStack);
     }
+    
+    private void getStringArrayFromTask(Task task, String[] strArray) {
+        strArray[TID] = convertToStringFromInt(task.getTID());
+        strArray[TASK_NAME] = task.getTaskName();
+
+        if(task.getDateFrom() != null) {
+            strArray[DATE_FROM] = convertToStringFromDate(task.getDateFrom());
+        } else {
+            strArray[DATE_FROM] = EMPTY_INPUT;
+        }
+
+        if(task.getDateTo() != null) {
+            strArray[DATE_TO] = convertToStringFromDate(task.getDateTo());
+        } else {
+            strArray[DATE_TO] = EMPTY_INPUT;
+        }
+
+        if(task.getDeadline() != null) {
+            strArray[DEADLINE] = convertToStringFromDate(task.getDeadline());
+        } else {
+            strArray[DEADLINE] = EMPTY_INPUT;
+        }
+
+        strArray[LOCATION] = task.getLocation();
+        strArray[DETAILS] = task.getDetails();
+        strArray[PRIORITY] = convertToStringFromInt(task.getPriority());
+    }
 }
