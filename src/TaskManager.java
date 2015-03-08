@@ -72,8 +72,11 @@ public class TaskManager {
             returningTasks = addATask(inputs);
             break;
         case edit: 
-            
-            returningTasks = editATask(convertToIntType(inputs[TID]), inputs);
+            if(isAbleToEdit(inputs)) {
+                int TIDToEdit = getTaskTID(inputs);
+                Task taskToEdit = getTaskFromTID(TIDToEdit);
+                returningTasks = editATask(taskToEdit, inputs);
+            }
             break;
         case view: 
             returningTasks = viewTasks(); 
