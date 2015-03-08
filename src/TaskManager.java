@@ -73,23 +73,28 @@ public class TaskManager {
         ArrayList<Task> returningTasks = null;
 
         switch(commandObtained) {
-        case add: 
+        case add:
             returningTasks = addATask(inputs);
+            if(returningTasks != null) {
+                updateUndoStack(returningTasks, inputs[COMMAND_TYPE]);
+            }
             break;
-        case edit: 
+        case edit:
             if(isAbleToEdit(inputs)) {
                 int TIDToEdit = getTaskTID(inputs);
                 Task taskToEdit = getTaskFromTID(TIDToEdit);
+                updateStackForEdit(taskToEdit, inputs, _undoStack);
                 returningTasks = editATask(taskToEdit, inputs);
             }
             break;
-        case view: 
+        case view:
             returningTasks = viewTasks(); 
             break;
-        case delete: 
+        case delete:
             if(isAbleToDelete(inputs)) {
                 int TIDToDelete = getTaskTID(inputs);
                 Task taskToDelete = getTaskFromTID(TIDToDelete);
+                updateUndoStackFromTask(taskToDelete, inputs[COMMAND_TYPE]);
                 returningTasks = deleteATask(TIDToDelete);
             }
             break;
@@ -98,6 +103,7 @@ public class TaskManager {
             returningTasks = viewTasks();
             break;
         case undo:
+            undoAnOperation();
             break;
         case redo:
             break;
@@ -384,5 +390,10 @@ public class TaskManager {
             //updateRedoStack();
         }
         return returningTasks;
+    }
+    
+    private void updateUndoStack(ArrayList<Task> tasks, String commandType) {
+        Task task = tasks.get(INDEX_OF_ONLY_TASK);
+        updateUndoStackFromTask(task, commandType); 
     }
 }
