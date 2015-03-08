@@ -115,6 +115,17 @@ public class TaskManager {
             returningTasks.add(newTask);
         }
         return returningTasks;
+    }   
+
+    private int getNewTID() {
+        int newTID;
+        if(_tasks.isEmpty()) {
+            newTID = INITIAL_TID;
+        } else {
+            ++_IDCounter;
+            newTID = _IDCounter;
+        }
+        return newTID;
     }
     
     private boolean hasTID(String[] inputs) {
@@ -237,17 +248,6 @@ public class TaskManager {
             commandObtained = COMMAND_TYPE_TASK_MANAGER.invalid;
         }
         return commandObtained;
-    }
-
-    private int getNewTID() {
-        int newTID;
-        if(_tasks.isEmpty()) {
-            newTID = INITIAL_TID;
-        } else {
-            ++_IDCounter;
-            newTID = _IDCounter;
-        }
-        return newTID;
     }
 
     private ArrayList<Task> viewTasks() {
