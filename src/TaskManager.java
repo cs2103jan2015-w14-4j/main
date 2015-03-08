@@ -66,16 +66,16 @@ public class TaskManager {
 
         switch(commandObtained) {
         case add: 
-            returningTasks = new ArrayList<Task>(addATask(inputs));
+            returningTasks = addATask(inputs);
             break;
         case edit: 
-            returningTasks = new ArrayList<Task>(editATask(convertToIntType(inputs[TID]), inputs));
+            returningTasks = editATask(convertToIntType(inputs[TID]), inputs);
             break;
         case view: 
-            returningTasks = new ArrayList<Task>(viewTasks()); 
+            returningTasks = viewTasks(); 
             break;
         case delete: 
-            returningTasks = new ArrayList<Task>(deleteATask(convertToIntType(inputs[TID])));
+            returningTasks = deleteATask(convertToIntType(inputs[TID]));
             break;
         case init:
             //call Wei Quan first
