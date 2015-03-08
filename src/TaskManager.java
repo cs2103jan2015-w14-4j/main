@@ -95,7 +95,7 @@ public class TaskManager {
     }
 
     private ArrayList<Task> addATask(String[] inputs) throws ParseException {
-        ArrayList<Task> returningTasks = new ArrayList<Task>();
+        ArrayList<Task> returningTasks = null;
         if(hasTID(inputs)){
             Task newTask = new Task(getNewTID(), inputs[TASK_NAME], 
                     convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
@@ -111,6 +111,7 @@ public class TaskManager {
                     convertToIntType(inputs[PRIORITY]));
             updateIDCounter(inputs[TID]);
             _tasks.add(newTask);
+            returningTasks = new ArrayList<Task>();
             returningTasks.add(newTask);
         }
         return returningTasks;
