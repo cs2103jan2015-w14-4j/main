@@ -439,9 +439,25 @@ public class TaskManager {
     private ArrayList<Task> editATaskForUndo(Task taskToEdit, String[] inputs) 
             throws ParseException {
         ArrayList<Task> returningTasks = null;
-        updateStackForEdit(taskToEdit, inputs, _undoStack);
+        updateStackForEditUnderUndoRedo(taskToEdit, inputs, _undoStack);
         returningTasks = editATask(taskToEdit, inputs);
         return returningTasks;
+    }
+    
+    private void updateStackForEditUnderUndoRedo(Task taskToEdit, String[] inputs, 
+            Stack<String[]> stack) {
+        stack.pop();
+        String[] strForStack = new String[DEFAULT_SIZE];
+
+        strForStack[COMMAND_TYPE] = inputs[COMMAND_TYPE];
+        getStringArrayFromTask(taskToEdit, strForStack);
+
+        for(int i = TASK_NAME; i < DEFAULT_SIZE; ++i) {
+            if(strForStack[i] == null && inputs[i] != null) {
+                strForStack[i] = CLEAR_INFO_INDICATOR;
+            }
+        }
+        stack.push(strForStack);
     }
 
     //This ArrayList contains only one item
@@ -541,7 +557,7 @@ public class TaskManager {
     private ArrayList<Task> editATaskForRedo(Task taskToEdit, String[] inputs) 
             throws ParseException {
         ArrayList<Task> returningTasks = null;
-        updateStackForEdit(taskToEdit, inputs, _redoStack);
+        updateStackForEditUnderUndoRedo(taskToEdit, inputs, _redoStack);
         returningTasks = editATask(taskToEdit, inputs);
         return returningTasks;
     }
