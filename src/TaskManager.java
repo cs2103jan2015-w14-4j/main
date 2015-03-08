@@ -3,6 +3,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 public class TaskManager {
     //------------solved--------------
@@ -304,6 +305,24 @@ public class TaskManager {
         task.setPriority(0);
     }
     
+    private ArrayList<Task> viewTasks() {
+        return _tasks;
+    }
+    
+    private ArrayList<Task> deleteATask(int TID) {
+        ArrayList<Task> returningTasks = null;
+        Iterator<Task> iterator = _tasks.iterator();
+        while (iterator.hasNext()) {
+            Task nextTask = (Task) iterator.next();
+            if(TID == nextTask.getTID()) {
+                returningTasks = new ArrayList<Task>();
+                returningTasks.add(nextTask);
+                iterator.remove();
+            }
+        }
+        return returningTasks;
+    }
+    
 
 
 
@@ -321,19 +340,6 @@ public class TaskManager {
 
 
 
-    private ArrayList<Task> deleteATask(int TID) {
-        ArrayList<Task> returningTasks = new ArrayList<Task>(viewTasks());
-        for(Task task : _tasks) {
-            if(TID == task.getTID()) {
-
-                returningTasks.add(task);
-            }
-        }
-        return returningTasks;
-    }
-
-
-
     private COMMAND_TYPE_TASK_MANAGER obtainCommand (String command) {
         COMMAND_TYPE_TASK_MANAGER commandObtained;
         try {
@@ -344,9 +350,7 @@ public class TaskManager {
         return commandObtained;
     }
 
-    private ArrayList<Task> viewTasks() {
-        return _tasks;
-    }
+
 
     //+undoAddTask(): boolean
     //+undoDeleteTask(): boolean
