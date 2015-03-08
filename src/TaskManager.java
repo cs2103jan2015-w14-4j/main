@@ -36,11 +36,14 @@ public class TaskManager {
     private static final int LOCATION = 6;
     private static final int DETAILS = 7;
     private static final int PRIORITY = 8;
+    private static final int INITIAL_TID = 1000;
+    private static final int DEFAULT_SIZE = 9;
+    private static final String EMPTY_INPUT = "null";
+    private static final String CLEAR_INFO_INDICATOR = "";
+    private static final String INVALID_COMMAND_MESSAGE = "The command is invalid.\n";
     private static final boolean TID_IS_NOT_FOUND = false;
     private static final boolean TID_IS_FOUND = true;
-    private static final int INITIAL_TID = 1000;
-    private static final String EMPTY_INPUT = "null";
-    private static final String INVALID_COMMAND_MESSAGE = "The command is invalid.\n";
+    private static final int INDEX_OF_ONLY_TASK = 0;
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
 
     private enum COMMAND_TYPE_TASK_MANAGER {
@@ -169,7 +172,11 @@ public class TaskManager {
 
         return returningTasks;
     }
-
+    
+    private boolean isInputEmpty(String[] inputs, int i) {
+        return inputs[i].equals(EMPTY_INPUT);
+    }
+    
     private void editTaskInfo(String[] inputs, Task task, int i)
             throws ParseException {
         switch(i) {
@@ -182,7 +189,7 @@ public class TaskManager {
         case PRIORITY: editTaskPriority(inputs, task); break;
         }
     }
-
+    
     private void editTaskPriority(String[] inputs, Task task) {
         int newPriority = convertToIntType(inputs[PRIORITY]);
         task.setPriority(newPriority);
@@ -217,10 +224,18 @@ public class TaskManager {
     private void editTaskName(String[] inputs, Task task) {
         task.setTaskName(inputs[TASK_NAME]);
     }
-
-    private boolean isInputEmpty(String[] inputs, int i) {
-        return inputs[i].equals(EMPTY_INPUT);
+    
+    private boolean isContentToBeClear(String[] inputs, int i) {
+        return inputs[i].equals(CLEAR_INFO_INDICATOR);
     }
+    
+    
+
+
+
+    
+
+
 
     /*private String getStringFromInt() {
 
