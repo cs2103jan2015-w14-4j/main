@@ -70,6 +70,8 @@ public class SystemHandler {
 			case "view":
 			case "delete":
 			case "edit":
+			case "undo":
+			case "redo":
 				return COMMAND_TYPE_GROUP.TASK_MANAGER;
 			//dummy command keyword
 			case "addShort":

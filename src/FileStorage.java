@@ -66,11 +66,7 @@ public class FileStorage {
         	Task tempTask = taskList.get(i);
         	String[] taskArray = taskToStrArray(tempTask);
         	for(int j = 0; j < taskArray.length; j++) {
-        	
         	    bw.write(taskArray[j]);
-        	
-        	}
-        	bw.write(newLine);
         }
 
         bw.close();

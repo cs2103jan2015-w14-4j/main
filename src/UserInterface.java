@@ -153,7 +153,7 @@ public class UserInterface {
 			}
 			else{
 				clearInput();
-
+  
 				//Dummy
 
 				ArrayList<Task> result = mainHandler.rawUserInput(input);

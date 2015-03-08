@@ -58,15 +58,6 @@ public class FlexiParser {
 			}
 			
 			inputArray = outputArray;
-//			
-//			
-//			outputArray[TASK_NAME] = inputArray[TASK_NAME];
-//			outputArray[DATE_FROM] = inputArray[DATE_FROM];
-//			outputArray[DATE_TO] = inputArray[DATE_TO];
-//			outputArray[DEADLINE] = inputArray[DEADLINE];
-//			outputArray[LOCATION] = inputArray[LOCATION];
-//			outputArray[DETAILS] = inputArray[DETAILS];
-			
 			
 		}catch(IllegalArgumentException ex) { 
 			
@@ -113,6 +104,10 @@ public class FlexiParser {
 			if(inputArray[i].equals("from")) {
 				//WARNING: No checking for time input format
 				timeF = inputArray[++i];
+			}
+			else if(inputArray[i].equals("name")) {
+				//WARNING: No checking for time input format
+				outputArray[TASK_NAME] = inputArray[++i];
 			}
 			else if(inputArray[i].equals("to")) {
 				//WARNING: No checking for time input format
