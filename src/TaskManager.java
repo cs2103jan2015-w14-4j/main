@@ -54,6 +54,8 @@ public class TaskManager {
 
     private static ArrayList<Task> _tasks;
     private static int _IDCounter;
+    private Stack<String[]> _undoStack = new Stack<String[]>();
+    private Stack<String[]> _redoStack = new Stack<String[]>();
 
     //------------constructor-------
     public TaskManager() {
@@ -354,5 +356,7 @@ public class TaskManager {
         //FileStorage fileStorage = new FileStorage();
         //fileStorage.retriveDataFromFile();
     }
+    
+
 
 }
