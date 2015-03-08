@@ -432,4 +432,15 @@ public class TaskManager {
         strArray[DETAILS] = task.getDetails();
         strArray[PRIORITY] = convertToStringFromInt(task.getPriority());
     }
+    
+    private String convertToStringFromDate(Date dateObject) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("DEFAULT_DATE_FORMAT");
+        String dateString = dateFormat.format(dateObject);
+        return dateString;
+    }
+    
+    private String convertToStringFromInt(int intType) {
+        String intString = Integer.toString(intType);
+        return intString;
+    }
 }
