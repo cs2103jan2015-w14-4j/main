@@ -41,7 +41,7 @@ public class TaskManager {
     private static final int INITIAL_TID = 1000;
     private static final String EMPTY_INPUT = "null";
     private static final String INVALID_COMMAND_MESSAGE = "The command is invalid.\n";
-
+    private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
 
     private enum COMMAND_TYPE_TASK_MANAGER {
         add, edit, view, delete, init, undo, redo, invalid
@@ -126,10 +126,9 @@ public class TaskManager {
         }
     }
     
-    
     //assume dateString is as this format "dd/MM/yyyy HH:mm"
     private Date convertToDateObject(String dateString) throws ParseException {
-        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
         Date date = format.parse(dateString);
         return date;
     }
