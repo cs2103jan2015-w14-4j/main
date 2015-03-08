@@ -243,7 +243,7 @@ public class TaskManager {
                 editTaskInfo(inputs, taskToEdit, i);
             }
 
-            if(isContentToClear(inputs, i)) {
+            if(inputs[i] != null && isContentToClear(inputs, i)) {
                 clearTaskInfo(taskToEdit, i);
             }
         }
