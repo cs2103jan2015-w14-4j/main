@@ -149,19 +149,24 @@ public class TaskManager {
         int intType = Integer.parseInt(intString);
         return intType;
     }
+    
 
-    private ArrayList<Task> editATask(int TID, String[] inputs) throws ParseException {
-        ArrayList<Task> returningTasks = new ArrayList<Task>();
-        for(Task task : _tasks) {
-            if(TID == task.getTID()) {
-                for(int i = TASK_NAME; i < inputs.length; i++) {
-                    if(!isInputEmpty(inputs, i)) {
-                        editTaskInfo(inputs, task, i);
-                    }
-                }
-                returningTasks.add(task);
+    private ArrayList<Task> editATask(Task taskToEdit, String[] inputs) 
+            throws ParseException {
+        ArrayList<Task> returningTasks = null;
+        
+        for(int i = TASK_NAME; i < inputs.length; ++i) {
+            if(!isInputEmpty(inputs, i)) {
+                editTaskInfo(inputs, taskToEdit, i);
+            }
+
+            if(isContentToBeClear(inputs, i)) {
+                clearTaskInfo(taskToEdit, i);
             }
         }
+        returningTasks = new ArrayList<Task>();
+        returningTasks.add(taskToEdit);
+
         return returningTasks;
     }
 
