@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Stack;
 
 public class TaskManager {
     //------------solved--------------
@@ -51,13 +52,12 @@ public class TaskManager {
         add, edit, view, delete, init, undo, redo, invalid
     }
 
-    private ArrayList<Task> _tasks;
-    //private ArrayList<String[]> _handledTasks = new ArrayList<String[]>();
-    private int _IDCounter = INITIAL_TID;
+    private static ArrayList<Task> _tasks;
+    private static int _IDCounter;
 
     //------------constructor-------
     public TaskManager() {
-        this._tasks = new ArrayList<Task>();
+        TaskManager._tasks = new ArrayList<Task>();
     }
 
     //------------getter------------
