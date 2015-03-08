@@ -499,4 +499,12 @@ public class TaskManager {
         }
         return returningTasks;
     }
+    
+    private ArrayList<Task> editATaskForRedo(Task taskToEdit, String[] inputs) 
+            throws ParseException {
+        ArrayList<Task> returningTasks = null;
+        updateStackForEdit(taskToEdit, inputs, _redoStack);
+        returningTasks = editATask(taskToEdit, inputs);
+        return returningTasks;
+    }
 }
