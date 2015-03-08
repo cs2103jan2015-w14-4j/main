@@ -104,16 +104,15 @@ public class TaskManager {
             returningTasks = viewTasks();
             break;
         case undo:
-            undoAnOperation();
+            returningTasks = undoAnOperation();
             break;
         case redo:
-            redoAnOperation();
+            returningTasks = redoAnOperation();
             break;
         case invalid:
             System.out.print(INVALID_COMMAND_MESSAGE);
             break;
         }
-
         return returningTasks;
     }
 
@@ -175,15 +174,22 @@ public class TaskManager {
 
     //assume dateString is as this format "dd/MM/yyyy HH:mm"
     private Date convertToDateObject(String dateString) throws ParseException {
-        DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
-        Date date = format.parse(dateString);
+        Date date = null;
+        if(!dateString.equals(EMPTY_INPUT) && !dateString.equals(CLEAR_INFO_INDICATOR)) {
+            DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+            date = format.parse(dateString);
+        }
         return date;
     }
 
     private int convertToIntType(String intString) {
-        int intType = Integer.parseInt(intString);
+        int intType = 0;
+        if(!intString.equals(EMPTY_INPUT)) {
+            intType = Integer.parseInt(intString);
+        }
         return intType;
     }
+    
 
     private boolean isAbleToEdit(String[] inputs) {
         int TaskTID = getTaskTID(inputs);
@@ -360,7 +366,7 @@ public class TaskManager {
     //@warning: incomplete method()
     private void initializeTasks() throws ParseException {
         //basically call Wei Quan and do his readFromFile() method
-        //because I do not know how he named the method, so I cannot write now
+        //because I do not know the name of that method, so I cannot write now
 
         //suggested method
         //FileStorage fileStorage = new FileStorage();
