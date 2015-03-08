@@ -40,6 +40,8 @@ public class TaskManager {
     private static final boolean TID_IS_FOUND = true;
     private static final int INITIAL_TID = 1000;
     private static final String EMPTY_INPUT = "null";
+    private static final String INVALID_COMMAND_MESSAGE = "The command is invalid.\n";
+
 
     private enum COMMAND_TYPE_TASK_MANAGER {
         add, edit, view, delete, init, undo, redo, invalid
@@ -85,7 +87,8 @@ public class TaskManager {
         case redo:
             break;
         case invalid:
-        
+            System.out.print(INVALID_COMMAND_MESSAGE);
+            break;
         }
 
         return returningTasks;
