@@ -72,6 +72,7 @@ public class TaskManager {
             returningTasks = addATask(inputs);
             break;
         case edit: 
+            
             returningTasks = editATask(convertToIntType(inputs[TID]), inputs);
             break;
         case view: 
@@ -153,7 +154,27 @@ public class TaskManager {
         return intType;
     }
     
-
+    private boolean isAbleToEdit(String[] inputs) {
+        int TaskTID = getTaskTID(inputs);
+        return isTIDFound(TaskTID);
+    }
+    
+    private int getTaskTID(String[] inputs) {
+        int TaskTID = convertToIntType(inputs[TID]);
+        return TaskTID;
+    }
+    
+    private boolean isTIDFound(int TID) {
+        boolean isTIDFound = TID_IS_NOT_FOUND;
+        for(Task task : _tasks) {
+            if(task.getTID() == TID) {
+                isTIDFound = TID_IS_FOUND;
+                break;
+            }
+        }
+        return isTIDFound;
+    }
+    
     private ArrayList<Task> editATask(Task taskToEdit, String[] inputs) 
             throws ParseException {
         ArrayList<Task> returningTasks = null;
