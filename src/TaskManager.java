@@ -53,15 +53,15 @@ public class TaskManager {
         add, edit, view, delete, init, undo, redo, invalid
     }
 
-    private static ArrayList<Task> _tasks;
-    private static int _IDCounter;
+    private ArrayList<Task> _tasks;
+    private int _IDCounter;
     private Stack<String[]> _undoStack = new Stack<String[]>();
     private Stack<String[]> _redoStack = new Stack<String[]>();
 
     //------------constructor-------
     public TaskManager() {
-        TaskManager._tasks = new ArrayList<Task>();
-        TaskManager._IDCounter = INITIAL_TID;
+        _tasks = new ArrayList<Task>();
+        _IDCounter = INITIAL_TID;
     }
 
     //------------getter------------
