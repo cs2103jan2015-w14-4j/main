@@ -187,7 +187,7 @@ public class TaskManager {
     //assume dateString is as this format "dd/MM/yyyy HH:mm"
     private Date convertToDateObject(String dateString) throws ParseException {
         Date date = null;
-        if(!dateString.equals(EMPTY_INPUT) && !dateString.equals(CLEAR_INFO_INDICATOR)) {
+        if(dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
             DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
             date = format.parse(dateString);
         }
@@ -196,7 +196,7 @@ public class TaskManager {
 
     private int convertToIntType(String intString) {
         int intType = 0;
-        if(!intString.equals(EMPTY_INPUT)) {
+        if(intString != null) {
             intType = Integer.parseInt(intString);
         }
         return intType;
