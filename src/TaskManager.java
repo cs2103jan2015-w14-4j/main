@@ -429,6 +429,7 @@ public class TaskManager {
         return returningTasks;
     }
     
+    //This ArrayList contains only one item
     private void updateUndoStackForAdd(ArrayList<Task> tasks, String commandType) {
         Task task = tasks.get(INDEX_OF_ONLY_TASK);
         updateUndoStackFromTask(task, commandType); 
