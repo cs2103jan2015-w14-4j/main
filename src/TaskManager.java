@@ -90,9 +90,7 @@ public class TaskManager {
             }
             break;
         case init:
-            //call Wei Quan first
-            //then he calls me back
-            //then I add one by one and view it at the end
+            
             break;
         case undo:
             break;
@@ -343,6 +341,17 @@ public class TaskManager {
             }
         }
         return returningTasks;
+    }
+    
+    
+    //@warning: incomplete method()
+    private void initializeTasks() throws ParseException {
+        //basically call Wei Quan and do his readFromFile() method
+        //because I do not know how he named the method, so I cannot write now
+        
+        //suggested method
+        //FileStorage fileStorage = new FileStorage();
+        //fileStorage.retriveDataFromFile();
     }
 
 }
