@@ -507,4 +507,8 @@ public class TaskManager {
         returningTasks = editATask(taskToEdit, inputs);
         return returningTasks;
     }
+    
+    private void updateUndoStackFromRedoOperation() {
+        _undoStack.push(_redoStack.pop());
+    }
 }
