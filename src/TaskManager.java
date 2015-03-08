@@ -63,7 +63,9 @@ public class TaskManager {
     }
 
     //------------getter------------
-    public ArrayList<Task> getTasks() {return _tasks;}
+    public ArrayList<Task> getTasks() {
+        return _tasks;
+    }
 
     //------------other methods------------
     public ArrayList<Task> processTM(String[] inputs) throws ParseException {
@@ -345,18 +347,42 @@ public class TaskManager {
         }
         return returningTasks;
     }
-    
-    
+
+
     //@warning: incomplete method()
     private void initializeTasks() throws ParseException {
         //basically call Wei Quan and do his readFromFile() method
         //because I do not know how he named the method, so I cannot write now
-        
+
         //suggested method
         //FileStorage fileStorage = new FileStorage();
         //fileStorage.retriveDataFromFile();
     }
-    
 
 
+    private ArrayList<Task> undoAnOperation() throws ParseException {
+        ArrayList<Task> returningTasks = null;
+        if(!_undoStack.isEmpty()) {
+            String[] undoOperation = _undoStack.peek();
+            COMMAND_TYPE_TASK_MANAGER commandUndo = obtainCommand(undoOperation[COMMAND_TYPE]);
+            switch(commandUndo) {
+            case add: 
+                int TIDToDelete = getTaskTID(undoOperation);
+                returningTasks = deleteATask(TIDToDelete);
+                break;
+            case delete:
+                returningTasks = addATask(undoOperation);
+                break;
+            case edit:
+                int TIDToEdit = getTaskTID(undoOperation);
+                Task taskToEdit = getTaskFromTID(TIDToEdit);
+                returningTasks = editATaskFromUndo(taskToEdit, undoOperation);
+                break;
+            default:
+                break;
+            }
+            //updateRedoStack();
+        }
+        return returningTasks;
+    }
 }
