@@ -229,6 +229,45 @@ public class TaskManager {
         return inputs[i].equals(CLEAR_INFO_INDICATOR);
     }
     
+    private void clearTaskInfo(Task task, int i) throws ParseException {
+        switch(i) {
+        case TASK_NAME: clearTaskName(task); break;
+        case DATE_FROM: clearTaskDateFrom(task); break;
+        case DATE_TO: clearTaskDateTo(task); break;
+        case DEADLINE: clearTaskDeadline(task); break;
+        case LOCATION: clearTaskLocation(task); break;
+        case DETAILS: clearTaskDetails(task); break;
+        case PRIORITY: clearTaskPriority(task); break;
+        }
+    }
+
+    private void clearTaskName(Task task) {
+        task.setTaskName(EMPTY_INPUT);
+    }
+
+    private void clearTaskDateFrom(Task task) {
+        task.setTaskName(null);
+    }
+
+    private void clearTaskDateTo(Task task) {
+        task.setDateTo(null);
+    }
+
+    private void clearTaskDeadline(Task task) {
+        task.setDeadline(null);
+    }
+
+    private void clearTaskLocation(Task task) {
+        task.setLocation(EMPTY_INPUT);
+    }
+
+    private void clearTaskDetails(Task task) {
+        task.setDetails(EMPTY_INPUT);
+    }
+
+    private void clearTaskPriority(Task task) {
+        task.setPriority(0);
+    }
     
 
 
