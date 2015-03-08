@@ -178,6 +178,17 @@ public class TaskManager {
         return isTIDFound;
     }
     
+    private Task getTaskFromTID(int TID) {
+        Task taskFound = null;
+        for(Task task : _tasks) {
+            if(task.getTID() == TID) {
+                taskFound = task;
+                break;
+            }
+        }
+        return taskFound;
+    }
+    
     private ArrayList<Task> editATask(Task taskToEdit, String[] inputs) 
             throws ParseException {
         ArrayList<Task> returningTasks = null;
