@@ -83,9 +83,11 @@ public class TaskManager {
             returningTasks = viewTasks(); 
             break;
         case delete: 
-            int TIDToDelete = getTaskTID(inputs);
-            Task taskToDelete = getTaskFromTID(TIDToDelete);
-            returningTasks = deleteATask(TIDToDelete);
+            if(isAbleToDelete(inputs)) {
+                int TIDToDelete = getTaskTID(inputs);
+                Task taskToDelete = getTaskFromTID(TIDToDelete);
+                returningTasks = deleteATask(TIDToDelete);
+            }
             break;
         case init:
             //call Wei Quan first
@@ -103,6 +105,18 @@ public class TaskManager {
 
         return returningTasks;
     }
+
+
+    private COMMAND_TYPE_TASK_MANAGER obtainCommand (String command) {
+        COMMAND_TYPE_TASK_MANAGER commandObtained;
+        try {
+            commandObtained = COMMAND_TYPE_TASK_MANAGER.valueOf(command);
+        } catch (IllegalArgumentException ex) {
+            commandObtained = COMMAND_TYPE_TASK_MANAGER.invalid;
+        }
+        return commandObtained;
+    }
+
 
     private ArrayList<Task> addATask(String[] inputs) throws ParseException {
         ArrayList<Task> returningTasks = null;
@@ -310,8 +324,8 @@ public class TaskManager {
     private ArrayList<Task> viewTasks() {
         return _tasks;
     }
-    
-    
+
+
     private boolean isAbleToDelete(String[] inputs) {
         int TaskTID = getTaskTID(inputs);
         return isTIDFound(TaskTID);
@@ -330,37 +344,5 @@ public class TaskManager {
         }
         return returningTasks;
     }
-
-
-
-
-
-
-
-
-    /*private String getStringFromInt() {
-
-    }
-
-    private String getStringFromDate() {
-
-    }*/
-
-
-
-    private COMMAND_TYPE_TASK_MANAGER obtainCommand (String command) {
-        COMMAND_TYPE_TASK_MANAGER commandObtained;
-        try {
-            commandObtained = COMMAND_TYPE_TASK_MANAGER.valueOf(command);
-        } catch (IllegalArgumentException ex) {
-            commandObtained = COMMAND_TYPE_TASK_MANAGER.invalid;
-        }
-        return commandObtained;
-    }
-
-
-
-    //+undoAddTask(): boolean
-    //+undoDeleteTask(): boolean
 
 }
