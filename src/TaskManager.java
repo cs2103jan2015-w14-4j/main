@@ -76,7 +76,7 @@ public class TaskManager {
         case add:
             returningTasks = addATask(inputs);
             if(returningTasks != null) {
-                updateUndoStack(returningTasks, inputs[COMMAND_TYPE]);
+                updateUndoStackForAdd(returningTasks, inputs[COMMAND_TYPE]);
             }
             break;
         case edit:
@@ -392,8 +392,17 @@ public class TaskManager {
         return returningTasks;
     }
     
-    private void updateUndoStack(ArrayList<Task> tasks, String commandType) {
+    private void updateUndoStackForAdd(ArrayList<Task> tasks, String commandType) {
         Task task = tasks.get(INDEX_OF_ONLY_TASK);
         updateUndoStackFromTask(task, commandType); 
+    }
+    
+    private void updateUndoStackFromTask(Task task, String commandType) {
+        String[] strForUndoStack = new String[DEFAULT_SIZE];
+
+        strForUndoStack[COMMAND_TYPE] = commandType;
+        getStringArrayFromTask(task, strForUndoStack);
+
+        _undoStack.push(strForUndoStack);
     }
 }
