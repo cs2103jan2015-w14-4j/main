@@ -365,6 +365,22 @@ public class TaskManager {
         //fileStorage.retriveDataFromFile();
     }
 
+    
+    private void updateStackForEdit(Task taskToEdit, String[] inputs, 
+            Stack<String[]> stack) {
+        String[] strForStack = new String[DEFAULT_SIZE];
+
+        strForStack[COMMAND_TYPE] = inputs[COMMAND_TYPE];
+        getStringArrayFromTask(taskToEdit, strForStack);
+
+        for(int i = TASK_NAME; i < DEFAULT_SIZE; ++i) {
+            if(strForStack[i].equals(EMPTY_INPUT) && !inputs[i].equals(EMPTY_INPUT)) {
+                strForStack[i] = CLEAR_INFO_INDICATOR;
+            }
+        }
+
+        stack.push(strForStack);
+    }
 
     private ArrayList<Task> undoAnOperation() throws ParseException {
         ArrayList<Task> returningTasks = null;
