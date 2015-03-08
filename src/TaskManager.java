@@ -99,15 +99,15 @@ public class TaskManager {
         if(inputs[TID].equals(EMPTY_INPUT)){
             //ArrayList<Task> returningTasks = new ArrayList<Task>();
             Task newTask = new Task(getNewTID(), inputs[TASK_NAME], 
-                    getDateObject(inputs[DATE_FROM]), getDateObject(inputs[DATE_TO]), 
-                    getDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
+                    convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
+                    convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
                     getIntType(inputs[PRIORITY]));
             _tasks.add(newTask);
             returningTasks.add(newTask);
         } else {
             Task newTask = new Task(getIntType(inputs[TID]), inputs[TASK_NAME], 
-                    getDateObject(inputs[DATE_FROM]), getDateObject(inputs[DATE_TO]), 
-                    getDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
+                    convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
+                    convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
                     getIntType(inputs[PRIORITY]));
             updateIDCounter(inputs[TID]);
             _tasks.add(newTask);
@@ -123,7 +123,7 @@ public class TaskManager {
     
     
     //assume dateString is as this format "dd/MM/yyyy HH:mm"
-    private Date getDateObject(String dateString) throws ParseException {
+    private Date convertToDateObject(String dateString) throws ParseException {
         DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         Date date = format.parse(dateString);
         return date;
@@ -177,19 +177,19 @@ public class TaskManager {
 
     private void editTaskDeadline(String[] inputs, Task task)
             throws ParseException {
-        Date newDeadline = getDateObject(inputs[DEADLINE]);
+        Date newDeadline = convertToDateObject(inputs[DEADLINE]);
         task.setDeadline(newDeadline);
     }
 
     private void editTaskDateTo(String[] inputs, Task task)
             throws ParseException {
-        Date newDateTo = getDateObject(inputs[DATE_TO]);
+        Date newDateTo = convertToDateObject(inputs[DATE_TO]);
         task.setDateTo(newDateTo);
     }
 
     private void editTaskDateFrom(String[] inputs, Task task)
             throws ParseException {
-        Date newDateFrom = getDateObject(inputs[DATE_FROM]);
+        Date newDateFrom = convertToDateObject(inputs[DATE_FROM]);
         task.setDateFrom(newDateFrom);
     }
 
