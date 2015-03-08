@@ -92,6 +92,7 @@ public class SystemHandler {
 		
 		boolean isInitProperly = false;
 		myTaskList = new TaskManager();
+		externalStorage = new FileStorage(fileName);
 		if(isInitProperly) {
 			return true;	
 		}
