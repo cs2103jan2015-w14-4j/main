@@ -398,13 +398,21 @@ public class TaskManager {
             case edit:
                 int TIDToEdit = getTaskTID(undoOperation);
                 Task taskToEdit = getTaskFromTID(TIDToEdit);
-                returningTasks = editATaskFromUndo(taskToEdit, undoOperation);
+                returningTasks = editATaskForUndo(taskToEdit, undoOperation);
                 break;
             default:
                 break;
             }
             //updateRedoStack();
         }
+        return returningTasks;
+    }
+    
+    private ArrayList<Task> editATaskForUndo(Task taskToEdit, String[] inputs) 
+            throws ParseException {
+        ArrayList<Task> returningTasks = null;
+        updateStackForEdit(taskToEdit, inputs, _undoStack);
+        returningTasks = editATask(taskToEdit, inputs);
         return returningTasks;
     }
     
