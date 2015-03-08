@@ -7,6 +7,7 @@ import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Date;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 
@@ -27,6 +28,8 @@ public class UserInterface {
     
     public static final String MSG_ASK_FILENAME = "Please enter the name of your file";
 	public static final String MSG_ASK_INPUT = "Please enter your command";
+	public static final String MSG_ECHO_FILENAME = "File location: %1$s";
+	
 	
 	/**
 	 * Launch the application.
@@ -77,10 +80,19 @@ public class UserInterface {
 			public void actionPerformed(ActionEvent arg0) {
 				String input = textField.getText();
 				textField.selectAll();
-				ArrayList<Task> result = mainHandler.rawUserInput(input);
-				printOutput(result);
+				//Actual
+//				ArrayList<Task> result = mainHandler.rawUserInput(input);
+//				printOutput(result);
 				//outputArea.setCaretPosition(outputArea.getDocument().getLength());		
-			
+
+				//Dummy
+				ArrayList<Task> result = new ArrayList<Task>();
+				Task testTask = new Task(1, input + " (The rest are dummies)", new Date(115,3,8,14,0) , 
+						new Date(115,3,8,17,0), null, "HOME", null, 0);
+				result.add(testTask);
+				printOutput(result);
+				
+				outputArea.append(MSG_ASK_INPUT + newline);
 			}
 		});
 		
@@ -108,14 +120,18 @@ public class UserInterface {
 		//Init system handler with filename
 		outputArea.append(MSG_ASK_FILENAME + newline);
 		String fileName = "default.txt";
+		outputArea.append(String.format(MSG_ECHO_FILENAME, fileName) + newline);
+		outputArea.append(MSG_ASK_INPUT + newline);
+		
+		
 		mainHandler = new SystemHandler(fileName);
 		
 		
 	}
 	
 	private void printOutput(ArrayList<Task> returnedOutput){
-		
-		for(Task nextTask: returnedOutput){
+		for(int i = 0; i < returnedOutput.size(); i++){
+			Task nextTask = returnedOutput.get(i);
 			outputArea.append("Added(dummy) the following:"+newline);
 			outputArea.append("ID    : "+ nextTask.getTID() + newline);
 			outputArea.append("Name  : "+ nextTask.getTaskName() + newline);
@@ -123,10 +139,10 @@ public class UserInterface {
 				outputArea.append("Location  : "+nextTask.getLocation() + newline);
 			}
 			if(nextTask.getDateFrom() != null) {
-				outputArea.append("Date From  : "+nextTask.getDateFrom().toString() + newline);
+				outputArea.append("Date From  : "+nextTask.getDateFrom().toLocaleString() + newline);
 			}
 			if(nextTask.getDateTo() != null) {
-				outputArea.append("Date To  : "+nextTask.getDateTo().toString() + newline);
+				outputArea.append("Date To  : "+nextTask.getDateTo().toLocaleString() + newline);
 			}
 			
 			if(nextTask.getDeadline() != null) {
@@ -135,7 +151,7 @@ public class UserInterface {
 			if(nextTask.getDetails() != null) {
 				outputArea.append("Detail  : "+nextTask.getDetails() + newline);
 			}
-			
+			outputArea.append(newline);
 		}
 		
 	}
