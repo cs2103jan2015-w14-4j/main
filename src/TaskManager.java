@@ -497,7 +497,7 @@ public class TaskManager {
     }
 
     private String convertToStringFromDate(Date dateObject) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("DEFAULT_DATE_FORMAT");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
         String dateString = dateFormat.format(dateObject);
         return dateString;
     }
