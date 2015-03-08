@@ -70,7 +70,8 @@ public class TaskManager {
     }
 
     //------------other methods------------
-    public ArrayList<Task> processTM(String[] inputs) throws ParseException {
+    //MUNAW
+    public ArrayList<Task> processTM(String[] inputs, FileStorage externalStorage) throws ParseException {
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
         ArrayList<Task> returningTasks = null;
 
@@ -101,7 +102,8 @@ public class TaskManager {
             }
             break;
         case init:
-            initializeTasks();
+        	//MUNAW
+            initializeTasks(externalStorage);
             returningTasks = viewTasks();
             break;
         case undo:
@@ -114,6 +116,11 @@ public class TaskManager {
             System.out.print(INVALID_COMMAND_MESSAGE);
             break;
         }
+        // Write to External Storage
+        //MUNAW
+        externalStorage.writeToFile(_tasks);
+        
+        
         return returningTasks;
     }
 
@@ -370,13 +377,17 @@ public class TaskManager {
 
 
     //@warning: incomplete method()
-    private void initializeTasks() throws ParseException {
+    private void initializeTasks(FileStorage externalStorage) throws ParseException {
         //basically call Wei Quan and do his readFromFile() method
         //because I do not know the name of that method, so I cannot write now
-
+    	
         //suggested method
         //FileStorage fileStorage = new FileStorage();
         //fileStorage.retriveDataFromFile();
+    	
+    	//MUN AW
+    	//This 
+    	externalStorage.readFromFile(this);
     }
 
     
