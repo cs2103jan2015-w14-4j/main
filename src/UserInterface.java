@@ -1,9 +1,3 @@
-
-/*public class UserInterface {
-	//dummy
-}
-*/
-
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -20,14 +14,14 @@ import javax.swing.JTextArea;
 
 import java.awt.Insets;
 
-public class UI {
+public class UserInterface {
 
 	private JFrame frame;
 	private JTextField textField;
 	private JTextArea outputArea;
     private final static String newline = "\n";
     private JScrollPane scrollPane;
-
+    private ArrayList<Task> outputArray = new arrayList<Task>;
 	/**
 	 * Launch the application.
 	 */
@@ -35,7 +29,7 @@ public class UI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					UI window = new UI();
+					UserInterface window = new UserInterface();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -47,7 +41,7 @@ public class UI {
 	/**
 	 * Create the application.
 	 */
-	public UI() {
+	public UserInterface() {
 		initialize();
 	}
 
@@ -69,14 +63,10 @@ public class UI {
 		textField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				String input = textField.getText();
-				rawUserInput(arg0, input);
-			
-				ArrayList<String> inputArray = new ArrayList<String>();
-				inputArray.add(input);
-				printOutput(inputArray);
+				outputArray = rawUserInput(input);
+				printOutput(outputArray);
 				textField.selectAll();
-				//outputArea.setCaretPosition(outputArea.getDocument().getLength());
-				
+				//outputArea.setCaretPosition(outputArea.getDocument().getLength());		
 			
 			}
 		});
