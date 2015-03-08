@@ -58,7 +58,6 @@ public class TaskManager {
     public ArrayList<Task> getTasks() {return _tasks;}
 
     //------------other methods------------
-    @SuppressWarnings("incomplete-switch")
     public ArrayList<Task> processTM(String[] inputs) throws ParseException {
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
         ArrayList<Task> returningTasks = null;
@@ -81,6 +80,11 @@ public class TaskManager {
             //then he calls me back
             //then I add one by one and view it at the end
             break;
+        case undo:
+            break;
+        case redo:
+            break;
+        case invalid:
         
         }
 
