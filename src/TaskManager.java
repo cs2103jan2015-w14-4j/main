@@ -22,7 +22,6 @@ public class TaskManager {
     //what should I return if I can't carry the action. 
     //Eg edit 1134, delete 1135; but there are no 1134 1135?
 
-    //null indicate nonexistence
     private static final int COMMAND_TYPE = 0;
     private static final int TID = 1;
     private static final int TASK_NAME = 2;
@@ -52,7 +51,7 @@ public class TaskManager {
     @SuppressWarnings("incomplete-switch")
     public ArrayList<Task> processTM(String[] inputs) throws ParseException {
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
-        ArrayList<Task> returningTasks = new ArrayList<Task>();
+        ArrayList<Task> returningTasks = null;
 
         switch(commandObtained) {
         case add: 
@@ -104,7 +103,9 @@ public class TaskManager {
             _IDCounter = getIntType(currentID);
         }
     }
-
+    
+    
+    //assume dateString is as this format "dd/MM/yyyy HH:mm"
     private Date getDateObject(String dateString) throws ParseException {
         DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         Date date = format.parse(dateString);
