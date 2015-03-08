@@ -403,7 +403,7 @@ public class TaskManager {
             default:
                 break;
             }
-            //updateRedoStack();
+            updateRedoStack();
         }
         return returningTasks;
     }
@@ -466,5 +466,9 @@ public class TaskManager {
     private String convertToStringFromInt(int intType) {
         String intString = Integer.toString(intType);
         return intString;
+    }
+    
+    private void updateRedoStack() {
+        _redoStack.push(_undoStack.pop());
     }
 }
