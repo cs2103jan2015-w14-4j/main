@@ -70,6 +70,10 @@ public class TaskManager {
     }
 
     //------------other methods------------
+    public void processAddForInitialization(String[] inputs) throws ParseException {
+        addATask(inputs);
+    }
+    
     //MUNAW
     public ArrayList<Task> processTM(String[] inputs, FileStorage externalStorage) throws ParseException {
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
@@ -102,7 +106,7 @@ public class TaskManager {
             }
             break;
         case init:
-        	//MUNAW
+            //MUNAW
             initializeTasks(externalStorage);
             returningTasks = viewTasks();
             break;
@@ -119,8 +123,8 @@ public class TaskManager {
         // Write to External Storage
         //MUNAW
         externalStorage.writeToFile(_tasks);
-        
-        
+
+
         return returningTasks;
     }
 
@@ -197,7 +201,7 @@ public class TaskManager {
         }
         return intType;
     }
-    
+
 
     private boolean isAbleToEdit(String[] inputs) {
         int TaskTID = getTaskTID(inputs);
@@ -346,7 +350,7 @@ public class TaskManager {
         task.setPriority(0);
     }
 
-    
+
     private ArrayList<Task> viewTasks() {
         if(_tasks.isEmpty()){
             return null;
@@ -380,17 +384,17 @@ public class TaskManager {
     private void initializeTasks(FileStorage externalStorage) throws ParseException {
         //basically call Wei Quan and do his readFromFile() method
         //because I do not know the name of that method, so I cannot write now
-    	
+
         //suggested method
         //FileStorage fileStorage = new FileStorage();
         //fileStorage.retriveDataFromFile();
-    	
-    	//MUN AW
-    	//This 
-    	externalStorage.readFromFile(this);
+
+        //MUN AW
+        //This 
+        externalStorage.readFromFile(this);
     }
 
-    
+
     private void updateStackForEdit(Task taskToEdit, String[] inputs, 
             Stack<String[]> stack) {
         String[] strForStack = new String[DEFAULT_SIZE];
@@ -432,7 +436,7 @@ public class TaskManager {
         }
         return returningTasks;
     }
-    
+
     private ArrayList<Task> editATaskForUndo(Task taskToEdit, String[] inputs) 
             throws ParseException {
         ArrayList<Task> returningTasks = null;
@@ -440,13 +444,13 @@ public class TaskManager {
         returningTasks = editATask(taskToEdit, inputs);
         return returningTasks;
     }
-    
+
     //This ArrayList contains only one item
     private void updateUndoStackForAdd(ArrayList<Task> tasks, String commandType) {
         Task task = tasks.get(INDEX_OF_ONLY_TASK);
         updateUndoStackFromTask(task, commandType); 
     }
-    
+
     private void updateUndoStackFromTask(Task task, String commandType) {
         String[] strForUndoStack = new String[DEFAULT_SIZE];
 
@@ -455,7 +459,7 @@ public class TaskManager {
 
         _undoStack.push(strForUndoStack);
     }
-    
+
     private void getStringArrayFromTask(Task task, String[] strArray) {
         strArray[TID] = convertToStringFromInt(task.getTID());
         strArray[TASK_NAME] = task.getTaskName();
@@ -482,23 +486,23 @@ public class TaskManager {
         strArray[DETAILS] = task.getDetails();
         strArray[PRIORITY] = convertToStringFromInt(task.getPriority());
     }
-    
+
     private String convertToStringFromDate(Date dateObject) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("DEFAULT_DATE_FORMAT");
         String dateString = dateFormat.format(dateObject);
         return dateString;
     }
-    
+
     private String convertToStringFromInt(int intType) {
         String intString = Integer.toString(intType);
         return intString;
     }
-    
+
     private void updateRedoStack() {
         _redoStack.push(_undoStack.pop());
     }
-    
-    
+
+
     private ArrayList<Task> redoAnOperation() throws ParseException {
         ArrayList<Task> returningTasks = null;
         if(!_redoStack.isEmpty()) {
@@ -524,7 +528,7 @@ public class TaskManager {
         }
         return returningTasks;
     }
-    
+
     private ArrayList<Task> editATaskForRedo(Task taskToEdit, String[] inputs) 
             throws ParseException {
         ArrayList<Task> returningTasks = null;
@@ -532,7 +536,7 @@ public class TaskManager {
         returningTasks = editATask(taskToEdit, inputs);
         return returningTasks;
     }
-    
+
     private void updateUndoStackFromRedoOperation() {
         _undoStack.push(_redoStack.pop());
     }
