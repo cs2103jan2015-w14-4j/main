@@ -17,12 +17,12 @@ public class FileStorage {
 	private static final int COMMAND_TYPE_INDEX = 0;
 	private static final int TASK_ID_INDEX = 1;
 	private static final int TASK_NAME_INDEX = 2;
-	private static final int DATE_FROM_INDEX = 3;
-	private static final int DATE_TO_INDEX = 4;
-	private static final int DEADLINE_INDEX = 5;
-	private static final int LOCATION_INDEX = 6;
-	private static final int DETAILS_INDEX = 7;
-	private static final int PRIORITY_INDEX = 8;
+	private static final int TASK_DATE_FROM_INDEX = 3;
+	private static final int TASK_DATE_TO_INDEX = 4;
+	private static final int TASK_DEADLINE_INDEX = 5;
+	private static final int TASK_LOCATION_INDEX = 6;
+	private static final int TASK_DETAILS_INDEX = 7;
+	private static final int TASK_PRIORITY_INDEX = 8;
 	
 	private static final String ERROR_EXCEPTION = "Exception caught";
 	
@@ -249,75 +249,75 @@ public class FileStorage {
                  
                     if(!tempStringArray[2].equals(EMPTY_INPUT)) {
                     	
-                    	inputs[DATE_FROM_INDEX] = tempStringArray[2];
+                    	inputs[TASK_DATE_FROM_INDEX] = tempStringArray[2];
                     
                     }
                     
                     else {
                     	
-                    	inputs[DATE_FROM_INDEX] = null;
+                    	inputs[TASK_DATE_FROM_INDEX] = null;
                     	
                     }
                                        
                     if(!tempStringArray[3].equals(EMPTY_INPUT)) {
                         
-                    	inputs[DATE_TO_INDEX] = tempStringArray[3];
+                    	inputs[TASK_DATE_TO_INDEX] = tempStringArray[3];
                     
                     }
                     
                     else {
                     	
-                    	inputs[DATE_TO_INDEX] = null;
+                    	inputs[TASK_DATE_TO_INDEX] = null;
                     	
                     }
                     
                     
                     if(!tempStringArray[4].equals(EMPTY_INPUT)) {
                         
-                    	inputs[DEADLINE_INDEX] = tempStringArray[4];
+                    	inputs[TASK_DEADLINE_INDEX] = tempStringArray[4];
                     
                     }
                     
                     else {
                     	
-                    	inputs[DEADLINE_INDEX] = null;
+                    	inputs[TASK_DEADLINE_INDEX] = null;
                     	
                     }
                     
                     if(!tempStringArray[5].equals(EMPTY_INPUT)) {
                         
-                    	inputs[LOCATION_INDEX] = tempStringArray[5];
+                    	inputs[TASK_LOCATION_INDEX] = tempStringArray[5];
                     
                     }
                     
                     else {
                     	
-                    	inputs[LOCATION_INDEX] = null;
+                    	inputs[TASK_LOCATION_INDEX] = null;
                     	
                     }
 
                     if(!tempStringArray[6].equals(EMPTY_INPUT)) {
                         
-                    	inputs[DETAILS_INDEX] = tempStringArray[6];
+                    	inputs[TASK_DETAILS_INDEX] = tempStringArray[6];
                     
                     }
                     
                     else {
                     	
-                    	inputs[DETAILS_INDEX] = null;
+                    	inputs[TASK_DETAILS_INDEX] = null;
                     	
                     }
                     
                     
                     if(!tempStringArray[7].equals(EMPTY_INPUT)) {
                         
-                    	inputs[PRIORITY_INDEX] = tempStringArray[7];
+                    	inputs[TASK_PRIORITY_INDEX] = tempStringArray[7];
                     	
                     }
                     
                     else {
                     	
-                    	inputs[PRIORITY_INDEX] = null;
+                    	inputs[TASK_PRIORITY_INDEX] = null;
                     	
                     }
                   
@@ -336,3 +336,4 @@ public class FileStorage {
         }
     
     }
+}
