@@ -4,6 +4,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JOptionPane;
+import javax.swing.JDialog;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -35,6 +37,7 @@ public class UserInterface {
 	public static final String MSG_ASK_INPUT = "Please enter your command";
 	public static final String MSG_ECHO_FILENAME = "File location: %1$s";
 	
+	private boolean hasFilename;
 	
 	/**
 	 * Launch the application.
@@ -65,9 +68,7 @@ public class UserInterface {
 	 */
 	private void initialize() {
 		outputArray = new ArrayList<Task>();
-		
-		
-		
+			
 		panel = new JPanel();
 		frame = new JFrame(APP_NAME);
 		frame.setBounds(100, 100, 552, 357);
@@ -80,8 +81,13 @@ public class UserInterface {
 		frame.getContentPane().setLayout(gridBagLayout);
 		
 		textField = new JTextField();
+		inputListener listener = new inputListener();
+		textField.addActionListener(listener);
 		
-		textField.addActionListener(new ActionListener() {
+		/*
+		 * 
+		 * textField.addActionListener(new ActionListener() {
+		 
 			public void actionPerformed(ActionEvent arg0) {
 				String input = textField.getText();
 				textField.selectAll();
@@ -101,6 +107,7 @@ public class UserInterface {
 			}
 		});
 		
+		*/
 		
 		scrollBar = new JScrollPane(panel,
 	            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -128,21 +135,50 @@ public class UserInterface {
 		
 		//Init system handler with filename
 		outputArea.append(MSG_ASK_FILENAME + newline);
-		String fileName = "default.txt";
-		outputArea.append(String.format(MSG_ECHO_FILENAME, fileName) + newline);
-		outputArea.append(MSG_ASK_INPUT + newline);
-		
-		
-		mainHandler = new SystemHandler(fileName);
-		
+
 		
 	}
 	
-	private void printOutput(ArrayList<Task> returnedOutput){
+	private class inputListener implements ActionListener {
+		
+		public void actionPerformed(ActionEvent e){
+			String input = textField.getText();
+			
+			if (!hasFilename){		
+				mainHandler = new SystemHandler(input);
+				mainHandler.rawUserInput("init");
+				hasFilename = true;
+				outputArea.append(String.format(MSG_ECHO_FILENAME, mainHandler.getFileName()) + newline);
+				outputArea.append(MSG_ASK_INPUT + newline);
+				clearInput();
+			}
+			else{
+				clearInput();
+  
+				//Dummy
+
+				ArrayList<Task> result = mainHandler.rawUserInput(input);
+				
+//				ArrayList<Task> result = new ArrayList<Task>();
+//				Task testTask = new Task(1, input + " (The rest are dummies)", new Date(115,3,8,14,0) , 
+//						new Date(115,3,8,17,0), null, "HOME", null, 0);
+//				result.add(testTask);
+				printOutput(input.split("\\s*,\\s*")[0],result);
+				
+				outputArea.append(MSG_ASK_INPUT + newline);
+			}
+		}
+	}
+	
+	
+	
+	
+	private void printOutput(String commandType, ArrayList<Task> returnedOutput){
 		if(returnedOutput == null) return;
 		for(int i = 0; i < returnedOutput.size(); i++){
 			Task nextTask = returnedOutput.get(i);
-			outputArea.append("Added(dummy) the following:"+newline);
+			outputArea.append(commandType);
+			outputArea.append(" the following:"+newline);
 			outputArea.append("ID    : "+ nextTask.getTID() + newline);
 			outputArea.append("Name  : "+ nextTask.getTaskName() + newline);
 			if(nextTask.getLocation() != null) {
@@ -156,7 +192,7 @@ public class UserInterface {
 			}
 			
 			if(nextTask.getDeadline() != null) {
-				outputArea.append("ID  : "+nextTask.getDeadline() + newline);
+				outputArea.append("Deadline  : "+nextTask.getDeadline() + newline);
 			}
 			if(nextTask.getDetails() != null) {
 				outputArea.append("Detail  : "+nextTask.getDetails() + newline);
@@ -164,6 +200,11 @@ public class UserInterface {
 			outputArea.append(newline);
 		}
 		
+	}
+
+	private void clearInput() {
+		textField.selectAll();
+		textField.setText("");
 	}
 	
 }

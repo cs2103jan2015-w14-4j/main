@@ -41,7 +41,6 @@ public class TaskManager {
     private static final int PRIORITY = 8;
     private static final int INITIAL_TID = 1000;
     private static final int DEFAULT_SIZE = 9;
-    private static final String EMPTY_INPUT = "null";
     private static final String CLEAR_INFO_INDICATOR = "";
     private static final String INVALID_COMMAND_MESSAGE = "The command is invalid.\n";
     private static final boolean TID_IS_NOT_FOUND = false;
@@ -73,7 +72,7 @@ public class TaskManager {
     public void processAddForInitialization(String[] inputs) throws ParseException {
         addATask(inputs);
     }
-    
+
     //MUNAW
     public ArrayList<Task> processTM(String[] inputs, FileStorage externalStorage) throws ParseException {
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
@@ -175,7 +174,7 @@ public class TaskManager {
     }
 
     private boolean hasTID(String[] inputs) {
-        return inputs[TID].equals(EMPTY_INPUT);
+        return inputs[TID] == null;
     }
 
     private void updateIDCounter(String currentID) {
@@ -187,7 +186,7 @@ public class TaskManager {
     //assume dateString is as this format "dd/MM/yyyy HH:mm"
     private Date convertToDateObject(String dateString) throws ParseException {
         Date date = null;
-        if(!dateString.equals(EMPTY_INPUT) && !dateString.equals(CLEAR_INFO_INDICATOR)) {
+        if(dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
             DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
             date = format.parse(dateString);
         }
@@ -196,7 +195,7 @@ public class TaskManager {
 
     private int convertToIntType(String intString) {
         int intType = 0;
-        if(!intString.equals(EMPTY_INPUT)) {
+        if(intString != null) {
             intType = Integer.parseInt(intString);
         }
         return intType;
@@ -244,7 +243,7 @@ public class TaskManager {
                 editTaskInfo(inputs, taskToEdit, i);
             }
 
-            if(isContentToBeClear(inputs, i)) {
+            if(inputs[i] != null && isContentToClear(inputs, i)) {
                 clearTaskInfo(taskToEdit, i);
             }
         }
@@ -255,7 +254,7 @@ public class TaskManager {
     }
 
     private boolean isInputEmpty(String[] inputs, int i) {
-        return inputs[i].equals(EMPTY_INPUT);
+        return inputs[i] == null;
     }
 
     private void editTaskInfo(String[] inputs, Task task, int i)
@@ -306,7 +305,7 @@ public class TaskManager {
         task.setTaskName(inputs[TASK_NAME]);
     }
 
-    private boolean isContentToBeClear(String[] inputs, int i) {
+    private boolean isContentToClear(String[] inputs, int i) {
         return inputs[i].equals(CLEAR_INFO_INDICATOR);
     }
 
@@ -323,7 +322,7 @@ public class TaskManager {
     }
 
     private void clearTaskName(Task task) {
-        task.setTaskName(EMPTY_INPUT);
+        task.setTaskName(null);
     }
 
     private void clearTaskDateFrom(Task task) {
@@ -339,11 +338,11 @@ public class TaskManager {
     }
 
     private void clearTaskLocation(Task task) {
-        task.setLocation(EMPTY_INPUT);
+        task.setLocation(null);
     }
 
     private void clearTaskDetails(Task task) {
-        task.setDetails(EMPTY_INPUT);
+        task.setDetails(null);
     }
 
     private void clearTaskPriority(Task task) {
@@ -403,7 +402,7 @@ public class TaskManager {
         getStringArrayFromTask(taskToEdit, strForStack);
 
         for(int i = TASK_NAME; i < DEFAULT_SIZE; ++i) {
-            if(strForStack[i].equals(EMPTY_INPUT) && !inputs[i].equals(EMPTY_INPUT)) {
+            if(strForStack[i] == null && inputs[i] != null) {
                 strForStack[i] = CLEAR_INFO_INDICATOR;
             }
         }
@@ -440,9 +439,25 @@ public class TaskManager {
     private ArrayList<Task> editATaskForUndo(Task taskToEdit, String[] inputs) 
             throws ParseException {
         ArrayList<Task> returningTasks = null;
-        updateStackForEdit(taskToEdit, inputs, _undoStack);
+        updateStackForEditUnderUndoRedo(taskToEdit, inputs, _undoStack);
         returningTasks = editATask(taskToEdit, inputs);
         return returningTasks;
+    }
+    
+    private void updateStackForEditUnderUndoRedo(Task taskToEdit, String[] inputs, 
+            Stack<String[]> stack) {
+        stack.pop();
+        String[] strForStack = new String[DEFAULT_SIZE];
+
+        strForStack[COMMAND_TYPE] = inputs[COMMAND_TYPE];
+        getStringArrayFromTask(taskToEdit, strForStack);
+
+        for(int i = TASK_NAME; i < DEFAULT_SIZE; ++i) {
+            if(strForStack[i] == null && inputs[i] != null) {
+                strForStack[i] = CLEAR_INFO_INDICATOR;
+            }
+        }
+        stack.push(strForStack);
     }
 
     //This ArrayList contains only one item
@@ -467,28 +482,38 @@ public class TaskManager {
         if(task.getDateFrom() != null) {
             strArray[DATE_FROM] = convertToStringFromDate(task.getDateFrom());
         } else {
-            strArray[DATE_FROM] = EMPTY_INPUT;
+            strArray[DATE_FROM] = null;
         }
 
         if(task.getDateTo() != null) {
             strArray[DATE_TO] = convertToStringFromDate(task.getDateTo());
         } else {
-            strArray[DATE_TO] = EMPTY_INPUT;
+            strArray[DATE_TO] = null;
         }
 
         if(task.getDeadline() != null) {
             strArray[DEADLINE] = convertToStringFromDate(task.getDeadline());
         } else {
-            strArray[DEADLINE] = EMPTY_INPUT;
+            strArray[DEADLINE] = null;
         }
 
-        strArray[LOCATION] = task.getLocation();
-        strArray[DETAILS] = task.getDetails();
+        if(task.getLocation() != null) {
+            strArray[LOCATION] = task.getLocation();
+        } else {
+            strArray[LOCATION] = null;
+        }
+
+        if(task.getDetails() != null) {
+            strArray[DETAILS] = task.getDetails();
+        } else {
+            strArray[DETAILS] = null;
+        }
+
         strArray[PRIORITY] = convertToStringFromInt(task.getPriority());
     }
 
     private String convertToStringFromDate(Date dateObject) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("DEFAULT_DATE_FORMAT");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
         String dateString = dateFormat.format(dateObject);
         return dateString;
     }
@@ -532,7 +557,7 @@ public class TaskManager {
     private ArrayList<Task> editATaskForRedo(Task taskToEdit, String[] inputs) 
             throws ParseException {
         ArrayList<Task> returningTasks = null;
-        updateStackForEdit(taskToEdit, inputs, _redoStack);
+        updateStackForEditUnderUndoRedo(taskToEdit, inputs, _redoStack);
         returningTasks = editATask(taskToEdit, inputs);
         return returningTasks;
     }
