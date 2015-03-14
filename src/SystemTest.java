@@ -42,7 +42,13 @@ public class SystemTest {
 
 	@Test
 	public void testFullSystem() {
+		String test1 = "add,NEW,at,ABC,on,12/09/2015,from,10:00,to,12:00";
+		ArrayList<Task> expect1 = new ArrayList<Task>();
 		
+		expect1.add(new Task(1000, "NEW", convertToDateObject("12/09/2015 10:00"), 
+				convertToDateObject("12/09/2015 12:00"), null, 
+				"ABC", null, 0));
+		assertTaskArrayListEquals(mySystem.rawUserInput(test1), expect1);
 		
 		System.out.println("Full System Test Not yet implemented");
 	}
