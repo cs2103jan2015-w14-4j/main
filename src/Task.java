@@ -140,5 +140,76 @@ public class Task {
 	public int getStatus() {
 		return status;
 	}
-
+	
+	public static boolean dateEqual(Date date1, Date date2) {
+		if(date1 == null && date2 == null) {
+			return true;
+		}
+		else if(date1 != null && date2 == null) {
+			return false;
+		}
+		else if(date1 == null && date2 != null) {
+			return false;
+		}
+		else {
+			return date1.equals(date2);
+		}
+	}
+	
+	public static boolean stringEqual(String str1, String str2) {
+		if(str1 == null && str2 == null) {
+			return true;
+		}
+		else if(str1 != null && str2 == null) {
+			return false;
+		}
+		else if(str1 == null && str2 != null) {
+			return false;
+		}
+		else {
+			return str1.equals(str2);
+		}
+	}
+	
+	public boolean isEqual(Task task) {
+		if( !dateEqual(task.getDateFrom(), dateFrom)) {
+			return false;
+		}
+		if( !dateEqual(task.getDateTo(), dateTo)) {
+			return false;
+		}
+		if( !dateEqual(task.getDeadline(), deadline)) {
+			return false;
+		}
+		if(!stringEqual(task.getTaskName(), taskName)) {
+			return false;
+		}
+		if(task.getTID() != TID) {
+			return false;
+		}
+		if(task.getPriority() != priority) {
+			return false;
+		}
+		if(!stringEqual(task.getLocation(), location)) {
+			return false;
+		}
+		if(!stringEqual(task.getDetails(), details)) {
+			return false;
+		}
+		ArrayList<Date> objDate = task.getReminders();
+		if(reminders.size() != objDate.size()) {
+			return false;
+		}
+		else {
+			for(int i = 0; i < reminders.size(); ++i) {
+				if(!!dateEqual(objDate.get(i),reminders.get(i))) {
+					return false;
+				}
+			}
+		}
+		if(status != task.getStatus()) {
+			return false;
+		}
+		return true;
+	}
 }
