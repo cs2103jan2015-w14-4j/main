@@ -2,29 +2,40 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
 public class FileStorage {
 	
-	private static final int COMMAND_TYPE = 0;
-	private static final int TASK_ID = 1;
-	private static final int TASK_NAME = 2;
-	private static final int DATE_FROM = 3;
-	private static final int DATE_TO = 4;
-	private static final int DEADLINE = 5;
-	private static final int LOCATION = 6;
-	private static final int DETAILS = 7;
-	private static final int PRIORITY = 8;
+	//The indexes for how a task object is stored in a ArrayList<Task>
+	private static final int COMMAND_TYPE_INDEX = 0;
+	private static final int TASK_ID_INDEX = 1;
+	private static final int TASK_NAME_INDEX = 2;
+	private static final int TASK_DATE_FROM_INDEX = 3;
+	private static final int TASK_DATE_TO_INDEX = 4;
+	private static final int TASK_DEADLINE_INDEX = 5;
+	private static final int TASK_LOCATION_INDEX = 6;
+	private static final int TASK_DETAILS_INDEX = 7;
+	private static final int TASK_PRIORITY_INDEX = 8;
 	
+	private static final String ERROR_EXCEPTION = "Exception caught";
+	
+	private static final String DEFAULT_FILENAME = "default.txt";
 	private static final String EMPTY_INPUT = "null";
 		
 	private static File textFile;
     
+	/**
+	 * Constructor for FileStorage object, this will store the text file name
+	 * in a global variable textFile for reference.
+	 * If the file does not exist it will be created.
+	 */
 	public FileStorage(String fileName) {
     	
 		textFile = new File(fileName);
@@ -36,11 +47,9 @@ public class FileStorage {
             
             }
 
-         } 
-         
-		catch(Exception e) {
+         }catch(Exception e) {
              
-        	 System.out.println("exception occurred"); 
+        	 System.out.println(ERROR_EXCEPTION); 
          
          }
 		
@@ -48,11 +57,11 @@ public class FileStorage {
 	
     public FileStorage() {
     	
-		textFile = new File("default.txt");
+		textFile = new File(DEFAULT_FILENAME);
     	
 	} 
 	
-    // takes the ||blah|| all of it at the end and store arraylist task
+    //stores each task as a string delimited by ,
     public void writeToFile(ArrayList<Task> taskList) {
     	
     	try {
@@ -63,7 +72,7 @@ public class FileStorage {
 		for (int i = 0; i < taskList.size(); i++) {
             
         	Task tempTask = taskList.get(i);
-        	String[] taskArray = taskToStrArray(tempTask);
+        	String[] taskArray = taskToStringArray(tempTask);
         	for(int j = 0; j < taskArray.length; j++) {
         		
         		
@@ -82,6 +91,7 @@ public class FileStorage {
         		}
         		
         	}
+        	
         	bw.newLine();
         }
 
@@ -89,29 +99,27 @@ public class FileStorage {
     	
     	}catch(Exception e) {
     		
-    		System.out.println("Exception occurred");
+    		System.out.println(ERROR_EXCEPTION);
     		
     	 }
         
 	}
     
     
-    //no priority yet
-    private String[] taskToStrArray(Task tempTask) {
+    //String array is size 8 as priority is not included yet
+    private String[] taskToStringArray(Task tempTask) {
     	
     	String[] strArr = new String[8];
+
     	//NO ERROR CATCHING FOR NULL ITEM
-    	
-    	
     	strArr[0] = IntegerToString(tempTask.getTID());
-    	
     	strArr[1] =	tempTask.getTaskName();
     	
-    	Date temp = tempTask.getDateFrom();
+    	Date tempDate = tempTask.getDateFrom();
     	
-    	if(temp != null) {
+    	if(tempDate != null) {
         	
-    		strArr[2] =	dateToString(temp);	
+    		strArr[2] =	dateToString(tempDate);	
     	
     	}
     	
@@ -121,11 +129,11 @@ public class FileStorage {
     		
     	}
     	
-    	temp = tempTask.getDateTo();
+    	tempDate = tempTask.getDateTo();
     	
-    	if(temp != null) {
+    	if(tempDate != null) {
     		
-    		strArr[3] = dateToString(temp);
+    		strArr[3] = dateToString(tempDate);
     	
     	}
     	
@@ -135,11 +143,11 @@ public class FileStorage {
     		
     	}
     	
-    	temp = tempTask.getDeadline();
+    	tempDate = tempTask.getDeadline();
     	
-    	if(temp != null) {
+    	if(tempDate != null) {
     		
-    		strArr[4] = dateToString(temp);
+    		strArr[4] = dateToString(tempDate);
     	
     	}
     	
@@ -191,7 +199,7 @@ public class FileStorage {
     	
     }
     
-    private String IntegerToString(int id ) {
+    private String IntegerToString(int id) {
     	
     	return Integer.toString(id);
     	
@@ -201,9 +209,16 @@ public class FileStorage {
     	
     	Format formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     	String dateString = formatter.format(date);
+    	
     	return dateString;
+    
     }
-    //return add,.. same as parse format;
+    
+    /**
+     * extracts each line from specified file as String array
+     * and pass it as parameter to logic via processAddForInitialization
+     * method
+     */    
     public void readFromFile(TaskManager tm) throws ParseException {
         
         if(textFile.exists()) {
@@ -213,97 +228,101 @@ public class FileStorage {
         		Scanner sc = new Scanner(textFile);
                 
                 while (sc.hasNextLine()) {
+                	
                 	String[] inputs = new String[9];
                 	String[] tempStringArray = new String[8];
+                	
                 	tempStringArray = sc.nextLine().split("\\s*,\\s*");
                 	System.out.println(tempStringArray.length);
+                	
                 	for(int i=0; i<tempStringArray.length;i++) {
                 		
                 		System.out.println(tempStringArray[i]);
                 		
                 	}
                 	             	
-                	inputs[COMMAND_TYPE] = "add";
-                	inputs[TASK_ID] = tempStringArray[0];
+                	inputs[COMMAND_TYPE_INDEX] = "add";
+                	inputs[TASK_ID_INDEX] = tempStringArray[0];
  
                 	
-                	inputs[TASK_NAME] = tempStringArray[1];
+                	inputs[TASK_NAME_INDEX] = tempStringArray[1];
                  
                     if(!tempStringArray[2].equals(EMPTY_INPUT)) {
                     	
-                    	inputs[DATE_FROM] = tempStringArray[2];
+                    	inputs[TASK_DATE_FROM_INDEX] = tempStringArray[2];
                     
                     }
                     
                     else {
                     	
-                    	inputs[DATE_FROM] = null;
+                    	inputs[TASK_DATE_FROM_INDEX] = null;
                     	
                     }
                                        
                     if(!tempStringArray[3].equals(EMPTY_INPUT)) {
                         
-                    	inputs[DATE_TO] = tempStringArray[3];
+                    	inputs[TASK_DATE_TO_INDEX] = tempStringArray[3];
                     
                     }
                     
                     else {
                     	
-                    	inputs[DATE_TO] = null;
+                    	inputs[TASK_DATE_TO_INDEX] = null;
                     	
                     }
                     
                     
                     if(!tempStringArray[4].equals(EMPTY_INPUT)) {
                         
-                    	inputs[DEADLINE] = tempStringArray[4];
+                    	inputs[TASK_DEADLINE_INDEX] = tempStringArray[4];
                     
                     }
                     
                     else {
                     	
-                    	inputs[DEADLINE] = null;
+                    	inputs[TASK_DEADLINE_INDEX] = null;
                     	
                     }
                     
                     if(!tempStringArray[5].equals(EMPTY_INPUT)) {
                         
-                    	inputs[LOCATION] = tempStringArray[5];
+                    	inputs[TASK_LOCATION_INDEX] = tempStringArray[5];
                     
                     }
                     
                     else {
                     	
-                    	inputs[LOCATION] = null;
+                    	inputs[TASK_LOCATION_INDEX] = null;
                     	
                     }
 
                     if(!tempStringArray[6].equals(EMPTY_INPUT)) {
                         
-                    	inputs[DETAILS] = tempStringArray[6];
+                    	inputs[TASK_DETAILS_INDEX] = tempStringArray[6];
                     
                     }
                     
                     else {
                     	
-                    	inputs[DETAILS] = null;
+                    	inputs[TASK_DETAILS_INDEX] = null;
                     	
                     }
                     
                     
                     if(!tempStringArray[7].equals(EMPTY_INPUT)) {
                         
-                    	inputs[PRIORITY] = tempStringArray[7];
+                    	inputs[TASK_PRIORITY_INDEX] = tempStringArray[7];
                     	
                     }
                     
                     else {
                     	
-                    	inputs[PRIORITY] = null;
+                    	inputs[TASK_PRIORITY_INDEX] = null;
                     	
                     }
                   
                     tm.processAddForInitialization(inputs);       
+               
                 }
                 
                 sc.close();
