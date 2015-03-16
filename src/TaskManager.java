@@ -410,23 +410,13 @@ public class TaskManager {
     private void updateStackForEditUnderUndoRedo(Task taskToEdit, String[] inputs, 
             Stack<String[]> stack) {
         stack.pop();
-        String[] strForStack = new String[DEFAULT_SIZE];
-
-        strForStack[COMMAND_TYPE] = inputs[COMMAND_TYPE];
-        getStringArrayFromTask(taskToEdit, strForStack);
-
-        for(int i = TASK_NAME; i < DEFAULT_SIZE; ++i) {
-            if(strForStack[i] == null && inputs[i] != null) {
-                strForStack[i] = CLEAR_INFO_INDICATOR;
-            }
-        }
-        stack.push(strForStack);
+        updateStackForEdit(taskToEdit, inputs, stack);
     }
 
     //This ArrayList contains only one item
     private void updateUndoStackForAdd(ArrayList<Task> tasks, String commandType) {
         Task task = tasks.get(INDEX_OF_ONLY_TASK);
-        updateUndoStackFromTask(task, commandType); 
+        updateUndoStackFromTask(task, commandType);
     }
 
     private void updateUndoStackFromTask(Task task, String commandType) {
