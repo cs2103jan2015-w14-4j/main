@@ -247,7 +247,7 @@ public class FileStorage {
                 	
                 	inputs[TASK_NAME_INDEX] = tempStringArray[1];
                  
-                    if(!tempStringArray[2].equals(EMPTY_INPUT)) {
+                    if(isEmptyInput(tempStringArray[2])) {
                     	
                     	inputs[TASK_DATE_FROM_INDEX] = tempStringArray[2];
                     
@@ -259,7 +259,7 @@ public class FileStorage {
                     	
                     }
                                        
-                    if(!tempStringArray[3].equals(EMPTY_INPUT)) {
+                    if(isEmptyInput(tempStringArray[3])) {
                         
                     	inputs[TASK_DATE_TO_INDEX] = tempStringArray[3];
                     
@@ -272,7 +272,7 @@ public class FileStorage {
                     }
                     
                     
-                    if(!tempStringArray[4].equals(EMPTY_INPUT)) {
+                    if(isEmptyInput(tempStringArray[4])) {
                         
                     	inputs[TASK_DEADLINE_INDEX] = tempStringArray[4];
                     
@@ -284,7 +284,7 @@ public class FileStorage {
                     	
                     }
                     
-                    if(!tempStringArray[5].equals(EMPTY_INPUT)) {
+                    if(isEmptyInput(tempStringArray[5])) {
                         
                     	inputs[TASK_LOCATION_INDEX] = tempStringArray[5];
                     
@@ -296,7 +296,7 @@ public class FileStorage {
                     	
                     }
 
-                    if(!tempStringArray[6].equals(EMPTY_INPUT)) {
+                    if(isEmptyInput(tempStringArray[6])) {
                         
                     	inputs[TASK_DETAILS_INDEX] = tempStringArray[6];
                     
@@ -309,7 +309,7 @@ public class FileStorage {
                     }
                     
                     
-                    if(!tempStringArray[7].equals(EMPTY_INPUT)) {
+                    if(isEmptyInput(tempStringArray[7])) {
                         
                     	inputs[TASK_PRIORITY_INDEX] = tempStringArray[7];
                     	
@@ -336,4 +336,20 @@ public class FileStorage {
         }
     
     }
+    
+    private boolean isEmptyInput(String str) {
+    	
+    	if(!str.equals(EMPTY_INPUT)) {
+    		
+    		return true;
+    		
+    	}
+    	else {
+    		
+    		return false;
+    		
+    	}
+    	
+    }
+    
 }
