@@ -7,29 +7,6 @@ import java.util.Iterator;
 import java.util.Stack;
 
 public class TaskManager {
-    //------------solved--------------
-    //what format of time do you provide and
-    //I suggest this format 31/05/2011 14:00
-    //                      DD/MM/YYYY HH:mm
-
-    //can I assume all commands are valid, no invalid commands?
-    //almost valid, 
-    //
-
-    //for edit task, are you gonna send me what is being edited in the String[]
-    //yes
-
-    //what should I return if I can't carry the action. 
-    //Eg edit 1134, delete 1135; but there are no 1134 1135?
-    //return null
-
-    //if there is a detail associated with a task previously, now you wanna remove the detail
-    //how to pass me the edit array String?
-    //pass me a ""
-
-    //-------------unsolved-----------
-    //need to discuss the last solved issue again this afternoon
-
     private static final int COMMAND_TYPE = 0;
     private static final int TID = 1;
     private static final int TASK_NAME = 2;
@@ -73,7 +50,6 @@ public class TaskManager {
         addATask(inputs);
     }
 
-    //MUNAW
     public ArrayList<Task> processTM(String[] inputs, FileStorage externalStorage) throws ParseException {
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
         ArrayList<Task> returningTasks = null;
@@ -105,7 +81,6 @@ public class TaskManager {
             }
             break;
         case init:
-            //MUNAW
             initializeTasks(externalStorage);
             returningTasks = viewTasks();
             break;
@@ -119,10 +94,8 @@ public class TaskManager {
             System.out.print(INVALID_COMMAND_MESSAGE);
             break;
         }
-        // Write to External Storage
-        //MUNAW
-        externalStorage.writeToFile(tasks);
 
+        externalStorage.writeToFile(tasks);
 
         return returningTasks;
     }
@@ -379,17 +352,7 @@ public class TaskManager {
     }
 
 
-    //@warning: incomplete method()
     private void initializeTasks(FileStorage externalStorage) throws ParseException {
-        //basically call Wei Quan and do his readFromFile() method
-        //because I do not know the name of that method, so I cannot write now
-
-        //suggested method
-        //FileStorage fileStorage = new FileStorage();
-        //fileStorage.retriveDataFromFile();
-
-        //MUN AW
-        //This 
         externalStorage.readFromFile(this);
     }
 
