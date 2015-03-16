@@ -25,10 +25,6 @@ public class TaskManager {
     private static final int INDEX_OF_ONLY_TASK = 0;
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
 
-    private enum COMMAND_TYPE_TASK_MANAGER {
-        add, edit, view, delete, init, undo, redo, invalid
-    }
-
     private ArrayList<Task> tasks;
     private int IDCounter;
     private Stack<String[]> undoStack = new Stack<String[]>();
