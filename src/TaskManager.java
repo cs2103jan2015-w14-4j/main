@@ -353,6 +353,8 @@ public class TaskManager {
     }
 
 
+    //to tell the stack there is an edit operation, 
+    //but the corresponding information for undo is wrong
     private void updateStackForEdit(Task taskToEdit, String[] inputs, 
             Stack<String[]> stack) {
         String[] strForStack = new String[DEFAULT_SIZE];
@@ -403,6 +405,7 @@ public class TaskManager {
         return returningTasks;
     }
     
+    //correct the corresponding information for undo operation
     private void updateStackForEditUnderUndoRedo(Task taskToEdit, String[] inputs, 
             Stack<String[]> stack) {
         stack.pop();
