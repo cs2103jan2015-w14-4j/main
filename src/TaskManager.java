@@ -154,15 +154,11 @@ public class TaskManager {
     }
 
     //assume dateString is as this format "dd/MM/yyyy HH:mm"
-    private Date convertToDateObject(String dateString) {
+    private Date convertToDateObject(String dateString) throws ParseException {
         Date date = null;
-        try {
-            if(dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
-                DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
-                date = format.parse(dateString);
-            } 
-        } catch (ParseException ex) {
-            System.out.println("Date format is wrong! Please enter again.");
+        if(dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
+            DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+            date = format.parse(dateString);
         }
         return date;
     }
