@@ -24,6 +24,7 @@ public class TaskManager {
     private static final boolean TID_IS_FOUND = true;
     private static final int INDEX_OF_ONLY_TASK = 0;
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
+    private static final String VERTICAL_BAR = "|";
 
     private ArrayList<Task> tasks;
     private int IDCounter;
@@ -153,11 +154,15 @@ public class TaskManager {
     }
 
     //assume dateString is as this format "dd/MM/yyyy HH:mm"
-    private Date convertToDateObject(String dateString) throws ParseException {
+    private Date convertToDateObject(String dateString) {
         Date date = null;
-        if(dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
-            DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
-            date = format.parse(dateString);
+        try {
+            if(dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
+                DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+                date = format.parse(dateString);
+            } 
+        } catch (ParseException ex) {
+            System.out.println("Date format is wrong! Please enter again.");
         }
         return date;
     }
@@ -404,7 +409,7 @@ public class TaskManager {
         returningTasks = editATask(taskToEdit, inputs);
         return returningTasks;
     }
-    
+
     //correct the corresponding information for undo operation
     private void updateStackForEditUnderUndoRedo(Task taskToEdit, String[] inputs, 
             Stack<String[]> stack) {
@@ -516,5 +521,37 @@ public class TaskManager {
 
     private void updateUndoStackFromRedoOperation() {
         undoStack.push(redoStack.pop());
+    }
+
+    //this method is for testing
+    protected String arrayListToString() {
+        String str = "";
+        for(Task task: tasks) {
+            str += convertToStringFromInt(task.getTID()) + VERTICAL_BAR 
+                    + task.getTaskName() + VERTICAL_BAR;
+
+            if(task.getDateFrom() != null) {
+                str += convertToStringFromDate(task.getDateFrom()) + VERTICAL_BAR;
+            } else {
+                str += "null" + VERTICAL_BAR;
+            }
+
+            if(task.getDateTo() != null) {
+                str += convertToStringFromDate(task.getDateTo()) + VERTICAL_BAR;
+            } else {
+                str += "null" + VERTICAL_BAR;
+            }
+
+            if(task.getDeadline() != null) {
+                str += convertToStringFromDate(task.getDeadline()) + VERTICAL_BAR;
+            } else {
+                str += "null" + VERTICAL_BAR;
+            }
+
+            str += task.getLocation() + VERTICAL_BAR
+                    + task.getDetails() + VERTICAL_BAR
+                    + task.getPriority() + "\n";
+        }
+        return str;
     }
 }
