@@ -33,7 +33,9 @@ public class SystemHandler {
 	public String getFileName() {
 		return fileName;
 	}
-	
+	public Logger getLogfile() {
+		return logfile;
+	}
 	/**
 	 * This constructor constructs System Handler object with fileName as the save location 
 	 * @param fileName	File location which the data saved at
