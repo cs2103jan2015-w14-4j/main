@@ -30,7 +30,7 @@ public class TaskManager {
     private int IDCounter;
     private Stack<String[]> undoStack = new Stack<String[]>();
     private Stack<String[]> redoStack = new Stack<String[]>();
-
+    
     //------------constructor-------
     public TaskManager() {
         tasks = new ArrayList<Task>();
@@ -42,12 +42,21 @@ public class TaskManager {
         return tasks;
     }
 
+    protected Stack<String[]> getUndoStack() {
+        return undoStack;
+    }
+
+    protected Stack<String[]> getRedoStack() {
+        return redoStack;
+    }
+
     //------------other methods------------
-    public void processAddForInitialization(String[] inputs) throws ParseException {
+    public void processAddForInitialization(String[] inputs) {
         addATask(inputs);
     }
 
-    public ArrayList<Task> processTM(String[] inputs, FileStorage externalStorage) throws ParseException {
+    public ArrayList<Task> processTM(String[] inputs, FileStorage externalStorage) 
+            throws ParseException {
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
         ArrayList<Task> returningTasks = null;
 
@@ -57,6 +66,7 @@ public class TaskManager {
             if(returningTasks != null) {
                 updateUndoStackForAdd(returningTasks, inputs[COMMAND_TYPE]);
             }
+            assert returningTasks != null;
             break;
         case edit:
             if(isAbleToEdit(inputs)) {
@@ -64,6 +74,7 @@ public class TaskManager {
                 Task taskToEdit = getTaskFromTID(TIDToEdit);
                 updateStackForEdit(taskToEdit, inputs, undoStack);
                 returningTasks = editATask(taskToEdit, inputs);
+                assert returningTasks != null;
             }
             break;
         case view:
@@ -80,6 +91,8 @@ public class TaskManager {
         case init:
             initializeTasks(externalStorage);
             returningTasks = viewTasks();
+            assert undoStack.size() == 0;
+            assert redoStack.size() == 0;
             break;
         case undo:
             returningTasks = undoAnOperation();
@@ -109,7 +122,7 @@ public class TaskManager {
     }
 
 
-    private ArrayList<Task> addATask(String[] inputs) throws ParseException {
+    private ArrayList<Task> addATask(String[] inputs) {
         ArrayList<Task> returningTasks = null;
         if(hasTID(inputs)){
             Task newTask = new Task(getNewTID(), inputs[TASK_NAME], 
@@ -129,6 +142,7 @@ public class TaskManager {
             returningTasks = new ArrayList<Task>();
             returningTasks.add(newTask);
         }
+        assert returningTasks.get(INDEX_OF_ONLY_TASK).getTID() >= 1000;
         return returningTasks;
     }   
 
@@ -154,11 +168,15 @@ public class TaskManager {
     }
 
     //assume dateString is as this format "dd/MM/yyyy HH:mm"
-    private Date convertToDateObject(String dateString) throws ParseException {
+    private Date convertToDateObject(String dateString) {
         Date date = null;
-        if(dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
-            DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
-            date = format.parse(dateString);
+        try {
+            if(dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
+                DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+                date = format.parse(dateString);
+            }
+        } catch (ParseException ex) {
+            System.out.println(ex);
         }
         return date;
     }
@@ -204,8 +222,7 @@ public class TaskManager {
         return taskFound;
     }
 
-    private ArrayList<Task> editATask(Task taskToEdit, String[] inputs) 
-            throws ParseException {
+    private ArrayList<Task> editATask(Task taskToEdit, String[] inputs) {
         ArrayList<Task> returningTasks = null;
 
         for(int i = TASK_NAME; i < inputs.length; ++i) {
@@ -227,8 +244,7 @@ public class TaskManager {
         return inputs[i] == null;
     }
 
-    private void editTaskInfo(String[] inputs, Task task, int i)
-            throws ParseException {
+    private void editTaskInfo(String[] inputs, Task task, int i) {
         switch(i) {
         case TASK_NAME: editTaskName(inputs, task); break;
         case DATE_FROM: editTaskDateFrom(inputs, task); break;
@@ -253,20 +269,17 @@ public class TaskManager {
         task.setLocation(inputs[LOCATION]);
     }
 
-    private void editTaskDeadline(String[] inputs, Task task)
-            throws ParseException {
+    private void editTaskDeadline(String[] inputs, Task task) {
         Date newDeadline = convertToDateObject(inputs[DEADLINE]);
         task.setDeadline(newDeadline);
     }
 
-    private void editTaskDateTo(String[] inputs, Task task)
-            throws ParseException {
+    private void editTaskDateTo(String[] inputs, Task task) {
         Date newDateTo = convertToDateObject(inputs[DATE_TO]);
         task.setDateTo(newDateTo);
     }
 
-    private void editTaskDateFrom(String[] inputs, Task task)
-            throws ParseException {
+    private void editTaskDateFrom(String[] inputs, Task task) {
         Date newDateFrom = convertToDateObject(inputs[DATE_FROM]);
         task.setDateFrom(newDateFrom);
     }
@@ -279,7 +292,7 @@ public class TaskManager {
         return inputs[i].equals(CLEAR_INFO_INDICATOR);
     }
 
-    private void clearTaskInfo(Task task, int i) throws ParseException {
+    private void clearTaskInfo(Task task, int i) {
         switch(i) {
         case TASK_NAME: clearTaskName(task); break;
         case DATE_FROM: clearTaskDateFrom(task); break;
@@ -372,7 +385,7 @@ public class TaskManager {
         stack.push(strForStack);
     }
 
-    private ArrayList<Task> undoAnOperation() throws ParseException {
+    private ArrayList<Task> undoAnOperation() {
         ArrayList<Task> returningTasks = null;
         if(!undoStack.isEmpty()) {
             String[] undoOperation = undoStack.peek();
@@ -398,8 +411,7 @@ public class TaskManager {
         return returningTasks;
     }
 
-    private ArrayList<Task> editATaskForUndo(Task taskToEdit, String[] inputs) 
-            throws ParseException {
+    private ArrayList<Task> editATaskForUndo(Task taskToEdit, String[] inputs) {
         ArrayList<Task> returningTasks = null;
         updateStackForEditUnderUndoRedo(taskToEdit, inputs, undoStack);
         returningTasks = editATask(taskToEdit, inputs);
@@ -415,6 +427,7 @@ public class TaskManager {
 
     //This ArrayList contains only one item
     private void updateUndoStackForAdd(ArrayList<Task> tasks, String commandType) {
+        assert tasks.size() == 1;
         Task task = tasks.get(INDEX_OF_ONLY_TASK);
         updateUndoStackFromTask(task, commandType);
     }
@@ -481,7 +494,7 @@ public class TaskManager {
     }
 
 
-    private ArrayList<Task> redoAnOperation() throws ParseException {
+    private ArrayList<Task> redoAnOperation() {
         ArrayList<Task> returningTasks = null;
         if(!redoStack.isEmpty()) {
             String[] redoOperation = redoStack.peek();
@@ -507,8 +520,7 @@ public class TaskManager {
         return returningTasks;
     }
 
-    private ArrayList<Task> editATaskForRedo(Task taskToEdit, String[] inputs) 
-            throws ParseException {
+    private ArrayList<Task> editATaskForRedo(Task taskToEdit, String[] inputs) {
         ArrayList<Task> returningTasks = null;
         updateStackForEditUnderUndoRedo(taskToEdit, inputs, redoStack);
         returningTasks = editATask(taskToEdit, inputs);
