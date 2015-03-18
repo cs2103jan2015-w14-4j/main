@@ -1,11 +1,12 @@
-import java.awt.EventQueue;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.JOptionPane;
-import javax.swing.JDialog;
+import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -13,11 +14,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import java.awt.Scrollbar;
-
-import javax.swing.JTextArea;
-
+import java.awt.EventQueue;
 import java.awt.Insets;
+
+
+
+
 
 public class UserInterface {
 
@@ -26,7 +28,6 @@ public class UserInterface {
 	private JTextField textField;
 	private JTextArea outputArea;
     private final static String newline = "\n";
-    private JScrollPane scrollBar;
     private JScrollPane scrollPane;
     private ArrayList<Task> outputArray;
     
@@ -38,6 +39,7 @@ public class UserInterface {
 	public static final String MSG_ECHO_FILENAME = "File location: %1$s";
 	
 	private boolean hasFilename;
+	private String prevInput;
 	
 	/**
 	 * Launch the application.
@@ -84,34 +86,76 @@ public class UserInterface {
 		inputListener listener = new inputListener();
 		textField.addActionListener(listener);
 		
-		/*
-		 * 
-		 * textField.addActionListener(new ActionListener() {
-		 
-			public void actionPerformed(ActionEvent arg0) {
-				String input = textField.getText();
-				textField.selectAll();
-				//Actual
-				ArrayList<Task> result = mainHandler.rawUserInput(input);
-				//outputArea.setCaretPosition(outputArea.getDocument().getLength());		
+	//keyboard shortcuts needs to be refactored out from here
+		
+		//pressing up restores previous input in textField
+		Action lastInput = new AbstractAction(){
 
-				//Dummy
-//				ArrayList<Task> result = new ArrayList<Task>();
-//				Task testTask = new Task(1, input + " (The rest are dummies)", new Date(115,3,8,14,0) , 
-//						new Date(115,3,8,17,0), null, "HOME", null, 0);
-//				result.add(testTask);
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				textField.setText(prevInput);			
+			}		
+		};
+		
+		textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+        .put(KeyStroke.getKeyStroke("UP"), "lastInput");
+		textField.getActionMap().put("lastInput", lastInput );
+		
+		Action undo = new AbstractAction(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String input  = "undo";
+				ArrayList<Task> result = mainHandler.rawUserInput(input);
+				printOutput(input.split("\\s*,\\s*")[0],result);
 				
-				printOutput(result);
+				outputArea.append(MSG_ASK_INPUT + newline);
+				
+			}
+			
+		};
+		
+		textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+        .put(KeyStroke.getKeyStroke("ctrl Z"), "undo");
+		textField.getActionMap().put("undo", undo );
+		
+		Action redo = new AbstractAction(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String input  = "redo";
+				ArrayList<Task> result = mainHandler.rawUserInput(input);
+				printOutput(input.split("\\s*,\\s*")[0],result);
+				
+				outputArea.append(MSG_ASK_INPUT + newline);
+				
+			}
+			
+		};
+		
+		textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+        .put(KeyStroke.getKeyStroke("ctrl Y"), "redo");
+		textField.getActionMap().put("redo", redo );
+		
+		Action view = new AbstractAction(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String input  = "view";
+				ArrayList<Task> result = mainHandler.rawUserInput(input);
+				printOutput(input.split("\\s*,\\s*")[0],result);
 				
 				outputArea.append(MSG_ASK_INPUT + newline);
 			}
-		});
+			
+		};
 		
-		*/
+		textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+        .put(KeyStroke.getKeyStroke("ctrl D"), "view");
+		textField.getActionMap().put("view", view );
 		
-		scrollBar = new JScrollPane(panel,
-	            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-	            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		//until here this needs to refactored out
+		
 		outputArea = new JTextArea();
 		scrollPane = new JScrollPane(outputArea); 
 		outputArea.setColumns(30);
@@ -139,10 +183,13 @@ public class UserInterface {
 		
 	}
 	
+
+	
 	private class inputListener implements ActionListener {
 		
 		public void actionPerformed(ActionEvent e){
 			String input = textField.getText();
+			prevInput = input;
 			
 			if (!hasFilename){		
 				mainHandler = new SystemHandler(input);
@@ -168,6 +215,10 @@ public class UserInterface {
 				outputArea.append(MSG_ASK_INPUT + newline);
 			}
 		}
+		
+			
+	
+		
 	}
 	
 	
