@@ -168,7 +168,7 @@ public class SystemTest {
 //		}
 		Assert.assertArrayEquals(test1.getStringArray(), expect1);
 	}
-
+ 
 	@Test
 	public void testCustomizedManager() {
 		System.out.println("Customized Manager Test Not yet implemented");
