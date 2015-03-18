@@ -1,12 +1,10 @@
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.awt.EventQueue;
-import java.text.ParseException;
-import java.util.NoSuchElementException;
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+import java.awt.EventQueue;
+import java.text.ParseException;
+
 
 public class SystemHandler {
 	
@@ -17,7 +15,7 @@ public class SystemHandler {
 	//Intended length of command array
 	public static final int LENGTH_COMMAND = 9;
 	
-	private Logger 			logfile;
+	private Logger 		logfile;
 	private TaskManager 	myTaskList;
 	private Customize 		myCustomizedList;
 	private Shortcut 		myShortcut;
@@ -33,9 +31,7 @@ public class SystemHandler {
 	public String getFileName() {
 		return fileName;
 	}
-	public Logger getLogfile() {
-		return logfile;
-	}
+	
 	/**
 	 * This constructor constructs System Handler object with fileName as the save location 
 	 * @param fileName	File location which the data saved at
@@ -138,7 +134,7 @@ public class SystemHandler {
 	private boolean initializeSystem(String fileName) {
 		
 		boolean isInitProperly = false;
-		buildLogger();
+		logfile = CentralizedLog.getLogger();
 		parser = new FlexiParser();
 		myTaskList = new TaskManager();
 		externalStorage = new FileStorage(fileName);
@@ -151,19 +147,6 @@ public class SystemHandler {
 		}
 	}
 	
-	private void buildLogger() {
-		logfile = Logger.getLogger("log");
-		try {
-			
-			FileHandler fh = new FileHandler("log.txt");
-			logfile.addHandler(fh);
-			SimpleFormatter formatter = new SimpleFormatter();  
-	        fh.setFormatter(formatter);
-			logfile.setLevel(Level.CONFIG);
-		} catch(Exception e) {
-			
-		}
-	}
 	/**
 	 * This method functions as a communication line between components and 
 	 * calls the correct components according to the command from user and fetch the correct data 
