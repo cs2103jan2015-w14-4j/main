@@ -150,11 +150,11 @@ public class SystemTest {
 	@Test
 	public void testParser() {
 
-		FlexiParser test1 = new FlexiParser("add,homework,on,20/04/2015,from,20:00,to,22:00");
+		FlexiParser test1 = new FlexiParser();
 		String[] expect1  = {"add",null,"homework",
 								"20/04/2015 20:00","20/04/2015 22:00",null,
 								null,null,null};
-		String[] abc = test1.getStringArray();
+		String[] abc = test1.parseText("add,homework,on,20/04/2015,from,20:00,to,22:00");
 //		for(int i=0;i<expect1.length;++i) {
 //			
 //			if(abc[i] == expect1[i] ||
@@ -166,7 +166,7 @@ public class SystemTest {
 //			}
 //			
 //		}
-		Assert.assertArrayEquals(test1.getStringArray(), expect1);
+		Assert.assertArrayEquals(abc, expect1);
 	}
  
 	@Test

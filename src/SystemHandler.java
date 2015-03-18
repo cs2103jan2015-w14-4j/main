@@ -17,14 +17,14 @@ public class SystemHandler {
 	//Intended length of command array
 	public static final int LENGTH_COMMAND = 9;
 	
-	private Logger logfile;
-	private TaskManager myTaskList;
-	private Customize myCustomizedList;
-	private Shortcut myShortcut;
-	private String fileName;
-	private FileStorage externalStorage;
-	private UserInterface window;
-	
+	private Logger 			logfile;
+	private TaskManager 	myTaskList;
+	private Customize 		myCustomizedList;
+	private Shortcut 		myShortcut;
+	private String 			fileName;
+	private FileStorage 	externalStorage;
+	private UserInterface 	window;
+	private FlexiParser 	parser;
 	
 	/**
 	 * Return file location which the data saved at
@@ -139,6 +139,7 @@ public class SystemHandler {
 		
 		boolean isInitProperly = false;
 		buildLogger();
+		parser = new FlexiParser();
 		myTaskList = new TaskManager();
 		externalStorage = new FileStorage(fileName);
 		
@@ -174,8 +175,8 @@ public class SystemHandler {
 			logfile.log(Level.CONFIG,"user enters: "+inputFromUser);
 			
 			//Parse command
-			FlexiParser parser = new FlexiParser(inputFromUser);
-			String[] parsedCommand = parser.getStringArray();
+			
+			String[] parsedCommand = parser.parseText(inputFromUser);
 			
 			//For checking purposes
 //			String[] temp = parsedCommand;
