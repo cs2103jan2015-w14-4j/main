@@ -563,4 +563,9 @@ public class TaskManager {
         }
         return str;
     }
+    
+    //this to test my .gitignore works or not
+    public void printHello() {
+        System.out.println("Hello");
+    }
 }
