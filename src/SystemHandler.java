@@ -2,6 +2,11 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.awt.EventQueue;
 import java.text.ParseException;
+import java.util.NoSuchElementException;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class SystemHandler {
 	
@@ -12,12 +17,14 @@ public class SystemHandler {
 	//Intended length of command array
 	public static final int LENGTH_COMMAND = 9;
 	
+	private Logger logfile;
 	private TaskManager myTaskList;
 	private Customize myCustomizedList;
 	private Shortcut myShortcut;
 	private String fileName;
 	private FileStorage externalStorage;
 	private UserInterface window;
+	
 	
 	/**
 	 * Return file location which the data saved at
@@ -131,6 +138,8 @@ public class SystemHandler {
 		boolean isInitProperly = false;
 		myTaskList = new TaskManager();
 		externalStorage = new FileStorage(fileName);
+		buildLogger();
+		
 		if(isInitProperly) {
 			return true;	
 		}
@@ -139,6 +148,19 @@ public class SystemHandler {
 		}
 	}
 	
+	private void buildLogger() {
+		logfile = Logger.getLogger("log");
+		try {
+			
+			FileHandler fh = new FileHandler("log.txt");
+			logfile.addHandler(fh);
+			SimpleFormatter formatter = new SimpleFormatter();  
+	        fh.setFormatter(formatter);
+			logfile.setLevel(Level.CONFIG);
+		} catch(Exception e) {
+			
+		}
+	}
 	/**
 	 * This method functions as a communication line between components and 
 	 * calls the correct components according to the command from user and fetch the correct data 
@@ -147,19 +169,21 @@ public class SystemHandler {
 	 */
 	private ArrayList<Task> processUserInput(String inputFromUser) {
 		try {
+			logfile.log(Level.CONFIG,"user enters: "+inputFromUser);
+			
 			//Parse command
 			FlexiParser parser = new FlexiParser(inputFromUser);
 			String[] parsedCommand = parser.getStringArray();
 			
 			//For checking purposes
-			String[] temp = parsedCommand;
+//			String[] temp = parsedCommand;
+//			
+//	    	for(int i = 0; i < temp.length; ++i) {
+//	    		System.out.print((temp[i] == null)? "NULL":temp[i].toString());
+//	    		System.out.print("|");
+//	    	}
 			
-	    	for(int i = 0; i < temp.length; ++i) {
-	    		System.out.print((temp[i] == null)? "NULL":temp[i].toString());
-	    		System.out.print("|");
-	    	}
-			
-			SystemHandler.validateParsedCommand(parsedCommand);
+			validateParsedCommand(parsedCommand);
 			
 			COMMAND_TYPE_GROUP commandGroupType = SystemHandler.getCommandGroupType(parsedCommand[0]);
 			switch(commandGroupType) {
@@ -169,26 +193,33 @@ public class SystemHandler {
 					executeShortcutManager(parsedCommand);
 				case CUSTOMIZED_MANAGER:
 					executeCustomizer(parsedCommand);
+				default:
+					assert(isAGroupCommand(getCommandGroupType(parsedCommand[0])));
 			}
 			
 		} catch(ParseException e) {
 			System.out.println(e);
-		}
+		} 
 		return null;
 		
 	}
 
+	private boolean isAGroupCommand(COMMAND_TYPE_GROUP command) {
+		return command != null;
+	}
+	
 	/**
 	 * @param parsedCommand		A parsed command received from parser 
 	 * @throws ParseException	The length of parsed command array is not the wanted length
 	 */
-	private static void validateParsedCommand(String[] parsedCommand)
+	private boolean validateParsedCommand(String[] parsedCommand)
 			throws ParseException {
 		assert(parsedCommand.length == LENGTH_COMMAND);
 		if(parsedCommand.length != LENGTH_COMMAND) {
 			throw new ParseException("Invalid length of parsed command", 
 					parsedCommand.length - LENGTH_COMMAND);
 		}
+		return true;
 	}
 	
 	/**
