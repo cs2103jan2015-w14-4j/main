@@ -18,9 +18,6 @@ import java.awt.EventQueue;
 import java.awt.Insets;
 
 
-
-
-
 public class UserInterface {
 
 	public JFrame frame;
@@ -105,6 +102,7 @@ public class UserInterface {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+			//	outputArea.append("ctrl Z has been pressed" + newline);
 				String input  = "undo";
 				ArrayList<Task> result = mainHandler.rawUserInput(input);
 				printOutput(input.split("\\s*,\\s*")[0],result);
@@ -123,6 +121,7 @@ public class UserInterface {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+			//	outputArea.append("ctrl Y has been pressed" + newline);
 				String input  = "redo";
 				ArrayList<Task> result = mainHandler.rawUserInput(input);
 				printOutput(input.split("\\s*,\\s*")[0],result);
@@ -141,6 +140,7 @@ public class UserInterface {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+			//	outputArea.append("ctrl D has been pressed" + newline);
 				String input  = "view";
 				ArrayList<Task> result = mainHandler.rawUserInput(input);
 				printOutput(input.split("\\s*,\\s*")[0],result);
