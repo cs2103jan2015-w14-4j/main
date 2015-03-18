@@ -517,7 +517,27 @@ public class TaskManagerTest {
                 expectEdit);
         //test the ArrayList after edit
         assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
-
+        
+        ArrayList<Task> expectUndo = new ArrayList<Task>();
+        expectTasks.get(TASK1002).setLocation(null);
+        expectTasks.get(TASK1002).setDetails("name the file properly");
+        expectUndo.add(expectTasks.get(TASK1002));
+        //test the return of processTM for edit
+        assertTaskArrayListEquals(myTaskManager.processTM(UNDO_OPERATION, myFileStorage),
+                expectUndo);
+        //test the ArrayList after edit
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+        
+        
+        ArrayList<Task> expectRedo = new ArrayList<Task>();
+        expectTasks.get(TASK1002).setLocation("IVLE");
+        expectTasks.get(TASK1002).setDetails(null);
+        expectRedo.add(expectTasks.get(TASK1002));
+        //test the return of processTM for edit
+        assertTaskArrayListEquals(myTaskManager.processTM(REDO_OPERATION, myFileStorage),
+                expectUndo);
+        //test the ArrayList after edit
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
     }
 
     public boolean assertTaskArrayListEquals(ArrayList<Task> test, 
