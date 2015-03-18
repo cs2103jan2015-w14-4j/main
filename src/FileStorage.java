@@ -233,13 +233,13 @@ public class FileStorage {
                 	String[] tempStringArray = new String[8];
                 	
                 	tempStringArray = sc.nextLine().split("\\s*,\\s*");
-                	System.out.println(tempStringArray.length);
-                	
-                	for(int i=0; i<tempStringArray.length;i++) {
-                		
-                		System.out.println(tempStringArray[i]);
-                		
-                	}
+//                	System.out.println(tempStringArray.length);
+//                	
+//                	for(int i=0; i<tempStringArray.length;i++) {
+//                		
+//                		System.out.println(tempStringArray[i]);
+//                		
+//                	}
                 	             	
                 	inputs[COMMAND_TYPE_INDEX] = "add";
                 	inputs[TASK_ID_INDEX] = tempStringArray[0];
