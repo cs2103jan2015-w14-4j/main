@@ -563,4 +563,9 @@ public class TaskManager {
         }
         return str;
     }
+    
+    //dummy
+    public void testGitIgnoreWorks() {
+        System.out.println("If I only need to commit the .java, that means it works!!");
+    }
 }
