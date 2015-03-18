@@ -1,3 +1,4 @@
+//once constructed can keep parsing
 public class FlexiParser {
 	
     private static final String COMMAND_ADD = "add";
@@ -22,9 +23,14 @@ public class FlexiParser {
     
     private static String[] inputArray;
 	
-    public FlexiParser(String userInput) {
+    public FlexiParser() {
 		
-		try {
+		
+	}
+	
+    public String[] parseText(String userInput) {
+    	
+    	try {
 		    
 			inputArray = userInput.split("\\s*,\\s*");
 			
@@ -66,13 +72,16 @@ public class FlexiParser {
 			
 			inputArray = outputArray;
 			
+			
 		}catch(IllegalArgumentException ex) { 
 			
 			System.out.println(ERROR_EXCEPTION);
 				
 		}
-	}
-	
+    	return inputArray;
+    	
+    }
+    
 	private void addCommand(String[] input,String[] outputArray) {
 		String timeF = null;
 		String dateF = null;
@@ -185,9 +194,9 @@ public class FlexiParser {
     
     public static void main(String[] args) {
     	
-    	FlexiParser test1 = new FlexiParser("add,meeting,on,24/03/2015,from,14:00,to,16:00");
-    	System.out.println("ORIGINAL: "+"add,meeting,on,24/03/2015,from,14:00,to,16:00");
-    	String[] temp = test1.getStringArray();
+    	FlexiParser test1 = new FlexiParser();
+    	
+    	String[] temp = test1.parseText("add,meeting,on,24/03/2015,from,14:00,to,16:00");
     	for(int i = 0; i < temp.length; ++i) {
     	
     		System.out.print((temp[i] == null)? "NULL":temp[i].toString());
@@ -198,43 +207,8 @@ public class FlexiParser {
     	System.out.println();
     	System.out.println();
     	
-    	FlexiParser test2 = new FlexiParser("delete,1222");
-    	temp = test2.getStringArray();
-    	System.out.println("ORIGINAL: "+"delete,1222");
-    	for(int i = 0; i < temp.length; ++i) {
-    		
-    		System.out.print((temp[i] == null)? "NULL":temp[i].toString());
-    		System.out.print("| ");
-    	
-    	}
-    	
-    	System.out.println();
-    	System.out.println();
+    
 
-    	FlexiParser test3 = new FlexiParser("view");
-    	System.out.println("ORIGINAL: "+"view");
-    	temp = test3.getStringArray();
-    	for(int i = 0; i < temp.length; ++i) {
-    		
-    		System.out.print((temp[i] == null)? "NULL":temp[i].toString());
-    		System.out.print("| ");
     	
-    	}
-    	
-    	System.out.println();
-    	System.out.println();
-    	
-    	FlexiParser test4 = new FlexiParser("edit,1005,to,15:00,on,20/03/2015");
-    	System.out.println("ORIGINAL: "+"edit,1005,to,15:00,on,20/03/2015");
-    	temp = test4.getStringArray();
-    	for(int i = 0; i < temp.length; ++i) {
-    		
-    		System.out.print((temp[i] == null)? "NULL":temp[i].toString());
-    		System.out.print("| ");
-    	
-    	}
-    	
-    	System.out.println();
-    	System.out.println();
     }
 }
