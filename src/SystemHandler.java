@@ -138,9 +138,9 @@ public class SystemHandler {
 	private boolean initializeSystem(String fileName) {
 		
 		boolean isInitProperly = false;
+		buildLogger();
 		myTaskList = new TaskManager();
 		externalStorage = new FileStorage(fileName);
-		buildLogger();
 		
 		if(isInitProperly) {
 			return true;	
