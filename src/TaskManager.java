@@ -562,5 +562,5 @@ public class TaskManager {
                     + task.getPriority() + "\n";
         }
         return str;
-    }}
+    }
 }
