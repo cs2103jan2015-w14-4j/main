@@ -562,14 +562,5 @@ public class TaskManager {
                     + task.getPriority() + "\n";
         }
         return str;
-    }
-    
-    //this to test my .gitignore works or not
-    public void printHello() {
-        System.out.println("Hello");
-    }
-    //this to test my .gitignore works or not
-    public void printHelloAgain() {
-        System.out.println("Hello, again");
-    }
+    }}
 }
