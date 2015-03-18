@@ -141,35 +141,6 @@ public class Task {
 		return status;
 	}
 	
-	public static boolean dateEqual(Date date1, Date date2) {
-		if(date1 == null && date2 == null) {
-			return true;
-		}
-		else if(date1 != null && date2 == null) {
-			return false;
-		}
-		else if(date1 == null && date2 != null) {
-			return false;
-		}
-		else {
-			return date1.equals(date2);
-		}
-	}
-	
-	public static boolean stringEqual(String str1, String str2) {
-		if(str1 == null && str2 == null) {
-			return true;
-		}
-		else if(str1 != null && str2 == null) {
-			return false;
-		}
-		else if(str1 == null && str2 != null) {
-			return false;
-		}
-		else {
-			return str1.equals(str2);
-		}
-	}
 	
 	public boolean isEqual(Task task) {
 		if( !dateEqual(task.getDateFrom(), dateFrom)) {
@@ -211,5 +182,40 @@ public class Task {
 			return false;
 		}
 		return true;
+	}
+	
+	private static boolean dateEqual(Date date1, Date date2) {
+		if(date1 == null && date2 == null) {
+			return true;
+		}
+		else if(date1 != null && date2 == null) {
+			return false;
+		}
+		else if(date1 == null && date2 != null) {
+			return false;
+		}
+		else {
+			return date1.equals(date2);
+		}
+	}
+	
+	private static boolean stringEqual(String str1, String str2) {
+		if(str1 == null && str2 == null) {
+			return true;
+		}
+		else if(str1 != null && str2 == null) {
+			return false;
+		}
+		else if(str1 == null && str2 != null) {
+			return false;
+		}
+		else {
+			return str1.equals(str2);
+		}
+	}
+	
+	public Task clone() {
+		return new Task(TID,taskName, new Date(dateFrom.getTime()), new Date(dateTo.getTime()), 
+				new Date(deadline.getTime()), location, details, priority);
 	}
 }
