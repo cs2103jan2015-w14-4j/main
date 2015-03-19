@@ -27,7 +27,7 @@ public class FlexiParser {
 		
 		
 	}
-	
+
     public String[] parseText(String userInput) {
     	
     	try {
