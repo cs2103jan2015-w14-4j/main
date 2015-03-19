@@ -215,7 +215,19 @@ public class Task {
 	}
 	
 	public Task clone() {
-		return new Task(TID,taskName, new Date(dateFrom.getTime()), new Date(dateTo.getTime()), 
-				new Date(deadline.getTime()), location, details, priority);
+		Date newDateFrom = null;
+		Date newDateTo = null;
+		Date newDeadline = null;
+		if(dateFrom != null) {
+			newDateFrom = new Date(dateFrom.getTime());
+		}
+		if(dateTo != null) {
+			newDateTo = new Date(dateTo.getTime());
+		}
+		if(deadline != null) {
+			newDeadline = new Date(deadline.getTime());
+		}
+		return new Task(TID,taskName, newDateFrom, newDateTo, 
+				newDeadline, location, details, priority);
 	}
 }

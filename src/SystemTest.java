@@ -43,6 +43,17 @@ public class SystemTest {
 	}
 
 	@Test
+	public void testImmutable() {
+		Task a = new Task(1004, "NEW",
+				convertToDateObject("12/09/2015 10:00"),
+				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0);
+		Task b = a.clone();
+		b.setDateFrom(convertToDateObject("12/09/2015 16:00"));
+		System.out.println(a.getDateFrom().toString());
+		System.out.println(b.getDateFrom().toString());
+	}
+	
+	@Test
 	public void testFullSystem() {
 		// TC 1 - simple multiple add
 		String test1 = "add,NEW,at,ABC,on,12/09/2015,from,10:00,to,12:00";
@@ -134,7 +145,9 @@ public class SystemTest {
 		ArrayList<Task> test6 = new ArrayList<Task>();
 		ArrayList<Task> expect6 = new ArrayList<Task>();
 		assertTaskArrayListEquals(test6, expect6);
+		
 
+		
 	}
 
 	@Test
