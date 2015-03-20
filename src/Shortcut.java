@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 public class Shortcut {
-	
+	 
 	
 	public static final String[] keywords = {	"addTask", "editTask","viewTasks","deleteTask",
 										"addShortcut", "viewShortcuts", "deleteShortcut",
@@ -16,7 +16,7 @@ public class Shortcut {
 		resetShortcut();
 	}
 	
-	public Shortcut getShortcut() {
+	public static Shortcut getShortcut() {
 		if(centralizedShortcut == null) {
 			centralizedShortcut = new Shortcut();
 		}
