@@ -5,7 +5,7 @@ import java.util.logging.SimpleFormatter;
 
 public class CentralizedLog {
 	private Logger logfile;
-	private static CentralizedLog centralLog;
+	private static CentralizedLog centralizedLog;
 	
 	private CentralizedLog() {
 		logfile = buildLogger();
@@ -17,11 +17,11 @@ public class CentralizedLog {
 	 * @return	log file that is used among the system
 	 */
 	public static CentralizedLog getLogger() {
-		if(centralLog == null) {
-			centralLog = new CentralizedLog();
+		if(centralizedLog == null) {
+			centralizedLog = new CentralizedLog();
 		}
 		
-		return centralLog;
+		return centralizedLog;
 	}
 	
 	
