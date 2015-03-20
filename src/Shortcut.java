@@ -10,9 +10,17 @@ public class Shortcut {
 										"viewTemplates", "deleteTemplate", "resetTemplates", "help"}; 
 	
 	private ArrayList<ArrayList<String>> userShortcuts;
+	private static Shortcut centralizedShortcut;
 	
-	public Shortcut() {
+	private Shortcut() {
 		resetShortcut();
+	}
+	
+	public Shortcut getShortcut() {
+		if(centralizedShortcut == null) {
+			centralizedShortcut = new Shortcut();
+		}
+		return centralizedShortcut;
 	}
 	
 	public String[][] processShortcutCommand(String[] command) throws NoSuchElementException {

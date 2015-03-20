@@ -68,7 +68,6 @@ public class Template {
 	}
 	
 	
-	
 	private Task insertTemplateIntoMap(String name, Task template) {
 		return templates.put(name, template);
 	}
