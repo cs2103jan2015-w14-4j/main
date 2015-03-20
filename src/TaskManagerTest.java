@@ -10,40 +10,40 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TaskManagerTest {
-    public static final String[] ADD_TASK_1000 = {"add", null, "CS2103T Tutorial", 
+    public static final String[] ADD_TASK_1000 = {"addTask", null, "CS2103T Tutorial", 
         "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "1"};
-    public static final String[] ADD_TASK_1001 = {"add", null, "CS2107 MidTerm", 
+    public static final String[] ADD_TASK_1001 = {"addTask", null, "CS2107 MidTerm", 
         "20/03/2015 12:00", "20/03/2015 13:30", null, "LT18", null, "1"};
-    public static final String[] ADD_TASK_1002 = {"add", null, "CS2101 Reflection", null, 
+    public static final String[] ADD_TASK_1002 = {"addTask", null, "CS2101 Reflection", null, 
         null, "21/03/2015 23:59", null, "name the file properly", "1"};
-    public static final String[] DELETE_TASK_1000 = {"delete", "1000", null, null, null, 
+    public static final String[] DELETE_TASK_1000 = {"deleteTask", "1000", null, null, null, 
         null, null, null, null};    
-    public static final String[] DELETE_TASK_1001 = {"delete", "1001", null, null, null, 
+    public static final String[] DELETE_TASK_1001 = {"deleteTask", "1001", null, null, null, 
             null, null, null, null};
-    public static final String[] DELETE_TASK_9999 = {"delete", "9999", null, null, null, 
+    public static final String[] DELETE_TASK_9999 = {"deleteTask", "9999", null, null, null, 
         null, null, null, null};
-    public static final String[] UNDO_OPERATION = {"undo", null, null, null, null, null, 
+    public static final String[] UNDO_OPERATION = {"undoTask", null, null, null, null, null, 
         null, null, null};
-    public static final String[] REDO_OPERATION = {"redo", null, null, null, null, null, 
+    public static final String[] REDO_OPERATION = {"redoTask", null, null, null, null, null, 
         null, null, null};
-    public static final String[] EDIT_TASK_1000 = {"edit", "1000", null, null, 
+    public static final String[] EDIT_TASK_1000 = {"editTask", "1000", null, null, 
         "20/03/2015 15:30", null, null, null, null};
-    public static final String[] EDIT_TASK_1001 = {"edit", "1001", null, null, 
+    public static final String[] EDIT_TASK_1001 = {"editTask", "1001", null, null, 
         "20/03/2015 15:30", null, "LT108", null, null};
-    public static final String[] EDIT_TASK_1002 = {"edit", "1002", null, null,
+    public static final String[] EDIT_TASK_1002 = {"editTask", "1002", null, null,
         null, null, "IVLE", "", null};
-    public static final String[] EDIT_TASK_9999 = {"edit", "9999", null, null, 
+    public static final String[] EDIT_TASK_9999 = {"editTask", "9999", null, null, 
             "20/03/2015 15:30", null, null, null, null};
-    public static final String[] VIEW_TASK = {"view", null, null, null, null, null, 
+    public static final String[] VIEW_TASK = {"viewTask", null, null, null, null, null, 
         null, null, null};
 
     public static final int TASK1000 = 0;
     public static final int TASK1001 = 1;
     public static final int TASK1002 = 2;
     public static final int COMMAND_TYPE = 0;
-    public static final String COMMAND_ADD = "add";
-    public static final String COMMAND_DELETE = "delete";
-    public static final String COMMAND_EDIT = "edit";
+    public static final String COMMAND_ADD = "addTask";
+    public static final String COMMAND_DELETE = "deleteTask";
+    public static final String COMMAND_EDIT = "editTask";
     
 
 
@@ -174,15 +174,9 @@ public class TaskManagerTest {
     @Test
     public void testViewCommand() throws ParseException {
         myTaskManager = new TaskManager();
-        String[] ADD_TASK_1 = {"add", null, "CS2103T Tutorial", "18/03/2015 14:00", 
-                "18/03/2015 15:00", null, "SOC", null, "1"};
-        String[] ADD_TASK_2 = {"add", null, "CS2107 MidTerm", "20/03/2015 12:00", 
-                "20/03/2015 13:30", null, "LT18", null, "1"};
-        String[] ADD_TASK_3 = {"add", null, "CS2101 Reflection", null, 
-                null, "21/03/2015 23:59", null, "name the file properly", "1"};
-        myTaskManager.processTM(ADD_TASK_1, myFileStorage);
-        myTaskManager.processTM(ADD_TASK_2, myFileStorage);
-        myTaskManager.processTM(ADD_TASK_3, myFileStorage);
+        myTaskManager.processTM(ADD_TASK_1000, myFileStorage);
+        myTaskManager.processTM(ADD_TASK_1001, myFileStorage);
+        myTaskManager.processTM(ADD_TASK_1002, myFileStorage);
 
         ArrayList<Task> expectTasks = new ArrayList<Task>();
         Task expectTask1000 = new Task(1000, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 

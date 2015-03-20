@@ -61,14 +61,14 @@ public class TaskManager {
         ArrayList<Task> returningTasks = null;
 
         switch(commandObtained) {
-        case add:
+        case addTask:
             returningTasks = addATask(inputs);
             if(returningTasks != null) {
                 updateUndoStackForAdd(returningTasks, inputs[COMMAND_TYPE]);
             }
             assert returningTasks != null;
             break;
-        case edit:
+        case editTask:
             if(isAbleToEdit(inputs)) {
                 int TIDToEdit = getTaskTID(inputs);
                 Task taskToEdit = getTaskFromTID(TIDToEdit);
@@ -77,10 +77,10 @@ public class TaskManager {
                 assert returningTasks != null;
             }
             break;
-        case view:
+        case viewTask:
             returningTasks = viewTasks(); 
             break;
-        case delete:
+        case deleteTask:
             if(isAbleToDelete(inputs)) {
                 int TIDToDelete = getTaskTID(inputs);
                 Task taskToDelete = getTaskFromTID(TIDToDelete);
@@ -88,19 +88,19 @@ public class TaskManager {
                 returningTasks = deleteATask(TIDToDelete);
             }
             break;
-        case init:
+        case initTask:
             initializeTasks(externalStorage);
             returningTasks = viewTasks();
             assert undoStack.size() == 0;
             assert redoStack.size() == 0;
             break;
-        case undo:
+        case undoTask:
             returningTasks = undoAnOperation();
             break;
-        case redo:
+        case redoTask:
             returningTasks = redoAnOperation();
             break;
-        case invalid:
+        case invalidTask:
             System.out.print(INVALID_COMMAND_MESSAGE);
             break;
         }
@@ -116,7 +116,7 @@ public class TaskManager {
         try {
             commandObtained = COMMAND_TYPE_TASK_MANAGER.valueOf(command);
         } catch (IllegalArgumentException ex) {
-            commandObtained = COMMAND_TYPE_TASK_MANAGER.invalid;
+            commandObtained = COMMAND_TYPE_TASK_MANAGER.invalidTask;
         }
         return commandObtained;
     }
@@ -210,9 +210,8 @@ public class TaskManager {
         }
         return isTIDFound;
     }
-
-    //create a public version of this
-    private Task getTaskFromTID(int TID) {
+    
+    public Task getTaskFromTID(int TID) {
         Task taskFound = null;
         for(Task task : tasks) {
             if(task.getTID() == TID) {
@@ -392,14 +391,14 @@ public class TaskManager {
             String[] undoOperation = undoStack.peek();
             COMMAND_TYPE_TASK_MANAGER commandUndo = obtainCommand(undoOperation[COMMAND_TYPE]);
             switch(commandUndo) {
-            case add: 
+            case addTask: 
                 int TIDToDelete = getTaskTID(undoOperation);
                 returningTasks = deleteATask(TIDToDelete);
                 break;
-            case delete:
+            case deleteTask:
                 returningTasks = addATask(undoOperation);
                 break;
-            case edit:
+            case editTask:
                 int TIDToEdit = getTaskTID(undoOperation);
                 Task taskToEdit = getTaskFromTID(TIDToEdit);
                 returningTasks = editATaskForUndo(taskToEdit, undoOperation);
@@ -501,14 +500,14 @@ public class TaskManager {
             String[] redoOperation = redoStack.peek();
             COMMAND_TYPE_TASK_MANAGER commandUndo = obtainCommand(redoOperation[COMMAND_TYPE]);
             switch(commandUndo) {
-            case add:
+            case addTask:
                 returningTasks = addATask(redoOperation);
                 break;
-            case delete:
+            case deleteTask:
                 int TIDToDelete = getTaskTID(redoOperation);
                 returningTasks = deleteATask(TIDToDelete);
                 break;
-            case edit:
+            case editTask:
                 int TIDToEdit = getTaskTID(redoOperation);
                 Task taskToEdit = getTaskFromTID(TIDToEdit);
                 returningTasks = editATaskForRedo(taskToEdit, redoOperation);
