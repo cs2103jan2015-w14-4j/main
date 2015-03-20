@@ -1,3 +1,3 @@
 public enum COMMAND_TYPE_TASK_MANAGER {
-    add, edit, view, delete, init, undo, redo, invalid
+    addTask, editTask, viewTask, deleteTask, initTask, undoTask, redoTask, invalidTask
 }
