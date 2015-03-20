@@ -90,6 +90,13 @@ public class SystemTest {
 			System.out.println(line);
 
 		}
+		
+		groups = parser.parse("assignment from tuesday to wednesday");
+		for(DateGroup group:groups)  {
+			List<Date> dates = group.getDates();   //for range date
+			for(Date date:dates)
+				System.out.println(date);
+		}
 	}
 	@Test
 	public void testImmutable() {
