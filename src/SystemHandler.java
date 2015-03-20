@@ -17,7 +17,7 @@ public class SystemHandler {
 	
 	private Logger 		logfile;
 	private TaskManager 	myTaskList;
-	private Customize 		myCustomizedList;
+	private Template 		myTemplates;
 	private Shortcut 		myShortcut;
 	private String 			fileName;
 	private FileStorage 	externalStorage;
@@ -229,7 +229,7 @@ public class SystemHandler {
 	private void executeCustomizer(String[] command) {
 		//stub
 		//Not implemented
-		myCustomizedList.processCustomizingCommand(command);
+		myTemplates.processCustomizingCommand(command);
 		
 	}
 	

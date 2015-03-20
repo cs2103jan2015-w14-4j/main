@@ -3,12 +3,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class Customize {
+public class Template {
 	
 	public static final String NO_SUCH_TEMPLATE = "No such template saved in the system";
 	private HashMap<String,Task> templates; 
 	
-	public Customize() {
+	public Template() {
 		templates = new HashMap<String,Task>();
 	}
 	
