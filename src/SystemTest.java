@@ -8,14 +8,20 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-
-
 import org.junit.Assert;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+
+//Import for natty
+import java.util.List;
+import java.util.Map;
+
+import com.joestelmach.natty.DateGroup;
+import com.joestelmach.natty.Parser;
 
 public class SystemTest {
 
@@ -42,6 +48,49 @@ public class SystemTest {
 		myfile.deleteOnExit();
 	}
 
+	@SuppressWarnings("deprecation")
+	@Test
+	public void testNatty() {
+
+		//To use, import antlr-3.5.2-runtime.jar which is in lib, 
+		//import 	java.util.List;
+		//import 	java.util.Map;
+		//import 	com.joestelmach.natty.DateGroup;
+		//import 	com.joestelmach.natty.Parser;
+		Parser parser = new Parser();
+		
+		List<DateGroup> groups = parser.parse("the day before next thursday");
+		for(DateGroup group:groups)  {
+			Date dates = group.getDates().get(0);   //Here to get the date (which we need mostly)
+			System.out.println(dates.toLocaleString());   
+			
+			//Not really necessary
+//			int line = group.getLine();
+//			int column = group.getPosition();
+//			String matchingValue = group.getText(); 
+//			String syntaxTree = group.getSyntaxTree().toStringTree();
+//			Map parseMap = group.getParseLocations();
+//			boolean isRecurreing = group.isRecurring();
+//			Date recursUntil = group.getRecursUntil();
+
+		}
+
+		groups = parser.parse("every thursday until June");
+		for(DateGroup group:groups)  {
+			Date dates = group.getDates().get(0);   //Here to get the date (which we need mostly)
+			System.out.println(dates.toLocaleString());        
+			int line = group.getLine();			//Not sure what it does
+			int column = group.getPosition();	//Not sure what
+			String matchingValue = group.getText(); 	//thursday
+			String syntaxTree = group.getSyntaxTree().toStringTree(); //Not sure what
+			Map parseMap = group.getParseLocations();	//Not sure what
+			boolean isRecurreing = group.isRecurring();	//True
+			Date recursUntil = group.getRecursUntil();	//Mon Jun 01 21:25:06 SGT 2015
+			System.out.println(recursUntil);	
+			System.out.println(line);
+
+		}
+	}
 	@Test
 	public void testImmutable() {
 		Task a = new Task(1004, "NEW",

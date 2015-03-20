@@ -15,7 +15,7 @@ public class SystemHandler {
 	//Intended length of command array
 	public static final int LENGTH_COMMAND = 9;
 	
-	private Logger 		logfile;
+	private CentralizedLog 	logfile;
 	private TaskManager 	myTaskList;
 	private Template 		myTemplates;
 	private Shortcut 		myShortcut;
