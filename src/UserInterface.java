@@ -7,18 +7,23 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
+import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Vector;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.EventQueue;
 import java.awt.Insets;
+import java.util.Observable;
+import java.util.Observer;
 
 
-public class UserInterface {
+public class UserInterface  {
 
 	public JFrame frame;
 	public JPanel panel;
@@ -34,9 +39,32 @@ public class UserInterface {
     public static final String MSG_ASK_FILENAME = "Please enter the name of your file";
 	public static final String MSG_ASK_INPUT = "Please enter your command";
 	public static final String MSG_ECHO_FILENAME = "File location: %1$s";
+	public static final String MSG_SEPARATOR = "=========================================================";
 	
 	private boolean hasFilename;
 	private String prevInput;
+	
+	/**
+	public void update(Observable obs, Object obj ){
+				
+			//printOutputTask(mainHandler.getTaskResult());
+		
+	}
+	
+	public void update(Observable obserable, ArrayList<Task> outputArray ){
+	
+//		ArrayList<Task> result = new ArrayList<Task>();
+//		Task testTask = new Task(1, input + " (The rest are dummies)", new Date(115,3,8,14,0) , 
+//				new Date(115,3,8,17,0), null, "HOME", null, 0);
+//		result.add(testTask);
+	//	printOutputTask(outputArray);
+		
+		outputArea.append(MSG_SEPARATOR + newline);
+		outputArea.append(MSG_ASK_INPUT + newline);
+		
+	}
+	
+	*/
 	
 	/**
 	 * Launch the application.
@@ -105,9 +133,9 @@ public class UserInterface {
 			//	outputArea.append("ctrl Z has been pressed" + newline);
 				String input  = "undo";
 				ArrayList<Task> result = mainHandler.rawUserInput(input);
-				printOutput(input.split("\\s*,\\s*")[0],result);
+			//	printOutput(input.split("\\s*,\\s*")[0],result);
 				
-				outputArea.append(MSG_ASK_INPUT + newline);
+			//	outputArea.append(MSG_ASK_INPUT + newline);
 				
 			}
 			
@@ -124,9 +152,9 @@ public class UserInterface {
 			//	outputArea.append("ctrl Y has been pressed" + newline);
 				String input  = "redo";
 				ArrayList<Task> result = mainHandler.rawUserInput(input);
-				printOutput(input.split("\\s*,\\s*")[0],result);
+			//	printOutput(input.split("\\s*,\\s*")[0],result);
 				
-				outputArea.append(MSG_ASK_INPUT + newline);
+			//	outputArea.append(MSG_ASK_INPUT + newline);
 				
 			}
 			
@@ -143,9 +171,9 @@ public class UserInterface {
 			//	outputArea.append("ctrl D has been pressed" + newline);
 				String input  = "view";
 				ArrayList<Task> result = mainHandler.rawUserInput(input);
-				printOutput(input.split("\\s*,\\s*")[0],result);
+			//	printOutput(input.split("\\s*,\\s*")[0],result);
 				
-				outputArea.append(MSG_ASK_INPUT + newline);
+				//outputArea.append(MSG_ASK_INPUT + newline);
 			}
 			
 		};
@@ -156,13 +184,20 @@ public class UserInterface {
 		
 		//until here this needs to refactored out
 		
-		outputArea = new JTextArea();
-		scrollPane = new JScrollPane(outputArea); 
+	//	outputArea = new JTextArea();	
+	//	scrollPane = new JScrollPane(outputArea); 
+		
+		TaskTableModel model = new TaskTableModel(outputArray);
+		JTable outputTable = new JTable (model);
+		JScrollPane scrollPane = new JScrollPane(outputTable);
+	
+		/*
 		outputArea.setColumns(30);
 		outputArea.setTabSize(10);
 		outputArea.setRows(10);
 		outputArea.setLineWrap(true);
 		outputArea.setEditable(false);
+		*/
 		GridBagConstraints gbc_outputArea = new GridBagConstraints();
 		gbc_outputArea.insets = new Insets(0, 0, 5, 0);
 		gbc_outputArea.fill = GridBagConstraints.BOTH;
@@ -178,7 +213,7 @@ public class UserInterface {
  
 		
 		//Init system handler with filename
-		outputArea.append(MSG_ASK_FILENAME + newline);
+		//outputArea.append(MSG_ASK_FILENAME + newline);
 
 		
 	}
@@ -195,8 +230,8 @@ public class UserInterface {
 				mainHandler = new SystemHandler(input);
 				mainHandler.rawUserInput("init");
 				hasFilename = true;
-				outputArea.append(String.format(MSG_ECHO_FILENAME, mainHandler.getFileName()) + newline);
-				outputArea.append(MSG_ASK_INPUT + newline);
+				//outputArea.append(String.format(MSG_ECHO_FILENAME, mainHandler.getFileName()) + newline);
+				//outputArea.append(MSG_ASK_INPUT + newline);
 				clearInput();
 			}
 			else{
@@ -204,15 +239,16 @@ public class UserInterface {
   
 				//Dummy
 
-				ArrayList<Task> result = mainHandler.rawUserInput(input);
+				//ArrayList<Task> result = mainHandler.rawUserInput(input);
 				
-//				ArrayList<Task> result = new ArrayList<Task>();
-//				Task testTask = new Task(1, input + " (The rest are dummies)", new Date(115,3,8,14,0) , 
-//						new Date(115,3,8,17,0), null, "HOME", null, 0);
-//				result.add(testTask);
-				printOutput(input.split("\\s*,\\s*")[0],result);
+		     	ArrayList<Task> result = new ArrayList<Task>();
+			   Task testTask = new Task(1, input + " (The rest are dummies)", new Date(115,3,8,14,0) , 
+					new Date(115,3,8,17,0), null, "HOME", null, 0);
+				outputArray.add(testTask);
+				//printOutput(input.split("\\s*,\\s*")[0],result);
+				outputArray.add(testTask);
 				
-				outputArea.append(MSG_ASK_INPUT + newline);
+				//outputArea.append(MSG_ASK_INPUT + newline);
 			}
 		}
 		
@@ -222,7 +258,7 @@ public class UserInterface {
 	}
 	
 	
-	
+	/**
 	
 	private void printOutput(String commandType, ArrayList<Task> returnedOutput){
 		if(returnedOutput == null) return;
@@ -252,6 +288,22 @@ public class UserInterface {
 		}
 		
 	}
+	
+	*/
+
+	private void printOutputTask(ArrayList<Task> returnedOutput){
+		if(returnedOutput == null) return;
+		for(int i = 0; i < returnedOutput.size(); i++){
+			Task nextTask = returnedOutput.get(i);
+			outputArray.add(nextTask);
+			}
+			
+		//	outputArea.append(MSG_SEPARATOR);
+		//	outputArea.append(newline);
+		
+		
+	}
+
 
 	private void clearInput() {
 		textField.selectAll();
@@ -259,4 +311,5 @@ public class UserInterface {
 	}
 	
 }
+
 

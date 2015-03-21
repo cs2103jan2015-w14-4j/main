@@ -4,9 +4,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.awt.EventQueue;
 import java.text.ParseException;
+import java.util.Observable;
 
 
-public class SystemHandler {
+public class SystemHandler extends Observable {
 	
 	//dummy string acting like UI prompt
 	public static final String MSG_ASK_FILENAME = "Please enter the name of your file";
@@ -21,8 +22,25 @@ public class SystemHandler {
 	private Shortcut 		myShortcut;
 	private String 			fileName;
 	private FileStorage 	externalStorage;
-	private UserInterface 	window;
+	private static UserInterface 	window;
 	private FlexiParser 	parser;
+	
+	private static ArrayList<Task> taskResult;
+	
+	public void outputTasklist(ArrayList<Task> result){
+		taskResult = result;
+		setChanged();
+		notifyObservers();
+	}
+	
+	public ArrayList<Task> getTaskResult(){
+		return taskResult;
+	}
+	
+	public void shortcutUpdate(String shortcuts){
+		setChanged();
+		notifyObservers();
+	}
 	
 	/**
 	 * Return file location which the data saved at
@@ -60,6 +78,7 @@ public class SystemHandler {
 		String myFile = dummyUI(MSG_ASK_FILENAME, sc);
 		SystemHandler mySystemControl = new SystemHandler(myFile);
 		mySystemControl.activateUI();
+		//mySystemControl.addObserver(window);
 		sc.close();
 	}
 	
@@ -77,6 +96,7 @@ public class SystemHandler {
 				}
 			}
 		});
+		
 	}
 	
 	
@@ -215,6 +235,7 @@ public class SystemHandler {
 	 */
 	private ArrayList<Task> executeTaskManager(String[] command) throws ParseException {
 		ArrayList<Task> result = myTaskList.processTM(command, externalStorage);
+		outputTasklist(result);
 		return result;
 	}
 	

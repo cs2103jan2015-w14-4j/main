@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="src">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="D:/!&amp;Docs/!NUS/CS2103T/FlexiTracker2/lib"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="C:/Users/MA/workspace/Flexi Tracker/lib/natty-0.10.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/MA/workspace/Flexi Tracker/lib/joda-time-2.7.jar"/>
-	<classpathentry kind="lib" path="C:/Users/MA/workspace/Flexi Tracker/lib/antlr-3.5.2-runtime.jar"/>
+	<classpathentry kind="lib" path="lib/antlr-3.5.2-runtime.jar"/>
+	<classpathentry kind="lib" path="lib/joda-time-2.7.jar"/>
+	<classpathentry kind="lib" path="lib/natty-0.10.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
