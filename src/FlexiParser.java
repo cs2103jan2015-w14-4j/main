@@ -1,14 +1,30 @@
-//once constructed can keep parsing
+//not sure natty loop for what
+//next time put inside get attribute
+//for edit id? how to check
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import com.joestelmach.natty.DateGroup;
+import com.joestelmach.natty.Parser;
+
+
+
+
+//add Task behind all the command
+
+
 public class FlexiParser {
 	
-    private static final String COMMAND_ADD = "add";
-    private static final String COMMAND_VIEW = "view";
-    private static final String COMMAND_DELETE = "delete";
-    private static final String COMMAND_EDIT = "edit";
+    private static final String COMMAND_ADD = "addTask";
+    private static final String COMMAND_VIEW = "viewTask";
+    private static final String COMMAND_DELETE = "deleteTask";
+    private static final String COMMAND_EDIT = "editTask";
 	
     private static final String TID_NOT_EXIST = null;
     
-    public static final int LENGTH_COMMAND = 9;
     private static final int COMMAND_TYPE_INDEX = 0;
     private static final int TASK_ID_INDEX = 1;
     private static final int TASK_NAME_INDEX = 2;
@@ -20,42 +36,91 @@ public class FlexiParser {
     private static final int TASK_PRIORITY_INDEX = 8;
     
     private static final String ERROR_EXCEPTION = "Exception caught";
+    private static final String DATE_FROM = "From";
+    private static final String DATE_TO = "To";
+    private static final String DATE_ON = "On";
+    
+    private static final String[] keyWords = {"ID","Title","From","To","On","At","Det","Pri"};
     
     private static String[] inputArray;
 	
+    public static final int TASK_LENGTH = 9;
+    
+    
+    
     public FlexiParser() {
 		
-		
+    	
+    	
 	}
-
+	
     public String[] parseText(String userInput) {
     	
     	try {
 		    
-			inputArray = userInput.split("\\s*,\\s*");
+			inputArray = userInput.split("\\s+");
 			
+			String[] outputArray = new String[TASK_LENGTH];
 			
-			String[] outputArray = new String[LENGTH_COMMAND];
-			outputArray[COMMAND_TYPE_INDEX] = inputArray[COMMAND_TYPE_INDEX];
+			//String command = processCommand(inputArray[COMMAND_TYPE_INDEX]);
+			//direct command must be correct;
 			
-			
-			
-			
-			switch(inputArray[COMMAND_TYPE_INDEX]) {
+			String command = inputArray[COMMAND_TYPE_INDEX];
+			outputArray[COMMAND_TYPE_INDEX] = command;
+	
+			switch(command) {
 				
 			    case COMMAND_ADD:
 					
 			    	//WARNING: NO CHECKING VALIDITY
-					outputArray[TASK_NAME_INDEX] = inputArray[1];
-					outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
-					addCommand(inputArray, outputArray);
+			    	
+			    	for(int i = 0; i < keyWords.length; i++) {
+			    		int j = i + 1;
+			    		String value = extractAttribute(inputArray, keyWords[i]);
+			    		if((keyWords[i].equals(DATE_FROM) || keyWords[i].equals(DATE_TO) || keyWords[i].equals(DATE_ON)) && value != null) {
+			    			 
+			    			ArrayList<Date> dateList = useNatty(value);
+			    			outputArray[j] = dateConverter(dateList.get(0));
+			    			 
+			    		 }
+			    		 
+			    		else {
+			    			 	 
+			    			 outputArray[j] = value;
+			    		 
+			    		 }
+			    	
+			    	}
+			    		//outputArray[TASK_ID_INDEX] = extractAttribute(inputArray,keyWords[0]);
+			    		//outputArray[TASK_NAME_INDEX] = extractAttribute(inputArray,keyWords[1]);
+			    		//outputArray[TASK_LOCATION_INDEX] = extractAttribute(inputArray,keyWords[5]);
+			    		//outputArray[TASK_DETAILS_INDEX] = extractAttribute(inputArray,keyWords[6]);
+			    		//outputArray[TASK_PRIORITY_INDEX] = extractAttribute(inputArray,keyWords[7]);
+			    	
+			    	//addCommand(inputArray, outputArray);
 					
 					break;
 				case COMMAND_EDIT:
 					
 					//WARNING: NO CHECKING VALIDITY
 					outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
-					editCommand(inputArray, outputArray);
+					for(int i = 1; i < keyWords.length; i++) {
+			    		int j = i + 1;
+			    		String value = extractAttribute(inputArray, keyWords[i]);
+			    		if((keyWords[i].equals(DATE_FROM) || keyWords[i].equals(DATE_TO) || keyWords[i].equals(DATE_ON)) && value != null) {
+			    			 
+			    			ArrayList<Date> dateList = useNatty(value);
+			    			outputArray[j] = dateConverter(dateList.get(0));
+			    			 
+			    		 }
+			    		 
+			    		else {
+			    			 	 
+			    			 outputArray[j] = value;
+			    		 
+			    		 }
+			    	
+			    	}
 					
 					break;
 				case COMMAND_DELETE:
@@ -82,131 +147,118 @@ public class FlexiParser {
     	
     }
     
-	private void addCommand(String[] input,String[] outputArray) {
-		String timeF = null;
-		String dateF = null;
-		String timeT = null;
-		String dateT = null;
-		for(int i = 2; i < input.length; ++i) {
-			
-			if(inputArray[i].equals("from")) {
-				
-				//WARNING: No checking for time input format
-				timeF = inputArray[++i];
-			
-			}
-			
-			else if(inputArray[i].equals("to")) {
-				
-				//WARNING: No checking for time input format
-				timeT = inputArray[++i];
-			
-			}
-			else if(inputArray[i].equals("on")) {
-				
-				//WARNING: No checking for date input format
-				//ASSUMPTION: No across midnight task 
-				dateF = dateT = inputArray[++i];
-			
-			}
-			else if(inputArray[i].equals("at")) {
-				
-				outputArray[TASK_LOCATION_INDEX] = inputArray[++i];
-			
-			}
-		}
-		
-		if(dateF != null && timeF != null) {
-			
-			outputArray[TASK_DATE_FROM_INDEX] = dateF + " " + timeF;
-		}
-		
-		if(dateT != null && timeT != null) {
-			
-			outputArray[TASK_DATE_TO_INDEX] = dateT + " " + timeT;
-		}	
-		
-	}
-	
-	private void editCommand(String[] input,String[] outputArray) {
-		
-		String timeF = null;
-		String dateF = null;
-		String timeT = null;
-		String dateT = null;
-		for(int i = 1; i < input.length; ++i) {
-			
-			if(inputArray[i].equals("from")) {
-				
-				//WARNING: No checking for time input format
-				timeF = inputArray[++i];
-			
-			}
-			
-			else if(inputArray[i].equals("name")) {
-				
-				//WARNING: No checking for time input format
-				outputArray[TASK_NAME_INDEX] = inputArray[++i];
-			
-			}
-			
-			else if(inputArray[i].equals("to")) {
-				
-				//WARNING: No checking for time input format
-				timeT = inputArray[++i];
-			}
-			
-			else if(inputArray[i].equals("on")) {
-				
-				//WARNING: No checking for date input format
-				//ASSUMPTION: No across midnight task 
-				dateF = dateT = inputArray[++i];
-			}
-			
-			else if(inputArray[i].equals("at")) {
-			
-				outputArray[TASK_LOCATION_INDEX] = inputArray[++i];
-			
-			}
-		
-		}
-		
-		if(dateF != null && timeF != null) {
-			
-			outputArray[TASK_DATE_FROM_INDEX] = dateF + " " + timeF;
-			
-		}
-		
-		if(dateT != null && timeT != null) {
-			
-			outputArray[TASK_DATE_TO_INDEX] = dateT + " " + timeT;
-			
-		}
-	
-	}
-	
-    //getter
-    public String[] getStringArray() {
+    private String processCommand(String command) {
     	
-    	return inputArray;
+    	String processedCommand = command.toLowerCase();
+    	
+    	return processedCommand;
     	
     }
     
+    //extractor
+	private String extractAttribute(String[] input, String keyWord) {
+			
+			StringBuilder strb = new StringBuilder();
+		
+			String attribute = null;
+		
+			try {	
+			for(int i = 0; i < input.length; i++) {
+				
+				if(input[i].equals(keyWord)) {
+					
+					int index = i+1;
+					while(isNotKeyWord(input[index]) && index < input.length) {
+						
+						strb.append(input[index]);
+						strb.append(" ");
+						index++;
+						if(index==input.length) {
+							
+							break;
+						
+						}
+					
+					}
+				
+					attribute = strb.toString();
+					
+				
+				}
+			
+			}
+		}catch(Exception e) {
+			
+			System.out.println("error");
+			
+		}
+		
+		return attribute;
+		
+	}
+	
+	private ArrayList<Date> useNatty(String dateInput) {
+		Parser parser = new Parser();
+		List<DateGroup> groups = parser.parse(dateInput);
+		ArrayList<Date> dateList = new ArrayList<Date>();
+		
+		for(DateGroup group:groups)  {
+			//this part loops through groups
+			Date dates = group.getDates().get(0);   
+			dateList.add(dates);
+			//System.out.println(dates.toLocaleString());        
+
+		}
+		return dateList;
+		
+	}
+	
+	private String dateConverter(Date date) {
+		SimpleDateFormat ft = new SimpleDateFormat ("dd/MM/yyyy HH:mm");
+		
+		return ft.format(date);
+		
+	}
+	
+	
+	private boolean isNotKeyWord(String str) {
+		
+		for(int i = 0; i < keyWords.length; i++) {
+			
+			if(str.equals(keyWords[i])) {
+				
+				return false;
+				
+			}
+			
+		}
+		
+		return true;
+		
+	}
+	
     public static void main(String[] args) {
+    
+    	
     	
     	FlexiParser test1 = new FlexiParser();
     	
-    	String[] temp = test1.parseText("add,meeting,on,24/03/2015,from,14:00,to,16:00");
-    	for(int i = 0; i < temp.length; ++i) {
     	
-    		System.out.print((temp[i] == null)? "NULL":temp[i].toString());
-    		System.out.print("| ");
+    	String[] temp = test1.parseText("editTask ID 1001 Title meeting with huehue On June 20th 20:00 To 16:00");
+    
+    	//test1.useNatty("to March 24 2015");
     	
+    	
+    		
+    	for(int i=0;i<temp.length;i++) {
+    		
+    		System.out.println(temp[i]);
+    		
     	}
+    	//System.out.println();
+    	//System.out.println();
     	
-    	System.out.println();
-    	System.out.println();
-    	
+
     
 
     	
