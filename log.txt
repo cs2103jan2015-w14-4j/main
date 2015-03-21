@@ -1,0 +1,2 @@
+Mar 22, 2015 2:42:31 AM CentralizedLog log
+CONFIG: user enters: init
