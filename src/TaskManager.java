@@ -4,7 +4,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TaskManager {
     private static final int COMMAND_TYPE = 0;
@@ -18,10 +21,18 @@ public class TaskManager {
     private static final int PRIORITY = 8;
     private static final int INITIAL_TID = 1000;
     private static final int DEFAULT_SIZE = 9;
+    private static final int NUM_ATTRIBUTE_FOR_DATE_OBJECT = 5;
+    private static final int DAY_INDEX = 0;
+    private static final int MONTH_INDEX = 1;
+    private static final int YEAR_INDEX = 2;
+    private static final int HOUR_INDEX = 3;
+    private static final int MINUTE_INDEX = 4;
     private static final String CLEAR_INFO_INDICATOR = "";
     private static final String INVALID_COMMAND_MESSAGE = "The command is invalid.\n";
     private static final boolean TID_IS_NOT_FOUND = false;
     private static final boolean TID_IS_FOUND = true;
+    private static final boolean DATE_IS_VALID = true;
+    private static final boolean DATE_IS_INVALID = false;
     private static final int INDEX_OF_ONLY_TASK = 0;
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
     private static final String VERTICAL_BAR = "|";
@@ -30,7 +41,7 @@ public class TaskManager {
     private int IDCounter;
     private Stack<String[]> undoStack = new Stack<String[]>();
     private Stack<String[]> redoStack = new Stack<String[]>();
-    
+
     //------------constructor-------
     public TaskManager() {
         tasks = new ArrayList<Task>();
@@ -66,7 +77,6 @@ public class TaskManager {
             if(returningTasks != null) {
                 updateUndoStackForAdd(returningTasks, inputs[COMMAND_TYPE]);
             }
-            assert returningTasks != null;
             break;
         case editTask:
             if(isAbleToEdit(inputs)) {
@@ -172,6 +182,7 @@ public class TaskManager {
         Date date = null;
         try {
             if(dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
+                assert isDateValid(dateString);
                 DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
                 date = format.parse(dateString);
             }
@@ -210,7 +221,7 @@ public class TaskManager {
         }
         return isTIDFound;
     }
-    
+
     public Task getTaskFromTID(int TID) {
         Task taskFound = null;
         for(Task task : tasks) {
@@ -223,8 +234,6 @@ public class TaskManager {
     }
 
     private ArrayList<Task> editATask(Task taskToEdit, String[] inputs) {
-        ArrayList<Task> returningTasks = null;
-
         for(int i = TASK_NAME; i < inputs.length; ++i) {
             if(!isInputEmpty(inputs, i)) {
                 editTaskInfo(inputs, taskToEdit, i);
@@ -234,7 +243,7 @@ public class TaskManager {
                 clearTaskInfo(taskToEdit, i);
             }
         }
-        returningTasks = new ArrayList<Task>();
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
         returningTasks.add(taskToEdit.clone());
 
         return returningTasks;
@@ -566,9 +575,74 @@ public class TaskManager {
         }
         return str;
     }
-    
-    //dummy
-    public void testGitIgnoreWorks() {
-        System.out.println("If I only need to commit the .java, that means it works!!");
+
+    protected boolean isDateValid(String date) {
+        boolean isDateValid = DATE_IS_VALID;
+
+        Matcher m = Pattern.compile("\\d+").matcher(date);
+        int[] numbers = new int[NUM_ATTRIBUTE_FOR_DATE_OBJECT];
+        int i = 0;
+
+        //assume date objects always have five attributes
+        //can use a logger here actually
+        while(m.find()) {
+            numbers[i] = Integer.parseInt(m.group());
+            if(numbers[i] < 0)
+                isDateValid = DATE_IS_INVALID;
+            ++i;
+        }
+
+        if(isDateValid && numbers[HOUR_INDEX] > 23) {
+            isDateValid = DATE_IS_INVALID;
+        }
+
+        if(isDateValid && numbers[MINUTE_INDEX] > 59) {
+            isDateValid = DATE_IS_INVALID;
+        }
+
+        if(isDateValid) {
+            switch(numbers[MONTH_INDEX]) {
+            case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+                if(numbers[DAY_INDEX] == 0 || numbers[DAY_INDEX] > 31) {
+                    isDateValid = DATE_IS_INVALID;
+                }
+                break;
+            case 4: case 6: case 9: case 11:
+                if(numbers[DAY_INDEX] == 0 || numbers[DAY_INDEX] > 30) {
+                    isDateValid = DATE_IS_INVALID;
+                }
+                break;
+            case 2:
+                if(isLeapYear(numbers[YEAR_INDEX])) {
+                    if(numbers[DAY_INDEX] == 0 || numbers[DAY_INDEX] > 29) {
+                        isDateValid = DATE_IS_INVALID;
+                    }
+                } else {
+                    if(numbers[DAY_INDEX] == 0 || numbers[DAY_INDEX] > 28) {
+                        isDateValid = DATE_IS_INVALID;
+                    }
+                }
+                break;
+            default:
+                isDateValid = DATE_IS_INVALID;
+                break;
+            }
+        }
+
+        return isDateValid;
+    }
+
+    private boolean isLeapYear(int year) {
+        boolean isLeapYear = true;
+        if(year % 100 == 0) {
+            if(year % 400 != 0) {
+                isLeapYear = false;
+            }
+        } else {
+            if(year % 4 != 0) {
+                isLeapYear = false;
+            }
+        }
+        return isLeapYear;
     }
 }
