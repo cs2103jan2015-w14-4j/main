@@ -36,7 +36,7 @@ public class TaskManager {
     private static final boolean DATE_IS_INVALID = false;
     private static final boolean SEARCH_IS_FOUND = true;
     private static final boolean SEARCH_IS_NOT_FOUND = false;
-    private static final int INDEX_OF_ONLY_TASK = 0;
+    private static final int INDEX_ZERO = 0;
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
 
     private ArrayList<Task> tasks;
@@ -72,7 +72,9 @@ public class TaskManager {
                     convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
                     convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
                     convertToIntType(inputs[PRIORITY]));
+            addIDToTaskIDs(newTask.getTID());
             tasks.add(newTask);
+
             if(newTask.getDateFrom() != null) {
                 assert newTask.getDateTo() != null;
                 assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
@@ -90,7 +92,9 @@ public class TaskManager {
                     convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
                     convertToIntType(inputs[PRIORITY]));
             updateIDCounter(inputs[TID]);
+            addIDToTaskIDs(newTask.getTID());
             tasks.add(newTask);
+
             if(newTask.getDateFrom() != null) {
                 assert newTask.getDateTo() != null;
                 assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
@@ -191,7 +195,7 @@ public class TaskManager {
         } else {
             if(isIDClashing(inputs[TID])) {
                 inputs[TID] = convertToStringFromInt(getNewTID());
-            } 
+            }
             if(isIDLessThan1000(inputs[TID])) {
                 inputs[TID] = convertToStringFromInt(getNewTID());
             }
@@ -205,25 +209,31 @@ public class TaskManager {
             returningTasks.add(newTask.clone());
         }
 
-        if(returningTasks.get(INDEX_OF_ONLY_TASK).getDateFrom() != null) {
-            assert returningTasks.get(INDEX_OF_ONLY_TASK).getDateTo() != null;
+        addIDToTaskIDs(returningTasks.get(INDEX_ZERO).getTID());
+
+        if(returningTasks.get(INDEX_ZERO).getDateFrom() != null) {
+            assert returningTasks.get(INDEX_ZERO).getDateTo() != null;
             assert isDateFromSmallerThanDateTo(
-                    returningTasks.get(INDEX_OF_ONLY_TASK).getDateFrom(), 
-                    returningTasks.get(INDEX_OF_ONLY_TASK).getDateTo());
+                    returningTasks.get(INDEX_ZERO).getDateFrom(), 
+                    returningTasks.get(INDEX_ZERO).getDateTo());
         }
 
-        assert returningTasks.get(INDEX_OF_ONLY_TASK).getTID() >= 1000;
+        assert returningTasks.get(INDEX_ZERO).getTID() >= 1000;
         return returningTasks;
     }
 
-    private void addIDtoTIDs(String TID) {
-        TaskIDs.add(convertToIntType(TID));
+    private void removeIDFromTaskIDs(int TID) {
+        TaskIDs.remove(TID);
+    }
+
+    private void addIDToTaskIDs(int TID) {
+        TaskIDs.add(TID);
     }
 
     private boolean isIDClashing(String TID) {
         return TaskIDs.contains(convertToIntType(TID));
     }
-    
+
     private boolean isIDLessThan1000(String TID) {
         return convertToIntType(TID) < INITIAL_TID;
     }
@@ -448,6 +458,9 @@ public class TaskManager {
                 iterator.remove();
             }
         }
+
+        removeIDFromTaskIDs(TID);
+
         return returningTasks;
     }
 
@@ -554,7 +567,7 @@ public class TaskManager {
     //This ArrayList contains only one item
     private void updateUndoStackForAdd(ArrayList<Task> tasks, String commandType) {
         assert tasks.size() == 1;
-        Task task = tasks.get(INDEX_OF_ONLY_TASK);
+        Task task = tasks.get(INDEX_ZERO);
         updateUndoStackFromTask(task, commandType);
     }
 
