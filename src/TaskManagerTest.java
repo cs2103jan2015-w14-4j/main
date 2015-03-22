@@ -533,6 +533,25 @@ public class TaskManagerTest {
         //test the ArrayList after edit
         assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
     }
+    
+    public void testIsDateValid() {
+        myTaskManager = new TaskManager();
+        String date1 = "22/03/2015 23:59";
+        String invalidDate1 = "29/02/2015 23:59";
+        String invalidDate2 = "29/02/1900 23:59";
+        String invalidDate3 = "35/01/2013 23:59";
+        String invalidDate4 = "25/13/2013 23:59";
+        String invalidDate5 = "25/01/2013 24:59";
+        String invalidDate6 = "25/01/2013 23:61";
+        
+        Assert.assertEquals(myTaskManager.isDateValid(date1), true);
+        Assert.assertEquals(myTaskManager.isDateValid(invalidDate1), false);
+        Assert.assertEquals(myTaskManager.isDateValid(invalidDate2), false);
+        Assert.assertEquals(myTaskManager.isDateValid(invalidDate3), false);
+        Assert.assertEquals(myTaskManager.isDateValid(invalidDate4), false);
+        Assert.assertEquals(myTaskManager.isDateValid(invalidDate5), false);
+        Assert.assertEquals(myTaskManager.isDateValid(invalidDate6), false);
+    }
 
     public boolean assertTaskArrayListEquals(ArrayList<Task> test, 
             ArrayList<Task> expected) {
