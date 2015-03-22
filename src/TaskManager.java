@@ -76,9 +76,15 @@ public class TaskManager {
             if(newTask.getDateFrom() != null) {
                 assert newTask.getDateTo() != null;
                 assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
-                    newTask.getDateTo());
+                        newTask.getDateTo());
             }
         } else {
+            if(isIDClashing(inputs[TID])) {
+                inputs[TID] = convertToStringFromInt(getNewTID());
+            }
+            if(isIDLessThan1000(inputs[TID])) {
+                inputs[TID] = convertToStringFromInt(getNewTID());
+            }
             Task newTask = new Task(convertToIntType(inputs[TID]), inputs[TASK_NAME], 
                     convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
                     convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
@@ -88,7 +94,7 @@ public class TaskManager {
             if(newTask.getDateFrom() != null) {
                 assert newTask.getDateTo() != null;
                 assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
-                    newTask.getDateTo());
+                        newTask.getDateTo());
             }
         } 
     }
@@ -183,6 +189,12 @@ public class TaskManager {
             returningTasks = new ArrayList<Task>();
             returningTasks.add(newTask.clone());
         } else {
+            if(isIDClashing(inputs[TID])) {
+                inputs[TID] = convertToStringFromInt(getNewTID());
+            } 
+            if(isIDLessThan1000(inputs[TID])) {
+                inputs[TID] = convertToStringFromInt(getNewTID());
+            }
             Task newTask = new Task(convertToIntType(inputs[TID]), inputs[TASK_NAME], 
                     convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
                     convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
@@ -192,20 +204,28 @@ public class TaskManager {
             returningTasks = new ArrayList<Task>();
             returningTasks.add(newTask.clone());
         }
-        
+
         if(returningTasks.get(INDEX_OF_ONLY_TASK).getDateFrom() != null) {
             assert returningTasks.get(INDEX_OF_ONLY_TASK).getDateTo() != null;
             assert isDateFromSmallerThanDateTo(
                     returningTasks.get(INDEX_OF_ONLY_TASK).getDateFrom(), 
                     returningTasks.get(INDEX_OF_ONLY_TASK).getDateTo());
         }
-        
+
         assert returningTasks.get(INDEX_OF_ONLY_TASK).getTID() >= 1000;
         return returningTasks;
-    }  
+    }
+
+    private void addIDtoTIDs(String TID) {
+        TaskIDs.add(convertToIntType(TID));
+    }
+
+    private boolean isIDClashing(String TID) {
+        return TaskIDs.contains(convertToIntType(TID));
+    }
     
-    private boolean isIDClash() {
-        
+    private boolean isIDLessThan1000(String TID) {
+        return convertToIntType(TID) < INITIAL_TID;
     }
 
     private int getNewTID() {
@@ -299,7 +319,7 @@ public class TaskManager {
         if(taskToEdit.getDateFrom() != null) {
             assert taskToEdit.getDateTo() != null;
             assert isDateFromSmallerThanDateTo(taskToEdit.getDateFrom(), 
-                taskToEdit.getDateTo());
+                    taskToEdit.getDateTo());
         }
         returningTasks.add(taskToEdit.clone());
 
@@ -637,7 +657,7 @@ public class TaskManager {
         undoStack.push(redoStack.pop());
     }
 
-    
+
     protected boolean isDateValid(String date) {
         boolean isDateValid = DATE_IS_VALID;
 

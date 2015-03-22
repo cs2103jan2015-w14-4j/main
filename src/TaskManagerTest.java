@@ -10,6 +10,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TaskManagerTest {
+    public static final String[] ADD_TASK_765 = {"addTask", "765", "CS2103T Tutorial", 
+        "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "1"};
     public static final String[] ADD_TASK_1000 = {"addTask", null, "CS2103T Tutorial", 
         "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "1"};
     public static final String[] ADD_TASK_1001 = {"addTask", null, "CS2107 MidTerm", 
@@ -627,6 +629,14 @@ public class TaskManagerTest {
         
         Date deadline2 = convertToDateObject("18/02/2050 14:00");
         Assert.assertTrue(myTaskManager.isDeadlineAfterCurrentTime(deadline2));
+    }
+    
+    @Test
+    public void testAddWithIDLessThanOneThousand() throws ParseException {
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(ADD_TASK_765, myFileStorage);
+        
+        Assert.assertEquals(myTaskManager.getTasks().get(0).getTID(), 1000);
     }
     
     @Test
