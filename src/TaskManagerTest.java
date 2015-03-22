@@ -575,8 +575,8 @@ public class TaskManagerTest {
         
         Task searchTask1000 = new Task(1000, "CS2103T Tutorial", convertToDateObject("18/02/2015 14:00"), 
                 convertToDateObject("18/03/2016 15:00"), null, "SOC", null, 1);
-        Task searchTask1001 = new Task(1001, "CS4107 MidTerm", convertToDateObject("20/01/2015 12:00"), 
-                convertToDateObject("20/03/2017 13:30"), null, "LT18", null, 1);
+        //Task searchTask1001 = new Task(1001, "CS4107 MidTerm", convertToDateObject("20/01/2015 12:00"), 
+        //        convertToDateObject("20/03/2017 13:30"), null, "LT18", null, 1);
         Task searchTask1002 = new Task(1002, "CS2101 Reflection", null, null, 
                 convertToDateObject("21/05/2015 23:59"), null, "name the file properly", 1);
 
@@ -602,9 +602,40 @@ public class TaskManagerTest {
                 expectTasks);
     }
     
+    @Test
+    public void testIsDateFromSmallerThanDateTo() {
+        myTaskManager = new TaskManager();
+
+        Date dateFrom1 = convertToDateObject("18/02/2015 14:00");
+        Date dateTo1 = convertToDateObject("18/03/2016 15:00");
+        Assert.assertTrue(myTaskManager.isDateFromSmallerThanDateTo(dateFrom1, dateTo1));
+        
+        Date dateFrom2 = convertToDateObject("18/02/2015 14:00");
+        Date dateTo2 = convertToDateObject("18/02/2015 14:00");
+        Assert.assertFalse(myTaskManager.isDateFromSmallerThanDateTo(dateFrom2, dateTo2));
+    
+        Date dateFrom3 = convertToDateObject("18/02/2015 14:00");
+        Date dateTo3 = convertToDateObject("18/02/2010 14:00");
+        Assert.assertFalse(myTaskManager.isDateFromSmallerThanDateTo(dateFrom3, dateTo3));
+    }
+    
+    @Test
+    public void testIsDeadlineAfterCurrentTime() {
+        myTaskManager = new TaskManager();
+        Date deadline1 = convertToDateObject("18/02/2010 14:00");
+        Assert.assertFalse(myTaskManager.isDeadlineAfterCurrentTime(deadline1));
+        
+        Date deadline2 = convertToDateObject("18/02/2050 14:00");
+        Assert.assertTrue(myTaskManager.isDeadlineAfterCurrentTime(deadline2));
+    }
+    
+    @Test
     public void testClone() throws ParseException {
         myTaskManager = new TaskManager();
-        myTaskManager.processTM(ADD_TASK_1000, myFileStorage);
+        ArrayList<Task> tks = myTaskManager.processTM(ADD_TASK_1000, myFileStorage);
+        tks.get(0).setTID(5000);
+        Assert.assertFalse(assertTaskEqual(tks.get(0), myTaskManager.getTasks().get(0)));
+        
     }
 
     public boolean assertTaskArrayListEquals(ArrayList<Task> test, 
