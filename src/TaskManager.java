@@ -402,6 +402,9 @@ public class TaskManager {
     
     private ArrayList<Task> searchTask(String[] inputs) {
         ArrayList<Task> returningTasks = new ArrayList<Task>();
+        
+        assert inputs[SEARCH_INDEX].trim() != "";
+        
         for(Task task: tasks) {
             if(isSearchFound(task, inputs[SEARCH_INDEX])) {
                 returningTasks.add(task.clone());
@@ -699,5 +702,15 @@ public class TaskManager {
             }
         }
         return isLeapYear;
+    }
+    
+    //stub
+    protected boolean isDateFromSmallerThanDateTo() {
+        return false;
+    }
+    
+    //stub
+    protected boolean isDeadlineAfterCurrentTime() {
+        return false;
     }
 }
