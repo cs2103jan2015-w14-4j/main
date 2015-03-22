@@ -26,12 +26,15 @@ public class TaskManager {
     private static final int YEAR_INDEX = 2;
     private static final int HOUR_INDEX = 3;
     private static final int MINUTE_INDEX = 4;
+    private static final int SEARCH_INDEX = 1;
     private static final String CLEAR_INFO_INDICATOR = "";
     private static final String INVALID_COMMAND_MESSAGE = "The command is invalid.\n";
     private static final boolean TID_IS_NOT_FOUND = false;
     private static final boolean TID_IS_FOUND = true;
     private static final boolean DATE_IS_VALID = true;
     private static final boolean DATE_IS_INVALID = false;
+    private static final boolean SEARCH_IS_FOUND = true;
+    private static final boolean SEARCH_IS_NOT_FOUND = false;
     private static final int INDEX_OF_ONLY_TASK = 0;
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
     private static final String VERTICAL_BAR = "|";
@@ -69,7 +72,7 @@ public class TaskManager {
         updateIDCounter(inputs[TID]);
         tasks.add(newTask);
     }
-    
+
     public void addATaskForInitialization(String[] inputs) {
         Task newTask = new Task(convertToIntType(inputs[TID]), inputs[TASK_NAME], 
                 convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
@@ -118,6 +121,7 @@ public class TaskManager {
             assert redoStack.size() == 0;
             break;
         case searchTask:
+            returningTasks = searchTask(inputs);
             break;
         case undoTask:
             returningTasks = undoAnOperation();
@@ -393,6 +397,39 @@ public class TaskManager {
 
     private void initializeTasks(FileStorage externalStorage) throws ParseException {
         externalStorage.readFromFile(this);
+    }
+
+    
+    private ArrayList<Task> searchTask(String[] inputs) {
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
+        for(Task task: tasks) {
+            if(isSearchFound(task, inputs[SEARCH_INDEX])) {
+                returningTasks.add(task.clone());
+            }
+        }
+
+        if(returningTasks.isEmpty()) {
+            return null;
+        } else {
+            return returningTasks;
+        }
+    }
+
+    private boolean isSearchFound(Task task, String search) {
+        boolean isSearchFound = SEARCH_IS_NOT_FOUND;
+        String[] strForSearch = new String[DEFAULT_SIZE];
+        strForSearch[COMMAND_TYPE] = null;
+        
+        getStringArrayFromTask(task, strForSearch);
+        
+        for(String str: strForSearch) {
+            if(str != null && str.toLowerCase().contains(search.toLowerCase())) {
+                isSearchFound = SEARCH_IS_FOUND;
+                break;
+            }
+        }
+        
+        return isSearchFound;
     }
 
 
