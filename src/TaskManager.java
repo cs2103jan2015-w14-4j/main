@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -63,7 +62,21 @@ public class TaskManager {
 
     //------------other methods------------
     public void processAddForInitialization(String[] inputs) {
-        addATask(inputs);
+        Task newTask = new Task(convertToIntType(inputs[TID]), inputs[TASK_NAME], 
+                convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
+                convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
+                convertToIntType(inputs[PRIORITY]));
+        updateIDCounter(inputs[TID]);
+        tasks.add(newTask);
+    }
+    
+    public void addATaskForInitialization(String[] inputs) {
+        Task newTask = new Task(convertToIntType(inputs[TID]), inputs[TASK_NAME], 
+                convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
+                convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
+                convertToIntType(inputs[PRIORITY]));
+        updateIDCounter(inputs[TID]);
+        tasks.add(newTask);
     }
 
     public ArrayList<Task> processTM(String[] inputs, FileStorage externalStorage) 
@@ -134,14 +147,15 @@ public class TaskManager {
 
     private ArrayList<Task> addATask(String[] inputs) {
         ArrayList<Task> returningTasks = null;
-        if(hasTID(inputs)){
+        //if does not have TID, get a new TID; else just add it
+        if(!hasTID(inputs)){
             Task newTask = new Task(getNewTID(), inputs[TASK_NAME], 
                     convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
                     convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
                     convertToIntType(inputs[PRIORITY]));
             tasks.add(newTask);
             returningTasks = new ArrayList<Task>();
-            returningTasks.add(newTask);
+            returningTasks.add(newTask.clone());
         } else {
             Task newTask = new Task(convertToIntType(inputs[TID]), inputs[TASK_NAME], 
                     convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
@@ -150,7 +164,7 @@ public class TaskManager {
             updateIDCounter(inputs[TID]);
             tasks.add(newTask);
             returningTasks = new ArrayList<Task>();
-            returningTasks.add(newTask);
+            returningTasks.add(newTask.clone());
         }
         assert returningTasks.get(INDEX_OF_ONLY_TASK).getTID() >= 1000;
         return returningTasks;
@@ -168,7 +182,7 @@ public class TaskManager {
     }
 
     private boolean hasTID(String[] inputs) {
-        return inputs[TID] == null;
+        return inputs[TID] != null;
     }
 
     private void updateIDCounter(String currentID) {
@@ -575,6 +589,8 @@ public class TaskManager {
         }
         return str;
     }
+
+
 
     protected boolean isDateValid(String date) {
         boolean isDateValid = DATE_IS_VALID;
