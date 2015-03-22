@@ -3,6 +3,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -37,12 +38,12 @@ public class TaskManager {
     private static final boolean SEARCH_IS_NOT_FOUND = false;
     private static final int INDEX_OF_ONLY_TASK = 0;
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
-    private static final String VERTICAL_BAR = "|";
 
     private ArrayList<Task> tasks;
     private int IDCounter;
     private Stack<String[]> undoStack = new Stack<String[]>();
     private Stack<String[]> redoStack = new Stack<String[]>();
+    private HashSet<Integer> TaskIDs = new HashSet<Integer>();
 
     //------------constructor-------
     public TaskManager() {
@@ -65,17 +66,31 @@ public class TaskManager {
 
     //------------other methods------------
     public void processAddForInitialization(String[] inputs) {
-        Task newTask = new Task(convertToIntType(inputs[TID]), inputs[TASK_NAME], 
-                convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
-                convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
-                convertToIntType(inputs[PRIORITY]));
-        if(newTask.getDateFrom() != null) {
-            assert newTask.getDateTo() != null;
-            assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
-                newTask.getDateTo());
-        }
-        updateIDCounter(inputs[TID]);
-        tasks.add(newTask);
+        //if does not have TID, get a new TID; else just add the TID
+        if(!hasTID(inputs)){
+            Task newTask = new Task(getNewTID(), inputs[TASK_NAME], 
+                    convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
+                    convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
+                    convertToIntType(inputs[PRIORITY]));
+            tasks.add(newTask);
+            if(newTask.getDateFrom() != null) {
+                assert newTask.getDateTo() != null;
+                assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
+                    newTask.getDateTo());
+            }
+        } else {
+            Task newTask = new Task(convertToIntType(inputs[TID]), inputs[TASK_NAME], 
+                    convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
+                    convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
+                    convertToIntType(inputs[PRIORITY]));
+            updateIDCounter(inputs[TID]);
+            tasks.add(newTask);
+            if(newTask.getDateFrom() != null) {
+                assert newTask.getDateTo() != null;
+                assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
+                    newTask.getDateTo());
+            }
+        } 
     }
 
     public void addATaskForInitialization(String[] inputs) {
@@ -158,7 +173,7 @@ public class TaskManager {
 
     private ArrayList<Task> addATask(String[] inputs) {
         ArrayList<Task> returningTasks = null;
-        //if does not have TID, get a new TID; else just add it
+        //if does not have TID, get a new TID; else just add the TID
         if(!hasTID(inputs)){
             Task newTask = new Task(getNewTID(), inputs[TASK_NAME], 
                     convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
@@ -187,7 +202,11 @@ public class TaskManager {
         
         assert returningTasks.get(INDEX_OF_ONLY_TASK).getTID() >= 1000;
         return returningTasks;
-    }   
+    }  
+    
+    private boolean isIDClash() {
+        
+    }
 
     private int getNewTID() {
         int newTID;
@@ -618,40 +637,7 @@ public class TaskManager {
         undoStack.push(redoStack.pop());
     }
 
-    //this method is for testing
-    protected String arrayListToString() {
-        String str = "";
-        for(Task task: tasks) {
-            str += convertToStringFromInt(task.getTID()) + VERTICAL_BAR 
-                    + task.getTaskName() + VERTICAL_BAR;
-
-            if(task.getDateFrom() != null) {
-                str += convertToStringFromDate(task.getDateFrom()) + VERTICAL_BAR;
-            } else {
-                str += "null" + VERTICAL_BAR;
-            }
-
-            if(task.getDateTo() != null) {
-                str += convertToStringFromDate(task.getDateTo()) + VERTICAL_BAR;
-            } else {
-                str += "null" + VERTICAL_BAR;
-            }
-
-            if(task.getDeadline() != null) {
-                str += convertToStringFromDate(task.getDeadline()) + VERTICAL_BAR;
-            } else {
-                str += "null" + VERTICAL_BAR;
-            }
-
-            str += task.getLocation() + VERTICAL_BAR
-                    + task.getDetails() + VERTICAL_BAR
-                    + task.getPriority() + "\n";
-        }
-        return str;
-    }
-
-
-
+    
     protected boolean isDateValid(String date) {
         boolean isDateValid = DATE_IS_VALID;
 
