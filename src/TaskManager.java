@@ -69,6 +69,11 @@ public class TaskManager {
                 convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
                 convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
                 convertToIntType(inputs[PRIORITY]));
+        if(newTask.getDateFrom() != null) {
+            assert newTask.getDateTo() != null;
+            assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
+                newTask.getDateTo());
+        }
         updateIDCounter(inputs[TID]);
         tasks.add(newTask);
     }
@@ -172,6 +177,14 @@ public class TaskManager {
             returningTasks = new ArrayList<Task>();
             returningTasks.add(newTask.clone());
         }
+        
+        if(returningTasks.get(INDEX_OF_ONLY_TASK).getDateFrom() != null) {
+            assert returningTasks.get(INDEX_OF_ONLY_TASK).getDateTo() != null;
+            assert isDateFromSmallerThanDateTo(
+                    returningTasks.get(INDEX_OF_ONLY_TASK).getDateFrom(), 
+                    returningTasks.get(INDEX_OF_ONLY_TASK).getDateTo());
+        }
+        
         assert returningTasks.get(INDEX_OF_ONLY_TASK).getTID() >= 1000;
         return returningTasks;
     }   
@@ -264,6 +277,11 @@ public class TaskManager {
             }
         }
         ArrayList<Task> returningTasks = new ArrayList<Task>();
+        if(taskToEdit.getDateFrom() != null) {
+            assert taskToEdit.getDateTo() != null;
+            assert isDateFromSmallerThanDateTo(taskToEdit.getDateFrom(), 
+                taskToEdit.getDateTo());
+        }
         returningTasks.add(taskToEdit.clone());
 
         return returningTasks;
@@ -399,12 +417,12 @@ public class TaskManager {
         externalStorage.readFromFile(this);
     }
 
-    
+
     private ArrayList<Task> searchTask(String[] inputs) {
         ArrayList<Task> returningTasks = new ArrayList<Task>();
-        
+
         assert inputs[SEARCH_INDEX].trim() != "";
-        
+
         for(Task task: tasks) {
             if(isSearchFound(task, inputs[SEARCH_INDEX])) {
                 returningTasks.add(task.clone());
@@ -422,16 +440,16 @@ public class TaskManager {
         boolean isSearchFound = SEARCH_IS_NOT_FOUND;
         String[] strForSearch = new String[DEFAULT_SIZE];
         strForSearch[COMMAND_TYPE] = null;
-        
+
         getStringArrayFromTask(task, strForSearch);
-        
+
         for(String str: strForSearch) {
             if(str != null && str.toLowerCase().contains(search.toLowerCase())) {
                 isSearchFound = SEARCH_IS_FOUND;
                 break;
             }
         }
-        
+
         return isSearchFound;
     }
 
@@ -703,14 +721,21 @@ public class TaskManager {
         }
         return isLeapYear;
     }
-    
-    //stub
-    protected boolean isDateFromSmallerThanDateTo() {
-        return false;
+
+    protected boolean isDateFromSmallerThanDateTo(Date dateFrom, Date dateTo) {
+        if(dateFrom.compareTo(dateTo) < 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
-    
-    //stub
-    protected boolean isDeadlineAfterCurrentTime() {
-        return false;
+
+    protected boolean isDeadlineAfterCurrentTime(Date deadline) {
+        Date date = new Date();
+        if(deadline.compareTo(date) > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
