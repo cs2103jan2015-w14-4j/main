@@ -36,6 +36,12 @@ public class TaskManagerTest {
             "20/03/2015 15:30", null, null, null, null};
     public static final String[] VIEW_TASK = {"viewTask", null, null, null, null, null, 
         null, null, null};
+    public static final String[] ADD_TASK_1000_SEARCH = {"addTask", null, "CS2103T Tutorial", 
+        "18/02/2015 14:00", "18/03/2016 15:00", null, "SOC", null, "1"};
+    public static final String[] ADD_TASK_1001_SEARCH = {"addTask", null, "CS4107 MidTerm", 
+        "20/01/2015 12:00", "20/03/2017 13:30", null, "LT18", null, "1"};
+    public static final String[] ADD_TASK_1002_SEARCH = {"addTask", null, "CS2101 Reflection", 
+        null, null, "21/05/2015 23:59", null, "name the file properly", "1"};
 
     public static final int TASK1000 = 0;
     public static final int TASK1001 = 1;
@@ -558,6 +564,47 @@ public class TaskManagerTest {
         Assert.assertEquals(myTaskManager.isDateValid(invalidDate5), false);
         Assert.assertEquals(myTaskManager.isDateValid(invalidDate6), false);
         Assert.assertEquals(myTaskManager.isDateValid(invalidDate7), false);
+    }
+    
+    @Test
+    public void testSearchTask() throws ParseException {
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(ADD_TASK_1000_SEARCH, myFileStorage);
+        myTaskManager.processTM(ADD_TASK_1001_SEARCH, myFileStorage);
+        myTaskManager.processTM(ADD_TASK_1002_SEARCH, myFileStorage);
+        
+        Task searchTask1000 = new Task(1000, "CS2103T Tutorial", convertToDateObject("18/02/2015 14:00"), 
+                convertToDateObject("18/03/2016 15:00"), null, "SOC", null, 1);
+        Task searchTask1001 = new Task(1001, "CS4107 MidTerm", convertToDateObject("20/01/2015 12:00"), 
+                convertToDateObject("20/03/2017 13:30"), null, "LT18", null, 1);
+        Task searchTask1002 = new Task(1002, "CS2101 Reflection", null, null, 
+                convertToDateObject("21/05/2015 23:59"), null, "name the file properly", 1);
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        String[] search1 = {"searchTask", "CS2", null, null, null, null, 
+                null, null, null};
+        expectTasks.add(searchTask1000);
+        expectTasks.add(searchTask1002);
+        assertTaskArrayListEquals(myTaskManager.processTM(search1, myFileStorage), 
+                expectTasks);
+        
+        expectTasks = new ArrayList<Task>();
+        String[] search2 = {"searchTask", "05/2015", null, null, null, null, 
+                null, null, null};
+        expectTasks.add(searchTask1002);
+        assertTaskArrayListEquals(myTaskManager.processTM(search2, myFileStorage), 
+                expectTasks);
+        
+        String[] searchNotFound = {"searchTask", "cannot found", null, null, null, null, 
+                null, null, null};
+        expectTasks = null;
+        assertTaskArrayListEquals(myTaskManager.processTM(searchNotFound, myFileStorage), 
+                expectTasks);
+    }
+    
+    public void testClone() throws ParseException {
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(ADD_TASK_1000, myFileStorage);
     }
 
     public boolean assertTaskArrayListEquals(ArrayList<Task> test, 
