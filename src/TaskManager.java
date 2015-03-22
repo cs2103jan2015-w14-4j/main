@@ -117,6 +117,8 @@ public class TaskManager {
             assert undoStack.size() == 0;
             assert redoStack.size() == 0;
             break;
+        case searchTask:
+            break;
         case undoTask:
             returningTasks = undoAnOperation();
             break;
