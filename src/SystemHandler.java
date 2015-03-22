@@ -22,25 +22,29 @@ public class SystemHandler extends Observable {
 	private Shortcut 		myShortcut;
 	private String 			fileName;
 	private FileStorage 	externalStorage;
-	private static UserInterface 	window;
+	private UserInterface 	window;
 	private FlexiParser 	parser;
 	
-	private static ArrayList<Task> taskResult;
+	/*
+	private int 			displayType;
 	
-	public void outputTasklist(ArrayList<Task> result){
-		taskResult = result;
-		setChanged();
-		notifyObservers();
+	public int getDisplayType(){
+		if ( display shortcuts )
+			displayType = 1;
+		
+		return displayType;
 	}
 	
-	public ArrayList<Task> getTaskResult(){
-		return taskResult;
+	public ArrayList<Task> getOutputArray (ArrayList<Task> result){
+		return result;	
 	}
 	
-	public void shortcutUpdate(String shortcuts){
-		setChanged();
-		notifyObservers();
+	public ArrayList<Task> getShortcuts(ArrayList<Task> result){
+		return result;	
 	}
+	
+	*/
+	
 	
 	/**
 	 * Return file location which the data saved at
@@ -91,12 +95,14 @@ public class SystemHandler extends Observable {
 				try {
 					window = new UserInterface();
 					window.frame.setVisible(true);
+					 System.out.println(window);
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
-		
+
 	}
 	
 	
@@ -235,7 +241,6 @@ public class SystemHandler extends Observable {
 	 */
 	private ArrayList<Task> executeTaskManager(String[] command) throws ParseException {
 		ArrayList<Task> result = myTaskList.processTM(command, externalStorage);
-		outputTasklist(result);
 		return result;
 	}
 	

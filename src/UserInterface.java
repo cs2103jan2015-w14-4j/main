@@ -8,15 +8,11 @@ import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Vector;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.EventQueue;
@@ -35,7 +31,7 @@ public class UserInterface  {
 	private TaskTableModel model;
     private final static String newline = "\n";
     private JScrollPane scrollPane;
-    //private ArrayList<Task> outputArray;
+    private ArrayList<Task> outputArray;
     
     private SystemHandler mainHandler;
     
@@ -72,7 +68,7 @@ public class UserInterface  {
 	
 	/**
 	 * Launch the application.
-	 */
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -80,13 +76,16 @@ public class UserInterface  {
 
 					UserInterface window = new UserInterface();
 					window.frame.setVisible(true);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
 	}
-
+ */
+	
+	
 	/**
 	 * Create the application.
 	 */
@@ -116,24 +115,27 @@ public class UserInterface  {
 		
 	//	kbShortcuts();
 		
-	//	outputArea = new JTextArea();	
-	//	scrollPane = new JScrollPane(outputArea); 
+
+		 outputArray = new ArrayList<Task>();
 		
-		ArrayList<Task> outputArray =  new ArrayList<Task>();
-		 Task testTask = new Task( 1001  , " (The rest are dummies)", new Date(115,3,8,14,0) , 
-					new Date(115,3,8,17,0), new Date(113,2,8,17,0), "HOME", null, 0);
-		 outputArray.add(testTask);
+	   initOutputArea();
 		
-		JScrollPane scrollPane = createTaskTable(outputArray);
-	         
-	    	  
-		/*
+	
+		
+
+		
+	}
+
+	public void initOutputArea() {
+		outputArea = new JTextArea();	
+		scrollPane = new JScrollPane(); 
+		scrollPane.setViewportView(outputArea);
 		outputArea.setColumns(30);
 		outputArea.setTabSize(10);
 		outputArea.setRows(10);
 		outputArea.setLineWrap(true);
 		outputArea.setEditable(false);
-		*/
+		
 		GridBagConstraints gbc_outputArea = new GridBagConstraints();
 		gbc_outputArea.insets = new Insets(0, 0, 5, 0);
 		gbc_outputArea.fill = GridBagConstraints.BOTH;
@@ -146,12 +148,8 @@ public class UserInterface  {
 		gbc_textField.gridy = 1;
 		frame.getContentPane().add(textField, gbc_textField);
 		textField.setColumns(10);
-		addDummy();
-		
-		//Init system handler with filename
+		outputArea.append("Welcome to Flexi Tracker!" + newline + newline +"Press Enter Key to continue");
 		//outputArea.append(MSG_ASK_FILENAME + newline);
-
-		
 	}
 
 	public JScrollPane createTaskTable(ArrayList<Task> outputArray) {
@@ -164,11 +162,21 @@ public class UserInterface  {
 		columnNames.add("Location");
 		columnNames.add("Details");
 		columnNames.add("Priority");
-		
-		TaskTableModel model = new TaskTableModel(outputArray, columnNames, Task.class );
-		JTable outputTable = new JTable (model);
-		JScrollPane scrollPane = new JScrollPane(outputTable);
+		model = new TaskTableModel(outputArray, columnNames, Task.class );
+		 outputTable = new JTable (model);
+		// scrollPane = new JScrollPane(outputTable);
+		 scrollPane.setViewportView(outputTable);
+		   System.out.println(model+ "in createTaskTable");
 		return scrollPane;
+	}
+	
+	private void viewTextPane(){
+		scrollPane.setViewportView(outputArea);
+		
+	}
+	
+	private void viewTaskPane(){
+		scrollPane.setViewportView(outputTable);
 	}
 
 	private void kbShortcuts() {
@@ -250,64 +258,65 @@ public class UserInterface  {
 		int tid =1001;
 		   Task testTask = new Task( tid  , " (The rest are dummies)", new Date(115,3,8,14,0) , 
 				new Date(115,3,8,17,0), new Date(113,2,8,17,0), "HOME", null, 0);
-			//model.add(testTask);
-			//printOutput(input.split("\\s*,\\s*")[0],result);
-			//model.addRow(testTask);
+			
+		   System.out.println(model);
+			model.addRow(testTask);
 	}
 
 
 	
 	private class inputListener implements ActionListener {
-		/*
+		
 		public void actionPerformed(ActionEvent e){
 			String input = textField.getText();
 			prevInput = input;
 			
 			if (!hasFilename){		
-				mainHandler = new SystemHandler(input);
-				mainHandler.rawUserInput("init");
+				clearInput();
+				//Init system handler with filename
+				
+				//mainHandler = new SystemHandler(input);
+				//mainHandler.rawUserInput("init");
 				hasFilename = true;
+				//outputArea.append("input = " +input);
 				//outputArea.append(String.format(MSG_ECHO_FILENAME, mainHandler.getFileName()) + newline);
 				//outputArea.append(MSG_ASK_INPUT + newline);
-				clearInput();
+				createTaskTable(outputArray);
+				
+				
 			}
 			else{
 				clearInput();
-  
-				//Dummy
-
-				//ArrayList<Task> result = mainHandler.rawUserInput(input);
-			
-			   Task testTask = new Task(1, " (The rest are dummies)", new Date(115,3,8,14,0) , 
-					new Date(115,3,8,17,0), null, "HOME", null, 0);
-				//model.add(testTask);
-				//printOutput(input.split("\\s*,\\s*")[0],result);
-				outputArray.add(testTask);
-				model.fireTableDataChanged();
-				//outputArea.append(MSG_ASK_INPUT + newline);
+			//	System.out.println(window);
+				System.out.println(model);
+				System.out.println(mainHandler);
+				
+		//		if (getDisplayType() == 1){
+		//			displayShortcuts();
+		//		}else{
+		//			displayTaskTable();
+		//		}
+				
+				
+				 addDummy();
+				
+				 model.fireTableDataChanged();
 			}
-			*/
-			public void actionPerformed(ActionEvent e){
-			
-					//Dummy
-
-					//ArrayList<Task> result = mainHandler.rawUserInput(input);
-				int tid =1001;
-				   Task testTask = new Task( tid  , " (The rest are dummies)", new Date(115,3,8,14,0) , 
-						new Date(115,3,8,17,0), new Date(113,2,8,17,0), "HOME", null, 0);
-					//model.add(testTask);
-					//printOutput(input.split("\\s*,\\s*")[0],result);
-					model.addRow(testTask);
-					
-					//outputArea.append(MSG_ASK_INPUT + newline);
-				}
-
-
-		
 			
 	
-		
+		}
+
+		private void displayTaskTable() {
+			// TODO Auto-generated method stub
+			//model.refreshTable(getOutputArray());
+		}
+
+		private void displayShortcuts() {
+			// TODO Auto-generated method stub
+			
+		}
 	}
+		
 	
 
 	

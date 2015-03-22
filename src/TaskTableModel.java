@@ -11,7 +11,7 @@ public class TaskTableModel extends AbstractTableModel {
 	/**
 	 * 
 	 */
-	private ArrayList<Task> taskArray;
+	private static ArrayList<Task> taskArray;
 	protected ArrayList<String> columnNames;
 	protected Class[] columnClasses;
 	protected Boolean[] isColumnEditable;
@@ -21,10 +21,6 @@ public class TaskTableModel extends AbstractTableModel {
 	
 	private static final long serialVersionUID = 1L;
 	
-	
-//	public TaskTableModel(ArrayList<Task> taskArray){
-//		this.taskArray = new ArrayList<Task>(taskArray);
-//	}
 	
 	/**
 	 *  Full Constructor for creating a <code>RowTableModel</code>.
@@ -219,6 +215,30 @@ public class TaskTableModel extends AbstractTableModel {
 	{
 		taskArray.addAll(row, rowList);
 		fireTableRowsInserted(row, row + rowList.size() - 1);
+	}
+	
+	public void removeRowRange(int start, int end)
+	{
+		taskArray.subList(start, end + 1).clear();
+		fireTableRowsDeleted(start, end);
+	}
+	
+	public void removeRows(int... rows)
+	{
+		for (int i = rows.length - 1; i >= 0; i--)
+		{
+			int row = rows[i];
+			taskArray.remove(row);
+			fireTableRowsDeleted(row, row);
+		}
+	}
+
+	
+	public void refreshTable(ArrayList<Task> tableData){
+		System.out.println("inside refresh table");
+		//removeRows();
+		insertRows(0, tableData);
+		
 	}
  
       /*
