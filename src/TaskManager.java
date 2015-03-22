@@ -337,7 +337,11 @@ public class TaskManager {
         if(tasks.isEmpty()){
             return null;
         } else {
-            return tasks;
+            ArrayList<Task> returningTasks = new ArrayList<Task>();
+            for(Task task: tasks) {
+                returningTasks.add(task.clone());
+            }
+            return returningTasks;
         }
     }
 
