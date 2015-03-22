@@ -9,11 +9,13 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -29,9 +31,11 @@ public class UserInterface  {
 	public JPanel panel;
 	private JTextField textField;
 	private JTextArea outputArea;
+	private JTable outputTable;
+	private TaskTableModel model;
     private final static String newline = "\n";
     private JScrollPane scrollPane;
-    private ArrayList<Task> outputArray;
+    //private ArrayList<Task> outputArray;
     
     private SystemHandler mainHandler;
     
@@ -94,7 +98,6 @@ public class UserInterface  {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		outputArray = new ArrayList<Task>();
 			
 		panel = new JPanel();
 		frame = new JFrame(APP_NAME);
@@ -111,86 +114,19 @@ public class UserInterface  {
 		inputListener listener = new inputListener();
 		textField.addActionListener(listener);
 		
-	//keyboard shortcuts needs to be refactored out from here
-		
-		//pressing up restores previous input in textField
-		Action lastInput = new AbstractAction(){
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				textField.setText(prevInput);			
-			}		
-		};
-		
-		textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-        .put(KeyStroke.getKeyStroke("UP"), "lastInput");
-		textField.getActionMap().put("lastInput", lastInput );
-		
-		Action undo = new AbstractAction(){
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-			//	outputArea.append("ctrl Z has been pressed" + newline);
-				String input  = "undo";
-				ArrayList<Task> result = mainHandler.rawUserInput(input);
-			//	printOutput(input.split("\\s*,\\s*")[0],result);
-				
-			//	outputArea.append(MSG_ASK_INPUT + newline);
-				
-			}
-			
-		};
-		
-		textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-        .put(KeyStroke.getKeyStroke("ctrl Z"), "undo");
-		textField.getActionMap().put("undo", undo );
-		
-		Action redo = new AbstractAction(){
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-			//	outputArea.append("ctrl Y has been pressed" + newline);
-				String input  = "redo";
-				ArrayList<Task> result = mainHandler.rawUserInput(input);
-			//	printOutput(input.split("\\s*,\\s*")[0],result);
-				
-			//	outputArea.append(MSG_ASK_INPUT + newline);
-				
-			}
-			
-		};
-		
-		textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-        .put(KeyStroke.getKeyStroke("ctrl Y"), "redo");
-		textField.getActionMap().put("redo", redo );
-		
-		Action view = new AbstractAction(){
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-			//	outputArea.append("ctrl D has been pressed" + newline);
-				String input  = "view";
-				ArrayList<Task> result = mainHandler.rawUserInput(input);
-			//	printOutput(input.split("\\s*,\\s*")[0],result);
-				
-				//outputArea.append(MSG_ASK_INPUT + newline);
-			}
-			
-		};
-		
-		textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-        .put(KeyStroke.getKeyStroke("ctrl D"), "view");
-		textField.getActionMap().put("view", view );
-		
-		//until here this needs to refactored out
+	//	kbShortcuts();
 		
 	//	outputArea = new JTextArea();	
 	//	scrollPane = new JScrollPane(outputArea); 
 		
-		TaskTableModel model = new TaskTableModel(outputArray);
-		JTable outputTable = new JTable (model);
-		JScrollPane scrollPane = new JScrollPane(outputTable);
-	
+		ArrayList<Task> outputArray =  new ArrayList<Task>();
+		 Task testTask = new Task( 1001  , " (The rest are dummies)", new Date(115,3,8,14,0) , 
+					new Date(115,3,8,17,0), new Date(113,2,8,17,0), "HOME", null, 0);
+		 outputArray.add(testTask);
+		
+		JScrollPane scrollPane = createTaskTable(outputArray);
+	         
+	    	  
 		/*
 		outputArea.setColumns(30);
 		outputArea.setTabSize(10);
@@ -210,18 +146,119 @@ public class UserInterface  {
 		gbc_textField.gridy = 1;
 		frame.getContentPane().add(textField, gbc_textField);
 		textField.setColumns(10);
- 
+		addDummy();
 		
 		//Init system handler with filename
 		//outputArea.append(MSG_ASK_FILENAME + newline);
 
 		
 	}
+
+	public JScrollPane createTaskTable(ArrayList<Task> outputArray) {
+		ArrayList<String> columnNames = new ArrayList<String>();
+		columnNames.add("Task ID");
+		columnNames.add("Task Name");
+		columnNames.add("Date From");
+		columnNames.add("Date To");
+		columnNames.add("Deadline");
+		columnNames.add("Location");
+		columnNames.add("Details");
+		columnNames.add("Priority");
+		
+		TaskTableModel model = new TaskTableModel(outputArray, columnNames, Task.class );
+		JTable outputTable = new JTable (model);
+		JScrollPane scrollPane = new JScrollPane(outputTable);
+		return scrollPane;
+	}
+
+	private void kbShortcuts() {
+		//keyboard shortcuts needs to be refactored out from here
+			
+			//pressing up restores previous input in textField
+			Action lastInput = new AbstractAction(){
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					textField.setText(prevInput);			
+				}		
+			};
+			
+			textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+		    .put(KeyStroke.getKeyStroke("UP"), "lastInput");
+			textField.getActionMap().put("lastInput", lastInput );
+			
+			Action undo = new AbstractAction(){
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+				//	outputArea.append("ctrl Z has been pressed" + newline);
+					String input  = "undo";
+					ArrayList<Task> result = mainHandler.rawUserInput(input);
+				//	printOutput(input.split("\\s*,\\s*")[0],result);
+					
+				//	outputArea.append(MSG_ASK_INPUT + newline);
+					
+				}
+				
+			};
+			
+			textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+		    .put(KeyStroke.getKeyStroke("ctrl Z"), "undo");
+			textField.getActionMap().put("undo", undo );
+			
+			Action redo = new AbstractAction(){
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+				//	outputArea.append("ctrl Y has been pressed" + newline);
+					String input  = "redo";
+					ArrayList<Task> result = mainHandler.rawUserInput(input);
+				//	printOutput(input.split("\\s*,\\s*")[0],result);
+					
+				//	outputArea.append(MSG_ASK_INPUT + newline);
+					
+				}
+				
+			};
+			
+			textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+		    .put(KeyStroke.getKeyStroke("ctrl Y"), "redo");
+			textField.getActionMap().put("redo", redo );
+			
+			Action view = new AbstractAction(){
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+				//	outputArea.append("ctrl D has been pressed" + newline);
+					String input  = "view";
+					ArrayList<Task> result = mainHandler.rawUserInput(input);
+				//	printOutput(input.split("\\s*,\\s*")[0],result);
+					
+					//outputArea.append(MSG_ASK_INPUT + newline);
+				}
+				
+			};
+			
+			textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+		    .put(KeyStroke.getKeyStroke("ctrl D"), "view");
+			textField.getActionMap().put("view", view );
+			
+			//until here this needs to refactored out
+	}
 	
+	private void addDummy() {
+		int tid =1001;
+		   Task testTask = new Task( tid  , " (The rest are dummies)", new Date(115,3,8,14,0) , 
+				new Date(115,3,8,17,0), new Date(113,2,8,17,0), "HOME", null, 0);
+			//model.add(testTask);
+			//printOutput(input.split("\\s*,\\s*")[0],result);
+			//model.addRow(testTask);
+	}
+
 
 	
 	private class inputListener implements ActionListener {
-		
+		/*
 		public void actionPerformed(ActionEvent e){
 			String input = textField.getText();
 			prevInput = input;
@@ -240,23 +277,39 @@ public class UserInterface  {
 				//Dummy
 
 				//ArrayList<Task> result = mainHandler.rawUserInput(input);
-				
-		     	ArrayList<Task> result = new ArrayList<Task>();
-			   Task testTask = new Task(1, input + " (The rest are dummies)", new Date(115,3,8,14,0) , 
+			
+			   Task testTask = new Task(1, " (The rest are dummies)", new Date(115,3,8,14,0) , 
 					new Date(115,3,8,17,0), null, "HOME", null, 0);
-				outputArray.add(testTask);
+				//model.add(testTask);
 				//printOutput(input.split("\\s*,\\s*")[0],result);
 				outputArray.add(testTask);
-				
+				model.fireTableDataChanged();
 				//outputArea.append(MSG_ASK_INPUT + newline);
 			}
-		}
+			*/
+			public void actionPerformed(ActionEvent e){
+			
+					//Dummy
+
+					//ArrayList<Task> result = mainHandler.rawUserInput(input);
+				int tid =1001;
+				   Task testTask = new Task( tid  , " (The rest are dummies)", new Date(115,3,8,14,0) , 
+						new Date(115,3,8,17,0), new Date(113,2,8,17,0), "HOME", null, 0);
+					//model.add(testTask);
+					//printOutput(input.split("\\s*,\\s*")[0],result);
+					model.addRow(testTask);
+					
+					//outputArea.append(MSG_ASK_INPUT + newline);
+				}
+
+
 		
 			
 	
 		
 	}
 	
+
 	
 	/**
 	
@@ -290,19 +343,6 @@ public class UserInterface  {
 	}
 	
 	*/
-
-	private void printOutputTask(ArrayList<Task> returnedOutput){
-		if(returnedOutput == null) return;
-		for(int i = 0; i < returnedOutput.size(); i++){
-			Task nextTask = returnedOutput.get(i);
-			outputArray.add(nextTask);
-			}
-			
-		//	outputArea.append(MSG_SEPARATOR);
-		//	outputArea.append(newline);
-		
-		
-	}
 
 
 	private void clearInput() {
