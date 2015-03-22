@@ -235,7 +235,7 @@ public class TaskManager {
             }
         }
         returningTasks = new ArrayList<Task>();
-        returningTasks.add(taskToEdit);
+        returningTasks.add(taskToEdit.clone());
 
         return returningTasks;
     }
