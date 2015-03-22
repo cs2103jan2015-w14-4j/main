@@ -358,7 +358,7 @@ public class TaskManager {
             Task nextTask = (Task) iterator.next();
             if(TID == nextTask.getTID()) {
                 returningTasks = new ArrayList<Task>();
-                returningTasks.add(nextTask);
+                returningTasks.add(nextTask.clone());
                 iterator.remove();
             }
         }
