@@ -29,7 +29,7 @@ public class TaskManagerTest {
     public static final String[] REDO_OPERATION = {"redoTask", null, null, null, null, null, 
         null, null, null};
     public static final String[] EDIT_TASK_1000 = {"editTask", "1000", null, null, 
-        "20/03/2015 15:30", null, null, null, null};
+        "18/03/2015 15:30", null, null, null, null};
     public static final String[] EDIT_TASK_1001 = {"editTask", "1001", null, null, 
         "20/03/2015 15:30", null, "LT108", null, null};
     public static final String[] EDIT_TASK_1002 = {"editTask", "1002", null, null,
@@ -659,6 +659,45 @@ public class TaskManagerTest {
 
         //test the ArrayList
         assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
+    }
+
+    @Test
+    public void testClasedTasks() throws ParseException {
+        myTaskManager = new TaskManager();
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        ArrayList<Task> clashTasks = new ArrayList<Task>();
+        Task expectTask1000 = new Task(1000, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
+                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
+        Task expectTask1001 = new Task(1001, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
+                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
+        Task expectTask1002 = new Task(1002, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
+                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
+
+
+        expectTasks.add(expectTask1000);
+        clashTasks = new ArrayList<Task> ();
+        clashTasks.add(expectTask1000);
+        assertTaskArrayListEquals(myTaskManager.processTM(ADD_TASK_1000, myFileStorage), 
+                clashTasks);
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
+
+        clashTasks = new ArrayList<Task> ();
+        clashTasks.add(expectTask1001);
+        clashTasks.add(expectTask1000);
+        assertTaskArrayListEquals(myTaskManager.processTM(ADD_TASK_1000, myFileStorage), 
+                clashTasks);
+        expectTasks.add(expectTask1001);
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
+
+        
+        clashTasks = new ArrayList<Task> ();
+        clashTasks.add(expectTask1002);
+        clashTasks.add(expectTask1000);
+        clashTasks.add(expectTask1001);
+        assertTaskArrayListEquals(myTaskManager.processTM(ADD_TASK_1000, myFileStorage), 
+                clashTasks);
+        expectTasks.add(expectTask1002);
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
     }
 
     @Test
