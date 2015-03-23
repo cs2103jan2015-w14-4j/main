@@ -74,13 +74,14 @@ public class TaskManager {
                     convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
                     convertToIntType(inputs[PRIORITY]));
             addIDToTaskIDs(newTask.getTID());
-            tasks.add(newTask);
 
             if(newTask.getDateFrom() != null) {
                 assert newTask.getDateTo() != null;
                 assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
                         newTask.getDateTo());
             }
+            
+            tasks.add(newTask);
         } else {
             if(isIDClashing(inputs[TID])) {
                 inputs[TID] = convertToStringFromInt(getNewTID());
@@ -94,13 +95,14 @@ public class TaskManager {
                     convertToIntType(inputs[PRIORITY]));
             updateIDCounter(inputs[TID]);
             addIDToTaskIDs(newTask.getTID());
-            tasks.add(newTask);
 
             if(newTask.getDateFrom() != null) {
                 assert newTask.getDateTo() != null;
                 assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
                         newTask.getDateTo());
             }
+            
+            tasks.add(newTask);
         } 
     }
 
@@ -190,7 +192,14 @@ public class TaskManager {
                     convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
                     convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
                     convertToIntType(inputs[PRIORITY]));
+            
+            if(newTask.getDateFrom() != null) {
+                assert newTask.getDateTo() != null;
+                assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
+                        newTask.getDateTo());
+            }
             tasks.add(newTask);
+            
             returningTasks = new ArrayList<Task>();
             returningTasks.add(newTask.clone());
         } else {
@@ -205,6 +214,13 @@ public class TaskManager {
                     convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
                     convertToIntType(inputs[PRIORITY]));
             updateIDCounter(inputs[TID]);
+            
+            if(newTask.getDateFrom() != null) {
+                assert newTask.getDateTo() != null;
+                assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
+                        newTask.getDateTo());
+            }
+            
             tasks.add(newTask);
             returningTasks = new ArrayList<Task>();
             returningTasks.add(newTask.clone());
