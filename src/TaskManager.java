@@ -70,20 +70,15 @@ public class TaskManager {
     //------------other methods------------
     public void processAddForInitialization(String[] inputs) {
         //if does not have TID, get a new TID; else just add the TID
+        Task newTask = null;
         if(!hasTID(inputs)){
-            Task newTask = new Task(getNewTID(), inputs[TASK_NAME], 
+            newTask = new Task(getNewTID(), inputs[TASK_NAME], 
                     convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
                     convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
                     convertToIntType(inputs[PRIORITY]));
             addIDToTaskIDs(newTask.getTID());
 
-            if(newTask.getDateFrom() != null) {
-                assert newTask.getDateTo() != null;
-                assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
-                        newTask.getDateTo());
-            }
-
-            tasks.add(newTask);
+            
         } else {
             if(isIDClashing(inputs[TID])) {
                 inputs[TID] = convertToStringFromInt(getNewTID());
@@ -91,21 +86,22 @@ public class TaskManager {
             if(isIDLessThan1000(inputs[TID])) {
                 inputs[TID] = convertToStringFromInt(getNewTID());
             }
-            Task newTask = new Task(convertToIntType(inputs[TID]), inputs[TASK_NAME], 
+            newTask = new Task(convertToIntType(inputs[TID]), inputs[TASK_NAME], 
                     convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
                     convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
                     convertToIntType(inputs[PRIORITY]));
             updateIDCounter(inputs[TID]);
             addIDToTaskIDs(newTask.getTID());
-
-            if(newTask.getDateFrom() != null) {
-                assert newTask.getDateTo() != null;
-                assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
-                        newTask.getDateTo());
-            }
-
-            tasks.add(newTask);
         } 
+        
+        assert isTaskDateNumberValid(newTask);
+        if(isTaskADurationalTask(newTask)) {
+            assert newTask.getDateTo() != null;
+            assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
+                    newTask.getDateTo());
+        }
+
+        tasks.add(newTask);
     }
 
     public void addATaskForInitialization(String[] inputs) {
@@ -209,11 +205,13 @@ public class TaskManager {
             updateIDCounter(inputs[TID]);         
         }
 
-        if(newTask.getDateFrom() != null) {
+        assert isTaskDateNumberValid(newTask);
+        if(isTaskADurationalTask(newTask)) {
             assert newTask.getDateTo() != null;
             assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
                     newTask.getDateTo());
         }
+        
         addIDToTaskIDs(newTask.getTID());
 
         tasks.add(newTask);
@@ -361,6 +359,14 @@ public class TaskManager {
             assert isDateFromSmallerThanDateTo(taskToEdit.getDateFrom(), 
                     taskToEdit.getDateTo());
         }
+        
+        assert isTaskDateNumberValid(taskToEdit);
+        if(isTaskADurationalTask(taskToEdit)) {
+            assert taskToEdit.getDateTo() != null;
+            assert isDateFromSmallerThanDateTo(taskToEdit.getDateFrom(), 
+                    taskToEdit.getDateTo());
+        }
+        
         returningTasks.add(taskToEdit.clone());
 
         return returningTasks;
@@ -787,5 +793,25 @@ public class TaskManager {
         }
     }
     
-    
+    protected boolean isTaskDateNumberValid(Task task) {
+        //durational task
+        if(task.getDateFrom() != null && task.getDateTo() != null && 
+                task.getDeadline() == null) {
+            return true;
+        }
+        
+        //deadline task
+        if(task.getDateFrom() == null && task.getDateTo() == null && 
+                task.getDeadline() != null) {
+            return true;
+        }
+        
+        //floating task
+        if(task.getDateFrom() == null && task.getDateTo() == null && 
+                task.getDeadline() == null) {
+            return true;
+        }
+        
+        return false;
+    }
 }
