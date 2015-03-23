@@ -10,17 +10,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TaskManager {
-    private static final int COMMAND_TYPE = 0;
-    private static final int TID = 1;
-    private static final int TASK_NAME = 2;
-    private static final int DATE_FROM = 3;
-    private static final int DATE_TO = 4;
-    private static final int DEADLINE = 5;
-    private static final int LOCATION = 6;
-    private static final int DETAILS = 7;
-    private static final int PRIORITY = 8;
+    public static final int COMMAND_TYPE = 0;
+    public static final int TID = 1;
+    public static final int TASK_NAME = 2;
+    public static final int DATE_FROM = 3;
+    public static final int DATE_TO = 4;
+    public static final int DEADLINE = 5;
+    public static final int LOCATION = 6;
+    public static final int DETAILS = 7;
+    public static final int PRIORITY = 8;
+    public static final int DEFAULT_SIZE = 9;
+
     private static final int INITIAL_TID = 1000;
-    private static final int DEFAULT_SIZE = 9;
     private static final int NUM_ATTRIBUTE_FOR_DATE_OBJECT = 5;
     private static final int DAY_INDEX = 0;
     private static final int MONTH_INDEX = 1;
@@ -671,7 +672,7 @@ public class TaskManager {
     }
 
 
-    protected boolean isDateValid(String date) {
+    public boolean isDateValid(String date) {
         boolean isDateValid = DATE_IS_VALID;
 
         Matcher m = Pattern.compile("\\d+").matcher(date);
