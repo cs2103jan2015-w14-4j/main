@@ -183,9 +183,11 @@ public class SystemHandler {
 	private boolean initializeSystem(String fileName) {
 		
 		boolean isInitProperly = false;
+		myShortcut = Shortcut.getShortcut();
 		logfile = CentralizedLog.getLogger();
-		parser = new FlexiParser();
+		myTemplates = new Template();
 		myTaskList = new TaskManager();
+		parser = new FlexiParser();
 		externalStorage = new FileStorage(fileName);
 		
 		if(isInitProperly) {
