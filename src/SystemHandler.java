@@ -46,7 +46,7 @@ public class SystemHandler {
 	/**
 	 * 	This constructor constructs System Handler object with default.txt as the save location
 	 */
-	public SystemHandler () {
+	private SystemHandler () {
 		String fileName = "default.txt";
 		initializeSystem(fileName);
 		

@@ -52,27 +52,12 @@ public class SystemTest {
 	@Test
 	public void testNatty() {
 
-		//To use, import antlr-3.5.2-runtime.jar which is in lib, 
-		//import 	java.util.List;
-		//import 	java.util.Map;
-		//import 	com.joestelmach.natty.DateGroup;
-		//import 	com.joestelmach.natty.Parser;
 		Parser parser = new Parser();
 		
 		List<DateGroup> groups = parser.parse("the day before next thursday");
 		for(DateGroup group:groups)  {
 			Date dates = group.getDates().get(0);   //Here to get the date (which we need mostly)
 			System.out.println(dates.toLocaleString());   
-			
-			//Not really necessary
-//			int line = group.getLine();
-//			int column = group.getPosition();
-//			String matchingValue = group.getText(); 
-//			String syntaxTree = group.getSyntaxTree().toStringTree();
-//			Map parseMap = group.getParseLocations();
-//			boolean isRecurreing = group.isRecurring();
-//			Date recursUntil = group.getRecursUntil();
-
 		}
 
 		groups = parser.parse("every thursday until June");
