@@ -131,12 +131,12 @@ public class Shortcut {
 	}
 	private ArrayList<String> buildViewShortcut() {
 		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("viewShortcut");
+		defaults.add("viewShortcuts");
 		return defaults;
 	}
 	private ArrayList<String> buildResetShortcut() {
 		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("resetShortcut");
+		defaults.add("resetShortcuts");
 		return defaults;
 	}
 	private ArrayList<String> buildAddTemplate() {
@@ -151,7 +151,7 @@ public class Shortcut {
 	}
 	private ArrayList<String> buildViewTemplates() {
 		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("viewTemplate");
+		defaults.add("viewTemplates");
 		return defaults;
 	}
 	private ArrayList<String> buildDeleteTemplate() {
@@ -161,7 +161,7 @@ public class Shortcut {
 	}
 	private ArrayList<String> buildResetTemplates() {
 		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("resetTemplate");
+		defaults.add("resetTemplates");
 		return defaults;
 	}
 	private ArrayList<String> buildHelp() {
@@ -196,7 +196,7 @@ public class Shortcut {
 		if(!isKeyWords(belongTo)) {
 			return null;
 		}
-		else if(isKeyWords(newShortcut)) {
+		else if(isKeyWords(searchMatching(newShortcut))) {
 			return null;
 		}
 		else {
@@ -208,7 +208,7 @@ public class Shortcut {
 	}
 	
 	private boolean isKeyWords(int index) {
-		return index > -1;
+		return (index > -1);
 	}
 	
 	private boolean isKeyWords(String command) {
@@ -224,7 +224,6 @@ public class Shortcut {
 					return i;
 				}
 			}
-			userShortcuts.add(singleShortcut);
 		}
 		return -1;
 	}
