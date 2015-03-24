@@ -190,7 +190,7 @@ public class SystemTest {
 		String[] cmd = {"viewShortcuts",null,null};
 		String[][] results = myshortcut.processShortcutCommand(cmd);
 		String[][] expected1 = {
-								{"add"}, {"edit"}, {"view"}, {"delete"},
+								{"add"}, {"edit"}, {"view"}, {"delete"}, {"undo"}, {"redo"},
 								{"addShortcut"}, {"viewShortcuts"}, {"deleteShortcut"},
 								{"resetShortcuts"}, {"addTemplate"}, {"editTemplate"},
 								{"viewTemplates"}, {"deleteTemplate"}, {"resetTemplates"}, 
@@ -228,7 +228,7 @@ public class SystemTest {
 		String[] cmd5 = {"viewShortcuts",null,null};
 		String[][] results5 = myshortcut.processShortcutCommand(cmd5);
 		String[][] expected5 = {
-								{"add","+"}, {"edit"}, {"view"}, {"delete"},
+								{"add","+"}, {"edit"}, {"view"}, {"delete"}, {"undo"}, {"redo"},
 								{"addShortcut"}, {"viewShortcuts"}, {"deleteShortcut"},
 								{"resetShortcuts"}, {"addTemplate"}, {"editTemplate","eT","addS"},
 								{"viewTemplates"}, {"deleteTemplate"}, {"resetTemplates"}, 
@@ -250,7 +250,7 @@ public class SystemTest {
 		String[] cmd7 = {"resetShortcut"};
 		String[][] results7 = myshortcut.processShortcutCommand(cmd7);
 		String[][] expected7 = {
-				{"add"}, {"edit"}, {"view"}, {"delete"},
+				{"add"}, {"edit"}, {"view"}, {"delete"}, {"undo"}, {"redo"},
 				{"addShortcut"}, {"viewShortcuts"}, {"deleteShortcut"},
 				{"resetShortcuts"}, {"addTemplate"}, {"editTemplate"},
 				{"viewTemplates"}, {"deleteTemplate"}, {"resetTemplates"}, 

@@ -4,7 +4,8 @@ import java.util.NoSuchElementException;
 public class Shortcut {
 	 
 	
-	public static final String[] keywords = {	"addTask", "editTask","viewTasks","deleteTask",
+	public static final String[] keywords = {	"addTask", "editTask","viewTasks","deleteTask", 
+										"undoTask", "redoTask",
 										"addShortcut", "viewShortcuts", "deleteShortcut",
 										"resetShortcut", "addTemplate", "editTemplate", 
 										"viewTemplates", "deleteTemplate", "resetTemplates", "help"}; 
@@ -87,6 +88,8 @@ public class Shortcut {
 		userShortcuts.add(buildEditTask());
 		userShortcuts.add(buildViewTask());
 		userShortcuts.add(buildDeleteTask());
+		userShortcuts.add(buildUndoTask());
+		userShortcuts.add(buildRedoTask());
 		userShortcuts.add(buildAddShortcut());
 		userShortcuts.add(buildViewShortcut());
 		userShortcuts.add(buildDeleteShortcut());
@@ -99,6 +102,8 @@ public class Shortcut {
 		userShortcuts.add(buildHelp());
 	}
 	
+	
+
 	private ArrayList<String> buildAddTask() {
 		ArrayList<String> defaults = new ArrayList<String>();
 		defaults.add("add");
@@ -117,6 +122,16 @@ public class Shortcut {
 	private ArrayList<String> buildDeleteTask() {
 		ArrayList<String> defaults = new ArrayList<String>();
 		defaults.add("delete");
+		return defaults;
+	}
+	private ArrayList<String> buildUndoTask() {
+		ArrayList<String> defaults = new ArrayList<String>();
+		defaults.add("undo");
+		return defaults;
+	}
+	private ArrayList<String> buildRedoTask() {
+		ArrayList<String> defaults = new ArrayList<String>();
+		defaults.add("redo");
 		return defaults;
 	}
 	private ArrayList<String> buildAddShortcut() {
