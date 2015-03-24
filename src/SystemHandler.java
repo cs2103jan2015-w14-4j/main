@@ -1,9 +1,12 @@
+import java.util.Date;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.awt.EventQueue;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 
 public class SystemHandler {
@@ -104,7 +107,32 @@ public class SystemHandler {
 		System.out.println("Executing '"+ userInput+"'");
 		return processUserInput(userInput);
 	}
+	
+	public Task requestTask(int id) {
+		//stub
+		return new Task(1000, "NEW",
+				convertToDateObject("12/09/2015 10:00"),
+				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0);
 
+	}
+	
+	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
+	private static final String CLEAR_INFO_INDICATOR = "";
+
+	private Date convertToDateObject(String dateString) {
+		try {
+			Date date = null;
+			if (dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
+				DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+				date = format.parse(dateString);
+			}
+			return date;
+		} catch (ParseException e) {
+			System.out.println(e);
+			return null;
+		}
+	}
+	
 	/**
 	 * @param commandType	Command Type string extracted from first word of strings of user command
 	 * @return	COMMAND_TYPE_GROUP to allocate the command to correct component
@@ -146,6 +174,7 @@ public class SystemHandler {
 		String commandFromUser = sc.nextLine();
 		return commandFromUser;
 	}
+	
 	
 	/**
 	 * @param fileName	File location which the data saved at
