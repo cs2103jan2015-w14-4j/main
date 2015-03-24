@@ -119,16 +119,22 @@ public class SystemHandler {
 			case "redoTask":
 				return COMMAND_TYPE_GROUP.TASK_MANAGER;
 			//dummy command keyword
-			case "addShort":
+			case "addShortcut":
+			case "viewShortcuts":
+			case "deleteShortcut":
+			case "resetShortcut":
 				return COMMAND_TYPE_GROUP.SHORTCUT_MANAGER;
 			//dummy command keyword
-			case "addCustomized":
+			case "addTemplate":
+			case "editTemplate":
+			case "viewTemplates":
+			case "deleteTemplate":
+			case "resetTemplates":
 				return COMMAND_TYPE_GROUP.CUSTOMIZED_MANAGER;
 			default:
 		}
 		return null;
 	}
-	
 	/**
 	 * This is a dummy user interface to simulate user interaction
 	 * @param msg	Message to show user
