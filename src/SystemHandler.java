@@ -24,6 +24,8 @@ public class SystemHandler {
 	private UserInterface 	window;
 	private FlexiParser 	parser;
 	
+	public static SystemHandler system;
+	
 	/**
 	 * Return file location which the data saved at
 	 * @return	File location which the data saved at
@@ -49,24 +51,31 @@ public class SystemHandler {
 		initializeSystem(fileName);
 		
 	}
-
+	
+	public static SystemHandler getSystemHandler() {
+		if(system == null) {
+			system = new SystemHandler();
+		}
+		return system;
+	}
+	
 	/**
 	 * Booting the system 
 	 * @param args	Parameter from input - not applicable
 	 */
 	public static void main(String[] args) {
 
-		Scanner sc = new Scanner(System.in);
-		String myFile = dummyUI(MSG_ASK_FILENAME, sc);
-		SystemHandler mySystemControl = new SystemHandler(myFile);
-		mySystemControl.activateUI();
-		sc.close();
+		system = new SystemHandler();
+		system.activateUI();
+		
 	}
 	
 	/**
 	 * It activates user interface window by calling the Runnable user interface 
 	 */
 	private void activateUI() {
+		window = new UserInterface();
+		System.out.println("Activated");
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -77,6 +86,11 @@ public class SystemHandler {
 				}
 			}
 		});
+	}
+	
+	public void initialize(String name) {
+		fileName = name;
+		initializeSystem(fileName);
 	}
 	
 	
@@ -97,13 +111,12 @@ public class SystemHandler {
 	 */
 	private static COMMAND_TYPE_GROUP getCommandGroupType(String commandType) {
 		switch(commandType) {
-			case "init":	
-			case "add":
-			case "view":
-			case "delete":
-			case "edit":
-			case "undo":
-			case "redo":
+			case "addTask":
+			case "viewTask":
+			case "deleteTask":
+			case "editTask":
+			case "undoTask":
+			case "redoTask":
 				return COMMAND_TYPE_GROUP.TASK_MANAGER;
 			//dummy command keyword
 			case "addShort":
@@ -111,6 +124,7 @@ public class SystemHandler {
 			//dummy command keyword
 			case "addCustomized":
 				return COMMAND_TYPE_GROUP.CUSTOMIZED_MANAGER;
+			default:
 		}
 		return null;
 	}
@@ -162,12 +176,12 @@ public class SystemHandler {
 			String[] parsedCommand = parser.parseText(inputFromUser);
 			
 			//For checking purposes
-//			String[] temp = parsedCommand;
-//			
-//	    	for(int i = 0; i < temp.length; ++i) {
-//	    		System.out.print((temp[i] == null)? "NULL":temp[i].toString());
-//	    		System.out.print("|");
-//	    	}
+			String[] temp = parsedCommand;
+			
+	    	for(int i = 0; i < temp.length; ++i) {
+	    		System.out.print((temp[i] == null)? "NULL":temp[i].toString());
+	    		System.out.print("|");
+	    	}
 			
 			validateParsedCommand(parsedCommand);
 			

@@ -192,8 +192,10 @@ public class UserInterface {
 			prevInput = input;
 			
 			if (!hasFilename){		
-				mainHandler = new SystemHandler(input);
-				mainHandler.rawUserInput("init");
+				
+				mainHandler = SystemHandler.getSystemHandler();
+				mainHandler.initialize(input);
+
 				hasFilename = true;
 				outputArea.append(String.format(MSG_ECHO_FILENAME, mainHandler.getFileName()) + newline);
 				outputArea.append(MSG_ASK_INPUT + newline);
