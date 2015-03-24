@@ -11,7 +11,7 @@ public class Template {
 	
 	public Template() {
 		templates = new HashMap<String,Task>();
-		system = SystemHandler.getSystemHandler();
+		
 	}
 	
 	public ArrayList<Task> processCustomizingCommand(String[] command) 
@@ -20,6 +20,9 @@ public class Template {
 		assert(command.length == 3);
 		switch(getCommandType(commandType)) {
 			case addTemplate:
+				if(system == null) {
+					system = SystemHandler.getSystemHandler();
+				}
 				Task taskToBeAdded = system.requestTask(Integer.parseInt(command[2]));
 				return addTemplate(command[1], taskToBeAdded);
 				
