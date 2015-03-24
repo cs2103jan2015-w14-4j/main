@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.NoSuchElementException;
 
 import org.junit.Assert;
 import org.junit.After;
@@ -14,6 +15,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+
 
 
 //Import for natty
@@ -225,7 +228,7 @@ public class SystemTest {
 		}
 		
 		//TC5 - view all changes
-		String[] cmd5 = {"viewShortcuts",null,null};
+		String[] cmd5 = {"viewShortcuts", null, null};
 		String[][] results5 = myshortcut.processShortcutCommand(cmd5);
 		String[][] expected5 = {
 								{"add","+"}, {"edit"}, {"view"}, {"delete"}, {"undo"}, {"redo"},
@@ -239,7 +242,7 @@ public class SystemTest {
 		}
 		
 		//TC6 - delete shortcut
-		String[] cmd6 = {"deleteShortcut","eT"};
+		String[] cmd6 = {"deleteShortcut", "eT", null};
 		String[][] results6 = myshortcut.processShortcutCommand(cmd6);
 		String[][] expected6 = {{"editTemplate","eT"}};
 		for(int i = 0; i < expected6.length; ++i) {
@@ -247,7 +250,7 @@ public class SystemTest {
 		}
 		
 		//TC7 - reset
-		String[] cmd7 = {"resetShortcut"};
+		String[] cmd7 = {"resetShortcut", null, null};
 		String[][] results7 = myshortcut.processShortcutCommand(cmd7);
 		String[][] expected7 = {
 				{"add"}, {"edit"}, {"view"}, {"delete"}, {"undo"}, {"redo"},
@@ -290,7 +293,46 @@ public class SystemTest {
  
 	@Test
 	public void testCustomizedManager() {
-		System.out.println("Customized Manager Test Not yet implemented");
+		//TC1 - test adding
+		Template template = new Template();
+		String[] cmd1 = {"addTemplate","task1","1000"};
+		ArrayList<Task> result1 = template.processCustomizingCommand(cmd1);
+		ArrayList<Task> expected1 = new ArrayList<Task>();
+		expected1.add(new Task(1000, "NEW",
+				convertToDateObject("12/09/2015 10:00"),
+				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0));
+		assertTaskArrayListEquals(expected1, result1);
+		
+		//TC2 - test view
+		String[] cmd2 = {"viewTemplates", null, null};
+		ArrayList<Task> result2 = template.processCustomizingCommand(cmd2);
+		ArrayList<Task> expected2 = new ArrayList<Task>();
+		expected2.add(new Task(1000, "NEW",
+				convertToDateObject("12/09/2015 10:00"),
+				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0));
+		assertTaskArrayListEquals(expected2, result2);
+		
+		//TC3 - test delete
+		String[] cmd3 = {"deleteTemplate", "task1", null};
+		ArrayList<Task> result3 = template.processCustomizingCommand(cmd3);
+		ArrayList<Task> expected3 = new ArrayList<Task>();
+		expected3.add(new Task(1000, "NEW",
+				convertToDateObject("12/09/2015 10:00"),
+				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0));
+		assertTaskArrayListEquals(expected3, result3);
+		
+		//TC4 - try delete invalid template
+		String[] cmd4 = {"deleteTemplate", "task0", null};
+		try {
+			template.processCustomizingCommand(cmd4);
+			
+		} catch(NoSuchElementException e) {
+			Assert.assertEquals(e.getMessage(), "No such template saved in the system");
+		}
+		//TC5 - try reset
+		String[] cmd5 = {"resetTemplates", null, null};
+		ArrayList<Task> result5 = template.processCustomizingCommand(cmd5);
+		assertTaskArrayListEquals(result5,new ArrayList<Task>());
 	}
 
 	public boolean assertTaskArrayListEquals(ArrayList<Task> test,
