@@ -189,6 +189,12 @@ public class SystemTest {
 	public void testShortcutManager() {
 		Shortcut myshortcut = Shortcut.getShortcut();
 		
+		String result = myshortcut.keywordMatching("add");
+		Assert.assertEquals(result, "addTask");
+		result = myshortcut.keywordMatching("deleteShortcut");
+		Assert.assertEquals(result, "deleteShortcut");
+		
+		
 		//TC1 - test view and initialize shortcut list
 		String[] cmd = {"viewShortcuts",null,null};
 		String[][] results = myshortcut.processShortcutCommand(cmd);
