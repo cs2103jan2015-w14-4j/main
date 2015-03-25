@@ -100,10 +100,11 @@ public class FlexiParser {
 			    		}
 			    		 
 			    		else {
-			    			 	 
-			    			 outputArray[j] = value;
+			    			if(value != null) {
+			    			 outputArray[j] = value.trim();
+			    			}
 			    		 
-			    		 }
+			    		}
 			    	
 			    	}
 			    		//outputArray[TASK_ID_INDEX] = extractAttribute(inputArray,keyWords[0]);
@@ -132,7 +133,9 @@ public class FlexiParser {
 			    		 
 			    		else {
 			    			 	 
-			    			 outputArray[j] = value;
+			    			if(value != null) {
+				    			 outputArray[j] = value.trim();
+				    			}
 			    		 
 			    		 }
 			    	
@@ -140,9 +143,16 @@ public class FlexiParser {
 					
 					break;
 				case COMMAND_DELETE:
-					
+					//doesn't need the ID keyword
 					//WARNING: NO CHECKING VALIDITY
 					outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
+					for(int i = 1; i < keyWords.length; i++) {
+			    		int j = i + 1;
+			    		
+			    		outputArray[j] = null;
+			    		
+					}
+					
 					
 					break;
 				case COMMAND_VIEW:
@@ -254,7 +264,7 @@ public class FlexiParser {
 						//System.out.println("temp: "+ temp);
 						//rem to put if valid
 						//ArrayList<Date> dateList = useNatty(value);
-						outputArr[j] = output.format(now) ;
+						outputArr[j] = output.format(now).trim() ;
 					} catch (ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -265,7 +275,7 @@ public class FlexiParser {
 			else {
 			ArrayList<Date> dateList = useNatty(value);
 			//System.out.println("The date is "+ dateList.get(0));
-			outputArr[j] = dateConverter(dateList.get(0));
+			outputArr[j] = dateConverter(dateList.get(0)).trim();
 			} 
 		 }
 		

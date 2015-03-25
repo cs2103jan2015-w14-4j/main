@@ -145,6 +145,7 @@ public class SystemHandler {
 			case "editTask":
 			case "undoTask":
 			case "redoTask":
+			case "init":
 				return COMMAND_TYPE_GROUP.TASK_MANAGER;
 			//dummy command keyword
 			case "addShortcut":
@@ -184,11 +185,19 @@ public class SystemHandler {
 		
 		boolean isInitProperly = false;
 		myShortcut = Shortcut.getShortcut();
+		String[] cmd = {"resetShortcut",null,null};
+		myShortcut.processShortcutCommand(cmd);
+		
 		logfile = CentralizedLog.getLogger();
 		myTemplates = new Template();
 		myTaskList = new TaskManager();
 		parser = new FlexiParser();
 		externalStorage = new FileStorage(fileName);
+		try{
+			externalStorage.readFromFile(myTaskList);
+		} catch(ParseException e) {
+			
+		}
 		
 		if(isInitProperly) {
 			return true;	

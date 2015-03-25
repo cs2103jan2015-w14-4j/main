@@ -91,12 +91,13 @@ public class SystemTest {
 	@Test
 	public void testFullSystem() {
 		// TC 1 - simple multiple add
-		String test1 = "add,NEW,at,ABC,on,12/09/2015,from,10:00,to,12:00";
+		String test1 = "addTask Title NEW From 12/09/2015 10:00 To 12/09/2015 12:00 At ABC";
 		ArrayList<Task> expect1 = new ArrayList<Task>();
-
+		//"ID","Title","From","To","On","At","Det","Pri"
 		expect1.add(new Task(1000, "NEW",
 				convertToDateObject("12/09/2015 10:00"),
 				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0));
+		
 		assertTaskArrayListEquals(mySystem.rawUserInput(test1), expect1);
 
 		// TC2 - continue -- multiple add same inputs then view
@@ -246,7 +247,7 @@ public class SystemTest {
 								{"viewTemplates"}, {"deleteTemplate"}, {"resetTemplates"}, 
 								{"help"},
 							};
-		for(int i = 0; i < expected5.length; ++i) {
+		for(int i = 0; i < expected5.length; ++i) { 
 			Assert.assertArrayEquals(results5[i], expected5[i]);
 		}
 		
@@ -348,24 +349,60 @@ public class SystemTest {
 			ArrayList<Task> expect) {
 		Assert.assertEquals(test.size(), expect.size());
 		for (int i = 0; i < test.size(); ++i) {
+			if(!assertTaskEqual(test.get(i), expect.get(i))) {
+				showNotMatch(test.get(i), expect.get(i));
+				showTask(test.get(i));
+				showTask(expect.get(i));	
+			}
 			Assert.assertTrue(assertTaskEqual(test.get(i), expect.get(i)));
 		}
 
 		return true;
 	}
 
+	public void showNotMatch(Task a, Task b) {
+		if(!a.getTaskName().equals(b.getTaskName()))
+			System.out.println("#NAME = " + a.getTaskName());
+		if(a.getTID() != b.getTID())
+			System.out.println("#TID  = " + a.getTID());
+		if(!a.getDateFrom().equals(b.getDateFrom()))
+			System.out.println("#DFro = " + a.getDateFrom());
+		if(!a.getDateTo().equals(b.getDateTo()))
+			System.out.println("#DTo  = " + a.getDateTo());
+		if(!a.getDeadline().equals(b.getDeadline()))
+			System.out.println("#dead = " + a.getDeadline());
+		if(!a.getLocation().equals(b.getLocation()))
+			System.out.println("#loca = " + a.getLocation());
+		if(!a.getDetails().equals(b.getDetails()))
+			System.out.println("#Deta = " + a.getDetails());
+		if(a.getStatus() != b.getStatus())
+			System.out.println("#State= " + a.getStatus());
+		if(a.getPriority() != b.getPriority())
+			System.out.println("#prio = " + a.getPriority());
+
+	}
+	
 	public boolean assertTaskEqual(Task taskA, Task taskB) {
 		return taskA.isEqual(taskB);
 	}
 
-	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
-	private static final String CLEAR_INFO_INDICATOR = "";
-
+	
+	private void showTask(Task t) {
+		System.out.println("NAME = " + t.getTaskName());
+		System.out.println("TID  = " + t.getTID());
+		System.out.println("DFro = " + t.getDateFrom());
+		System.out.println("DTo  = " + t.getDateTo());
+		System.out.println("dead = " + t.getDeadline());
+		System.out.println("loca = " + t.getLocation());
+		System.out.println("Deta = " + t.getDetails());
+		System.out.println("State= " + t.getStatus());
+		System.out.println("prio = " + t.getPriority());
+	}
 	private Date convertToDateObject(String dateString) {
 		try {
 			Date date = null;
-			if (dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
-				DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+			if (dateString != null && !dateString.equals("")) {
+				DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 				date = format.parse(dateString);
 			}
 			return date;
