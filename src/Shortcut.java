@@ -14,7 +14,7 @@ public class Shortcut {
 	private static Shortcut centralizedShortcut;
 	
 	private Shortcut() {
-		resetShortcut();
+		userShortcuts = new ArrayList<ArrayList<String>>();
 	}
 	
 	public static Shortcut getShortcut() {
