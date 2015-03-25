@@ -188,7 +188,10 @@ public class SystemTest {
 	@Test
 	public void testShortcutManager() {
 		Shortcut myshortcut = Shortcut.getShortcut();
+		String[] cmd0 = {"resetShortcut",null,null};
+		myshortcut.processShortcutCommand(cmd0);
 		
+		//TC0 - test keyword matching working
 		String result = myshortcut.keywordMatching("add");
 		Assert.assertEquals(result, "addTask");
 		result = myshortcut.keywordMatching("deleteShortcut");
@@ -300,7 +303,7 @@ public class SystemTest {
 	@Test
 	public void testCustomizedManager() {
 		//TC1 - test adding
-		Template template = new Template();
+		Template template = new Template(true);
 		String[] cmd1 = {"addTemplate","1000","task1", null, null, null, null, null, null};
 		ArrayList<Task> result1 = template.processCustomizingCommand(cmd1);
 		ArrayList<Task> expected1 = new ArrayList<Task>();
