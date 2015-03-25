@@ -107,21 +107,27 @@ public class Shortcut {
 	private ArrayList<String> buildAddTask() {
 		ArrayList<String> defaults = new ArrayList<String>();
 		defaults.add("add");
+		defaults.add("addTask");
+		
 		return defaults;
 	}
 	private ArrayList<String> buildEditTask() {
 		ArrayList<String> defaults = new ArrayList<String>();
 		defaults.add("edit");
+		defaults.add("editTask");
 		return defaults;
 	}
 	private ArrayList<String> buildViewTask() {
 		ArrayList<String> defaults = new ArrayList<String>();
 		defaults.add("view");
+		defaults.add("viewTask");
+		defaults.add("viewTasks");
 		return defaults;
 	}
 	private ArrayList<String> buildDeleteTask() {
 		ArrayList<String> defaults = new ArrayList<String>();
 		defaults.add("delete");
+		defaults.add("deleteTask");
 		return defaults;
 	}
 	private ArrayList<String> buildUndoTask() {
@@ -137,46 +143,61 @@ public class Shortcut {
 	private ArrayList<String> buildAddShortcut() {
 		ArrayList<String> defaults = new ArrayList<String>();
 		defaults.add("addShortcut");
+		defaults.add("addShort");
 		return defaults;
 	}
 	private ArrayList<String> buildDeleteShortcut() {
 		ArrayList<String> defaults = new ArrayList<String>();
 		defaults.add("deleteShortcut");
+		defaults.add("deleteShort");
 		return defaults;
 	}
 	private ArrayList<String> buildViewShortcut() {
 		ArrayList<String> defaults = new ArrayList<String>();
 		defaults.add("viewShortcuts");
+		defaults.add("viewShortcut");
+		defaults.add("viewShort");
+		defaults.add("viewShorts");
 		return defaults;
 	}
 	private ArrayList<String> buildResetShortcut() {
 		ArrayList<String> defaults = new ArrayList<String>();
 		defaults.add("resetShortcuts");
+		defaults.add("resetShortcut");
 		return defaults;
 	}
 	private ArrayList<String> buildAddTemplate() {
 		ArrayList<String> defaults = new ArrayList<String>();
 		defaults.add("addTemplate");
+		defaults.add("addTemp");
 		return defaults;
 	}
 	private ArrayList<String> buildEditTemplate() {
 		ArrayList<String> defaults = new ArrayList<String>();
 		defaults.add("editTemplate");
+		defaults.add("editTemp");
 		return defaults;
 	}
 	private ArrayList<String> buildViewTemplates() {
 		ArrayList<String> defaults = new ArrayList<String>();
 		defaults.add("viewTemplates");
+		defaults.add("viewTemplate");
+		defaults.add("viewTemp");
+		defaults.add("viewTemps");
 		return defaults;
 	}
 	private ArrayList<String> buildDeleteTemplate() {
 		ArrayList<String> defaults = new ArrayList<String>();
 		defaults.add("deleteTemplate");
+		defaults.add("deleteTemp");
 		return defaults;
 	}
 	private ArrayList<String> buildResetTemplates() {
 		ArrayList<String> defaults = new ArrayList<String>();
 		defaults.add("resetTemplates");
+		defaults.add("resetTemplate");
+		defaults.add("resetTemp");
+		defaults.add("resetTemps");
 		return defaults;
 	}
 	private ArrayList<String> buildHelp() {
