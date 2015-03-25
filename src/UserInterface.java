@@ -36,6 +36,8 @@ public class UserInterface  {
 	private SystemHandler mainHandler;
 
 	public static final String APP_NAME = "Flexi Tracker";
+	public static final String MSG_WELCOME = "Welcome to Flexi Tracker!";
+	public static final String MSG_HELP = "Type \"help\" as a command into the  text field for help";
 	public static final String MSG_ASK_FILENAME = "Please enter the name of your file";
 	public static final String MSG_ASK_INPUT = "Please enter your command";
 	public static final String MSG_ECHO_FILENAME = "File location: %1$s";
@@ -66,20 +68,24 @@ public class UserInterface  {
 
 	 */
 
-	public void  displayTaskTable(ArrayList<Task> outputData){
+	public void  displayTaskTable(ArrayList<Task> outputData, boolean success){
 		viewTaskPane();
 		model.refreshTable(outputData);
 
 	}
 
-	public void displayShortcuts(ArrayList<String> outputData) {
+	public void displayShortcuts(ArrayList<String> outputData, boolean success) {
 		// TODO Auto-generated method stub
 		viewTextPane();
 
 	}
 
-	public void displayMsg(ArrayList<String> outputData){
-
+	public void displayMsg(ArrayList<String> outputData, boolean success){
+		
+	}
+	
+	public void displayTemplate(ArrayList<Task> outputData, boolean success){
+		
 	}
 
 	public String getRawUserInput(){
@@ -135,57 +141,44 @@ public class UserInterface  {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//	outputArea.append("ctrl Z has been pressed" + newline);
-				String input  = "undo";
+				String input  = "undoTask";
 				ArrayList<Task> result = mainHandler.rawUserInput(input);
-				//	printOutput(input.split("\\s*,\\s*")[0],result);
-
-				//	outputArea.append(MSG_ASK_INPUT + newline);
 
 			}
 
 		};
 
 		textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-		.put(KeyStroke.getKeyStroke("ctrl Z"), "undo");
-		textField.getActionMap().put("undo", undo );
+		.put(KeyStroke.getKeyStroke("ctrl Z"), "undoTask");
+		textField.getActionMap().put("undoTask", undo );
 
 		Action redo = new AbstractAction(){
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//	outputArea.append("ctrl Y has been pressed" + newline);
-				String input  = "redo";
+				String input  = "redoTask";
 				ArrayList<Task> result = mainHandler.rawUserInput(input);
-				//	printOutput(input.split("\\s*,\\s*")[0],result);
-
-				//	outputArea.append(MSG_ASK_INPUT + newline);
-
 			}
 
 		};
 
 		textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-		.put(KeyStroke.getKeyStroke("ctrl Y"), "redo");
-		textField.getActionMap().put("redo", redo );
+		.put(KeyStroke.getKeyStroke("ctrl Y"), "redoTask");
+		textField.getActionMap().put("redoTask", redo );
 
 		Action view = new AbstractAction(){
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//	outputArea.append("ctrl D has been pressed" + newline);
-				String input  = "view";
+				String input  = "viewTask";
 				ArrayList<Task> result = mainHandler.rawUserInput(input);
-				//	printOutput(input.split("\\s*,\\s*")[0],result);
-
-				//outputArea.append(MSG_ASK_INPUT + newline);
 			}
 
 		};
 
 		textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-		.put(KeyStroke.getKeyStroke("ctrl D"), "view");
-		textField.getActionMap().put("view", view );
+		.put(KeyStroke.getKeyStroke("ctrl D"), "viewTask");
+		textField.getActionMap().put("viewTask", view );
 
 		//until here this needs to refactored out
 
@@ -222,8 +215,8 @@ public class UserInterface  {
 		gbc_textField.gridy = 1;
 		frame.getContentPane().add(textField, gbc_textField);
 		textField.setColumns(10);
-		outputArea.append("Welcome to Flexi Tracker!" + newline + newline +"Press Enter Key to continue");
-		//outputArea.append(MSG_ASK_FILENAME + newline);
+		outputArea.append(MSG_WELCOME + newline + newline + MSG_HELP +newline + MSG_ASK_FILENAME);
+
 	}
 
 	public JScrollPane createTaskTable(ArrayList<Task> outputArray) {
@@ -272,13 +265,8 @@ public class UserInterface  {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//	outputArea.append("ctrl Z has been pressed" + newline);
 				String input  = "undo";
 				ArrayList<Task> result = mainHandler.rawUserInput(input);
-				//	printOutput(input.split("\\s*,\\s*")[0],result);
-
-				//	outputArea.append(MSG_ASK_INPUT + newline);
-
 			}
 
 		};
@@ -291,13 +279,8 @@ public class UserInterface  {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//	outputArea.append("ctrl Y has been pressed" + newline);
 				String input  = "redo";
 				ArrayList<Task> result = mainHandler.rawUserInput(input);
-				//	printOutput(input.split("\\s*,\\s*")[0],result);
-
-				//	outputArea.append(MSG_ASK_INPUT + newline);
-
 			}
 
 		};
@@ -310,12 +293,8 @@ public class UserInterface  {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//	outputArea.append("ctrl D has been pressed" + newline);
 				String input  = "view";
 				ArrayList<Task> result = mainHandler.rawUserInput(input);
-				//	printOutput(input.split("\\s*,\\s*")[0],result);
-
-				//outputArea.append(MSG_ASK_INPUT + newline);
 			}
 
 		};
@@ -358,7 +337,7 @@ public class UserInterface  {
 			else{
 				clearInput();
 				
-				
+				mainHandler.rawUserInput(input);
 				//dummytest
 				/*
 				for (int i = 0 ; i<9 ;  i++){
@@ -369,7 +348,7 @@ public class UserInterface  {
 				}
 
 */
-				displayTaskTable(outputArray);
+
 			}
 		}
 
