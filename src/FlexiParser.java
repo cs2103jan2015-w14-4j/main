@@ -51,7 +51,8 @@ public class FlexiParser {
     private static final String DATE_ON = "On";
     
     //use for template also?
-    private static final String[] KEYWORDS_TASK = {null,"Title","From","To","On","At","Det","Pri"};
+    private static final String[] KEYWORDS_TASK = {null,"\\title","\\from","\\to","\\on","\\at","\\det","\\pri"};
+    
     private static final String[] KEYWORDS_SHORTCUT = {"Ori","New"};
    
     private static final String[] commandArray = {"addTask","editTask","deleteTask","viewTask","Block","SearchTask","addShortcut","deleteShortcut","viewShortcut","resetShortcut",
@@ -103,7 +104,7 @@ public class FlexiParser {
 			int commandIndex = getCommandIndex(command);
 			
 			switch(commandIndex) {
-				//add task
+				//add task need to ignore title also
 			    case 0:
 					
 			    	//WARNING: NO CHECKING VALIDITY
@@ -391,7 +392,7 @@ public class FlexiParser {
     	FlexiParser test1 = new FlexiParser();
     	
     	
-    	String[] temp = test1.parseText("addTask 1000 Title lol ");
+    	String[] temp = test1.parseText("addTask \\title Orchard ");
     
     	
     	
