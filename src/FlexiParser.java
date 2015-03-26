@@ -1,10 +1,14 @@
 //not sure natty loop for what
 //next time put inside get attribute
 //for edit id? how to check
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import com.joestelmach.natty.DateGroup;
@@ -22,6 +26,12 @@ public class FlexiParser {
     private static final String COMMAND_VIEW = "viewTask";
     private static final String COMMAND_DELETE = "deleteTask";
     private static final String COMMAND_EDIT = "editTask";
+    
+    private static final String COMMAND_ADD_SHORTCUT = "addTask";
+    private static final String COMMAND_VIEW_SHORTCUT = "viewTasks";
+    private static final String COMMAND_DELETE_SHORTCUT = "deleteTask";
+    private static final String COMMAND_EDIT_SHORTCUT = "editTask";
+    
 	
     private static final String TID_NOT_EXIST = null;
     
@@ -45,7 +55,7 @@ public class FlexiParser {
     private static String[] inputArray;
 	
     public static final int TASK_LENGTH = 9;
-    
+    public static final int SHORTCUT_LENGTH = 3;
     
     
     public FlexiParser() {
@@ -61,11 +71,16 @@ public class FlexiParser {
 			inputArray = userInput.split("\\s+");
 			
 			String[] outputArray = new String[TASK_LENGTH];
-			
+			String[] shortcutArray = new String[SHORTCUT_LENGTH];
 			//String command = processCommand(inputArray[COMMAND_TYPE_INDEX]);
 			//direct command must be correct;
 			
 			String command = inputArray[COMMAND_TYPE_INDEX];
+			//Shortcut shortcut = Shortcut.getShortcut();
+			//what does his one return
+			//command = myshortcut.keywordMatching(command);
+
+			
 			outputArray[COMMAND_TYPE_INDEX] = command;
 	
 			switch(command) {
@@ -77,46 +92,50 @@ public class FlexiParser {
 			    	for(int i = 0; i < keyWords.length; i++) {
 			    		int j = i + 1;
 			    		String value = extractAttribute(inputArray, keyWords[i]);
-			    		if((keyWords[i].equals(DATE_FROM) || keyWords[i].equals(DATE_TO) || keyWords[i].equals(DATE_ON)) && value != null) {
-			    			 
-			    			ArrayList<Date> dateList = useNatty(value);
-			    			outputArray[j] = dateConverter(dateList.get(0));
-			    			 
-			    		 }
+			    		
+			    		if(isDateTime(i,value)) {
+			    			
+			    			storeDateTime(outputArray,value,i);
+			    			
+			    		}
 			    		 
 			    		else {
-			    			 	 
-			    			 outputArray[j] = value;
+			    			if(value != null) {
+			    			 outputArray[j] = value.trim();
+			    			}
 			    		 
-			    		 }
+			    		}
 			    	
 			    	}
 			    		//outputArray[TASK_ID_INDEX] = extractAttribute(inputArray,keyWords[0]);
-			    		//outputArray[TASK_NAME_INDEX] = extractAttribute(inputArray,keyWords[1]);
-			    		//outputArray[TASK_LOCATION_INDEX] = extractAttribute(inputArray,keyWords[5]);
-			    		//outputArray[TASK_DETAILS_INDEX] = extractAttribute(inputArray,keyWords[6]);
-			    		//outputArray[TASK_PRIORITY_INDEX] = extractAttribute(inputArray,keyWords[7]);
+			    		
 			    	
-			    	//addCommand(inputArray, outputArray);
 					
 					break;
 				case COMMAND_EDIT:
 					
 					//WARNING: NO CHECKING VALIDITY
-					outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
-					for(int i = 1; i < keyWords.length; i++) {
+					
+					for(int i = 0; i < keyWords.length; i++) {
 			    		int j = i + 1;
 			    		String value = extractAttribute(inputArray, keyWords[i]);
-			    		if((keyWords[i].equals(DATE_FROM) || keyWords[i].equals(DATE_TO) || keyWords[i].equals(DATE_ON)) && value != null) {
-			    			 
-			    			ArrayList<Date> dateList = useNatty(value);
-			    			outputArray[j] = dateConverter(dateList.get(0));
-			    			 
-			    		 }
+			    		if(i == TASK_ID_INDEX && value.equals(TID_NOT_EXIST)) {
+			    			//what should i return
+			    			break;
+			    			
+			    		}
+			    		
+			    		if(isDateTime(i,value)) {
+			    			
+			    			storeDateTime(outputArray,value,i);
+			    			
+			    		}
 			    		 
 			    		else {
 			    			 	 
-			    			 outputArray[j] = value;
+			    			if(value != null) {
+				    			 outputArray[j] = value.trim();
+				    			}
 			    		 
 			    		 }
 			    	
@@ -124,9 +143,16 @@ public class FlexiParser {
 					
 					break;
 				case COMMAND_DELETE:
-					
+					//doesn't need the ID keyword
 					//WARNING: NO CHECKING VALIDITY
 					outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
+					for(int i = 1; i < keyWords.length; i++) {
+			    		int j = i + 1;
+			    		
+			    		outputArray[j] = null;
+			    		
+					}
+					
 					
 					break;
 				case COMMAND_VIEW:
@@ -147,6 +173,14 @@ public class FlexiParser {
     	
     }
     
+  /*  private boolean isTaskOrShortcut(String command) {
+    	
+    	if(command.equals())
+    	
+    	
+    }*/
+    
+    //not used as command must be exact?
     private String processCommand(String command) {
     	
     	String processedCommand = command.toLowerCase();
@@ -197,6 +231,56 @@ public class FlexiParser {
 		
 	}
 	
+	private boolean isDateTime(int index, String value) {
+		
+		if((keyWords[index].equals(DATE_FROM) || keyWords[index].equals(DATE_TO) || keyWords[index].equals(DATE_ON)) && value != null) {
+			
+			return true;
+			
+		}
+		
+		return false;
+		
+	}
+	
+	private void storeDateTime(String[] outputArr,String value,int index) {
+		int j = index + 1;
+		if((keyWords[index].equals(DATE_FROM) || keyWords[index].equals(DATE_TO) || keyWords[index].equals(DATE_ON)) && value != null) {
+			
+			if(value.contains("/")) {
+				
+				DateFormat input = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.ENGLISH);
+				DateFormat output = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+				
+				    try {
+						String temp = output.format(input.parse(value));
+						Date now = output.parse(value);
+						//System.out.println("It is: "+output.format(now));
+						Calendar calendar = Calendar.getInstance();
+				        calendar.setTime(now);
+				       // System.out.println("When it came in: "+calendar.get(Calendar.DAY_OF_MONTH));
+						
+						
+						//System.out.println("temp: "+ temp);
+						//rem to put if valid
+						//ArrayList<Date> dateList = useNatty(value);
+						outputArr[j] = output.format(now).trim() ;
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				
+
+			}
+			else {
+			ArrayList<Date> dateList = useNatty(value);
+			//System.out.println("The date is "+ dateList.get(0));
+			outputArr[j] = dateConverter(dateList.get(0)).trim();
+			} 
+		 }
+		
+	}
+	
 	private ArrayList<Date> useNatty(String dateInput) {
 		Parser parser = new Parser();
 		List<DateGroup> groups = parser.parse(dateInput);
@@ -244,9 +328,9 @@ public class FlexiParser {
     	FlexiParser test1 = new FlexiParser();
     	
     	
-    	String[] temp = test1.parseText("editTask ID 1001 Title meeting with huehue On June 20th 20:00 To 16:00");
+    	String[] temp = test1.parseText("addTask ID 1001 Title meeting with huehue On June 20th On 6:00");
     
-    	//test1.useNatty("to March 24 2015");
+    	
     	
     	
     		

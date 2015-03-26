@@ -91,12 +91,13 @@ public class SystemTest {
 	@Test
 	public void testFullSystem() {
 		// TC 1 - simple multiple add
-		String test1 = "add,NEW,at,ABC,on,12/09/2015,from,10:00,to,12:00";
+		String test1 = "addTask Title NEW From 12/09/2015 10:00 To 12/09/2015 12:00 At ABC";
 		ArrayList<Task> expect1 = new ArrayList<Task>();
-
+		//"ID","Title","From","To","On","At","Det","Pri"
 		expect1.add(new Task(1000, "NEW",
 				convertToDateObject("12/09/2015 10:00"),
 				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0));
+		
 		assertTaskArrayListEquals(mySystem.rawUserInput(test1), expect1);
 
 		// TC2 - continue -- multiple add same inputs then view
@@ -188,7 +189,10 @@ public class SystemTest {
 	@Test
 	public void testShortcutManager() {
 		Shortcut myshortcut = Shortcut.getShortcut();
+		String[] cmd0 = {"resetShortcut",null,null};
+		myshortcut.processShortcutCommand(cmd0);
 		
+		//TC0 - test keyword matching working
 		String result = myshortcut.keywordMatching("add");
 		Assert.assertEquals(result, "addTask");
 		result = myshortcut.keywordMatching("deleteShortcut");
@@ -243,7 +247,7 @@ public class SystemTest {
 								{"viewTemplates"}, {"deleteTemplate"}, {"resetTemplates"}, 
 								{"help"},
 							};
-		for(int i = 0; i < expected5.length; ++i) {
+		for(int i = 0; i < expected5.length; ++i) { 
 			Assert.assertArrayEquals(results5[i], expected5[i]);
 		}
 		
@@ -300,8 +304,8 @@ public class SystemTest {
 	@Test
 	public void testCustomizedManager() {
 		//TC1 - test adding
-		Template template = new Template();
-		String[] cmd1 = {"addTemplate","task1","1000"};
+		Template template = new Template(true);
+		String[] cmd1 = {"addTemplate","1000","task1", null, null, null, null, null, null};
 		ArrayList<Task> result1 = template.processCustomizingCommand(cmd1);
 		ArrayList<Task> expected1 = new ArrayList<Task>();
 		expected1.add(new Task(1000, "NEW",
@@ -310,7 +314,7 @@ public class SystemTest {
 		assertTaskArrayListEquals(expected1, result1);
 		
 		//TC2 - test view
-		String[] cmd2 = {"viewTemplates", null, null};
+		String[] cmd2 = {"viewTemplates", null, null, null, null, null, null, null, null};
 		ArrayList<Task> result2 = template.processCustomizingCommand(cmd2);
 		ArrayList<Task> expected2 = new ArrayList<Task>();
 		expected2.add(new Task(1000, "NEW",
@@ -319,7 +323,7 @@ public class SystemTest {
 		assertTaskArrayListEquals(expected2, result2);
 		
 		//TC3 - test delete
-		String[] cmd3 = {"deleteTemplate", "task1", null};
+		String[] cmd3 = {"deleteTemplate", "task1", null, null, null, null, null, null, null};
 		ArrayList<Task> result3 = template.processCustomizingCommand(cmd3);
 		ArrayList<Task> expected3 = new ArrayList<Task>();
 		expected3.add(new Task(1000, "NEW",
@@ -328,7 +332,7 @@ public class SystemTest {
 		assertTaskArrayListEquals(expected3, result3);
 		
 		//TC4 - try delete invalid template
-		String[] cmd4 = {"deleteTemplate", "task0", null};
+		String[] cmd4 = {"deleteTemplate", "task0", null, null, null, null, null, null, null};
 		try {
 			template.processCustomizingCommand(cmd4);
 			
@@ -336,7 +340,7 @@ public class SystemTest {
 			Assert.assertEquals(e.getMessage(), "No such template saved in the system");
 		}
 		//TC5 - try reset
-		String[] cmd5 = {"resetTemplates", null, null};
+		String[] cmd5 = {"resetTemplates", null, null, null, null, null, null, null, null};
 		ArrayList<Task> result5 = template.processCustomizingCommand(cmd5);
 		assertTaskArrayListEquals(result5,new ArrayList<Task>());
 	}
@@ -345,24 +349,60 @@ public class SystemTest {
 			ArrayList<Task> expect) {
 		Assert.assertEquals(test.size(), expect.size());
 		for (int i = 0; i < test.size(); ++i) {
+			if(!assertTaskEqual(test.get(i), expect.get(i))) {
+				showNotMatch(test.get(i), expect.get(i));
+				showTask(test.get(i));
+				showTask(expect.get(i));	
+			}
 			Assert.assertTrue(assertTaskEqual(test.get(i), expect.get(i)));
 		}
 
 		return true;
 	}
 
+	public void showNotMatch(Task a, Task b) {
+		if(!a.getTaskName().equals(b.getTaskName()))
+			System.out.println("#NAME = " + a.getTaskName());
+		if(a.getTID() != b.getTID())
+			System.out.println("#TID  = " + a.getTID());
+		if(!a.getDateFrom().equals(b.getDateFrom()))
+			System.out.println("#DFro = " + a.getDateFrom());
+		if(!a.getDateTo().equals(b.getDateTo()))
+			System.out.println("#DTo  = " + a.getDateTo());
+		if(!a.getDeadline().equals(b.getDeadline()))
+			System.out.println("#dead = " + a.getDeadline());
+		if(!a.getLocation().equals(b.getLocation()))
+			System.out.println("#loca = " + a.getLocation());
+		if(!a.getDetails().equals(b.getDetails()))
+			System.out.println("#Deta = " + a.getDetails());
+		if(a.getStatus() != b.getStatus())
+			System.out.println("#State= " + a.getStatus());
+		if(a.getPriority() != b.getPriority())
+			System.out.println("#prio = " + a.getPriority());
+
+	}
+	
 	public boolean assertTaskEqual(Task taskA, Task taskB) {
 		return taskA.isEqual(taskB);
 	}
 
-	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
-	private static final String CLEAR_INFO_INDICATOR = "";
-
+	
+	private void showTask(Task t) {
+		System.out.println("NAME = " + t.getTaskName());
+		System.out.println("TID  = " + t.getTID());
+		System.out.println("DFro = " + t.getDateFrom());
+		System.out.println("DTo  = " + t.getDateTo());
+		System.out.println("dead = " + t.getDeadline());
+		System.out.println("loca = " + t.getLocation());
+		System.out.println("Deta = " + t.getDetails());
+		System.out.println("State= " + t.getStatus());
+		System.out.println("prio = " + t.getPriority());
+	}
 	private Date convertToDateObject(String dateString) {
 		try {
 			Date date = null;
-			if (dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
-				DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+			if (dateString != null && !dateString.equals("")) {
+				DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 				date = format.parse(dateString);
 			}
 			return date;

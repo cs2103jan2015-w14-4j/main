@@ -1,47 +1,129 @@
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class Template {
-	
+
+    private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
+	public static final int COMMAND_LENGTH = 9;
 	public static final String NO_SUCH_TEMPLATE = "No such template saved in the system";
 	private HashMap<String,Task> templates; 
+	private boolean isTest;
 	private SystemHandler system;
+	
 	
 	public Template() {
 		templates = new HashMap<String,Task>();
-		
+		isTest = false;
+	}
+	
+	public Template(boolean test) {
+		templates = new HashMap<String,Task>();
+		isTest = test;
 	}
 	
 	public ArrayList<Task> processCustomizingCommand(String[] command) 
 			throws NoSuchElementException, NumberFormatException {
-		String commandType = command[0];
-		assert(command.length == 3);
-		switch(getCommandType(commandType)) {
+		
+		COMMAND_TYPE_TEMPLATE commandType = getCommandType(command[0]);
+		assertValidity(command, commandType);
+		
+		switch(commandType) {
 			case addTemplate:
 				if(system == null) {
 					system = SystemHandler.getSystemHandler();
 				}
-				Task taskToBeAdded = system.requestTask(Integer.parseInt(command[2]));
-				return addTemplate(command[1], taskToBeAdded);
+				
+				Task taskToBeAdded;
+				if(isTest) {
+					taskToBeAdded = new Task(1000, "NEW",
+							convertToDateObject("12/09/2015 10:00"),
+							convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0);
+				}
+				else {
+					taskToBeAdded = system.requestTask(Integer.parseInt(command[1]));	
+				}
+				return addTemplate(command[2], taskToBeAdded);
 				
 			case viewTemplates:
-				assert(command[1] == null);
-				assert(command[2] == null);
 				return viewTemplates();
 				
 			case deleteTemplate:
-				assert(command[2] == null);
 				return removeTemplate(command[1]);
 				
 			case editTemplate:
-				return null;
+				Task temp = editTemplate(command);
+				ArrayList<Task> result = new ArrayList<Task>(); 
+				result.add(temp);
+				return result;
+				
 			case resetTemplates:
 				resetTemplates();
 				return new ArrayList<Task>();
 		}
 		return null;
+	}
+	
+	private Task editTemplate(String[] command) {
+		Task task = templates.get(command[1]);
+		if(task == null) {
+			throw new NoSuchElementException(NO_SUCH_TEMPLATE);
+		}
+		if(command[3] != null) {
+			task.setTaskName(command[3]);
+		}
+		if(command[4] != null) {
+			Date dateFrom = getDate(command[4]);
+			task.setDateFrom(dateFrom);
+		}
+		if(command[5] != null) {
+			Date dateTo = getDate(command[5]);
+			task.setDateFrom(dateTo);
+		}
+		if(command[6] != null) {
+			Date deadline = getDate(command[5]);
+			task.setDateFrom(deadline);
+		}
+		if(command[7] != null) {
+			task.setLocation(command[7]);
+		}
+		if(command[8] != null) {
+			task.setDetails(command[8]);
+		}	
+		return task.clone();
+	}
+		
+
+	private Date getDate(String date) {
+		try {
+			DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+			return format.parse(date);
+		} catch (ParseException e) {
+			assert(true);
+		}
+		return null;
+	}
+
+	private void assertValidity(String[] command, COMMAND_TYPE_TEMPLATE cmdType) {
+		assert(command.length == 9);
+		assert(command[0] != null);
+		switch(cmdType) {
+			case viewTemplates:
+			case resetTemplates:
+				assert(command[1] == null);
+			case deleteTemplate:
+				assert(command[2] == null);
+			case addTemplate:
+				for(int i = 3; i < COMMAND_LENGTH; ++i) {
+					assert(command[i] == null);
+				}
+			case editTemplate:
+		}
 	}
 	
 	private COMMAND_TYPE_TEMPLATE getCommandType(String command) throws NoSuchElementException {
@@ -99,7 +181,7 @@ public class Template {
 		return templateList;
 		
 	}
-	
+
 	private ArrayList<Task> addTemplate(String name, Task template) {
 		boolean sameName = hasSameName(name);
 		if(!sameName) {
@@ -125,6 +207,20 @@ public class Template {
 	
 	private boolean hasSameName(String name) {
 		return templates.containsKey(name);
+	}
+	
+	private Date convertToDateObject(String dateString) {
+		try {
+			Date date = null;
+			if (dateString != null && !dateString.equals("")) {
+				DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+				date = format.parse(dateString);
+			}
+			return date;
+		} catch (ParseException e) {
+			System.out.println(e);
+			return null;
+		}
 	}
 	
 }
