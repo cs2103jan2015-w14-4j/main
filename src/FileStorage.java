@@ -2,11 +2,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
-
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -60,7 +58,32 @@ public class FileStorage {
 		textFile = new File(DEFAULT_FILENAME);
     	
 	} 
-	
+    
+    //stub
+    public FileStorage(String fileName, TaskManager myTaskList, Template myTemplate, Shortcut myShortcut) {
+    	//stub
+		textFile = new File(DEFAULT_FILENAME);
+    	//TODO read from file and add respective info to the 3 parts
+		//to call TM, same as before
+		//to call template, use processCustomizingCommand(String[] cmd) 
+		//	cmd = {"addTemplate", , <template name>,<datefrom>......} //same as task manager 
+		//to call shortcut, use processShortcutCommand(String[] command)
+		// cmd = {"addShortcutINIT", shortcutname, id} // id the the row, eg addTask = row 0, deleteTask = row 3
+														// refer to shortcut keywords for the row
+    }
+    //TODO update template file
+    //@param given an arraylist of task, update the the template file
+    public void writeTemplateToFile(ArrayList<Task> template) {
+    	//stub
+    }
+    
+	//TODO update shortcut file
+    //@param shortcuts String[][] of size 9 each string[i] keeps a variable length represent certain keyword 
+    //store in order , one row is one id during retrieve
+    public void writeShortcutToFile(String[][] shortcuts) {
+    	//stub
+    }
+    
     //stores each task as a string delimited by ,
     public void writeToFile(ArrayList<Task> taskList) {
     	
