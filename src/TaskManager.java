@@ -28,7 +28,7 @@ public class TaskManager {
     private static final int YEAR_INDEX = 2;
     private static final int HOUR_INDEX = 3;
     private static final int MINUTE_INDEX = 4;
-    private static final int SEARCH_INDEX = 1;
+    private static final int SEARCH_INDEX = 2;
     private static final String CLEAR_INFO_INDICATOR = "";
     private static final String INVALID_COMMAND_MESSAGE = "The command is invalid.\n";
     private static final boolean TID_IS_NOT_FOUND = false;
@@ -104,15 +104,6 @@ public class TaskManager {
         tasks.add(newTask);
     }
 
-    public void addATaskForInitialization(String[] inputs) {
-        Task newTask = new Task(convertToIntType(inputs[TID]), inputs[TASK_NAME], 
-                convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
-                convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
-                convertToIntType(inputs[PRIORITY]));
-        updateIDCounter(inputs[TID]);
-        tasks.add(newTask);
-    }
-
     public ArrayList<Task> processTM(String[] inputs, FileStorage externalStorage) 
             throws ParseException {
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
@@ -144,12 +135,6 @@ public class TaskManager {
                 updateUndoStackFromTask(taskToDelete, inputs[COMMAND_TYPE]);
                 returningTasks = deleteATask(TIDToDelete);
             }
-            break;
-        case initTask:
-            initializeTasks(externalStorage);
-            returningTasks = viewTasks();
-            assert undoStack.size() == 0;
-            assert redoStack.size() == 0;
             break;
         case searchTask:
             returningTasks = searchTask(inputs);
@@ -498,11 +483,6 @@ public class TaskManager {
         removeIDFromTaskIDs(TID);
 
         return returningTasks;
-    }
-
-
-    private void initializeTasks(FileStorage externalStorage) throws ParseException {
-        externalStorage.readFromFile(this);
     }
 
 
