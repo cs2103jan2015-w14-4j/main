@@ -136,14 +136,18 @@ public class FlexiParser {
 					
 					//WARNING: NO CHECKING VALIDITY
 					outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
+					
+					if(inputArray[TASK_ID_INDEX].equals(TID_NOT_EXIST)) {
+		    			//what should i return
+		    			System.out.println("sfsbds");
+						
+		    			
+		    		}
+					
 					for(int i = 1; i < KEYWORDS_TASK.length; i++) {
 			    		int j = i + 1;
 			    		String value = extractAttribute(inputArray, KEYWORDS_TASK[i],KEYWORDS_TASK);
-			    		if(i == TASK_ID_INDEX && value.equals(TID_NOT_EXIST)) {
-			    			//what should i return
-			    			break;
-			    			
-			    		}
+			    		
 			    		
 			    		if(isDateTime(i,value)) {
 			    			
@@ -387,7 +391,7 @@ public class FlexiParser {
     	FlexiParser test1 = new FlexiParser();
     	
     	
-    	String[] temp = test1.parseText("addShortcut Ori addShortcut New addS");
+    	String[] temp = test1.parseText("editTask 1000 ");
     
     	
     	
@@ -407,4 +411,3 @@ public class FlexiParser {
     	
     }
 }
-
