@@ -13,11 +13,18 @@ public class Template {
 	public static final int COMMAND_LENGTH = 9;
 	public static final String NO_SUCH_TEMPLATE = "No such template saved in the system";
 	private HashMap<String,Task> templates; 
+	private boolean isTest;
 	private SystemHandler system;
+	
 	
 	public Template() {
 		templates = new HashMap<String,Task>();
-		
+		isTest = false;
+	}
+	
+	public Template(boolean test) {
+		templates = new HashMap<String,Task>();
+		isTest = test;
 	}
 	
 	public ArrayList<Task> processCustomizingCommand(String[] command) 
@@ -32,7 +39,15 @@ public class Template {
 					system = SystemHandler.getSystemHandler();
 				}
 				
-				Task taskToBeAdded = system.requestTask(Integer.parseInt(command[1]));
+				Task taskToBeAdded;
+				if(isTest) {
+					taskToBeAdded = new Task(1000, "NEW",
+							convertToDateObject("12/09/2015 10:00"),
+							convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0);
+				}
+				else {
+					taskToBeAdded = system.requestTask(Integer.parseInt(command[1]));	
+				}
 				return addTemplate(command[2], taskToBeAdded);
 				
 			case viewTemplates:
@@ -166,7 +181,7 @@ public class Template {
 		return templateList;
 		
 	}
-	
+
 	private ArrayList<Task> addTemplate(String name, Task template) {
 		boolean sameName = hasSameName(name);
 		if(!sameName) {
@@ -192,6 +207,20 @@ public class Template {
 	
 	private boolean hasSameName(String name) {
 		return templates.containsKey(name);
+	}
+	
+	private Date convertToDateObject(String dateString) {
+		try {
+			Date date = null;
+			if (dateString != null && !dateString.equals("")) {
+				DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+				date = format.parse(dateString);
+			}
+			return date;
+		} catch (ParseException e) {
+			System.out.println(e);
+			return null;
+		}
 	}
 	
 }
