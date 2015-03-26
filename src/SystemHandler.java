@@ -189,7 +189,7 @@ public class SystemHandler {
 		myShortcut.processShortcutCommand(cmd);
 		
 		logfile = CentralizedLog.getLogger();
-		myTemplates = new Template();
+		myTemplates = Template.getTemplate();
 		myTaskList = new TaskManager();
 		parser = new FlexiParser();
 		externalStorage = new FileStorage(fileName);

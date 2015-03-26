@@ -304,7 +304,7 @@ public class SystemTest {
 	@Test
 	public void testCustomizedManager() {
 		//TC1 - test adding
-		Template template = new Template(true);
+		Template template = Template.getTemplate(true);
 		String[] cmd1 = {"addTemplate","1000","task1", null, null, null, null, null, null};
 		ArrayList<Task> result1 = template.processCustomizingCommand(cmd1);
 		ArrayList<Task> expected1 = new ArrayList<Task>();
