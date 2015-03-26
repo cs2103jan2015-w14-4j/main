@@ -548,13 +548,22 @@ public class TaskManagerTest {
         String date1 = "22/03/2015 23:59";
         String date2 = "29/02/2000 23:59";
         String date3 = "29/02/2012 23:59";
+        //boundary case for date in February that is not in leap year
         String invalidDate1 = "29/02/2015 23:59";
+        //boundary case for date in February that is not in leap year
         String invalidDate2 = "29/02/1900 23:59";
-        String invalidDate3 = "35/01/2013 23:59";
+        //boundary case for date
+        String invalidDate3 = "32/01/2013 23:59";
+        //boundary case for month
         String invalidDate4 = "25/13/2013 23:59";
+        //boundary case for hour
         String invalidDate5 = "25/01/2013 24:59";
-        String invalidDate6 = "25/01/2013 23:61";
+        //boundary case for minute
+        String invalidDate6 = "25/01/2013 23:60";
+        //boundary case for date
         String invalidDate7 = "00/01/2013 23:41";
+        //boundary case for month
+        String invalidDate8 = "01/00/2013 23:41";
 
         Assert.assertEquals(myTaskManager.isDateValid(date1), true);
         Assert.assertEquals(myTaskManager.isDateValid(date2), true);
@@ -566,6 +575,7 @@ public class TaskManagerTest {
         Assert.assertEquals(myTaskManager.isDateValid(invalidDate5), false);
         Assert.assertEquals(myTaskManager.isDateValid(invalidDate6), false);
         Assert.assertEquals(myTaskManager.isDateValid(invalidDate7), false);
+        Assert.assertEquals(myTaskManager.isDateValid(invalidDate8), false);
     }
 
     @Test
