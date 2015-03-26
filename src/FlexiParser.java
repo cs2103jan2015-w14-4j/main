@@ -107,7 +107,7 @@ public class FlexiParser {
 			    case 0:
 					
 			    	//WARNING: NO CHECKING VALIDITY
-			    	outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
+			    	outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
 			    	for(int i = 1; i < KEYWORDS_TASK.length; i++) {
 			    		int j = i + 1;
 			    		String value = extractAttribute(inputArray, KEYWORDS_TASK[i],KEYWORDS_TASK);
@@ -391,7 +391,7 @@ public class FlexiParser {
     	FlexiParser test1 = new FlexiParser();
     	
     	
-    	String[] temp = test1.parseText("editTask 1000 ");
+    	String[] temp = test1.parseText("addTask 1000 Title lol ");
     
     	
     	
