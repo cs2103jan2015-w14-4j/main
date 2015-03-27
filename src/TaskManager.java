@@ -48,14 +48,25 @@ public class TaskManager {
     private Stack<String[]> redoStack = new Stack<String[]>();
     private HashSet<Integer> TaskIDs = new HashSet<Integer>();
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
     //------------constructor-------
     public TaskManager() {
         tasks = new ArrayList<Task>();
         IDCounter = INITIAL_TID;
     }
 
+<<<<<<< HEAD
     //------------getter------------
     public ArrayList<Task> getTasks() {
+=======
+
+    //------------getter------------
+    //This method is for testing purpose
+    protected ArrayList<Task> getTasks() {
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
         return tasks;
     }
 
@@ -67,9 +78,16 @@ public class TaskManager {
         return redoStack;
     }
 
+<<<<<<< HEAD
     //------------other methods------------
     public void processAddForInitialization(String[] inputs) {
         //if does not have TID, get a new TID; else just add the TID
+=======
+
+    //------------other methods------------
+    //Initialization method starts
+    public void processInitialization(String[] inputs) {
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
         Task newTask = null;
         if(!hasTID(inputs)){
             newTask = new Task(getNewTID(), inputs[TASK_NAME], 
@@ -101,11 +119,30 @@ public class TaskManager {
                     newTask.getDateTo());
         }
 
+<<<<<<< HEAD
         tasks.add(newTask);
     }
 
     public ArrayList<Task> processTM(String[] inputs, FileStorage externalStorage) 
             throws ParseException {
+=======
+        addIDToTaskIDs(newTask.getTID());
+        assertTaskDetailsValid(newTask);
+        tasks.add(newTask);
+    }
+
+    private Task processInitializationWithID(String[] inputs) {
+        return processAddWithID(inputs);
+    }
+
+    private Task processInitializationWithoutID(String[] inputs) {
+        return processAddWithoutID(inputs);
+    }
+    //Initialization method ends
+
+
+    public ArrayList<Task> processTM(String[] inputs) {
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
         ArrayList<Task> returningTasks = null;
 
@@ -167,6 +204,10 @@ public class TaskManager {
     }
 
 
+<<<<<<< HEAD
+=======
+    //Add method starts
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
     private ArrayList<Task> addATask(String[] inputs) {
         ArrayList<Task> returningTasks = null;
         Task newTask = null;
@@ -190,6 +231,7 @@ public class TaskManager {
             updateIDCounter(inputs[TID]);         
         }
 
+<<<<<<< HEAD
         assert isTaskDateNumberValid(newTask);
         if(isTaskADurationalTask(newTask)) {
             assert newTask.getDateTo() != null;
@@ -197,6 +239,9 @@ public class TaskManager {
                     newTask.getDateTo());
         }
         
+=======
+        assertTaskDetailsValid(newTask);
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
         addIDToTaskIDs(newTask.getTID());
 
         tasks.add(newTask);
@@ -211,7 +256,38 @@ public class TaskManager {
         }
         return returningTasks;
     }
+<<<<<<< HEAD
 
+=======
+    
+    private Task processAddWithID(String[] inputs) {
+        if(isIDClashing(inputs[TID])) {
+            inputs[TID] = convertToStringFromInt(getNewTID());
+        }
+        if(isIDLessThanTen(inputs[TID])) {
+            inputs[TID] = convertToStringFromInt(getNewTID());
+        }
+        Task newTask = new Task(convertToIntType(inputs[TID]), inputs[TASK_NAME], 
+                convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
+                convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
+                convertToIntType(inputs[PRIORITY]));
+        updateIDCounter(inputs[TID]);
+        return newTask;
+    }
+    
+    private Task processAddWithoutID(String[] inputs) {
+        Task newTask = new Task(getNewTID(), inputs[TASK_NAME], 
+                convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
+                convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
+                convertToIntType(inputs[PRIORITY]));
+        return newTask;
+    }
+    
+    private void addIDToTaskIDs(int TID) {
+        TaskIDs.add(TID);
+    }
+    
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
     private boolean isTaskADurationalTask(Task task) {
         return task.getDateFrom() != null && task.getDateTo() != null;
     }
@@ -239,15 +315,23 @@ public class TaskManager {
         TaskIDs.remove(TID);
     }
 
+<<<<<<< HEAD
     private void addIDToTaskIDs(int TID) {
         TaskIDs.add(TID);
     }
+=======
+
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
 
     private boolean isIDClashing(String TID) {
         return TaskIDs.contains(convertToIntType(TID));
     }
 
+<<<<<<< HEAD
     private boolean isIDLessThan1000(String TID) {
+=======
+    private boolean isIDLessThanTen(String TID) {
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
         return convertToIntType(TID) < INITIAL_TID;
     }
 
@@ -344,6 +428,7 @@ public class TaskManager {
             assert isDateFromSmallerThanDateTo(taskToEdit.getDateFrom(), 
                     taskToEdit.getDateTo());
         }
+<<<<<<< HEAD
         
         assert isTaskDateNumberValid(taskToEdit);
         if(isTaskADurationalTask(taskToEdit)) {
@@ -354,6 +439,13 @@ public class TaskManager {
         
         returningTasks.add(taskToEdit.clone());
 
+=======
+
+        assertTaskDetailsValid(taskToEdit);
+
+        returningTasks.add(taskToEdit.clone());
+
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
         return returningTasks;
     }
 
@@ -794,4 +886,19 @@ public class TaskManager {
         
         return false;
     }
+<<<<<<< HEAD
+=======
+
+
+
+
+    private void assertTaskDetailsValid(Task newTask) {
+        assert isTaskDateNumberValid(newTask);
+        if(isTaskADurationalTask(newTask)) {
+            assert newTask.getDateTo() != null;
+            assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
+                    newTask.getDateTo());
+        }
+    }
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
 }
