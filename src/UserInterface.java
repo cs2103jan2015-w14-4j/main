@@ -18,6 +18,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.EventQueue;
 import java.awt.Insets;
+import java.util.Observable;
+import java.util.Observer;
 import java.awt.Font;
 import java.awt.Color;
 
@@ -28,7 +30,7 @@ public class UserInterface  {
 	public JPanel panel;
 	private JTextField textField;
 	private JTextArea outputArea;
-	private JTextArea sysFeedbackArea;
+	//private JTextArea sysFeedbackArea;
 	private JTable outputTable;
 	private TaskTableModel model;
 	private final static String newline = "\n";
@@ -44,21 +46,11 @@ public class UserInterface  {
 	public static final String MSG_ASK_INPUT = "Please enter your command";
 	public static final String MSG_ECHO_FILENAME = "File location: %1$s";
 	public static final String MSG_SEPARATOR = "=========================================================";
-	
-	private static final double taskIndex = 5,
-			   taskName = 20,
-			   dateFrom = 10,
-			   dateTo = 10,
-			   deadline = 10,
-			   location = 10,
-			   details = 20,
-			   priority = 5,
-			   reminder = 10;
 
 	private boolean hasFilename;
 	private String prevInput;
-	
-
+	private JTextArea sysFeedbackArea;
+	//	private JScrollPane scrollPane;
 
 
 	public void  displayTaskTable(ArrayList<Task> outputData, boolean success){
@@ -68,7 +60,6 @@ public class UserInterface  {
 	}
 
 	public void displayShortcuts(String[][] outputData, boolean success) {
-		clearTextPane();
 		viewTextPane();
 		for(int i = 0; i < outputData.length; i++){
 			String[] strArray = outputData[i];
@@ -82,9 +73,9 @@ public class UserInterface  {
 	}
 
 
-	public void displayMsg(String outputData, boolean success){
-		 clearFeedbackArea();	 
-		 sysFeedbackArea.append(outputData);
+	public void displayMsg(ArrayList<String> outputData, boolean success){
+
+
 	}
 
 	public void displayTemplate(ArrayList<Task> outputData, boolean success){
@@ -212,6 +203,17 @@ public class UserInterface  {
 		gbc_outputArea.gridx = 0;
 		gbc_outputArea.gridy = 0;
 		frame.getContentPane().add(scrollPaneMain, gbc_outputArea);
+		/*		
+		sysFeedbackArea = new JTextArea();
+		sysFeedbackArea.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 13));
+		sysFeedbackArea.setEditable(false);
+		sysFeedbackArea.setColumns(30);
+		sysFeedbackArea.setTabSize(10);
+		sysFeedbackArea.setRows(10);
+		sysFeedbackArea.setWrapStyleWord(true);
+		sysFeedbackArea.setBackground(new Color(240, 255, 255));
+		scrollPaneSysFeedback.setViewportView(sysFeedbackArea);
+		 */
 
 		sysFeedbackArea = new JTextArea();
 		sysFeedbackArea.setFont(new Font("Monospaced", Font.PLAIN, 15));
@@ -238,7 +240,7 @@ public class UserInterface  {
 
 	public JScrollPane createTaskTable(ArrayList<Task> outputArray) {
 		ArrayList<String> columnNames = new ArrayList<String>();
-		columnNames.add("Index");
+		columnNames.add("Task Index");
 		columnNames.add("Task Name");
 		columnNames.add("Date From");
 		columnNames.add("Date To");
@@ -247,13 +249,8 @@ public class UserInterface  {
 		columnNames.add("Details");
 		columnNames.add("Priority");
 		columnNames.add("Reminder");
-		
-	
-		double[] preferredWidth = {taskIndex, taskName,dateFrom, dateTo, deadline , location, details, priority, reminder};
-		
 		model = new TaskTableModel(outputArray, columnNames, Task.class );
 		outputTable = new JTable (model);
-		setJTableColumnsWidth(outputTable, 800, preferredWidth ) ;
 		scrollPaneMain.setViewportView(outputTable);
 		System.out.println(model+ "in createTaskTable");
 		return scrollPaneMain;
@@ -343,9 +340,9 @@ public class UserInterface  {
 	private class inputListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent e){
-			String input = textField.getText().trim();
-			prevInput = input;		
-			if (prevInput.length() != 0){
+			String input = textField.getText();
+			prevInput = input;
+			if (input.length() != 0){
 
 				if (!hasFilename){		
 					clearInput();
@@ -356,12 +353,12 @@ public class UserInterface  {
 					mainHandler.initialize(input);
 					createTaskTable(outputArray);
 
-				}else{
+
+				}
+				else{
 					clearInput();
 
 					mainHandler.rawUserInput(input);
-					
-				
 					//dummytest
 					/*
 				for (int i = 0 ; i<10 ;  i++){
@@ -379,7 +376,7 @@ public class UserInterface  {
 	}
 
 	public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
-			double[] percentages) {
+			double... percentages) {
 		double total = 0;
 		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
 			total += percentages[i];
@@ -393,6 +390,42 @@ public class UserInterface  {
 	}
 
 
+
+
+	/**
+
+	private void printOutput(String commandType, ArrayList<Task> returnedOutput){
+		if(returnedOutput == null) return;
+		for(int i = 0; i < returnedOutput.size(); i++){
+			Task nextTask = returnedOutput.get(i);
+			outputArea.append(commandType);
+			outputArea.append(" the following:"+newline);
+			outputArea.append("ID    : "+ nextTask.getTID() + newline);
+			outputArea.append("Name  : "+ nextTask.getTaskName() + newline);
+			if(nextTask.getLocation() != null) {
+				outputArea.append("Location  : "+nextTask.getLocation() + newline);
+			}
+			if(nextTask.getDateFrom() != null) {
+				outputArea.append("Date From  : "+nextTask.getDateFrom().toLocaleString() + newline);
+			}
+			if(nextTask.getDateTo() != null) {
+				outputArea.append("Date To  : "+nextTask.getDateTo().toLocaleString() + newline);
+			}
+
+			if(nextTask.getDeadline() != null) {
+				outputArea.append("Deadline  : "+nextTask.getDeadline() + newline);
+			}
+			if(nextTask.getDetails() != null) {
+				outputArea.append("Detail  : "+nextTask.getDetails() + newline);
+			}
+			outputArea.append(newline);
+		}
+
+	}
+
+	 */
+
+
 	private void clearInput() {
 		textField.selectAll();
 		textField.setText("");
@@ -400,10 +433,6 @@ public class UserInterface  {
 
 	private void clearTextPane() {
 		outputArea.setText("");	
-	}
-	
-	private void clearFeedbackArea(){
-		sysFeedbackArea.setText("");
 	}
 
 }

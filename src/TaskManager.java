@@ -9,7 +9,7 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TaskManager {
+public class TaskManager implements TaskManagerInterface {
     public static final int COMMAND_TYPE = 0;
     public static final int TID = 1;
     public static final int TASK_NAME = 2;
@@ -19,9 +19,9 @@ public class TaskManager {
     public static final int LOCATION = 6;
     public static final int DETAILS = 7;
     public static final int PRIORITY = 8;
-    public static final int DEFAULT_SIZE = 9;
+    public static final int DEFAULT_STRING_SIZE = 9;
 
-    private static final int INITIAL_TID = 1000;
+    private static final int INITIAL_TID = 10;
     private static final int NUM_ATTRIBUTE_FOR_DATE_OBJECT = 5;
     private static final int DAY_INDEX = 0;
     private static final int MONTH_INDEX = 1;
@@ -30,9 +30,6 @@ public class TaskManager {
     private static final int MINUTE_INDEX = 4;
     private static final int SEARCH_INDEX = 2;
     private static final String CLEAR_INFO_INDICATOR = "";
-    private static final String INVALID_COMMAND_MESSAGE = "The command is invalid.\n";
-    private static final boolean TID_IS_NOT_FOUND = false;
-    private static final boolean TID_IS_FOUND = true;
     private static final boolean IS_CLASH = true;
     private static final boolean IS_NOT_CLASH = false;
     private static final boolean DATE_IS_VALID = true;
@@ -48,89 +45,43 @@ public class TaskManager {
     private Stack<String[]> redoStack = new Stack<String[]>();
     private HashSet<Integer> TaskIDs = new HashSet<Integer>();
 
-<<<<<<< HEAD
-=======
 
-<<<<<<< HEAD
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
-=======
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
-    //------------constructor-------
+    //--------------------constructor-----------------
     public TaskManager() {
         tasks = new ArrayList<Task>();
         IDCounter = INITIAL_TID;
     }
 
-<<<<<<< HEAD
-    //------------getter------------
-    public ArrayList<Task> getTasks() {
-=======
 
-    //------------getter------------
+    //--------------------getter----------------------
     //This method is for testing purpose
     protected ArrayList<Task> getTasks() {
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
         return tasks;
     }
 
+    //This method is for testing purpose
     protected Stack<String[]> getUndoStack() {
         return undoStack;
     }
 
+    //This method is for testing purpose
     protected Stack<String[]> getRedoStack() {
         return redoStack;
     }
 
-<<<<<<< HEAD
-    //------------other methods------------
-    public void processAddForInitialization(String[] inputs) {
-        //if does not have TID, get a new TID; else just add the TID
-=======
 
-    //------------other methods------------
-    //Initialization method starts
+    //--------------------other methods-----------------------------------
+    //--------------------Initialization method starts--------------------
     public void processInitialization(String[] inputs) {
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
         Task newTask = null;
-        if(!hasTID(inputs)){
-            newTask = new Task(getNewTID(), inputs[TASK_NAME], 
-                    convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
-                    convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
-                    convertToIntType(inputs[PRIORITY]));
-            addIDToTaskIDs(newTask.getTID());
-
-            
-        } else {
-            if(isIDClashing(inputs[TID])) {
-                inputs[TID] = convertToStringFromInt(getNewTID());
-            }
-            if(isIDLessThan1000(inputs[TID])) {
-                inputs[TID] = convertToStringFromInt(getNewTID());
-            }
-            newTask = new Task(convertToIntType(inputs[TID]), inputs[TASK_NAME], 
-                    convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
-                    convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
-                    convertToIntType(inputs[PRIORITY]));
-            updateIDCounter(inputs[TID]);
-            addIDToTaskIDs(newTask.getTID());
-        } 
-        
-        assert isTaskDateNumberValid(newTask);
-        if(isTaskADurationalTask(newTask)) {
-            assert newTask.getDateTo() != null;
-            assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
-                    newTask.getDateTo());
+        if(hasTID(inputs)){
+            newTask = processInitializationWithID(inputs);
+        } else {  
+            newTask = processInitializationWithoutID(inputs);
         }
 
-<<<<<<< HEAD
-        tasks.add(newTask);
-    }
-
-    public ArrayList<Task> processTM(String[] inputs, FileStorage externalStorage) 
-            throws ParseException {
-=======
         addIDToTaskIDs(newTask.getTID());
-        assertTaskDetailsValid(newTask);
+        assertTaskDatesValid(newTask);
         tasks.add(newTask);
     }
 
@@ -141,33 +92,36 @@ public class TaskManager {
     private Task processInitializationWithoutID(String[] inputs) {
         return processAddWithoutID(inputs);
     }
-    //Initialization method ends
+    //--------------------Initialization method ends--------------------
 
 
     public ArrayList<Task> processTM(String[] inputs) {
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
         ArrayList<Task> returningTasks = null;
-
+        //SystemHandler handler = SystemHanlder.getSystemHandler()
+        //handler.saveToFile
         switch(commandObtained) {
+
         case addTask:
             returningTasks = addATask(inputs);
             if(returningTasks != null) {
-                updateUndoStackForAdd(returningTasks, inputs[COMMAND_TYPE]);
+                updateUndoStackFromTask(returningTasks.get(INDEX_ZERO), inputs[COMMAND_TYPE]);
             }
             break;
+
         case editTask:
             if(isAbleToEdit(inputs)) {
                 int TIDToEdit = getTaskTID(inputs);
                 Task taskToEdit = getTaskFromTID(TIDToEdit);
                 updateStackForEdit(taskToEdit, inputs, undoStack);
                 returningTasks = editATask(taskToEdit, inputs);
-                assert returningTasks != null;
             }
             break;
+
         case viewTask:
             returningTasks = viewTasks(); 
             break;
+
         case deleteTask:
             if(isAbleToDelete(inputs)) {
                 int TIDToDelete = getTaskTID(inputs);
@@ -176,26 +130,33 @@ public class TaskManager {
                 returningTasks = deleteATask(TIDToDelete);
             }
             break;
+
         case searchTask:
             returningTasks = searchTask(inputs);
             break;
+
         case undoTask:
             returningTasks = undoAnOperation();
             break;
+
         case redoTask:
             returningTasks = redoAnOperation();
             break;
+
         case invalidTask:
-            System.out.print(INVALID_COMMAND_MESSAGE);
+            //what do I do if command is invalid
             break;
         }
-
-        externalStorage.writeToFile(tasks);
 
         return returningTasks;
     }
 
 
+    /**
+     * if the command does not exist, returns a invalidTask
+     * @param command  a String received from FlexiParser
+     * @return         a COMMAND_TYPE_TASK_MANAGER type of the String command
+     */
     private COMMAND_TYPE_TASK_MANAGER obtainCommand (String command) {
         COMMAND_TYPE_TASK_MANAGER commandObtained;
         try {
@@ -207,69 +168,32 @@ public class TaskManager {
     }
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-    //Add method starts
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
-=======
-    //Add method starts
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
+    //--------------------Add method starts--------------------
     private ArrayList<Task> addATask(String[] inputs) {
         ArrayList<Task> returningTasks = null;
         Task newTask = null;
-        //if does not have TID, get a new TID; else just add the TID
-        if(!hasTID(inputs)){
-            newTask = new Task(getNewTID(), inputs[TASK_NAME], 
-                    convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
-                    convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
-                    convertToIntType(inputs[PRIORITY]));
+        if(hasTID(inputs)){
+            newTask = processAddWithID(inputs);       
         } else {
-            if(isIDClashing(inputs[TID])) {
-                inputs[TID] = convertToStringFromInt(getNewTID());
-            }
-            if(isIDLessThan1000(inputs[TID])) {
-                inputs[TID] = convertToStringFromInt(getNewTID());
-            }
-            newTask = new Task(convertToIntType(inputs[TID]), inputs[TASK_NAME], 
-                    convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
-                    convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
-                    convertToIntType(inputs[PRIORITY]));
-            updateIDCounter(inputs[TID]);         
+            newTask = processAddWithoutID(inputs);
         }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-        assert isTaskDateNumberValid(newTask);
-        if(isTaskADurationalTask(newTask)) {
-            assert newTask.getDateTo() != null;
-            assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
-                    newTask.getDateTo());
-        }
-        
-=======
-        assertTaskDetailsValid(newTask);
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
-=======
-        assertTaskDetailsValid(newTask);
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
+        assertTaskDatesValid(newTask);
         addIDToTaskIDs(newTask.getTID());
 
         tasks.add(newTask);
         returningTasks = new ArrayList<Task>();
         returningTasks.add(newTask.clone());
 
-        assert returningTasks.get(INDEX_ZERO).getTID() >= 1000;
+        assert returningTasks.get(INDEX_ZERO).getTID() >= INITIAL_TID;
 
-        //to make sure newTask is a durational task, which has a start and end time
+        //
         if(isTaskADurationalTask(newTask)) {
             addClashingTasksForReturning(newTask, returningTasks);
         }
+        
         return returningTasks;
     }
-<<<<<<< HEAD
-
-=======
     
     private Task processAddWithID(String[] inputs) {
         if(isIDClashing(inputs[TID])) {
@@ -285,6 +209,10 @@ public class TaskManager {
         updateIDCounter(inputs[TID]);
         return newTask;
     }
+
+    private boolean isIDLessThanTen(String TID) {
+        return convertToIntType(TID) < INITIAL_TID;
+    }
     
     private Task processAddWithoutID(String[] inputs) {
         Task newTask = new Task(getNewTID(), inputs[TASK_NAME], 
@@ -298,11 +226,10 @@ public class TaskManager {
         TaskIDs.add(TID);
     }
     
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
     private boolean isTaskADurationalTask(Task task) {
         return task.getDateFrom() != null && task.getDateTo() != null;
     }
-
+    
     private void addClashingTasksForReturning(Task newTask, 
             ArrayList<Task> returningTasks) {
         for(Task existingTask : tasks) {
@@ -320,38 +247,6 @@ public class TaskManager {
             return IS_NOT_CLASH;
         }
         return IS_CLASH;
-    }
-
-    private void removeIDFromTaskIDs(int TID) {
-        TaskIDs.remove(TID);
-    }
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-    private void addIDToTaskIDs(int TID) {
-        TaskIDs.add(TID);
-    }
-=======
-
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
-=======
-
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
-
-    private boolean isIDClashing(String TID) {
-        return TaskIDs.contains(convertToIntType(TID));
-    }
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-    private boolean isIDLessThan1000(String TID) {
-=======
-    private boolean isIDLessThanTen(String TID) {
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
-=======
-    private boolean isIDLessThanTen(String TID) {
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
-        return convertToIntType(TID) < INITIAL_TID;
     }
 
     private int getNewTID() {
@@ -374,106 +269,36 @@ public class TaskManager {
             IDCounter = convertToIntType(currentID);
         }
     }
+    //--------------------Add method ends--------------------
 
-    //assume dateString is as this format "dd/MM/yyyy HH:mm"
-    private Date convertToDateObject(String dateString) {
-        Date date = null;
-        try {
-            if(dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
-                assert isDateValid(dateString);
-                DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
-                date = format.parse(dateString);
-            }
-        } catch (ParseException ex) {
-            System.out.println(ex);
-        }
-        return date;
-    }
-
-    private int convertToIntType(String intString) {
-        int intType = 0;
-        if(intString != null) {
-            intType = Integer.parseInt(intString);
-        }
-        return intType;
-    }
-
-
+    
+    //--------------------Edit method starts--------------------
+    //ID is clashing, means TID is found
     private boolean isAbleToEdit(String[] inputs) {
-        int TaskTID = getTaskTID(inputs);
-        return isTIDFound(TaskTID);
+        return isIDClashing(inputs[TID]);
     }
-
-    private int getTaskTID(String[] inputs) {
-        int TaskTID = convertToIntType(inputs[TID]);
-        return TaskTID;
-    }
-
-    private boolean isTIDFound(int TID) {
-        boolean isTIDFound = TID_IS_NOT_FOUND;
-        for(Task task : tasks) {
-            if(task.getTID() == TID) {
-                isTIDFound = TID_IS_FOUND;
-                break;
-            }
-        }
-        return isTIDFound;
-    }
-
-    public Task getTaskFromTID(int TID) {
-        Task taskFound = null;
-        for(Task task : tasks) {
-            if(task.getTID() == TID) {
-                taskFound = task;
-                break;
-            }
-        }
-        return taskFound;
-    }
-
+    
     private ArrayList<Task> editATask(Task taskToEdit, String[] inputs) {
         for(int i = TASK_NAME; i < inputs.length; ++i) {
-            if(!isInputEmpty(inputs, i)) {
+            if(isTaskInfoChanged(inputs, i)) {
                 editTaskInfo(inputs, taskToEdit, i);
             }
 
-            if(inputs[i] != null && isContentToClear(inputs, i)) {
+            if(!isTaskInfoChanged(inputs, i) && isContentToClear(inputs, i)) {
                 clearTaskInfo(taskToEdit, i);
             }
         }
         ArrayList<Task> returningTasks = new ArrayList<Task>();
-        if(taskToEdit.getDateFrom() != null) {
-            assert taskToEdit.getDateTo() != null;
-            assert isDateFromSmallerThanDateTo(taskToEdit.getDateFrom(), 
-                    taskToEdit.getDateTo());
-        }
-<<<<<<< HEAD
-<<<<<<< HEAD
-        
-        assert isTaskDateNumberValid(taskToEdit);
-        if(isTaskADurationalTask(taskToEdit)) {
-            assert taskToEdit.getDateTo() != null;
-            assert isDateFromSmallerThanDateTo(taskToEdit.getDateFrom(), 
-                    taskToEdit.getDateTo());
-        }
-        
         returningTasks.add(taskToEdit.clone());
 
-=======
+        assertlalala(taskToEdit);
+        assertTaskDatesValid(taskToEdit);
 
-=======
-
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
-        assertTaskDetailsValid(taskToEdit);
-
-        returningTasks.add(taskToEdit.clone());
-
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
         return returningTasks;
     }
-
-    private boolean isInputEmpty(String[] inputs, int i) {
-        return inputs[i] == null;
+    
+    private boolean isTaskInfoChanged(String[] inputs, int i) {
+        return inputs[i] != null;
     }
 
     private void editTaskInfo(String[] inputs, Task task, int i) {
@@ -519,7 +344,7 @@ public class TaskManager {
     private void editTaskName(String[] inputs, Task task) {
         task.setTaskName(inputs[TASK_NAME]);
     }
-
+    
     private boolean isContentToClear(String[] inputs, int i) {
         return inputs[i].equals(CLEAR_INFO_INDICATOR);
     }
@@ -563,8 +388,10 @@ public class TaskManager {
     private void clearTaskPriority(Task task) {
         task.setPriority(0);
     }
-
-
+    //----------Edit method ends----------
+    
+    
+    //----------View method starts----------
     private ArrayList<Task> viewTasks() {
         if(tasks.isEmpty()){
             return null;
@@ -576,16 +403,18 @@ public class TaskManager {
             return returningTasks;
         }
     }
-
-
+    //--------------------View method ends--------------------
+    
+    
+    //--------------------Delete method starts--------------------
     private boolean isAbleToDelete(String[] inputs) {
-        int TaskTID = getTaskTID(inputs);
-        return isTIDFound(TaskTID);
+        return isIDClashing(inputs[TID]);
     }
-
+    
     private ArrayList<Task> deleteATask(int TID) {
         ArrayList<Task> returningTasks = null;
         Iterator<Task> iterator = tasks.iterator();
+        
         while (iterator.hasNext()) {
             Task nextTask = (Task) iterator.next();
             if(TID == nextTask.getTID()) {
@@ -594,13 +423,18 @@ public class TaskManager {
                 iterator.remove();
             }
         }
-
         removeIDFromTaskIDs(TID);
 
         return returningTasks;
     }
-
-
+    
+    private void removeIDFromTaskIDs(int TID) {
+        TaskIDs.remove(TID);
+    }
+    //--------------------Delete method ends--------------------
+    
+    
+    //--------------------Search method starts--------------------
     private ArrayList<Task> searchTask(String[] inputs) {
         ArrayList<Task> returningTasks = new ArrayList<Task>();
 
@@ -618,10 +452,10 @@ public class TaskManager {
             return returningTasks;
         }
     }
-
+    
     private boolean isSearchFound(Task task, String search) {
         boolean isSearchFound = SEARCH_IS_NOT_FOUND;
-        String[] strForSearch = new String[DEFAULT_SIZE];
+        String[] strForSearch = new String[DEFAULT_STRING_SIZE];
         strForSearch[COMMAND_TYPE] = null;
 
         getStringArrayFromTask(task, strForSearch);
@@ -635,28 +469,13 @@ public class TaskManager {
 
         return isSearchFound;
     }
-
-
-    //to tell the stack there is an edit operation, 
-    //but the corresponding information for undo is wrong
-    private void updateStackForEdit(Task taskToEdit, String[] inputs, 
-            Stack<String[]> stack) {
-        String[] strForStack = new String[DEFAULT_SIZE];
-
-        strForStack[COMMAND_TYPE] = inputs[COMMAND_TYPE];
-        getStringArrayFromTask(taskToEdit, strForStack);
-
-        for(int i = TASK_NAME; i < DEFAULT_SIZE; ++i) {
-            if(strForStack[i] == null && inputs[i] != null) {
-                strForStack[i] = CLEAR_INFO_INDICATOR;
-            }
-        }
-
-        stack.push(strForStack);
-    }
-
+    //--------------------Search method ends--------------------
+    
+    
+    //--------------------Undo method starts--------------------
     private ArrayList<Task> undoAnOperation() {
         ArrayList<Task> returningTasks = null;
+        
         if(!undoStack.isEmpty()) {
             String[] undoOperation = undoStack.peek();
             COMMAND_TYPE_TASK_MANAGER commandUndo = obtainCommand(undoOperation[COMMAND_TYPE]);
@@ -678,6 +497,7 @@ public class TaskManager {
             }
             updateRedoStack();
         }
+        
         return returningTasks;
     }
 
@@ -687,29 +507,132 @@ public class TaskManager {
         returningTasks = editATask(taskToEdit, inputs);
         return returningTasks;
     }
+    
+    private void updateRedoStack() {
+        redoStack.push(undoStack.pop());
+    }
+    //--------------------Undo method ends--------------------
+    
+    
+    //--------------------Redo method starts--------------------
+    private ArrayList<Task> redoAnOperation() {
+        ArrayList<Task> returningTasks = null;
+        
+        if(!redoStack.isEmpty()) {
+            String[] redoOperation = redoStack.peek();
+            COMMAND_TYPE_TASK_MANAGER commandUndo = obtainCommand(redoOperation[COMMAND_TYPE]);
+            switch(commandUndo) {
+            case addTask:
+                returningTasks = addATask(redoOperation);
+                break;
+            case deleteTask:
+                int TIDToDelete = getTaskTID(redoOperation);
+                returningTasks = deleteATask(TIDToDelete);
+                break;
+            case editTask:
+                int TIDToEdit = getTaskTID(redoOperation);
+                Task taskToEdit = getTaskFromTID(TIDToEdit);
+                returningTasks = editATaskForRedo(taskToEdit, redoOperation);
+                break;
+            default:
+                break;
+            }
+            updateUndoStackFromRedoOperation();
+        }
+        
+        return returningTasks;
+    }
+    
+    private ArrayList<Task> editATaskForRedo(Task taskToEdit, String[] inputs) {
+        ArrayList<Task> returningTasks = null;
+        updateStackForEditUnderUndoRedo(taskToEdit, inputs, redoStack);
+        returningTasks = editATask(taskToEdit, inputs);
+        return returningTasks;
+    }
+    
+    private void updateUndoStackFromRedoOperation() {
+        undoStack.push(redoStack.pop());
+    }
+    
+    //--------------------Redo method ends--------------------
 
-    //correct the corresponding information for undo operation
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+    
+
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //to tell the stack there is an edit operation, 
+    //but the corresponding information for undo is wrong
+    
+
+
+
+
+
+    
+    private void updateStackForEdit(Task taskToEdit, String[] inputs, 
+            Stack<String[]> stack) {
+        String[] strForStack = new String[DEFAULT_STRING_SIZE];
+
+        strForStack[COMMAND_TYPE] = inputs[COMMAND_TYPE];
+        getStringArrayFromTask(taskToEdit, strForStack);
+
+        for(int i = TASK_NAME; i < DEFAULT_STRING_SIZE; ++i) {
+            if(strForStack[i] == null && inputs[i] != null) {
+                strForStack[i] = CLEAR_INFO_INDICATOR;
+            }
+        }
+
+        stack.push(strForStack);
+    }
+    
+    
+    //--------------------Methods used more than once start----------------------
+    /**
+     * This method is used by editATaskForUndo() and editATaskForRedo()
+     * @param taskToEdit
+     * @param inputs
+     * @param stack
+     */
     private void updateStackForEditUnderUndoRedo(Task taskToEdit, String[] inputs, 
             Stack<String[]> stack) {
         stack.pop();
         updateStackForEdit(taskToEdit, inputs, stack);
     }
 
-    //This ArrayList contains only one item
-    private void updateUndoStackForAdd(ArrayList<Task> tasks, String commandType) {
-        Task task = tasks.get(INDEX_ZERO);
-        updateUndoStackFromTask(task, commandType);
-    }
-
-    private void updateUndoStackFromTask(Task task, String commandType) {
-        String[] strForUndoStack = new String[DEFAULT_SIZE];
-
-        strForUndoStack[COMMAND_TYPE] = commandType;
-        getStringArrayFromTask(task, strForUndoStack);
-
-        undoStack.push(strForUndoStack);
-    }
-
+    /**
+     * This method is used by updateUndoStackFromTask(), isSearchFound() and updateStackForEdit()
+     * @param task
+     * @param strArray
+     */
     private void getStringArrayFromTask(Task task, String[] strArray) {
         strArray[TID] = convertToStringFromInt(task.getTID());
         strArray[TASK_NAME] = task.getTaskName();
@@ -758,47 +681,93 @@ public class TaskManager {
         return intString;
     }
 
-    private void updateRedoStack() {
-        redoStack.push(undoStack.pop());
+    /**
+     * This method is used by processTM(), undoAnOperation() and redoAnOperation()
+     * @param inputs
+     * @return
+     */
+    private int getTaskTID(String[] inputs) {
+        int TaskTID = convertToIntType(inputs[TID]);
+        return TaskTID;
     }
 
+    /**
+     * This method is used by addTask and deleteTask case in processTM()
+     * @param task
+     * @param commandType
+     */
+    private void updateUndoStackFromTask(Task task, String commandType) {
+        String[] strForUndoStack = new String[DEFAULT_STRING_SIZE];
 
-    private ArrayList<Task> redoAnOperation() {
-        ArrayList<Task> returningTasks = null;
-        if(!redoStack.isEmpty()) {
-            String[] redoOperation = redoStack.peek();
-            COMMAND_TYPE_TASK_MANAGER commandUndo = obtainCommand(redoOperation[COMMAND_TYPE]);
-            switch(commandUndo) {
-            case addTask:
-                returningTasks = addATask(redoOperation);
-                break;
-            case deleteTask:
-                int TIDToDelete = getTaskTID(redoOperation);
-                returningTasks = deleteATask(TIDToDelete);
-                break;
-            case editTask:
-                int TIDToEdit = getTaskTID(redoOperation);
-                Task taskToEdit = getTaskFromTID(TIDToEdit);
-                returningTasks = editATaskForRedo(taskToEdit, redoOperation);
-                break;
-            default:
+        strForUndoStack[COMMAND_TYPE] = commandType;
+        getStringArrayFromTask(task, strForUndoStack);
+
+        undoStack.push(strForUndoStack);
+    }
+    
+    /* This method is used by processTM(), undoAnOperation(), redoAnOperation()
+     * @see TaskManagerInterface#getTaskFromTID(int)
+     */
+    public Task getTaskFromTID(int TID) {
+        Task taskFound = null;
+        for(Task task : tasks) {
+            if(task.getTID() == TID) {
+                taskFound = task;
                 break;
             }
-            updateUndoStackFromRedoOperation();
         }
-        return returningTasks;
+        return taskFound;
+    }
+    
+  //assume dateString is as this format "dd/MM/yyyy HH:mm"
+    /**
+     * This method is used by processAddWithID(), processAddWithoutID(), editTaskDateFrom(),
+     *      editTaskDateTo() and editTaskDeadline();
+     * @param dateString
+     * @return
+     */
+    private Date convertToDateObject(String dateString) {
+        Date date = null;
+        try {
+            if(dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
+                assert isDateValid(dateString);
+                DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+                date = format.parse(dateString);
+            }
+        } catch (ParseException ex) {
+            System.out.println(ex);
+        }
+        return date;
     }
 
-    private ArrayList<Task> editATaskForRedo(Task taskToEdit, String[] inputs) {
-        ArrayList<Task> returningTasks = null;
-        updateStackForEditUnderUndoRedo(taskToEdit, inputs, redoStack);
-        returningTasks = editATask(taskToEdit, inputs);
-        return returningTasks;
+    private int convertToIntType(String intString) {
+        int intType = 0;
+        if(intString != null) {
+            intType = Integer.parseInt(intString);
+        }
+        return intType;
     }
+    
+    /**
+     * This method is used by processIDWithAdd(), isAbleToEdit(), isAbleToDelete()
+     * @param TID
+     * @return
+     */
+    private boolean isIDClashing(String TID) {
+        return TaskIDs.contains(convertToIntType(TID));
+    }
+    //--------------------Methods used more than once end----------------------
 
-    private void updateUndoStackFromRedoOperation() {
-        undoStack.push(redoStack.pop());
-    }
+    
+    //--------------------Assertion methods start----------------------
+
+
+
+    
+
+
+
+
 
 
     public boolean isDateValid(String date) {
@@ -887,38 +856,39 @@ public class TaskManager {
             return false;
         }
     }
-    
+
     protected boolean isTaskDateNumberValid(Task task) {
         //durational task
         if(task.getDateFrom() != null && task.getDateTo() != null && 
                 task.getDeadline() == null) {
             return true;
         }
-        
+
         //deadline task
         if(task.getDateFrom() == null && task.getDateTo() == null && 
                 task.getDeadline() != null) {
             return true;
         }
-        
+
         //floating task
         if(task.getDateFrom() == null && task.getDateTo() == null && 
                 task.getDeadline() == null) {
             return true;
         }
-        
+
         return false;
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
+
+    
+    
+    
+    
+    
 
 
 
 
-    private void assertTaskDetailsValid(Task newTask) {
+    private void assertTaskDatesValid(Task newTask) {
         assert isTaskDateNumberValid(newTask);
         if(isTaskADurationalTask(newTask)) {
             assert newTask.getDateTo() != null;
@@ -926,8 +896,21 @@ public class TaskManager {
                     newTask.getDateTo());
         }
     }
-<<<<<<< HEAD
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
-=======
->>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
+    
+    
+    
+
+    
+    
+
+    
+    private void assertlalala(Task taskToEdit) {
+        if(taskToEdit.getDateFrom() != null) {
+            assert taskToEdit.getDateTo() != null;
+            assert isDateFromSmallerThanDateTo(taskToEdit.getDateFrom(), 
+                    taskToEdit.getDateTo());
+        }
+    }
+    //--------------------Assertion methods ends----------------------
+
 }
