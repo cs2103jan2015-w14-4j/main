@@ -74,7 +74,7 @@ public class UserInterface  {
 
 	}
 
-	public void displayShortcuts(ArrayList<String> outputData, boolean success) {
+	public void displayShortcuts(String[][] outputData, boolean success) {
 		// TODO Auto-generated method stub
 		viewTextPane();
 
