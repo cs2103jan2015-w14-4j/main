@@ -1,4 +1,4 @@
 
 public enum COMMAND_TYPE_SHORTCUT {
-	addShortcut, viewShortcut, deleteShortcut, resetShortcut
+	addShortcut, viewShortcut, deleteShortcut, resetShortcut, addShortcutInit
 }

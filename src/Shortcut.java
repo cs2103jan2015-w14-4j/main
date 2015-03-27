@@ -9,12 +9,15 @@ public class Shortcut {
 										"addShortcut", "viewShortcuts", "deleteShortcut",
 										"resetShortcut", "addTemplate", "editTemplate", 
 										"viewTemplates", "deleteTemplate", "resetTemplates", "help"}; 
-	
+
 	private ArrayList<ArrayList<String>> userShortcuts;
 	private static Shortcut centralizedShortcut;
 	
 	private Shortcut() {
 		userShortcuts = new ArrayList<ArrayList<String>>();
+		for(int i = 0; i < keywords.length; ++i) {
+			userShortcuts.add(new ArrayList<String>());
+		}
 	}
 	
 	public static Shortcut getShortcut() {
@@ -52,10 +55,26 @@ public class Shortcut {
 				verifyCommand(command, 1);
 				results = cloneShortcuts();
 				break;
+			case addShortcutInit:
+				verifyCommand(command, 3);
+				addShortcutInit(command);
+				break;
 		}
 		return results; 
 	}
 	
+	private void addShortcutInit(String[] command) throws NumberFormatException {
+		int row = Integer.parseInt(command[2]);
+		
+		assert(row < keywords.length);
+		assert(row >= 0);
+		assert(!isKeyWords(command[1]));
+		
+		ArrayList<String> toBeAddedInto = userShortcuts.get(row);
+		
+		toBeAddedInto.add(command[1]);
+	}
+
 	public String keywordMatching(String command) {
 		int matchingIndex = searchMatching(command);
 		if(matchingIndex > -1) {
@@ -76,6 +95,8 @@ public class Shortcut {
 				return COMMAND_TYPE_SHORTCUT.deleteShortcut;
 			case "resetShortcut":
 				return COMMAND_TYPE_SHORTCUT.resetShortcut;
+			case "addShortcutInit":
+				return COMMAND_TYPE_SHORTCUT.addShortcutInit;
 			default:
 				throw new NoSuchElementException("Wrong command received at Shortcut Manager.");
 		}
