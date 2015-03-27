@@ -51,6 +51,9 @@ public class TaskManager {
 <<<<<<< HEAD
 =======
 
+<<<<<<< HEAD
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
+=======
 >>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
     //------------constructor-------
     public TaskManager() {
@@ -205,6 +208,10 @@ public class TaskManager {
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+    //Add method starts
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
 =======
     //Add method starts
 >>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
@@ -232,6 +239,7 @@ public class TaskManager {
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         assert isTaskDateNumberValid(newTask);
         if(isTaskADurationalTask(newTask)) {
             assert newTask.getDateTo() != null;
@@ -239,6 +247,9 @@ public class TaskManager {
                     newTask.getDateTo());
         }
         
+=======
+        assertTaskDetailsValid(newTask);
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
 =======
         assertTaskDetailsValid(newTask);
 >>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
@@ -316,9 +327,13 @@ public class TaskManager {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     private void addIDToTaskIDs(int TID) {
         TaskIDs.add(TID);
     }
+=======
+
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
 =======
 
 >>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
@@ -328,7 +343,11 @@ public class TaskManager {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     private boolean isIDLessThan1000(String TID) {
+=======
+    private boolean isIDLessThanTen(String TID) {
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
 =======
     private boolean isIDLessThanTen(String TID) {
 >>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
@@ -429,6 +448,7 @@ public class TaskManager {
                     taskToEdit.getDateTo());
         }
 <<<<<<< HEAD
+<<<<<<< HEAD
         
         assert isTaskDateNumberValid(taskToEdit);
         if(isTaskADurationalTask(taskToEdit)) {
@@ -441,6 +461,9 @@ public class TaskManager {
 
 =======
 
+=======
+
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
         assertTaskDetailsValid(taskToEdit);
 
         returningTasks.add(taskToEdit.clone());
@@ -887,7 +910,10 @@ public class TaskManager {
         return false;
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
 
 
 
@@ -900,5 +926,8 @@ public class TaskManager {
                     newTask.getDateTo());
         }
     }
+<<<<<<< HEAD
+>>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
+=======
 >>>>>>> parent of e7e6ef6... refactored the code, except the assertion part
 }
