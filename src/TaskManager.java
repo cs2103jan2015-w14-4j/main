@@ -48,11 +48,13 @@ public class TaskManager implements TaskManagerInterface {
     private Stack<String[]> redoStack = new Stack<String[]>();
     private HashSet<Integer> TaskIDs = new HashSet<Integer>();
 
+
     //------------constructor-------
     public TaskManager() {
         tasks = new ArrayList<Task>();
         IDCounter = INITIAL_TID;
     }
+
 
     //------------getter------------
     //This method is for testing purpose
@@ -64,11 +66,12 @@ public class TaskManager implements TaskManagerInterface {
     protected Stack<String[]> getUndoStack() {
         return undoStack;
     }
-    
+
     //This method is for testing purpose
     protected Stack<String[]> getRedoStack() {
         return redoStack;
     }
+
 
     //------------other methods------------
     //Initialization method starts
@@ -86,6 +89,116 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private Task processInitializationWithID(String[] inputs) {
+        return processAddWithID(inputs);
+    }
+
+    private Task processInitializationWithoutID(String[] inputs) {
+        return processAddWithoutID(inputs);
+    }
+    //Initialization method ends
+
+
+    public ArrayList<Task> processTM(String[] inputs) {
+        COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
+        ArrayList<Task> returningTasks = null;
+        //SystemHandler handler = SystemHanlder.getSystemHandler()
+        //handler.saveToFile
+        switch(commandObtained) {
+
+        case addTask:
+            returningTasks = addATask(inputs);
+            if(returningTasks != null) {
+                updateUndoStackForAdd(returningTasks, inputs[COMMAND_TYPE]);
+            }
+            break;
+
+        case editTask:
+            if(isAbleToEdit(inputs)) {
+                int TIDToEdit = getTaskTID(inputs);
+                Task taskToEdit = getTaskFromTID(TIDToEdit);
+                updateStackForEdit(taskToEdit, inputs, undoStack);
+                returningTasks = editATask(taskToEdit, inputs);
+                assert returningTasks != null;
+            }
+            break;
+
+        case viewTask:
+            returningTasks = viewTasks(); 
+            break;
+
+        case deleteTask:
+            if(isAbleToDelete(inputs)) {
+                int TIDToDelete = getTaskTID(inputs);
+                Task taskToDelete = getTaskFromTID(TIDToDelete);
+                updateUndoStackFromTask(taskToDelete, inputs[COMMAND_TYPE]);
+                returningTasks = deleteATask(TIDToDelete);
+            }
+            break;
+
+        case searchTask:
+            returningTasks = searchTask(inputs);
+            break;
+
+        case undoTask:
+            returningTasks = undoAnOperation();
+            break;
+
+        case redoTask:
+            returningTasks = redoAnOperation();
+            break;
+
+        case invalidTask:
+            //what do I do if command is invalid
+            break;
+        }
+
+        return returningTasks;
+    }
+
+
+    /**
+     * if the command does not exist, returns a invalidTask
+     * @param command  a String received from FlexiParser
+     * @return         a COMMAND_TYPE_TASK_MANAGER type of the String command
+     */
+    private COMMAND_TYPE_TASK_MANAGER obtainCommand (String command) {
+        COMMAND_TYPE_TASK_MANAGER commandObtained;
+        try {
+            commandObtained = COMMAND_TYPE_TASK_MANAGER.valueOf(command);
+        } catch (IllegalArgumentException ex) {
+            commandObtained = COMMAND_TYPE_TASK_MANAGER.invalidTask;
+        }
+        return commandObtained;
+    }
+
+
+    //Add method starts
+    private ArrayList<Task> addATask(String[] inputs) {
+        ArrayList<Task> returningTasks = null;
+        Task newTask = null;
+        if(hasTID(inputs)){
+            newTask = processAddWithID(inputs);       
+        } else {
+            newTask = processAddWithoutID(inputs);
+        }
+
+        assertTaskDetailsValid(newTask);
+        addIDToTaskIDs(newTask.getTID());
+
+        tasks.add(newTask);
+        returningTasks = new ArrayList<Task>();
+        returningTasks.add(newTask.clone());
+
+        assert returningTasks.get(INDEX_ZERO).getTID() >= INITIAL_TID;
+
+        //to make sure newTask is a durational task, which has a start and end time
+        if(isTaskADurationalTask(newTask)) {
+            addClashingTasksForReturning(newTask, returningTasks);
+        }
+        return returningTasks;
+    }
+    
+    private Task processAddWithID(String[] inputs) {
         if(isIDClashing(inputs[TID])) {
             inputs[TID] = convertToStringFromInt(getNewTID());
         }
@@ -100,115 +213,22 @@ public class TaskManager implements TaskManagerInterface {
         return newTask;
     }
     
-    private Task processInitializationWithoutID(String[] inputs) {
+    private Task processAddWithoutID(String[] inputs) {
         Task newTask = new Task(getNewTID(), inputs[TASK_NAME], 
                 convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
                 convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
                 convertToIntType(inputs[PRIORITY]));
         return newTask;
     }
-    //Initialization method ends
-
-
-    public ArrayList<Task> processTM(String[] inputs) {
-        COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
-        ArrayList<Task> returningTasks = null;
-        //SystemHandler handler = SystemHanlder.getSystemHandler()
-        //handler.saveToFile
-        switch(commandObtained) {
-        
-        case addTask:
-            returningTasks = addATask(inputs);
-            if(returningTasks != null) {
-                updateUndoStackForAdd(returningTasks, inputs[COMMAND_TYPE]);
-            }
-            break;
-            
-        case editTask:
-            if(isAbleToEdit(inputs)) {
-                int TIDToEdit = getTaskTID(inputs);
-                Task taskToEdit = getTaskFromTID(TIDToEdit);
-                updateStackForEdit(taskToEdit, inputs, undoStack);
-                returningTasks = editATask(taskToEdit, inputs);
-                assert returningTasks != null;
-            }
-            break;
-            
-        case viewTask:
-            returningTasks = viewTasks(); 
-            break;
-            
-        case deleteTask:
-            if(isAbleToDelete(inputs)) {
-                int TIDToDelete = getTaskTID(inputs);
-                Task taskToDelete = getTaskFromTID(TIDToDelete);
-                updateUndoStackFromTask(taskToDelete, inputs[COMMAND_TYPE]);
-                returningTasks = deleteATask(TIDToDelete);
-            }
-            break;
-            
-        case searchTask:
-            returningTasks = searchTask(inputs);
-            break;
-            
-        case undoTask:
-            returningTasks = undoAnOperation();
-            break;
-            
-        case redoTask:
-            returningTasks = redoAnOperation();
-            break;
-            
-        case invalidTask:
-            //what do I do if command is invalid
-            break;
-        }
-
-        return returningTasks;
+    
+    private void addIDToTaskIDs(int TID) {
+        TaskIDs.add(TID);
     }
-
-    private COMMAND_TYPE_TASK_MANAGER obtainCommand (String command) {
-        COMMAND_TYPE_TASK_MANAGER commandObtained;
-        try {
-            commandObtained = COMMAND_TYPE_TASK_MANAGER.valueOf(command);
-        } catch (IllegalArgumentException ex) {
-            commandObtained = COMMAND_TYPE_TASK_MANAGER.invalidTask;
-        }
-        return commandObtained;
-    }
-
-
-    private ArrayList<Task> addATask(String[] inputs) {
-        ArrayList<Task> returningTasks = null;
-        Task newTask = null;
-        //if does not have TID, get a new TID; else just add the TID
-        if(!hasTID(inputs)){
-            newTask = processInitializationWithoutID(inputs);
-        } else {
-            newTask = processInitializationWithID(inputs);         
-        }
-
-        assertTaskDetailsValid(newTask);
-
-        addIDToTaskIDs(newTask.getTID());
-
-        tasks.add(newTask);
-        returningTasks = new ArrayList<Task>();
-        returningTasks.add(newTask.clone());
-
-        assert returningTasks.get(INDEX_ZERO).getTID() >= 1000;
-
-        //to make sure newTask is a durational task, which has a start and end time
-        if(isTaskADurationalTask(newTask)) {
-            addClashingTasksForReturning(newTask, returningTasks);
-        }
-        return returningTasks;
-    }
-
+    
     private boolean isTaskADurationalTask(Task task) {
         return task.getDateFrom() != null && task.getDateTo() != null;
     }
-
+    
     private void addClashingTasksForReturning(Task newTask, 
             ArrayList<Task> returningTasks) {
         for(Task existingTask : tasks) {
@@ -232,9 +252,7 @@ public class TaskManager implements TaskManagerInterface {
         TaskIDs.remove(TID);
     }
 
-    private void addIDToTaskIDs(int TID) {
-        TaskIDs.add(TID);
-    }
+
 
     private boolean isIDClashing(String TID) {
         return TaskIDs.contains(convertToIntType(TID));
@@ -782,10 +800,10 @@ public class TaskManager implements TaskManagerInterface {
 
         return false;
     }
-    
-    
-    
-    
+
+
+
+
     private void assertTaskDetailsValid(Task newTask) {
         assert isTaskDateNumberValid(newTask);
         if(isTaskADurationalTask(newTask)) {
