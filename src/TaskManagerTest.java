@@ -18,7 +18,7 @@ public class TaskManagerTest {
         "20/03/2015 12:00", "20/03/2015 13:30", null, "LT27", null, "1"};
     public static final String[] ADD_TASK_12 = {"addTask", null, "CS2211 Reflection", null, 
         null, "21/03/2015 23:59", null, "name the file properly", "1"};
-    public static final String[] DELETE_TASK_1000 = {"deleteTask", "1000", null, null, null, 
+    public static final String[] DELETE_TASK_10 = {"deleteTask", "10", null, null, null, 
         null, null, null, null};    
     public static final String[] DELETE_TASK_11 = {"deleteTask", "11", null, null, null, 
         null, null, null, null};
@@ -28,47 +28,42 @@ public class TaskManagerTest {
         null, null, null};
     public static final String[] REDO_OPERATION = {"redoTask", null, null, null, null, null, 
         null, null, null};
-    public static final String[] EDIT_TASK_1000 = {"editTask", "1000", null, null, 
+    public static final String[] EDIT_TASK_10 = {"editTask", "10", null, null, 
         "18/03/2015 15:30", null, null, null, null};
-    public static final String[] EDIT_TASK_1001 = {"editTask", "1001", null, null, 
+    public static final String[] EDIT_TASK_11 = {"editTask", "11", null, null, 
         "20/03/2015 15:30", null, "LT108", null, null};
-    public static final String[] EDIT_TASK_1002 = {"editTask", "1002", null, null,
+    public static final String[] EDIT_TASK_12 = {"editTask", "12", null, null,
         null, null, "IVLE", "", null};
     public static final String[] EDIT_TASK_9999 = {"editTask", "9999", null, null, 
         "20/03/2015 15:30", null, null, null, null};
     public static final String[] VIEW_TASK = {"viewTask", null, null, null, null, null, 
         null, null, null};
-    public static final String[] ADD_TASK_1000_SEARCH = {"addTask", null, "CS2103T Tutorial", 
-        "18/02/2015 14:00", "18/03/2016 15:00", null, "SOC", null, "1"};
-    public static final String[] ADD_TASK_1001_SEARCH = {"addTask", null, "CS4107 MidTerm", 
-        "20/01/2015 12:00", "20/03/2017 13:30", null, "LT18", null, "1"};
-    public static final String[] ADD_TASK_1002_SEARCH = {"addTask", null, "CS2101 Reflection", 
-        null, null, "21/05/2015 23:59", null, "name the file properly", "1"};
 
-    public static final int TASK1000 = 0;
-    public static final int TASK1001 = 1;
-    public static final int TASK1002 = 2;
-    public static final int COMMAND_TYPE = 0;
-    public static final String COMMAND_ADD = "addTask";
-    public static final String COMMAND_DELETE = "deleteTask";
-    public static final String COMMAND_EDIT = "editTask";
+
+    private static final int TASK1000 = 0;
+    private static final int TASK1001 = 1;
+    private static final int TASK1002 = 2;
+    private static final int COMMAND_TYPE = 0;
+    private static final String COMMAND_ADD = "addTask";
+    private static final String COMMAND_DELETE = "deleteTask";
+    private static final String COMMAND_EDIT = "editTask";
 
 
 
-    public static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
-    public static final String CLEAR_INFO_INDICATOR = "";
-    public static TaskManager myTaskManager;
-    public static FileStorage myFileStorage;
+    private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
+    private static final String CLEAR_INFO_INDICATOR = "";
+    private static TaskManager myTaskManager;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        myFileStorage = new FileStorage("testTaskManager.txt");
     }
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
     }
 
+
+    //--------------------testing add command starts----------------------
     @Test
     public void testAddCommand() {
         myTaskManager = new TaskManager();
@@ -91,14 +86,118 @@ public class TaskManagerTest {
         assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);   
     }
 
-    /*        public static final String[] ADD_TASK_10 = {"addTask", null, "CS2103T Tutorial", 
-    "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "1"};
-public static final String[] ADD_TASK_11 = {"addTask", null, "LAG3203 MidTerm", 
-    "20/03/2015 12:00", "20/03/2015 13:30", null, "LT27", null, "1"};
-public static final String[] ADD_TASK_12 = {"addTask", null, "CS2211 Reflection", null, 
-    null, "21/03/2015 23:59", null, "name the file properly", "1"};
-    */
+    @Test
+    public void testAddWithIDLessThanTen() {
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(ADD_TASK_7);
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS3103T Tutorial", convertToDateObject("18/03/2015 12:00"), 
+                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
+        expectTasks.add(expectTask10);
+
+        Assert.assertEquals(myTaskManager.getTasks().get(0).getTID(), 10);
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+
+    }
+
+    @Test
+    public void testAddWithClashIDs() throws ParseException {
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(ADD_TASK_10);
+        myTaskManager.processTM(ADD_TASK_10);
+        myTaskManager.processTM(ADD_TASK_10);
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
+                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);        
+        Task expectTask11 = new Task(11, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
+                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
+        Task expectTask12 = new Task(12, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
+                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
+        expectTasks.add(expectTask10);
+        expectTasks.add(expectTask11);
+        expectTasks.add(expectTask12);
+
+        //test the ArrayList
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
+    }
     
+    @Test
+    public void testClasedTasks() throws ParseException {
+        myTaskManager = new TaskManager();
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        ArrayList<Task> clashTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
+                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);        
+        Task expectTask11 = new Task(11, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
+                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
+        Task expectTask12 = new Task(12, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
+                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
+
+        expectTasks.add(expectTask10);
+        clashTasks = new ArrayList<Task> ();
+        clashTasks.add(expectTask10);
+        assertTaskArrayListEquals(myTaskManager.processTM(ADD_TASK_10), 
+                clashTasks);
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
+
+        clashTasks = new ArrayList<Task> ();
+        clashTasks.add(expectTask11);
+        clashTasks.add(expectTask10);
+        assertTaskArrayListEquals(myTaskManager.processTM(ADD_TASK_10), 
+                clashTasks);
+        expectTasks.add(expectTask11);
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
+
+
+        clashTasks = new ArrayList<Task> ();
+        clashTasks.add(expectTask12);
+        clashTasks.add(expectTask10);
+        clashTasks.add(expectTask11);
+        assertTaskArrayListEquals(myTaskManager.processTM(ADD_TASK_10), 
+                clashTasks);
+        expectTasks.add(expectTask12);
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+    }
+    //--------------------testing add command ends-----------------------
+
+    
+    //--------------------testing edit command starts--------------------
+    //--------------------testing edit command ends----------------------
+    
+    
+    //--------------------testing view command starts--------------------
+    @Test
+    public void testViewCommand() throws ParseException {
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(ADD_TASK_10);
+        myTaskManager.processTM(ADD_TASK_11);
+        myTaskManager.processTM(ADD_TASK_12);
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
+                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
+                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 1);
+        Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
+                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 1);
+        expectTasks.add(expectTask10);
+        expectTasks.add(expectTask11);
+        expectTasks.add(expectTask12);
+
+        ArrayList<Task> expectView = new ArrayList<Task>(expectTasks);
+
+        //test the ArrayList before view
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+        //test the return of processTM for view
+        assertTaskArrayListEquals(myTaskManager.processTM(VIEW_TASK), 
+                expectView);        
+    }
+    //--------------------testing view command ends----------------------
+
+    
+    //--------------------testing delete command starts------------------
     @Test
     public void testDeleteCommand() throws ParseException {
         myTaskManager = new TaskManager();
@@ -139,7 +238,13 @@ public static final String[] ADD_TASK_12 = {"addTask", null, "CS2211 Reflection"
         myTaskManager.processTM(ADD_TASK_10);
         assertTaskArrayListEquals(myTaskManager.processTM(DELETE_TASK_9999), null);
     }
-/*
+    //--------------------testing delete command ends--------------------
+    
+    //--------------------testing search command starts------------------
+    //--------------------testing search command ends--------------------
+
+    
+    /*
     @Test
     public void testEditCommand() throws ParseException {
         myTaskManager = new TaskManager();
@@ -184,32 +289,7 @@ public static final String[] ADD_TASK_12 = {"addTask", null, "CS2211 Reflection"
                 null);
     }
 
-    @Test
-    public void testViewCommand() throws ParseException {
-        myTaskManager = new TaskManager();
-        myTaskManager.processTM(ADD_TASK_10, myFileStorage);
-        myTaskManager.processTM(ADD_TASK_11, myFileStorage);
-        myTaskManager.processTM(ADD_TASK_12, myFileStorage);
-
-        ArrayList<Task> expectTasks = new ArrayList<Task>();
-        Task expectTask1000 = new Task(1000, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
-        Task expectTask1001 = new Task(1001, "CS2107 MidTerm", convertToDateObject("20/03/2015 12:00"), 
-                convertToDateObject("20/03/2015 13:30"), null, "LT18", null, 1);
-        Task expectTask1002 = new Task(1002, "CS2101 Reflection", null, null, 
-                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 1);
-        expectTasks.add(expectTask1000);
-        expectTasks.add(expectTask1001);
-        expectTasks.add(expectTask1002);
-
-        ArrayList<Task> expectView = new ArrayList<Task>(expectTasks);
-
-        //test the ArrayList before view
-        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
-        //test the return of processTM for view
-        assertTaskArrayListEquals(myTaskManager.processTM(VIEW_TASK, myFileStorage), 
-                expectView);        
-    }
+    
 
     @Test
     public void testUndoAndRedoForAdd() throws ParseException {
@@ -646,74 +726,11 @@ public static final String[] ADD_TASK_12 = {"addTask", null, "CS2211 Reflection"
         Assert.assertTrue(myTaskManager.isDeadlineAfterCurrentTime(deadline2));
     }
 
-    @Test
-    public void testAddWithIDLessThanOneThousand() throws ParseException {
-        myTaskManager = new TaskManager();
-        myTaskManager.processTM(ADD_TASK_765, myFileStorage);
-
-        Assert.assertEquals(myTaskManager.getTasks().get(0).getTID(), 1000);
-    }
-
-    @Test
-    public void testAddWithClashIDs() throws ParseException {
-        myTaskManager = new TaskManager();
-        myTaskManager.processTM(ADD_TASK_10, myFileStorage);
-        myTaskManager.processTM(ADD_TASK_10, myFileStorage);
-        myTaskManager.processTM(ADD_TASK_10, myFileStorage);
-
-        ArrayList<Task> expectTasks = new ArrayList<Task>();
-        Task expectTask1000 = new Task(1000, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
-        Task expectTask1001 = new Task(1001, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
-        Task expectTask1002 = new Task(1002, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
-        expectTasks.add(expectTask1000);
-        expectTasks.add(expectTask1001);
-        expectTasks.add(expectTask1002);
-
-        //test the ArrayList
-        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
-    }
-
-    @Test
-    public void testClasedTasks() throws ParseException {
-        myTaskManager = new TaskManager();
-        ArrayList<Task> expectTasks = new ArrayList<Task>();
-        ArrayList<Task> clashTasks = new ArrayList<Task>();
-        Task expectTask1000 = new Task(1000, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
-        Task expectTask1001 = new Task(1001, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
-        Task expectTask1002 = new Task(1002, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
 
 
-        expectTasks.add(expectTask1000);
-        clashTasks = new ArrayList<Task> ();
-        clashTasks.add(expectTask1000);
-        assertTaskArrayListEquals(myTaskManager.processTM(ADD_TASK_10, myFileStorage), 
-                clashTasks);
-        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
 
-        clashTasks = new ArrayList<Task> ();
-        clashTasks.add(expectTask1001);
-        clashTasks.add(expectTask1000);
-        assertTaskArrayListEquals(myTaskManager.processTM(ADD_TASK_10, myFileStorage), 
-                clashTasks);
-        expectTasks.add(expectTask1001);
-        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
 
-        
-        clashTasks = new ArrayList<Task> ();
-        clashTasks.add(expectTask1002);
-        clashTasks.add(expectTask1000);
-        clashTasks.add(expectTask1001);
-        assertTaskArrayListEquals(myTaskManager.processTM(ADD_TASK_10, myFileStorage), 
-                clashTasks);
-        expectTasks.add(expectTask1002);
-        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
-    }
+
 
     @Test
     public void testClone() throws ParseException {
@@ -723,7 +740,7 @@ public static final String[] ADD_TASK_12 = {"addTask", null, "CS2211 Reflection"
         Assert.assertFalse(assertTaskEqual(tks.get(0), myTaskManager.getTasks().get(0)));
 
     }
-    */
+     */
 
     public boolean assertTaskArrayListEquals(ArrayList<Task> test, 
             ArrayList<Task> expected) {
