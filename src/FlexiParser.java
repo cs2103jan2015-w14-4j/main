@@ -50,7 +50,13 @@ public class FlexiParser {
     private static final String DATE_TO = "To";
     private static final String DATE_ON = "On";
     
-    private static final String[] keyWords = {"ID","Title","From","To","On","At","Det","Pri"};
+    //use for template also?
+    private static final String[] KEYWORDS_TASK = {null,"\\title","\\from","\\to","\\on","\\at","\\det","\\pri"};
+    
+    private static final String[] KEYWORDS_SHORTCUT = {"Ori","New"};
+   
+    private static final String[] commandArray = {"addTask","editTask","deleteTask","viewTask","Block","SearchTask","addShortcut","deleteShortcut","viewShortcut","resetShortcut",
+    														"addTemplate","deleteTemplate","viewTemplate","resetTemplate"};
     
     private static String[] inputArray;
 	
@@ -70,7 +76,7 @@ public class FlexiParser {
 		    
 			inputArray = userInput.split("\\s+");
 			
-			String[] outputArray = new String[TASK_LENGTH];
+			
 			String[] shortcutArray = new String[SHORTCUT_LENGTH];
 			//String command = processCommand(inputArray[COMMAND_TYPE_INDEX]);
 			//direct command must be correct;
@@ -79,19 +85,33 @@ public class FlexiParser {
 			//Shortcut shortcut = Shortcut.getShortcut();
 			//what does his one return
 			//command = myshortcut.keywordMatching(command);
-
+			String[] outputArray;
+			if(!command.contains("Shortcut")) {
+				
+				outputArray = new String[TASK_LENGTH];
+				
+			}
+			else {
+				
+				outputArray = new String[SHORTCUT_LENGTH];
+				
+			}
 			
 			outputArray[COMMAND_TYPE_INDEX] = command;
-	
-			switch(command) {
-				
-			    case COMMAND_ADD:
+			
+			
+			
+			int commandIndex = getCommandIndex(command);
+			
+			switch(commandIndex) {
+				//add task need to ignore title also
+			    case 0:
 					
 			    	//WARNING: NO CHECKING VALIDITY
-			    	
-			    	for(int i = 0; i < keyWords.length; i++) {
+			    	outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
+			    	for(int i = 1; i < KEYWORDS_TASK.length; i++) {
 			    		int j = i + 1;
-			    		String value = extractAttribute(inputArray, keyWords[i]);
+			    		String value = extractAttribute(inputArray, KEYWORDS_TASK[i],KEYWORDS_TASK);
 			    		
 			    		if(isDateTime(i,value)) {
 			    			
@@ -107,23 +127,28 @@ public class FlexiParser {
 			    		}
 			    	
 			    	}
-			    		//outputArray[TASK_ID_INDEX] = extractAttribute(inputArray,keyWords[0]);
+			    		
 			    		
 			    	
 					
 					break;
-				case COMMAND_EDIT:
+				//edit task
+				case 1:
 					
 					//WARNING: NO CHECKING VALIDITY
+					outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
 					
-					for(int i = 0; i < keyWords.length; i++) {
+					if(inputArray[TASK_ID_INDEX].equals(TID_NOT_EXIST)) {
+		    			//what should i return
+		    			System.out.println("sfsbds");
+						
+		    			
+		    		}
+					
+					for(int i = 1; i < KEYWORDS_TASK.length; i++) {
 			    		int j = i + 1;
-			    		String value = extractAttribute(inputArray, keyWords[i]);
-			    		if(i == TASK_ID_INDEX && value.equals(TID_NOT_EXIST)) {
-			    			//what should i return
-			    			break;
-			    			
-			    		}
+			    		String value = extractAttribute(inputArray, KEYWORDS_TASK[i],KEYWORDS_TASK);
+			    		
 			    		
 			    		if(isDateTime(i,value)) {
 			    			
@@ -142,11 +167,12 @@ public class FlexiParser {
 			    	}
 					
 					break;
-				case COMMAND_DELETE:
+				//delete task
+				case 2:
 					//doesn't need the ID keyword
 					//WARNING: NO CHECKING VALIDITY
-					outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
-					for(int i = 1; i < keyWords.length; i++) {
+					
+					for(int i = 1; i < KEYWORDS_TASK.length; i++) {
 			    		int j = i + 1;
 			    		
 			    		outputArray[j] = null;
@@ -155,7 +181,35 @@ public class FlexiParser {
 					
 					
 					break;
-				case COMMAND_VIEW:
+				//view task
+				case 3:
+					
+					break;
+				//block
+				case 4:
+					
+					break;
+				//search
+				case 5:
+					
+					break;
+				//add shortcut
+				case 6:
+					
+					for(int i = 0; i < KEYWORDS_SHORTCUT.length; i++) {
+			    		int j = i + 1;
+			    		String value = extractAttribute(inputArray, KEYWORDS_SHORTCUT[i], KEYWORDS_SHORTCUT);
+			    		 
+			    		if(value != null) {
+			    			
+			    			outputArray[j] = value.trim();
+			    		
+			    		}
+			    		 
+			    		 
+			    	
+			    	}
+					
 					
 					break;
 					
@@ -173,12 +227,22 @@ public class FlexiParser {
     	
     }
     
-  /*  private boolean isTaskOrShortcut(String command) {
+    private int getCommandIndex(String command) {
+    	int index = -1;;
+    	for(int i = 0; i < commandArray.length; i++) {
+    		
+    		if(command.equals(commandArray[i])) {
+    			
+    			index = i;
+    			break;
+    			
+    		}
+    		
+    	}
     	
-    	if(command.equals())
+    	return index;
     	
-    	
-    }*/
+    }
     
     //not used as command must be exact?
     private String processCommand(String command) {
@@ -190,7 +254,7 @@ public class FlexiParser {
     }
     
     //extractor
-	private String extractAttribute(String[] input, String keyWord) {
+	private String extractAttribute(String[] input, String keyWord,String[] keywords) {
 			
 			StringBuilder strb = new StringBuilder();
 		
@@ -202,7 +266,7 @@ public class FlexiParser {
 				if(input[i].equals(keyWord)) {
 					
 					int index = i+1;
-					while(isNotKeyWord(input[index]) && index < input.length) {
+					while(isNotKeyWord(input[index],keywords) && index < input.length) {
 						
 						strb.append(input[index]);
 						strb.append(" ");
@@ -233,7 +297,7 @@ public class FlexiParser {
 	
 	private boolean isDateTime(int index, String value) {
 		
-		if((keyWords[index].equals(DATE_FROM) || keyWords[index].equals(DATE_TO) || keyWords[index].equals(DATE_ON)) && value != null) {
+		if((KEYWORDS_TASK[index].equals(DATE_FROM) || KEYWORDS_TASK[index].equals(DATE_TO) || KEYWORDS_TASK[index].equals(DATE_ON)) && value != null) {
 			
 			return true;
 			
@@ -245,7 +309,7 @@ public class FlexiParser {
 	
 	private void storeDateTime(String[] outputArr,String value,int index) {
 		int j = index + 1;
-		if((keyWords[index].equals(DATE_FROM) || keyWords[index].equals(DATE_TO) || keyWords[index].equals(DATE_ON)) && value != null) {
+		if((KEYWORDS_TASK[index].equals(DATE_FROM) || KEYWORDS_TASK[index].equals(DATE_TO) || KEYWORDS_TASK[index].equals(DATE_ON)) && value != null) {
 			
 			if(value.contains("/")) {
 				
@@ -305,11 +369,11 @@ public class FlexiParser {
 	}
 	
 	
-	private boolean isNotKeyWord(String str) {
+	private boolean isNotKeyWord(String str,String[] keywords) {
 		
-		for(int i = 0; i < keyWords.length; i++) {
+		for(int i = 0; i < keywords.length; i++) {
 			
-			if(str.equals(keyWords[i])) {
+			if(str.equals(keywords[i])) {
 				
 				return false;
 				
@@ -328,7 +392,7 @@ public class FlexiParser {
     	FlexiParser test1 = new FlexiParser();
     	
     	
-    	String[] temp = test1.parseText("addTask ID 1001 Title meeting with huehue On June 20th On 6:00");
+    	String[] temp = test1.parseText("addTask \\title Orchard ");
     
     	
     	

@@ -189,10 +189,10 @@ public class SystemHandler {
 		myShortcut.processShortcutCommand(cmd);
 		
 		logfile = CentralizedLog.getLogger();
-		myTemplates = new Template();
+		myTemplates = Template.getTemplate();
 		myTaskList = new TaskManager();
 		parser = new FlexiParser();
-		externalStorage = new FileStorage(fileName);
+		externalStorage = new FileStorage(fileName, myTaskList, myTemplates, myShortcut);
 		try{
 			externalStorage.readFromFile(myTaskList);
 		} catch(ParseException e) {
@@ -234,9 +234,14 @@ public class SystemHandler {
 			COMMAND_TYPE_GROUP commandGroupType = SystemHandler.getCommandGroupType(parsedCommand[0]);
 			switch(commandGroupType) {
 				case TASK_MANAGER:
-					return executeTaskManager(parsedCommand);
+					
+					ArrayList<Task> display = executeTaskManager(parsedCommand);
+					window.displayTaskTable(display, true);
+					break;
 				case SHORTCUT_MANAGER:
-					executeShortcutManager(parsedCommand);
+					String[][] displayS = executeShortcutManager(parsedCommand);
+					window.displayShortcuts(displayS, true);
+					break;
 				case CUSTOMIZED_MANAGER:
 					executeCustomizer(parsedCommand);
 				default:
@@ -279,10 +284,10 @@ public class SystemHandler {
 	}
 	
 	
-	private void executeShortcutManager(String[] command) {
+	private String[][] executeShortcutManager(String[] command) {
 		//stub
 		//Not implemented
-		myShortcut.processShortcutCommand(command);
+		return myShortcut.processShortcutCommand(command);
 
 	}
 	

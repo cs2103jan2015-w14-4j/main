@@ -16,15 +16,32 @@ public class Template {
 	private boolean isTest;
 	private SystemHandler system;
 	
+	private static Template template;
 	
-	public Template() {
+	
+	private Template() {
 		templates = new HashMap<String,Task>();
 		isTest = false;
 	}
 	
-	public Template(boolean test) {
+	
+	private Template(boolean test) {
 		templates = new HashMap<String,Task>();
 		isTest = test;
+	}
+	
+	public static Template getTemplate() {
+		if(template == null) {
+			template = new Template();
+		}
+		return template;
+	}
+	
+	public static Template getTemplate(boolean test) {
+		if(template == null) {
+			template = new Template(test);
+		}
+		return template;
 	}
 	
 	public ArrayList<Task> processCustomizingCommand(String[] command) 
