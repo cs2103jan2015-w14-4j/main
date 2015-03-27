@@ -21,7 +21,7 @@ public interface TaskManagerInterface {
     
     /**
      * @param TID  an integer Task ID
-     * @return     a Task with that ID, if ID exists; else return null
+     * @return     if ID is found, a Task with that ID; else null
      */
     public Task getTaskFromTID(int TID);
 }
