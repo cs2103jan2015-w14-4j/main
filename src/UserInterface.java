@@ -8,6 +8,7 @@ import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.JTable;
+import javax.swing.table.TableColumn;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -19,6 +20,8 @@ import java.awt.EventQueue;
 import java.awt.Insets;
 import java.util.Observable;
 import java.util.Observer;
+import java.awt.Font;
+import java.awt.Color;
 
 
 public class UserInterface  {
@@ -27,10 +30,11 @@ public class UserInterface  {
 	public JPanel panel;
 	private JTextField textField;
 	private JTextArea outputArea;
+	//private JTextArea sysFeedbackArea;
 	private JTable outputTable;
 	private TaskTableModel model;
 	private final static String newline = "\n";
-	private JScrollPane scrollPane;
+	private JScrollPane scrollPaneMain;
 	private ArrayList<Task> outputArray;
 
 	private SystemHandler mainHandler;
@@ -45,28 +49,9 @@ public class UserInterface  {
 
 	private boolean hasFilename;
 	private String prevInput;
+	private JTextArea sysFeedbackArea;
+	//	private JScrollPane scrollPane;
 
-	/**
-	public void update(Observable obs, Object obj ){
-
-			//printOutputTask(mainHandler.getTaskResult());
-
-	}
-
-	public void update(Observable obserable, ArrayList<Task> outputArray ){
-
-//		ArrayList<Task> result = new ArrayList<Task>();
-//		Task testTask = new Task(1, input + " (The rest are dummies)", new Date(115,3,8,14,0) , 
-//				new Date(115,3,8,17,0), null, "HOME", null, 0);
-//		result.add(testTask);
-	//	printOutputTask(outputArray);
-
-		outputArea.append(MSG_SEPARATOR + newline);
-		outputArea.append(MSG_ASK_INPUT + newline);
-
-	}
-
-	 */
 
 	public void  displayTaskTable(ArrayList<Task> outputData, boolean success){
 		viewTaskPane();
@@ -75,17 +60,26 @@ public class UserInterface  {
 	}
 
 	public void displayShortcuts(String[][] outputData, boolean success) {
-		// TODO Auto-generated method stub
 		viewTextPane();
+		for(int i = 0; i < outputData.length; i++){
+			String[] strArray = outputData[i];
+			String nextLine = "";
+			for(int j = 0; j < strArray.length; ++j) {
+				nextLine += " " + strArray[j];
+			}
+			outputArea.append(nextLine + newline);
+		}
 
 	}
+
 
 	public void displayMsg(ArrayList<String> outputData, boolean success){
-		
+
+
 	}
-	
+
 	public void displayTemplate(ArrayList<Task> outputData, boolean success){
-		
+
 	}
 
 	public String getRawUserInput(){
@@ -107,21 +101,22 @@ public class UserInterface  {
 
 		panel = new JPanel();
 		frame = new JFrame(APP_NAME);
-		frame.setBounds(100, 100, 552, 357);
+		frame.setBounds(100, 100, 800, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{536, 0};
-		gridBagLayout.rowHeights = new int[]{278, 40, 0};
+		gridBagLayout.rowHeights = new int[]{278, 0, 0, 40, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{1.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
 		frame.getContentPane().setLayout(gridBagLayout);
 
 		textField = new JTextField();
+		textField.setBackground(new Color(240, 248, 255));
 		inputListener listener = new inputListener();
 		textField.addActionListener(listener);
 
 		//	kbShortcuts();
-		
+
 		//keyboard shortcuts needs to be refactored out from here
 
 		//pressing up restores previous input in textField
@@ -186,42 +181,66 @@ public class UserInterface  {
 		outputArray = new ArrayList<Task>();
 
 		initOutputArea();
-
-
-
-
+		//initMsgDisplay();
 
 	}
 
 	public void initOutputArea() {
 		outputArea = new JTextArea();	
-		scrollPane = new JScrollPane(); 
-		scrollPane.setViewportView(outputArea);
+		outputArea.setBackground(new Color(255, 250, 250));
+		outputArea.setEditable(false);
+		outputArea.setFont(new Font("Arial", Font.PLAIN, 18));
 		outputArea.setColumns(30);
 		outputArea.setTabSize(10);
 		outputArea.setRows(10);
 		outputArea.setLineWrap(true);
-		outputArea.setEditable(false);
+		scrollPaneMain = new JScrollPane(); 
+		scrollPaneMain.setViewportView(outputArea);
 
 		GridBagConstraints gbc_outputArea = new GridBagConstraints();
 		gbc_outputArea.insets = new Insets(0, 0, 5, 0);
 		gbc_outputArea.fill = GridBagConstraints.BOTH;
 		gbc_outputArea.gridx = 0;
 		gbc_outputArea.gridy = 0;
-		frame.getContentPane().add(scrollPane, gbc_outputArea);
+		frame.getContentPane().add(scrollPaneMain, gbc_outputArea);
+		/*		
+		sysFeedbackArea = new JTextArea();
+		sysFeedbackArea.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 13));
+		sysFeedbackArea.setEditable(false);
+		sysFeedbackArea.setColumns(30);
+		sysFeedbackArea.setTabSize(10);
+		sysFeedbackArea.setRows(10);
+		sysFeedbackArea.setWrapStyleWord(true);
+		sysFeedbackArea.setBackground(new Color(240, 255, 255));
+		scrollPaneSysFeedback.setViewportView(sysFeedbackArea);
+		 */
+
+		sysFeedbackArea = new JTextArea();
+		sysFeedbackArea.setFont(new Font("Monospaced", Font.PLAIN, 15));
+		sysFeedbackArea.setEditable(false);
+		sysFeedbackArea.setBackground(new Color(245, 255, 250));
+		GridBagConstraints gbc_sysFeedbackArea = new GridBagConstraints();
+		gbc_sysFeedbackArea.gridheight = 2;
+		gbc_sysFeedbackArea.insets = new Insets(0, 0, 5, 0);
+		gbc_sysFeedbackArea.fill = GridBagConstraints.BOTH;
+		gbc_sysFeedbackArea.gridx = 0;
+		gbc_sysFeedbackArea.gridy = 1;
+		frame.getContentPane().add(sysFeedbackArea, gbc_sysFeedbackArea);
+
 		GridBagConstraints gbc_textField = new GridBagConstraints();
 		gbc_textField.fill = GridBagConstraints.BOTH;
 		gbc_textField.gridx = 0;
-		gbc_textField.gridy = 1;
+		gbc_textField.gridy = 3;
 		frame.getContentPane().add(textField, gbc_textField);
 		textField.setColumns(10);
+
 		outputArea.append(MSG_WELCOME + newline + newline + MSG_HELP +newline + MSG_ASK_FILENAME);
 
 	}
 
 	public JScrollPane createTaskTable(ArrayList<Task> outputArray) {
 		ArrayList<String> columnNames = new ArrayList<String>();
-		columnNames.add("Task ID");
+		columnNames.add("Task Index");
 		columnNames.add("Task Name");
 		columnNames.add("Date From");
 		columnNames.add("Date To");
@@ -229,20 +248,21 @@ public class UserInterface  {
 		columnNames.add("Location");
 		columnNames.add("Details");
 		columnNames.add("Priority");
+		columnNames.add("Reminder");
 		model = new TaskTableModel(outputArray, columnNames, Task.class );
 		outputTable = new JTable (model);
-		scrollPane.setViewportView(outputTable);
+		scrollPaneMain.setViewportView(outputTable);
 		System.out.println(model+ "in createTaskTable");
-		return scrollPane;
+		return scrollPaneMain;
 	}
 
 	private void viewTextPane(){
-		scrollPane.setViewportView(outputArea);
+		scrollPaneMain.setViewportView(outputArea);
 
 	}
 
 	private void viewTaskPane(){
-		scrollPane.setViewportView(outputTable);
+		scrollPaneMain.setViewportView(outputTable);
 	}
 
 	private void kbShortcuts() {
@@ -322,36 +342,51 @@ public class UserInterface  {
 		public void actionPerformed(ActionEvent e){
 			String input = textField.getText();
 			prevInput = input;
+			if (input.length() != 0){
 
-			if (!hasFilename){		
-				clearInput();
-				//Init system handler with filename
+				if (!hasFilename){		
+					clearInput();
+					//Init system handler with filename
 
-				hasFilename = true;
-				mainHandler = SystemHandler.getSystemHandler();
-				mainHandler.initialize(input);
-				createTaskTable(outputArray);
+					hasFilename = true;
+					mainHandler = SystemHandler.getSystemHandler();
+					mainHandler.initialize(input);
+					createTaskTable(outputArray);
 
 
-			}
-			else{
-				clearInput();
-				
-				mainHandler.rawUserInput(input);
-				//dummytest
-				/*
-				for (int i = 0 ; i<9 ;  i++){
+				}
+				else{
+					clearInput();
+
+					mainHandler.rawUserInput(input);
+					//dummytest
+					/*
+				for (int i = 0 ; i<10 ;  i++){
 					Task testTask = new Task( i , " (The rest are dummies)", new Date(115,3,8,14,0) , 
 							new Date(115,3,8,17,0), new Date(113,2,8,17,0), "HOME", null, 0);
 
 					outputArray.add(testTask);
 				}
 
-*/
-
+					 */
+				}
 			}
 		}
 
+	}
+
+	public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
+			double... percentages) {
+		double total = 0;
+		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
+			total += percentages[i];
+		}
+
+		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
+			TableColumn column = table.getColumnModel().getColumn(i);
+			column.setPreferredWidth((int)
+					(tablePreferredWidth * (percentages[i] / total)));
+		}
 	}
 
 
@@ -394,6 +429,10 @@ public class UserInterface  {
 	private void clearInput() {
 		textField.selectAll();
 		textField.setText("");
+	}
+
+	private void clearTextPane() {
+		outputArea.setText("");	
 	}
 
 }
