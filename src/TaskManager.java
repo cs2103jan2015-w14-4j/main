@@ -55,7 +55,7 @@ public class TaskManager {
     }
 
     //------------getter------------
-    public ArrayList<Task> getTasks() {
+    protected ArrayList<Task> getTasks() {
         return tasks;
     }
 
@@ -78,7 +78,7 @@ public class TaskManager {
                     convertToIntType(inputs[PRIORITY]));
             addIDToTaskIDs(newTask.getTID());
 
-            
+
         } else {
             if(isIDClashing(inputs[TID])) {
                 inputs[TID] = convertToStringFromInt(getNewTID());
@@ -93,7 +93,7 @@ public class TaskManager {
             updateIDCounter(inputs[TID]);
             addIDToTaskIDs(newTask.getTID());
         } 
-        
+
         assert isTaskDateNumberValid(newTask);
         if(isTaskADurationalTask(newTask)) {
             assert newTask.getDateTo() != null;
@@ -108,7 +108,8 @@ public class TaskManager {
             throws ParseException {
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
         ArrayList<Task> returningTasks = null;
-
+        //SystemHandler handler = SystemHanlder.getSystemHandler()
+        //handler.saveToFile
         switch(commandObtained) {
         case addTask:
             returningTasks = addATask(inputs);
@@ -196,7 +197,7 @@ public class TaskManager {
             assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
                     newTask.getDateTo());
         }
-        
+
         addIDToTaskIDs(newTask.getTID());
 
         tasks.add(newTask);
@@ -344,14 +345,14 @@ public class TaskManager {
             assert isDateFromSmallerThanDateTo(taskToEdit.getDateFrom(), 
                     taskToEdit.getDateTo());
         }
-        
+
         assert isTaskDateNumberValid(taskToEdit);
         if(isTaskADurationalTask(taskToEdit)) {
             assert taskToEdit.getDateTo() != null;
             assert isDateFromSmallerThanDateTo(taskToEdit.getDateFrom(), 
                     taskToEdit.getDateTo());
         }
-        
+
         returningTasks.add(taskToEdit.clone());
 
         return returningTasks;
@@ -772,26 +773,26 @@ public class TaskManager {
             return false;
         }
     }
-    
+
     protected boolean isTaskDateNumberValid(Task task) {
         //durational task
         if(task.getDateFrom() != null && task.getDateTo() != null && 
                 task.getDeadline() == null) {
             return true;
         }
-        
+
         //deadline task
         if(task.getDateFrom() == null && task.getDateTo() == null && 
                 task.getDeadline() != null) {
             return true;
         }
-        
+
         //floating task
         if(task.getDateFrom() == null && task.getDateTo() == null && 
                 task.getDeadline() == null) {
             return true;
         }
-        
+
         return false;
     }
 }
