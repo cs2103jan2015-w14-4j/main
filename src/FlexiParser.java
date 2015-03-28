@@ -18,7 +18,7 @@ import com.joestelmach.natty.Parser;
 
 
 //add Task behind all the command
-
+//add escape if n
 
 public class FlexiParser {
 	
@@ -46,12 +46,12 @@ public class FlexiParser {
     private static final int TASK_PRIORITY_INDEX = 8;
     
     private static final String ERROR_EXCEPTION = "Exception caught";
-    private static final String DATE_FROM = "From";
-    private static final String DATE_TO = "To";
-    private static final String DATE_ON = "On";
+    private static final String DATE_FROM = "from";
+    private static final String DATE_TO = "to";
+    private static final String DATE_ON = "on";
     
     //use for template also?
-    private static final String[] KEYWORDS_TASK = {null,"\\title","\\from","\\to","\\on","\\at","\\det","\\pri"};
+    private static final String[] KEYWORDS_TASK = {"ID","title","from","to","on","at","det","pri"};
     
     private static final String[] KEYWORDS_SHORTCUT = {"Ori","New"};
    
@@ -109,6 +109,8 @@ public class FlexiParser {
 					
 			    	//WARNING: NO CHECKING VALIDITY
 			    	outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
+			    	//outputArray[TASK_NAME_INDEX] = extractTitle(inputArray, KEYWORDS_TASK[TASK_NAME_INDEX],KEYWORDS_TASK);
+			    	//maybe change to index_ssd
 			    	for(int i = 1; i < KEYWORDS_TASK.length; i++) {
 			    		int j = i + 1;
 			    		String value = extractAttribute(inputArray, KEYWORDS_TASK[i],KEYWORDS_TASK);
@@ -137,10 +139,11 @@ public class FlexiParser {
 					
 					//WARNING: NO CHECKING VALIDITY
 					outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
-					
+					//error catching 
 					if(inputArray[TASK_ID_INDEX].equals(TID_NOT_EXIST)) {
 		    			//what should i return
-		    			System.out.println("sfsbds");
+		    		
+						System.out.println("ersadsdror?");
 						
 		    			
 		    		}
@@ -212,7 +215,22 @@ public class FlexiParser {
 					
 					
 					break;
-					
+				case 7:
+					break;
+				case 8:
+					break;
+				case 9:
+					break;
+				case 10:
+					break;
+				case 11:
+					break;
+				case 12:
+					break;
+				case 13:
+					break;
+				case 14:
+					break;
 			}
 			
 			inputArray = outputArray;
@@ -252,21 +270,58 @@ public class FlexiParser {
     	return processedCommand;
     	
     }
-    
+  /*  private String extractTitle(String[] input,) {
+    	
+    	
+    }*/
     //extractor
 	private String extractAttribute(String[] input, String keyWord,String[] keywords) {
-			
+			String[] tempArr = keywords;
 			StringBuilder strb = new StringBuilder();
-		
+			
 			String attribute = null;
 		
 			try {	
-			for(int i = 0; i < input.length; i++) {
 				
-				if(input[i].equals(keyWord)) {
-					
+				for(int i = 0; i < input.length; i++) {
+				String checkWord = input[i].toLowerCase(); // allow user to type keyword in anyform
+				if(checkWord.equals(keyWord) ) {
+					//not title
 					int index = i+1;
-					while(isNotKeyWord(input[index],keywords) && index < input.length) {
+					
+					
+					if(input[index].contains("\'")) {
+						int start = index;
+						int end = -1;
+						
+						if(input[index].split("\'", -1).length > 2) {
+							
+							end = index;
+							
+						}
+						
+						while(end<0) {
+							
+							if(input[index+1].contains("\'")) {
+								end = index+1;
+								break;
+							}
+							//may be magic number 2
+							
+							
+						}
+						for(int j = start; j <= end; j++) {
+							
+							strb.append(input[j]);
+							strb.append(" ");
+							
+						}
+						attribute = extractFromSingleQuote(strb.toString());
+						
+					}
+					
+				else { 
+					while(isNotKeyWord(input[index],tempArr/*,keyWord*/) && index < input.length) { //tempArr = keyword
 						
 						strb.append(input[index]);
 						strb.append(" ");
@@ -281,9 +336,9 @@ public class FlexiParser {
 				
 					attribute = strb.toString();
 					
-				
 				}
 			
+				}
 			}
 		}catch(Exception e) {
 			
@@ -292,7 +347,7 @@ public class FlexiParser {
 		}
 		
 		return attribute;
-		
+			
 	}
 	
 	private boolean isDateTime(int index, String value) {
@@ -306,6 +361,17 @@ public class FlexiParser {
 		return false;
 		
 	}
+	
+	//method for taking in string marked by ' '
+	private String extractFromSingleQuote(String preprocessed) {
+		//is it?
+		int start = 1;
+		return preprocessed.substring(start,preprocessed.length()-2);
+		
+	}
+	
+	
+	
 	
 	private void storeDateTime(String[] outputArr,String value,int index) {
 		int j = index + 1;
@@ -369,11 +435,13 @@ public class FlexiParser {
 	}
 	
 	
-	private boolean isNotKeyWord(String str,String[] keywords) {
+	private boolean isNotKeyWord(String str,String[] keywords/*,String ignoreWord*/) {
 		
 		for(int i = 0; i < keywords.length; i++) {
+			str = str.toLowerCase();
 			
-			if(str.equals(keywords[i])) {
+			
+			if(str.equals(keywords[i])/* && !str.equals(ignoreWord)*/) {
 				
 				return false;
 				
@@ -392,7 +460,7 @@ public class FlexiParser {
     	FlexiParser test1 = new FlexiParser();
     	
     	
-    	String[] temp = test1.parseText("addTask \\title Orchard ");
+    	String[] temp = test1.parseText("addTask title 'title lol' at NUS pri 1 det 'sp' ");
     
     	
     	
@@ -400,7 +468,7 @@ public class FlexiParser {
     		
     	for(int i=0;i<temp.length;i++) {
     		
-    		System.out.println(temp[i]);
+    		System.out.print(temp[i]+"|");
     		
     	}
     	//System.out.println();
