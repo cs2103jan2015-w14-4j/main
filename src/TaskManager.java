@@ -2,6 +2,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -83,6 +84,8 @@ public class TaskManager implements TaskManagerInterface {
 
         addIDToTaskIDs(newTask.getTID());
         assertTaskDatesValid(newTask);
+        
+        Collections.sort(tasks, new IDComparator());
         tasks.add(newTask);
     }
 
@@ -196,6 +199,7 @@ public class TaskManager implements TaskManagerInterface {
             addClashingTasksForReturning(newTask, returningTasks);
         }
         
+        Collections.sort(tasks, new IDComparator());
         return returningTasks;
     }
     
