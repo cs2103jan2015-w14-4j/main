@@ -52,7 +52,8 @@ public class TaskManagerTest {
     private static final String COMMAND_ADD = "addTask";
     private static final String COMMAND_DELETE = "deleteTask";
     private static final String COMMAND_EDIT = "editTask";
-
+    private static final String COMMAND_ADD_REMINDER = "addReminder";
+    private static final String COMMAND_DELETE_REMINDER = "deleteReminder";
 
 
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
@@ -885,6 +886,41 @@ public class TaskManagerTest {
         
         //only one reminder is allowed at this time
         assertTaskArrayListEquals(myTaskManager.processTM(addReminderTask10), null);
+    }
+    
+    @Test
+    public void testUndoAndRedoForAddReminder() {
+        myTaskManager = new TaskManager();
+        myTaskManager.processInitialization(ADD_TASK_10);
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
+                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
+        expectTasks.add(expectTask10);
+        Date reminder = convertToDateObject("13/03/2015 15:00");
+        expectTasks.get(0).addReminders(reminder);
+        
+        String[] addReminderTask10 = {"addReminder", "10", null, "13/03/2015 15:00", 
+                null, null, null, null, null};
+        
+        assertTaskArrayListEquals(myTaskManager.processTM(addReminderTask10), expectTasks);        
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+        
+        expectTasks.get(0).deleteReminders(reminder);
+        assertTaskArrayListEquals(myTaskManager.processTM(UNDO_OPERATION), expectTasks);
+        Assert.assertEquals(myTaskManager.getRedoStack().peek()[COMMAND_TYPE], 
+                COMMAND_ADD_REMINDER);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 1);
+        
+        expectTasks.get(0).addReminders(reminder);
+        assertTaskArrayListEquals(myTaskManager.processTM(REDO_OPERATION), expectTasks);
+        Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], 
+                COMMAND_ADD_REMINDER);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+
     }
     //--------------------testing add reminder ends-----------------------------
 
