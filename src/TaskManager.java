@@ -631,6 +631,7 @@ public class TaskManager implements TaskManagerInterface {
         Task taskToAddReminder = getTaskToAddReminder(inputs);
         Date reminder = convertToDateObject(inputs[REMINDER_INDEX]);
         taskToAddReminder.addReminders(reminder);
+        returningTasks.add(taskToAddReminder);
         return returningTasks;
     }
     //--------------------Add reminder method ends------------
