@@ -119,7 +119,7 @@ public class TaskManager implements TaskManagerInterface {
 
         case editTask:
             if(isAbleToEdit(inputs[TID])) {
-                processEditCommand(inputs);
+                returningTasks = processEditCommand(inputs);
             }
             break;
 
@@ -128,11 +128,8 @@ public class TaskManager implements TaskManagerInterface {
             break;
 
         case deleteTask:
-            if(isAbleToDelete(inputs)) {
-                int TIDToDelete = getTaskTID(inputs);
-                Task taskToDelete = getTaskFromTID(TIDToDelete);
-                updateUndoStackFromTask(taskToDelete, inputs[COMMAND_TYPE]);
-                returningTasks = deleteATask(TIDToDelete);
+            if(isAbleToDelete(inputs[TID])) {
+                returningTasks = processDeleteCommand(inputs);
             }
             break;
 
@@ -441,8 +438,15 @@ public class TaskManager implements TaskManagerInterface {
 
 
     //--------------------Delete method starts----------------
-    private boolean isAbleToDelete(String[] inputs) {
-        return isIDClashing(inputs[TID]);
+    private boolean isAbleToDelete(String TaskID) {
+        return isIDClashing(TaskID);
+    }
+    
+    private ArrayList<Task> processDeleteCommand(String[] inputs) {
+        int TIDToDelete = getTaskTID(inputs);
+        Task taskToDelete = getTaskFromTID(TIDToDelete);
+        updateUndoStackFromTask(taskToDelete, inputs[COMMAND_TYPE]);
+        return deleteATask(TIDToDelete);
     }
 
     private ArrayList<Task> deleteATask(int TID) {
