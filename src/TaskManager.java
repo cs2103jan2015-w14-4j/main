@@ -151,6 +151,12 @@ public class TaskManager implements TaskManagerInterface {
         case invalidTask:
             //what do I do if command is invalid
             break;
+            
+        case addReminder:
+            break;
+            
+        case deleteReminder:
+            break;
         }
 
         return returningTasks;
@@ -785,6 +791,10 @@ public class TaskManager implements TaskManagerInterface {
                 returningTasks.add(existingTask.clone());
             }
         }
+    }
+    
+    private void sortTasks(ArrayList<Task> tasks, int type) {
+        
     }
     //--------------------Methods used more than once end----------------------
 
