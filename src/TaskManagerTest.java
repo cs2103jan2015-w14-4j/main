@@ -889,6 +889,33 @@ public class TaskManagerTest {
     //--------------------testing add reminder ends-----------------------------
 
     
+    //--------------------testing delete reminder starts------------------------
+    @Test
+    public void testDeleteReminder() {
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(ADD_TASK_10);
+        
+        String[] addReminderTask10 = {"addReminder", "10", null, "13/03/2015 15:00", 
+                null, null, null, null, null};
+        myTaskManager.processTM(addReminderTask10);
+        String[] deleteReminderTask10 = {"deleteReminder", "10", null, null, 
+                null, null, null, null, null};
+        
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
+                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
+        expectTasks.add(expectTask10);
+        
+        
+        assertTaskArrayListEquals(myTaskManager.processTM(deleteReminderTask10), expectTasks);        
+        System.out.println(myTaskManager.getTasks().get(0).getReminders().size());
+
+        //only one reminder is allowed at this time
+        assertTaskArrayListEquals(myTaskManager.processTM(deleteReminderTask10), null);
+    }
+    //--------------------testing delete reminder ends--------------------------
+
+    
     //--------------------testing others starts---------------------------------
     @Test
     public void testIsDateValid() {
