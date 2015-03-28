@@ -118,11 +118,8 @@ public class TaskManager implements TaskManagerInterface {
             break;
 
         case editTask:
-            if(isAbleToEdit(inputs)) {
-                int TIDToEdit = getTaskTID(inputs);
-                Task taskToEdit = getTaskFromTID(TIDToEdit);
-                updateStackForEdit(taskToEdit, inputs, undoStack);
-                returningTasks = editATask(taskToEdit, inputs);
+            if(isAbleToEdit(inputs[TID])) {
+                processEditCommand(inputs);
             }
             break;
 
@@ -156,6 +153,9 @@ public class TaskManager implements TaskManagerInterface {
             break;
 
         case addReminder:
+            if(isAbleToAddReminder(inputs)) {
+                
+            }
             break;
 
         case deleteReminder:
@@ -279,8 +279,15 @@ public class TaskManager implements TaskManagerInterface {
 
     //--------------------Edit method starts--------------------
     //ID is clashing, means TID is found
-    private boolean isAbleToEdit(String[] inputs) {
-        return isIDClashing(inputs[TID]);
+    private boolean isAbleToEdit(String TaskID) {
+        return isIDClashing(TaskID);
+    }
+    
+    private ArrayList<Task> processEditCommand(String[] inputs) {
+        int TIDToEdit = getTaskTID(inputs);
+        Task taskToEdit = getTaskFromTID(TIDToEdit);
+        updateStackForEdit(taskToEdit, inputs, undoStack);
+        return editATask(taskToEdit, inputs);
     }
 
     private ArrayList<Task> editATask(Task taskToEdit, String[] inputs) {
@@ -587,7 +594,15 @@ public class TaskManager implements TaskManagerInterface {
     //--------------------Redo method ends--------------------
 
     //--------------------Add reminder method starts----------
+    private boolean isAbleToAddReminder(String[] inputs) {
+        return isIDClashing(inputs[TID]);
+    }
+    
+    private void addReminder() {
+        
+    }
     //--------------------Add reminder method ends------------
+    
     //--------------------Delete reminder method starts-------
     //--------------------Delete reminder method ends---------
 
