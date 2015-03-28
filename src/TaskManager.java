@@ -116,15 +116,15 @@ public class TaskManager implements TaskManagerInterface {
             returningTasks = addATask(inputs);
             if(returningTasks != null) {
                 updateUndoStackFromTask(returningTasks.get(INDEX_ZERO), inputs[COMMAND_TYPE]);
-                //call System Handler to save to the file
             }
+            saveTaskToFile();
             break;
 
         case editTask:
             if(isAbleToEdit(inputs[TID])) {
                 returningTasks = processEditCommand(inputs);
-                //call System Handler to save to the file
             }
+            saveTaskToFile();
             break;
 
         case viewTask:
@@ -134,8 +134,8 @@ public class TaskManager implements TaskManagerInterface {
         case deleteTask:
             if(isAbleToDelete(inputs[TID])) {
                 returningTasks = processDeleteCommand(inputs);
-                //call System Handler to save to the file
             }
+            saveTaskToFile();
             break;
 
         case searchTask:
@@ -157,15 +157,15 @@ public class TaskManager implements TaskManagerInterface {
         case addReminder:
             if(isAbleToAddReminder(inputs)) {
                 returningTasks = processAddReminder(inputs);
-                //call System Handler to save to the file
             }
+            saveTaskToFile();
             break;
 
         case deleteReminder:
             if(isAbleToDeleteReminder(inputs)) {
                 returningTasks = processDeleteReminder(inputs);
             }
-            //call System Handler to save to the file
+            saveTaskToFile();
             break;
         }
 
@@ -914,6 +914,10 @@ public class TaskManager implements TaskManagerInterface {
         case LOCATION: Collections.sort(tasks, new ComparatorLocation()); break;
         case PRIORITY: Collections.sort(tasks, new ComparatorPriority()); break;
         }
+    }
+    
+    private void saveTaskToFile() {
+        
     }
     //--------------------Methods used more than once end----------------------
 
