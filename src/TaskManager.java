@@ -69,6 +69,7 @@ public class TaskManager implements TaskManagerInterface {
         return redoStack;
     }
 
+    
 
     //--------------------other methods-----------------------------------
     //--------------------Initialization method starts--------------------
@@ -95,6 +96,7 @@ public class TaskManager implements TaskManagerInterface {
     //--------------------Initialization method ends--------------------
 
 
+    
     public ArrayList<Task> processTM(String[] inputs) {
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
         ArrayList<Task> returningTasks = null;
@@ -152,6 +154,7 @@ public class TaskManager implements TaskManagerInterface {
     }
 
 
+    
     /**
      * if the command does not exist, returns a invalidTask
      * @param command  a String received from FlexiParser
@@ -167,6 +170,7 @@ public class TaskManager implements TaskManagerInterface {
         return commandObtained;
     }
 
+    
 
     //--------------------Add method starts--------------------
     private ArrayList<Task> addATask(String[] inputs) {
@@ -272,6 +276,7 @@ public class TaskManager implements TaskManagerInterface {
     //--------------------Add method ends--------------------
 
     
+    
     //--------------------Edit method starts--------------------
     //ID is clashing, means TID is found
     private boolean isAbleToEdit(String[] inputs) {
@@ -284,7 +289,7 @@ public class TaskManager implements TaskManagerInterface {
                 editTaskInfo(inputs, taskToEdit, i);
             }
 
-            if(!isTaskInfoChanged(inputs, i) && isContentToClear(inputs, i)) {
+            if(isTaskInfoToClear(inputs, i)) {
                 clearTaskInfo(taskToEdit, i);
             }
         }
@@ -345,8 +350,8 @@ public class TaskManager implements TaskManagerInterface {
         task.setTaskName(inputs[TASK_NAME]);
     }
     
-    private boolean isContentToClear(String[] inputs, int i) {
-        return inputs[i].equals(CLEAR_INFO_INDICATOR);
+    private boolean isTaskInfoToClear(String[] inputs, int i) {
+        return inputs[i] != null && inputs[i].equals(CLEAR_INFO_INDICATOR);
     }
 
     private void clearTaskInfo(Task task, int i) {
@@ -391,6 +396,7 @@ public class TaskManager implements TaskManagerInterface {
     //----------Edit method ends----------
     
     
+    
     //----------View method starts----------
     private ArrayList<Task> viewTasks() {
         if(tasks.isEmpty()){
@@ -404,6 +410,7 @@ public class TaskManager implements TaskManagerInterface {
         }
     }
     //--------------------View method ends--------------------
+    
     
     
     //--------------------Delete method starts--------------------
@@ -432,6 +439,7 @@ public class TaskManager implements TaskManagerInterface {
         TaskIDs.remove(TID);
     }
     //--------------------Delete method ends--------------------
+    
     
     
     //--------------------Search method starts--------------------
@@ -470,6 +478,7 @@ public class TaskManager implements TaskManagerInterface {
         return isSearchFound;
     }
     //--------------------Search method ends--------------------
+    
     
     
     //--------------------Undo method starts--------------------
@@ -512,6 +521,7 @@ public class TaskManager implements TaskManagerInterface {
         redoStack.push(undoStack.pop());
     }
     //--------------------Undo method ends--------------------
+    
     
     
     //--------------------Redo method starts--------------------
