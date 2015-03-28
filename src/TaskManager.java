@@ -550,6 +550,7 @@ public class TaskManager implements TaskManagerInterface {
                 returningTasks = deleteReminder(undoOperation);
                 break;
             case deleteReminder:
+                returningTasks = addReminder(undoOperation);
                 break;
             default:
                 break;
@@ -570,7 +571,7 @@ public class TaskManager implements TaskManagerInterface {
     private void updateRedoStack() {
         redoStack.push(undoStack.pop());
     }
-    //--------------------Undo method ends--------------------
+    //--------------------Undo method ends----------------------
 
 
 
@@ -598,6 +599,7 @@ public class TaskManager implements TaskManagerInterface {
                 returningTasks = addReminder(redoOperation);
                 break;
             case deleteReminder:
+                returningTasks = deleteReminder(redoOperation);
                 break;
             default:
                 break;
@@ -636,7 +638,7 @@ public class TaskManager implements TaskManagerInterface {
     }
     
     private ArrayList<Task> processAddReminder(String[] inputs) {
-        updateUndoStackForAddReminder(inputs);
+        updateUndoStackForReminderOperations(inputs);
         return addReminder(inputs);
     }
     
@@ -649,9 +651,6 @@ public class TaskManager implements TaskManagerInterface {
         return returningTasks;
     }
     
-    private void updateUndoStackForAddReminder(String[] inputs) {
-        undoStack.add(inputs);
-    }
     //--------------------Add reminder method ends------------
 
     
@@ -671,6 +670,10 @@ public class TaskManager implements TaskManagerInterface {
     }
     
     private ArrayList<Task> processDeleteReminder(String[] inputs) {
+        Task taskToDeleteReminder = getTaskToDeleteReminder(inputs);
+        Date reminderToDelete = taskToDeleteReminder.getReminders().get(INDEX_ZERO);
+        inputs[REMINDER_INDEX] = convertToStringFromDate(reminderToDelete);
+        updateUndoStackForReminderOperations(inputs);
         return deleteReminder(inputs);
     }
     
@@ -930,6 +933,14 @@ public class TaskManager implements TaskManagerInterface {
         case LOCATION: Collections.sort(tasks, new ComparatorLocation()); break;
         case PRIORITY: Collections.sort(tasks, new ComparatorPriority()); break;
         }
+    }
+    
+    /**
+     * This method is used for processAddReminder() and processDeleteReminder()
+     * @param inputs
+     */
+    private void updateUndoStackForReminderOperations(String[] inputs) {
+        undoStack.add(inputs);
     }
     
     private void saveTaskToFile() {
