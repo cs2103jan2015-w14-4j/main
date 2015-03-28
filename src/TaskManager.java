@@ -546,6 +546,11 @@ public class TaskManager implements TaskManagerInterface {
                 Task taskToEdit = getTaskFromTID(TIDToEdit);
                 returningTasks = editATaskForUndo(taskToEdit, undoOperation);
                 break;
+            case addReminder:
+                returningTasks = deleteReminder(undoOperation);
+                break;
+            case deleteReminder:
+                break;
             default:
                 break;
             }
@@ -589,6 +594,11 @@ public class TaskManager implements TaskManagerInterface {
                 Task taskToEdit = getTaskFromTID(TIDToEdit);
                 returningTasks = editATaskForRedo(taskToEdit, redoOperation);
                 break;
+            case addReminder:
+                returningTasks = addReminder(redoOperation);
+                break;
+            case deleteReminder:
+                break;
             default:
                 break;
             }
@@ -626,6 +636,7 @@ public class TaskManager implements TaskManagerInterface {
     }
     
     private ArrayList<Task> processAddReminder(String[] inputs) {
+        updateUndoStackForAddReminder(inputs);
         return addReminder(inputs);
     }
     
@@ -637,7 +648,13 @@ public class TaskManager implements TaskManagerInterface {
         returningTasks.add(taskToAddReminder);
         return returningTasks;
     }
+    
+    private void updateUndoStackForAddReminder(String[] inputs) {
+        undoStack.add(inputs);
+    }
     //--------------------Add reminder method ends------------
+
+    
     
     //--------------------Delete reminder method starts-------
     private boolean isAbleToDeleteReminder(String[] inputs) {
