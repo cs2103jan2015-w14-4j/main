@@ -230,20 +230,7 @@ public class TaskManager implements TaskManagerInterface {
         TaskIDs.add(TID);
     }
     
-    private boolean isTaskADurationalTask(Task task) {
-        return task.getDateFrom() != null && task.getDateTo() != null;
-    }
-    
-    private void addClashingTasksForReturning(Task newTask, 
-            ArrayList<Task> returningTasks) {
-        for(Task existingTask : tasks) {
-            if(isTaskADurationalTask(existingTask) &&
-                    isNewTaskClashedWithExistingTask(newTask, existingTask) && 
-                    newTask.getTID() != existingTask.getTID()) {
-                returningTasks.add(existingTask.clone());
-            }
-        }
-    }
+
 
     private boolean isNewTaskClashedWithExistingTask(Task newTask, Task existing) {
         if(existing.getDateTo().compareTo(newTask.getDateFrom()) <= 0 || 
@@ -299,6 +286,10 @@ public class TaskManager implements TaskManagerInterface {
         assertlalala(taskToEdit);
         assertTaskDatesValid(taskToEdit);
 
+        if(isTaskADurationalTask(taskToEdit)) {
+            addClashingTasksForReturning(taskToEdit, returningTasks);
+        }
+        
         return returningTasks;
     }
     
@@ -765,6 +756,31 @@ public class TaskManager implements TaskManagerInterface {
      */
     private boolean isIDClashing(String TID) {
         return TaskIDs.contains(convertToIntType(TID));
+    }
+    
+    /**
+     * This method is used by addATask() and editATask()
+     * @param task
+     * @return
+     */
+    private boolean isTaskADurationalTask(Task task) {
+        return task.getDateFrom() != null && task.getDateTo() != null;
+    }
+    
+    /**
+     * This method is used by addATask() and editATask()
+     * @param newTask
+     * @param returningTasks
+     */
+    private void addClashingTasksForReturning(Task newTask, 
+            ArrayList<Task> returningTasks) {
+        for(Task existingTask : tasks) {
+            if(isTaskADurationalTask(existingTask) &&
+                    isNewTaskClashedWithExistingTask(newTask, existingTask) && 
+                    newTask.getTID() != existingTask.getTID()) {
+                returningTasks.add(existingTask.clone());
+            }
+        }
     }
     //--------------------Methods used more than once end----------------------
 
