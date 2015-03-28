@@ -21,6 +21,7 @@ public class TaskManager implements TaskManagerInterface {
     public static final int DETAILS = 7;
     public static final int PRIORITY = 8;
     public static final int DEFAULT_STRING_SIZE = 9;
+    public static final int VIEW_OPTION = 2;
 
     private static final int INITIAL_TID = 10;
     private static final int NUM_ATTRIBUTE_FOR_DATE_OBJECT = 5;
@@ -39,6 +40,8 @@ public class TaskManager implements TaskManagerInterface {
     private static final boolean SEARCH_IS_NOT_FOUND = false;
     private static final int INDEX_ZERO = 0;
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
+
+
 
     private ArrayList<Task> tasks;
     private int IDCounter;
@@ -70,7 +73,7 @@ public class TaskManager implements TaskManagerInterface {
         return redoStack;
     }
 
-    
+
 
     //--------------------other methods-----------------------------------
     //--------------------Initialization method starts--------------------
@@ -84,8 +87,8 @@ public class TaskManager implements TaskManagerInterface {
 
         addIDToTaskIDs(newTask.getTID());
         assertTaskDatesValid(newTask);
-        
-        Collections.sort(tasks, new IDComparator());
+
+        sortTasks(tasks, TID);
         tasks.add(newTask);
     }
 
@@ -99,7 +102,7 @@ public class TaskManager implements TaskManagerInterface {
     //--------------------Initialization method ends--------------------
 
 
-    
+
     public ArrayList<Task> processTM(String[] inputs) {
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
         ArrayList<Task> returningTasks = null;
@@ -124,7 +127,7 @@ public class TaskManager implements TaskManagerInterface {
             break;
 
         case viewTask:
-            returningTasks = viewTasks(); 
+            returningTasks = viewTasks(inputs); 
             break;
 
         case deleteTask:
@@ -151,10 +154,10 @@ public class TaskManager implements TaskManagerInterface {
         case invalidTask:
             //what do I do if command is invalid
             break;
-            
+
         case addReminder:
             break;
-            
+
         case deleteReminder:
             break;
         }
@@ -163,7 +166,7 @@ public class TaskManager implements TaskManagerInterface {
     }
 
 
-    
+
     /**
      * if the command does not exist, returns a invalidTask
      * @param command  a String received from FlexiParser
@@ -179,7 +182,7 @@ public class TaskManager implements TaskManagerInterface {
         return commandObtained;
     }
 
-    
+
 
     //--------------------Add method starts--------------------
     private ArrayList<Task> addATask(String[] inputs) {
@@ -204,11 +207,11 @@ public class TaskManager implements TaskManagerInterface {
         if(isTaskADurationalTask(newTask)) {
             addClashingTasksForReturning(newTask, returningTasks);
         }
-        
-        Collections.sort(tasks, new IDComparator());
+
+        sortTasks(tasks, TID);
         return returningTasks;
     }
-    
+
     private Task processAddWithID(String[] inputs) {
         if(isIDClashing(inputs[TID])) {
             inputs[TID] = convertToStringFromInt(getNewTID());
@@ -227,7 +230,7 @@ public class TaskManager implements TaskManagerInterface {
     private boolean isIDLessThanTen(String TID) {
         return convertToIntType(TID) < INITIAL_TID;
     }
-    
+
     private Task processAddWithoutID(String[] inputs) {
         Task newTask = new Task(getNewTID(), inputs[TASK_NAME], 
                 convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
@@ -235,11 +238,11 @@ public class TaskManager implements TaskManagerInterface {
                 convertToIntType(inputs[PRIORITY]));
         return newTask;
     }
-    
+
     private void addIDToTaskIDs(int TID) {
         TaskIDs.add(TID);
     }
-    
+
 
 
     private boolean isNewTaskClashedWithExistingTask(Task newTask, Task existing) {
@@ -272,14 +275,14 @@ public class TaskManager implements TaskManagerInterface {
     }
     //--------------------Add method ends--------------------
 
-    
-    
+
+
     //--------------------Edit method starts--------------------
     //ID is clashing, means TID is found
     private boolean isAbleToEdit(String[] inputs) {
         return isIDClashing(inputs[TID]);
     }
-    
+
     private ArrayList<Task> editATask(Task taskToEdit, String[] inputs) {
         for(int i = TASK_NAME; i < inputs.length; ++i) {
             if(isTaskInfoChanged(inputs, i)) {
@@ -299,10 +302,10 @@ public class TaskManager implements TaskManagerInterface {
         if(isTaskADurationalTask(taskToEdit)) {
             addClashingTasksForReturning(taskToEdit, returningTasks);
         }
-        
+
         return returningTasks;
     }
-    
+
     private boolean isTaskInfoChanged(String[] inputs, int i) {
         return inputs[i] != null;
     }
@@ -350,7 +353,7 @@ public class TaskManager implements TaskManagerInterface {
     private void editTaskName(String[] inputs, Task task) {
         task.setTaskName(inputs[TASK_NAME]);
     }
-    
+
     private boolean isTaskInfoToClear(String[] inputs, int i) {
         return inputs[i] != null && inputs[i].equals(CLEAR_INFO_INDICATOR);
     }
@@ -395,11 +398,11 @@ public class TaskManager implements TaskManagerInterface {
         task.setPriority(0);
     }
     //----------Edit method ends----------
-    
-    
-    
+
+
+
     //----------View method starts----------
-    private ArrayList<Task> viewTasks() {
+    private ArrayList<Task> viewTasks(String[] inputs) {
         if(tasks.isEmpty()){
             return null;
         } else {
@@ -407,22 +410,37 @@ public class TaskManager implements TaskManagerInterface {
             for(Task task: tasks) {
                 returningTasks.add(task.clone());
             }
-            return returningTasks;
+            if(isViewOptionDefault(inputs)) {
+                return returningTasks;
+            } else {
+                int viewType = getViewOption(inputs);
+                return returningTasks;
+            }
         }
     }
+
+    private boolean isViewOptionDefault(String[] inputs) {
+        return inputs[VIEW_OPTION] == null;
+    }
+
+    private int getViewOption(String[] inputs) {
+        //put an assertion here!
+        int viewType = convertToIntType(inputs[VIEW_OPTION]);
+        return viewType;
+    }
     //--------------------View method ends--------------------
-    
-    
-    
-    //--------------------Delete method starts--------------------
+
+
+
+    //--------------------Delete method starts----------------
     private boolean isAbleToDelete(String[] inputs) {
         return isIDClashing(inputs[TID]);
     }
-    
+
     private ArrayList<Task> deleteATask(int TID) {
         ArrayList<Task> returningTasks = null;
         Iterator<Task> iterator = tasks.iterator();
-        
+
         while (iterator.hasNext()) {
             Task nextTask = (Task) iterator.next();
             if(TID == nextTask.getTID()) {
@@ -435,14 +453,14 @@ public class TaskManager implements TaskManagerInterface {
 
         return returningTasks;
     }
-    
+
     private void removeIDFromTaskIDs(int TID) {
         TaskIDs.remove(TID);
     }
     //--------------------Delete method ends--------------------
-    
-    
-    
+
+
+
     //--------------------Search method starts--------------------
     private ArrayList<Task> searchTask(String[] inputs) {
         ArrayList<Task> returningTasks = new ArrayList<Task>();
@@ -461,7 +479,7 @@ public class TaskManager implements TaskManagerInterface {
             return returningTasks;
         }
     }
-    
+
     private boolean isSearchFound(Task task, String search) {
         boolean isSearchFound = SEARCH_IS_NOT_FOUND;
         String[] strForSearch = new String[DEFAULT_STRING_SIZE];
@@ -479,13 +497,13 @@ public class TaskManager implements TaskManagerInterface {
         return isSearchFound;
     }
     //--------------------Search method ends--------------------
-    
-    
-    
+
+
+
     //--------------------Undo method starts--------------------
     private ArrayList<Task> undoAnOperation() {
         ArrayList<Task> returningTasks = null;
-        
+
         if(!undoStack.isEmpty()) {
             String[] undoOperation = undoStack.peek();
             COMMAND_TYPE_TASK_MANAGER commandUndo = obtainCommand(undoOperation[COMMAND_TYPE]);
@@ -507,7 +525,7 @@ public class TaskManager implements TaskManagerInterface {
             }
             updateRedoStack();
         }
-        
+
         return returningTasks;
     }
 
@@ -517,18 +535,18 @@ public class TaskManager implements TaskManagerInterface {
         returningTasks = editATask(taskToEdit, inputs);
         return returningTasks;
     }
-    
+
     private void updateRedoStack() {
         redoStack.push(undoStack.pop());
     }
     //--------------------Undo method ends--------------------
-    
-    
-    
+
+
+
     //--------------------Redo method starts--------------------
     private ArrayList<Task> redoAnOperation() {
         ArrayList<Task> returningTasks = null;
-        
+
         if(!redoStack.isEmpty()) {
             String[] redoOperation = redoStack.peek();
             COMMAND_TYPE_TASK_MANAGER commandUndo = obtainCommand(redoOperation[COMMAND_TYPE]);
@@ -550,29 +568,27 @@ public class TaskManager implements TaskManagerInterface {
             }
             updateUndoStackFromRedoOperation();
         }
-        
+
         return returningTasks;
     }
-    
+
     private ArrayList<Task> editATaskForRedo(Task taskToEdit, String[] inputs) {
         ArrayList<Task> returningTasks = null;
         updateStackForEditUnderUndoRedo(taskToEdit, inputs, redoStack);
         returningTasks = editATask(taskToEdit, inputs);
         return returningTasks;
     }
-    
+
     private void updateUndoStackFromRedoOperation() {
         undoStack.push(redoStack.pop());
     }
-    
+
     //--------------------Redo method ends--------------------
 
-
-    
-    
-
-
-
+    //--------------------Add reminder method starts----------
+    //--------------------Add reminder method ends------------
+    //--------------------Delete reminder method starts-------
+    //--------------------Delete reminder method ends---------
 
 
 
@@ -580,11 +596,17 @@ public class TaskManager implements TaskManagerInterface {
 
 
 
-    
 
-    
 
-    
+
+
+
+
+
+
+
+
+
 
 
 
@@ -602,13 +624,13 @@ public class TaskManager implements TaskManagerInterface {
 
     //to tell the stack there is an edit operation, 
     //but the corresponding information for undo is wrong
-    
 
 
 
 
 
-    
+
+
     private void updateStackForEdit(Task taskToEdit, String[] inputs, 
             Stack<String[]> stack) {
         String[] strForStack = new String[DEFAULT_STRING_SIZE];
@@ -624,8 +646,8 @@ public class TaskManager implements TaskManagerInterface {
 
         stack.push(strForStack);
     }
-    
-    
+
+
     //--------------------Methods used more than once start----------------------
     /**
      * This method is used by editATaskForUndo() and editATaskForRedo()
@@ -715,7 +737,7 @@ public class TaskManager implements TaskManagerInterface {
 
         undoStack.push(strForUndoStack);
     }
-    
+
     /* This method is used by processTM(), undoAnOperation(), redoAnOperation()
      * @see TaskManagerInterface#getTaskFromTID(int)
      */
@@ -729,8 +751,8 @@ public class TaskManager implements TaskManagerInterface {
         }
         return taskFound;
     }
-    
-  //assume dateString is as this format "dd/MM/yyyy HH:mm"
+
+    //assume dateString is as this format "dd/MM/yyyy HH:mm"
     /**
      * This method is used by processAddWithID(), processAddWithoutID(), editTaskDateFrom(),
      *      editTaskDateTo() and editTaskDeadline();
@@ -758,7 +780,7 @@ public class TaskManager implements TaskManagerInterface {
         }
         return intType;
     }
-    
+
     /**
      * This method is used by processIDWithAdd(), isAbleToEdit(), isAbleToDelete()
      * @param TID
@@ -767,7 +789,7 @@ public class TaskManager implements TaskManagerInterface {
     private boolean isIDClashing(String TID) {
         return TaskIDs.contains(convertToIntType(TID));
     }
-    
+
     /**
      * This method is used by addATask() and editATask()
      * @param task
@@ -776,7 +798,7 @@ public class TaskManager implements TaskManagerInterface {
     private boolean isTaskADurationalTask(Task task) {
         return task.getDateFrom() != null && task.getDateTo() != null;
     }
-    
+
     /**
      * This method is used by addATask() and editATask()
      * @param newTask
@@ -793,17 +815,30 @@ public class TaskManager implements TaskManagerInterface {
         }
     }
     
+    /**
+     * This method is used by processInitialization(), addATask(), 
+     * @param tasks
+     * @param type
+     */
     private void sortTasks(ArrayList<Task> tasks, int type) {
-        
+        switch(type) {
+        case TID: Collections.sort(tasks, new IDComparator());break;
+        case TASK_NAME: break;
+        case DATE_FROM: break;
+        case DEADLINE: break;
+        case LOCATION: break;
+        case PRIORITY: break;
+        }
+
     }
     //--------------------Methods used more than once end----------------------
 
-    
+
     //--------------------Assertion methods start----------------------
 
 
 
-    
+
 
 
 
@@ -919,11 +954,11 @@ public class TaskManager implements TaskManagerInterface {
         return false;
     }
 
-    
-    
-    
-    
-    
+
+
+
+
+
 
 
 
@@ -936,14 +971,14 @@ public class TaskManager implements TaskManagerInterface {
                     newTask.getDateTo());
         }
     }
-    
-    
-    
 
-    
-    
 
-    
+
+
+
+
+
+
     private void assertlalala(Task taskToEdit) {
         if(taskToEdit.getDateFrom() != null) {
             assert taskToEdit.getDateTo() != null;
