@@ -41,7 +41,8 @@ public class TaskManager implements TaskManagerInterface {
     private static final boolean SEARCH_IS_NOT_FOUND = false;
     private static final int INDEX_ZERO = 0;
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
-
+    private static final int ZERO_REMINDER = 0;
+    private static final int ONE_REMINDER = 1;
 
 
     private ArrayList<Task> tasks;
@@ -161,6 +162,9 @@ public class TaskManager implements TaskManagerInterface {
             break;
 
         case deleteReminder:
+            if(isAbleToDeleteReminder(inputs)) {
+                returningTasks = processDeleteReminder(inputs);
+            }
             //call System Handler to save to the file
             break;
         }
@@ -619,7 +623,7 @@ public class TaskManager implements TaskManagerInterface {
     }
     
     private boolean hasNoReminder(Task task) {
-        return task.getReminders().size() == 0;
+        return task.getReminders().size() == ZERO_REMINDER;
     }
     
     private ArrayList<Task> processAddReminder(String[] inputs) {
@@ -629,14 +633,39 @@ public class TaskManager implements TaskManagerInterface {
     private ArrayList<Task> addReminder(String[] inputs) {
         ArrayList<Task> returningTasks = new ArrayList<Task>();
         Task taskToAddReminder = getTaskToAddReminder(inputs);
-        Date reminder = convertToDateObject(inputs[REMINDER_INDEX]);
-        taskToAddReminder.addReminders(reminder);
+        Date reminderToAdd = convertToDateObject(inputs[REMINDER_INDEX]);
+        taskToAddReminder.addReminders(reminderToAdd);
         returningTasks.add(taskToAddReminder);
         return returningTasks;
     }
     //--------------------Add reminder method ends------------
     
     //--------------------Delete reminder method starts-------
+    private boolean isAbleToDeleteReminder(String[] inputs) {
+        Task taskToDeleteReminder = getTaskToDeleteReminder(inputs);
+        return isIDClashing(inputs[TID]) && hasOnlyOneReminder(taskToDeleteReminder);
+    }
+    
+    private Task getTaskToDeleteReminder(String[] inputs) {
+        return getTaskFromTIDString(inputs);
+    }
+    
+    private boolean hasOnlyOneReminder(Task task) {
+        return task.getReminders().size() == ONE_REMINDER;
+    }
+    
+    private ArrayList<Task> processDeleteReminder(String[] inputs) {
+        return deleteReminder(inputs);
+    }
+    
+    private ArrayList<Task> deleteReminder(String[] inputs) {
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
+        Task taskToDeleteReminder = getTaskToDeleteReminder(inputs);
+        Date reminderToDelete = taskToDeleteReminder.getReminders().get(INDEX_ZERO);
+        taskToDeleteReminder.deleteReminders(reminderToDelete);
+        returningTasks.add(taskToDeleteReminder);
+        return returningTasks;
+    }
     //--------------------Delete reminder method ends---------
 
 
