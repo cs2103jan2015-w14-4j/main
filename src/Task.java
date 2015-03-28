@@ -173,7 +173,7 @@ public class Task {
 		}
 		else {
 			for(int i = 0; i < reminders.size(); ++i) {
-				if(!!dateEqual(objDate.get(i),reminders.get(i))) {
+				if(!dateEqual(objDate.get(i),reminders.get(i))) {
 					return false;
 				}
 			}
