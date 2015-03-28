@@ -108,8 +108,7 @@ public class TaskManager implements TaskManagerInterface {
     public ArrayList<Task> processTM(String[] inputs) {
         COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
         ArrayList<Task> returningTasks = null;
-        //SystemHandler handler = SystemHanlder.getSystemHandler()
-        //handler.saveToFile
+
         switch(commandObtained) {
 
         case addTask:
@@ -917,7 +916,8 @@ public class TaskManager implements TaskManagerInterface {
     }
     
     private void saveTaskToFile() {
-        
+        //SystemHandler handler = SystemHanlder.getSystemHandler()
+        //handler.saveToFile
     }
     //--------------------Methods used more than once end----------------------
 
