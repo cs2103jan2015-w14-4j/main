@@ -20,7 +20,7 @@ public interface TaskManagerInterface {
     
     
     /**
-     * @param TID  an integer Task ID
+     * @param TID  an int type Task ID
      * @return     if ID is found, a Task with that ID; else null
      */
     public Task getTaskFromTID(int TID);
