@@ -18,6 +18,10 @@ public class TaskManagerTest {
         "20/03/2015 12:00", "20/03/2015 13:30", null, "LT27", null, "1"};
     public static final String[] ADD_TASK_12 = {"addTask", null, "CS2211 Reflection", null, 
         null, "21/03/2015 23:59", null, "name the file properly", "1"};
+    public static final String[] ADD_TASK_13 = {"addTask", null, "Homework!", null, 
+        null, "21/04/2015 23:59", null, null, "3"};
+    public static final String[] ADD_TASK_14 = {"addTask", null, "CS2107 Lecture", 
+        "18/04/2015 14:00", "18/04/2015 15:00", null, "SOC", null, "2"};
     public static final String[] ADD_TASK_17 = {"addTask", "17", "CS2331 Reflection", null, 
         null, "21/03/2015 23:59", null, "name the file properly", "1"};
     public static final String[] DELETE_TASK_10 = {"deleteTask", "10", null, null, null, 
@@ -310,7 +314,7 @@ public class TaskManagerTest {
     
     //--------------------testing view command starts--------------------
     @Test
-    public void testViewCommand() {
+    public void testViewCommandDefault() {
         myTaskManager = new TaskManager();
         myTaskManager.processTM(ADD_TASK_10);
         myTaskManager.processTM(ADD_TASK_11);
@@ -334,6 +338,39 @@ public class TaskManagerTest {
         //test the return of processTM for view
         assertTaskArrayListEquals(myTaskManager.processTM(VIEW_TASK), 
                 expectView);        
+    }
+    
+    @Test
+    public void testViewLocation() {
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(ADD_TASK_10);
+        myTaskManager.processTM(ADD_TASK_11);
+        myTaskManager.processTM(ADD_TASK_12);
+        myTaskManager.processTM(ADD_TASK_13);
+        myTaskManager.processTM(ADD_TASK_14);
+        
+        String[] VIEW_TASK_LOCATION = {"viewTask", null, "6", null, null, null, 
+                null, null, null};
+        
+        ArrayList<Task> expectView = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
+                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
+                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 1);
+        Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
+                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 1);
+        Task expectTask13 = new Task(13, "Homework!", null, null, 
+                convertToDateObject("21/04/2015 23:59"), null, null, 3);
+        Task expectTask14 = new Task(14, "CS2107 Lecture", convertToDateObject("18/04/2015 14:00"), 
+                convertToDateObject("18/04/2015 15:00"), null, "SOC", null, 2);
+        expectView.add(expectTask11);
+        expectView.add(expectTask10);
+        expectView.add(expectTask14);
+        expectView.add(expectTask12);
+        expectView.add(expectTask13);
+        
+        assertTaskArrayListEquals(myTaskManager.processTM(VIEW_TASK_LOCATION), expectView);
+
     }
     //--------------------testing view command ends----------------------
 
