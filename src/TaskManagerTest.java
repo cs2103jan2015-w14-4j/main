@@ -864,6 +864,29 @@ public class TaskManagerTest {
     }
     //--------------------testing undo and redo command ends--------------------
 
+    
+    //--------------------testing add reminder starts---------------------------
+    @Test
+    public void testAddReminder() {
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(ADD_TASK_10);
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
+                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
+        expectTasks.add(expectTask10);
+        Date reminder = convertToDateObject("13/03/2015 15:00");
+        expectTasks.get(0).addReminders(reminder);
+        
+        String[] addReminderTask10 = {"addReminder", "10", null, "13/03/2015 15:00", 
+                null, null, null, null, null};
+        
+        assertTaskArrayListEquals(myTaskManager.processTM(addReminderTask10), expectTasks);        
+        
+        //only one reminder is allowed at this time
+        assertTaskArrayListEquals(myTaskManager.processTM(addReminderTask10), null);
+    }
+    //--------------------testing add reminder ends-----------------------------
 
     
     //--------------------testing others starts---------------------------------
