@@ -45,6 +45,8 @@ public class FlexiParser {
     private static final int TASK_DETAILS_INDEX = 7;
     private static final int TASK_PRIORITY_INDEX = 8;
     
+    private static final int START_INDEX = 0;
+    
     private static final String ERROR_EXCEPTION = "Exception caught";
     private static final String DATE_FROM = "from";
     private static final String DATE_TO = "to";
@@ -109,9 +111,11 @@ public class FlexiParser {
 					
 			    	//WARNING: NO CHECKING VALIDITY
 			    	outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
-			    	//outputArray[TASK_NAME_INDEX] = extractTitle(inputArray, KEYWORDS_TASK[TASK_NAME_INDEX],KEYWORDS_TASK);
+			    	String temp = extractTitle(inputArray,START_INDEX);
+			    	
+			    	outputArray[TASK_NAME_INDEX] = temp;
 			    	//maybe change to index_ssd
-			    	for(int i = 1; i < KEYWORDS_TASK.length; i++) {
+			    	for(int i = 2; i < KEYWORDS_TASK.length; i++) {
 			    		int j = i + 1;
 			    		String value = extractAttribute(inputArray, KEYWORDS_TASK[i],KEYWORDS_TASK);
 			    		
@@ -270,10 +274,55 @@ public class FlexiParser {
     	return processedCommand;
     	
     }
-  /*  private String extractTitle(String[] input,) {
+    private String extractTitle(String[] input,int index) {
+    	String attribute = null;
+    	StringBuilder strb = new StringBuilder();
+    	try {
+    		
+    		
+    		for(int i = index;i<input.length;i++){
+    			if(input[i].contains("\'")) {
+
+    				int start = i;
+    				int end = -1;
+				
+				if(input[i].split("\'", -1).length > 2) {
+					
+					end = i;
+					
+				}
+				
+				while(end<0) {
+					
+					if(input[i+1].contains("\'")) {
+						end = i+1;
+						break;
+					}
+					//may be magic number 2
+					
+					
+				}
+				for(int j = start; j <= end; j++) {
+					
+					strb.append(input[j]);
+					strb.append(" ");
+					
+				}
+				attribute = extractFromSingleQuote(strb.toString());
+				break;
+			}
+    		
+    		}
+    		
+    	}catch(Exception e) {
+			
+			System.out.println("error");
+			
+		}
     	
+    	return attribute;	
     	
-    }*/
+    }
     //extractor
 	private String extractAttribute(String[] input, String keyWord,String[] keywords) {
 			String[] tempArr = keywords;
@@ -460,7 +509,7 @@ public class FlexiParser {
     	FlexiParser test1 = new FlexiParser();
     	
     	
-    	String[] temp = test1.parseText("addTask title 'title lol' at NUS pri 1 det 'sp' ");
+    	String[] temp = test1.parseText("addTask 'title lol' at NUS pri 1 det 'sp' ");
     
     	
     	
