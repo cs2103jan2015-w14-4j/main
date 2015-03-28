@@ -22,13 +22,22 @@ public class FileStorage {
 	private static final int TASK_DETAILS_INDEX = 7;
 	private static final int TASK_PRIORITY_INDEX = 8;
 	
+	private static final int SHORTCUT_NAME_INDEX = 1;
+	private static final int SHORTCUT_ID_INDEX = 2;
+	
+	private static final String TYPE_TASK = "task";
+	private static final String TYPE_SHORTCUT = "shortcut";
+	private static final String TYPE_TEMPLATE = "template";
+	
 	private static final String ERROR_EXCEPTION = "Exception caught";
 	
 	private static final String DEFAULT_FILENAME = "default.txt";
 	private static final String EMPTY_INPUT = "null";
 		
 	private static File textFile;
-    
+	//include the two secret files;
+    private static final File templateFile = new File("template.txt");
+    private static final File shortcutFile = new File("shortcut.txt");
 	/**
 	 * Constructor for FileStorage object, this will store the text file name
 	 * in a global variable textFile for reference.
@@ -62,7 +71,20 @@ public class FileStorage {
     //stub
     public FileStorage(String fileName, TaskManager myTaskList, Template myTemplate, Shortcut myShortcut) {
     	//stub
-		textFile = new File(DEFAULT_FILENAME);
+    	textFile = new File(fileName);
+		try {
+            
+        	if(!textFile.exists()) {
+            
+            	textFile.createNewFile();
+            
+            }
+
+         }catch(Exception e) {
+             
+        	 System.out.println(ERROR_EXCEPTION); 
+         
+         }
     	//TODO read from file and add respective info to the 3 parts
 		//to call TM, same as before
 		//to call template, use processCustomizingCommand(String[] cmd) 
@@ -73,15 +95,86 @@ public class FileStorage {
     }
     //TODO update template file
     //@param given an arraylist of task, update the the template file
-    public void writeTemplateToFile(ArrayList<Task> template) {
-    	//stub
+    public void writeTemplateToFile(ArrayList<Task> templateList) {
+    	try {
+        	//write template like normal tasks must check what is different is everything null
+        	templateFile.delete();
+    		templateFile.createNewFile();
+    		BufferedWriter bw = new BufferedWriter(new FileWriter(templateFile));
+    		for (int i = 0; i < templateList.size(); i++) {
+                
+            	Task tempTask = templateList.get(i);
+            	String[] taskArray = taskToStringArray(tempTask);
+            	for(int j = 0; j < taskArray.length; j++) {
+            		
+            		if ( j != taskArray.length-1) {
+            			
+            			taskArray[j] += (",");
+            			bw.write(taskArray[j]);
+            			
+            		}
+            		
+            		else {
+            			
+            			bw.write(taskArray[j]);
+            			
+            		}
+            		
+            	}
+            	
+            	bw.newLine();
+            }
+
+            bw.close();
+        	
+        	}catch(Exception e) {
+        		
+        		System.out.println(ERROR_EXCEPTION);
+        		
+        	 }
+            
     }
+    
+    
     
 	//TODO update shortcut file
     //@param shortcuts String[][] of size 9 each string[i] keeps a variable length represent certain keyword 
     //store in order , one row is one id during retrieve
     public void writeShortcutToFile(String[][] shortcuts) {
-    	//stub
+    	try {
+        	
+        	shortcutFile.delete();
+        	shortcutFile.createNewFile();
+    		BufferedWriter bw = new BufferedWriter(new FileWriter(shortcutFile));
+    		//shortcut first column all the different shortcut each row is the mapped shortcuts
+    		for(int i=0;i<shortcuts.length;i++) {
+    			for(int j=0;j<shortcuts[i].length;j++) {
+    				if ( j != shortcuts[i].length-1) {
+            			
+            			shortcuts[i][j] += (",");
+            			bw.write(shortcuts[i][j]);
+            			
+            		}
+            		
+            		else {
+            			
+            			bw.write(shortcuts[i][j]);
+            			
+            		}
+    				
+    				
+    			}
+    			
+    			bw.newLine();
+    			
+    		}
+            bw.close();
+        	
+        	}catch(Exception e) {
+        		
+        		System.out.println(ERROR_EXCEPTION);
+        		
+        	 }
     }
     
     //stores each task as a string delimited by ,
@@ -237,13 +330,9 @@ public class FileStorage {
     
     }
     
-    /**
-     * extracts each line from specified file as String array
-     * and pass it as parameter to logic via processAddForInitialization
-     * method
-     */    
-    public void readFromFile(TaskManager tm) throws ParseException {
-        
+    public void readTemplateFromFile(Template template) throws ParseException {
+    	//needs a different one because format may be diff slightly
+    	//not just textFile
         if(textFile.exists()) {
            
         	try {
@@ -251,6 +340,162 @@ public class FileStorage {
         		Scanner sc = new Scanner(textFile);
                 
                 while (sc.hasNextLine()) {
+                	
+                	
+                	String[] inputs = new String[9];
+                	String[] tempStringArray = new String[8];
+                	
+                	tempStringArray = sc.nextLine().split("\\s*,\\s*");
+                	             	
+                	inputs[COMMAND_TYPE_INDEX] = "addTemplate";
+                	inputs[TASK_ID_INDEX] = tempStringArray[0];
+ 
+                	
+                	inputs[TASK_NAME_INDEX] = tempStringArray[1];
+                 
+                    if(isEmptyInput(tempStringArray[2])) {
+                    	
+                    	inputs[TASK_DATE_FROM_INDEX] = tempStringArray[2];
+                    
+                    }
+                    
+                    else {
+                    	
+                    	inputs[TASK_DATE_FROM_INDEX] = null;
+                    	
+                    }
+                                       
+                    if(isEmptyInput(tempStringArray[3])) {
+                        
+                    	inputs[TASK_DATE_TO_INDEX] = tempStringArray[3];
+                    
+                    }
+                    
+                    else {
+                    	
+                    	inputs[TASK_DATE_TO_INDEX] = null;
+                    	
+                    }
+                    
+                    
+                    if(isEmptyInput(tempStringArray[4])) {
+                        
+                    	inputs[TASK_DEADLINE_INDEX] = tempStringArray[4];
+                    
+                    }
+                    
+                    else {
+                    	
+                    	inputs[TASK_DEADLINE_INDEX] = null;
+                    	
+                    }
+                    
+                    if(isEmptyInput(tempStringArray[5])) {
+                        
+                    	inputs[TASK_LOCATION_INDEX] = tempStringArray[5];
+                    
+                    }
+                    
+                    else {
+                    	
+                    	inputs[TASK_LOCATION_INDEX] = null;
+                    	
+                    }
+
+                    if(isEmptyInput(tempStringArray[6])) {
+                        
+                    	inputs[TASK_DETAILS_INDEX] = tempStringArray[6];
+                    
+                    }
+                    
+                    else {
+                    	
+                    	inputs[TASK_DETAILS_INDEX] = null;
+                    	
+                    }
+                    
+                    
+                    if(isEmptyInput(tempStringArray[7])) {
+                        
+                    	inputs[TASK_PRIORITY_INDEX] = tempStringArray[7];
+                    	
+                    }
+                    
+                    else {
+                    	
+                    	inputs[TASK_PRIORITY_INDEX] = null;
+                    	
+                    }
+                  
+                    template.processCustomizingCommand(inputs);       
+               
+                }
+                
+                sc.close();
+            
+        	}catch(FileNotFoundException e) {
+                
+            	e.printStackTrace();
+            
+            }
+
+        }
+    
+    	
+    }
+    
+    public void readShortcutFromFile(Shortcut shortcut) {
+    	if(shortcutFile.exists()) {
+            
+        	try {
+                
+        		Scanner sc = new Scanner(shortcutFile);
+                
+                while (sc.hasNextLine()) {
+                	
+                	
+                	String[] inputs = new String[9];
+                	String[] tempStringArray = new String[8];
+                	
+                	tempStringArray = sc.nextLine().split("\\s*,\\s*");
+                	             	
+                	inputs[COMMAND_TYPE_INDEX] = "addShortcutINIT";
+                	inputs[SHORTCUT_NAME_INDEX] = tempStringArray[0];
+ 
+                	
+                	inputs[SHORTCUT_ID_INDEX] = tempStringArray[1];
+                 
+                    shortcut.processShortcutCommand(inputs);       
+               
+                }
+                
+                sc.close();
+            
+        	}catch(FileNotFoundException e) {
+                
+            	e.printStackTrace();
+            
+            }
+
+        }
+    	
+    }
+    
+    /**
+     * extracts each line from specified file as String array
+     * and pass it as parameter to logic via processAddForInitialization
+     * method. This is for normal and template.
+     */    
+    public void readFromFile(TaskManager tm) throws ParseException {
+        //not just textFile
+        if(templateFile.exists()) {
+           
+        	try {
+                
+        		Scanner sc = new Scanner(templateFile);
+                
+                while (sc.hasNextLine()) {
+                	
                 	
                 	String[] inputs = new String[9];
                 	String[] tempStringArray = new String[8];
@@ -264,7 +509,7 @@ public class FileStorage {
 //                		
 //                	}
                 	             	
-                	inputs[COMMAND_TYPE_INDEX] = "add";
+                	inputs[COMMAND_TYPE_INDEX] = "addTask";
                 	inputs[TASK_ID_INDEX] = tempStringArray[0];
  
                 	
