@@ -41,7 +41,7 @@ public class TaskManagerTest {
     public static final String[] VIEW_TASK = {"viewTask", null, null, null, null, null, 
         null, null, null};
 
-
+    private static final int TASK10 = 0;
     private static final int TASK11 = 1;
     private static final int TASK12 = 2;
     private static final int COMMAND_TYPE = 0;
@@ -275,6 +275,35 @@ public class TaskManagerTest {
         assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
     }
 
+    @Test
+    public void testEditWithTimeclash() {
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(ADD_TASK_10);
+        myTaskManager.processTM(ADD_TASK_11);
+        
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
+                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
+                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 1);
+        expectTasks.add(expectTask10);
+        expectTasks.add(expectTask11);
+        
+        //test the ArrayList before edit
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
+        
+        Date newDateTo = convertToDateObject("27/03/2015 15:30");
+        expectTasks.get(TASK10).setDateTo(newDateTo);
+        ArrayList<Task> expectEdit = new ArrayList<Task>();
+        expectEdit.add(expectTasks.get(TASK10));
+        expectEdit.add(expectTask11);
+        
+        String[] EDIT_TASK10_CLASH = {"editTask", "10", null, null, 
+            "27/03/2015 15:30", null, null, null, null};
+        
+        //test the ArrayList after edit
+        assertTaskArrayListEquals(myTaskManager.processTM(EDIT_TASK10_CLASH), expectEdit); 
+    }
     //--------------------testing edit command ends----------------------
 
 
