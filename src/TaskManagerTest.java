@@ -908,7 +908,6 @@ public class TaskManagerTest {
         
         
         assertTaskArrayListEquals(myTaskManager.processTM(deleteReminderTask10), expectTasks);        
-        System.out.println(myTaskManager.getTasks().get(0).getReminders().size());
 
         //only one reminder is allowed at this time
         assertTaskArrayListEquals(myTaskManager.processTM(deleteReminderTask10), null);
