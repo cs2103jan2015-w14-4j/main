@@ -414,6 +414,7 @@ public class TaskManager implements TaskManagerInterface {
                 return returningTasks;
             } else {
                 int viewType = getViewOption(inputs);
+                sortTasks(returningTasks, viewType);
                 return returningTasks;
             }
         }
@@ -822,14 +823,13 @@ public class TaskManager implements TaskManagerInterface {
      */
     private void sortTasks(ArrayList<Task> tasks, int type) {
         switch(type) {
-        case TID: Collections.sort(tasks, new IDComparator());break;
+        case TID: Collections.sort(tasks, new ComparatorID()); break;
         case TASK_NAME: break;
         case DATE_FROM: break;
         case DEADLINE: break;
-        case LOCATION: break;
+        case LOCATION: Collections.sort(tasks, new ComparatorLocation()); break;
         case PRIORITY: break;
         }
-
     }
     //--------------------Methods used more than once end----------------------
 
