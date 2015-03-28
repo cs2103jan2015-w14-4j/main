@@ -503,8 +503,8 @@ public class TaskManagerTest {
         assertTaskArrayListEquals(myTaskManager.processTM(UNDO_OPERATION), expectUndo);
         expectTasks = new ArrayList<Task>();
         expectTasks.add(expectTask10);
-        expectTasks.add(expectTask12);
         expectTasks.add(expectTask11);
+        expectTasks.add(expectTask12);
         //test the ArrayList after undo
         assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
