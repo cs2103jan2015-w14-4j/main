@@ -824,11 +824,11 @@ public class TaskManager implements TaskManagerInterface {
     private void sortTasks(ArrayList<Task> tasks, int type) {
         switch(type) {
         case TID: Collections.sort(tasks, new ComparatorID()); break;
-        case TASK_NAME: break;
-        case DATE_FROM: Collections.sort(tasks, new ComparatorDateFrom());break;
-        case DEADLINE: Collections.sort(tasks, new ComparatorDeadline());break;
+        case TASK_NAME: Collections.sort(tasks, new ComparatorTaskName()); break;
+        case DATE_FROM: Collections.sort(tasks, new ComparatorDateFrom()); break;
+        case DEADLINE: Collections.sort(tasks, new ComparatorDeadline()); break;
         case LOCATION: Collections.sort(tasks, new ComparatorLocation()); break;
-        case PRIORITY: Collections.sort(tasks, new ComparatorPriority());break;
+        case PRIORITY: Collections.sort(tasks, new ComparatorPriority()); break;
         }
     }
     //--------------------Methods used more than once end----------------------
