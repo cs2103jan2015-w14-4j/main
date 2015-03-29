@@ -175,16 +175,16 @@ public class Shortcut {
 	}
 	private ArrayList<String> buildViewShortcut() {
 		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("viewShortcuts");
 		defaults.add("viewShortcut");
+		defaults.add("viewShortcuts");
 		defaults.add("viewShort");
 		defaults.add("viewShorts");
 		return defaults;
 	}
 	private ArrayList<String> buildResetShortcut() {
 		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("resetShortcuts");
 		defaults.add("resetShortcut");
+		defaults.add("resetShortcuts");
 		return defaults;
 	}
 	private ArrayList<String> buildAddTemplate() {
@@ -201,8 +201,8 @@ public class Shortcut {
 	}
 	private ArrayList<String> buildViewTemplates() {
 		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("viewTemplates");
 		defaults.add("viewTemplate");
+		defaults.add("viewTemplates");
 		defaults.add("viewTemp");
 		defaults.add("viewTemps");
 		return defaults;
@@ -215,8 +215,8 @@ public class Shortcut {
 	}
 	private ArrayList<String> buildResetTemplates() {
 		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("resetTemplates");
 		defaults.add("resetTemplate");
+		defaults.add("resetTemplates");
 		defaults.add("resetTemp");
 		defaults.add("resetTemps");
 		return defaults;

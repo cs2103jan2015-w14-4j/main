@@ -203,11 +203,14 @@ public class SystemTest {
 		String[] cmd = {"viewShortcuts",null,null};
 		String[][] results = myshortcut.processShortcutCommand(cmd);
 		String[][] expected1 = {
-								{"add"}, {"edit"}, {"view"}, {"delete"}, {"undo"}, {"redo"},
-								{"addShortcut"}, {"viewShortcuts"}, {"deleteShortcut"},
-								{"resetShortcuts"}, {"addTemplate"}, {"editTemplate"},
-								{"viewTemplates"}, {"deleteTemplate"}, {"resetTemplates"}, 
-								{"help"},
+								{"add","addTask"}, {"edit","editTask"}, {"view","viewTask","viewTasks"}, {"delete","deleteTask"}, 
+								{"undo"}, {"redo"},
+								{"addShortcut","addShort"}, {"viewShortcut","viewShortcuts","viewShort","viewShorts"}, 
+								{"deleteShortcut","deleteShort"},
+								{"resetShortcut","resetShortcuts"}, {"addTemplate","addTemp"}, {"editTemplate","editTemp"},
+								{"viewTemplate","viewTemplates","viewTemp","viewTemps"}, {"deleteTemplate","deleteTemp"}, 
+								{"resetTemplate","resetTemplates","resetTemp","resetTemps"}, 
+								{"help"}
 							};
 		for(int i = 0; i < expected1.length; ++i) {
 			Assert.assertArrayEquals(results[i], expected1[i]);
@@ -241,11 +244,14 @@ public class SystemTest {
 		String[] cmd5 = {"viewShortcuts", null, null};
 		String[][] results5 = myshortcut.processShortcutCommand(cmd5);
 		String[][] expected5 = {
-								{"add","+"}, {"edit"}, {"view"}, {"delete"}, {"undo"}, {"redo"},
-								{"addShortcut"}, {"viewShortcuts"}, {"deleteShortcut"},
-								{"resetShortcuts"}, {"addTemplate"}, {"editTemplate","eT","addS"},
-								{"viewTemplates"}, {"deleteTemplate"}, {"resetTemplates"}, 
-								{"help"},
+								{"add","addTask","+"}, {"edit","editTask"}, {"view","viewTask","viewTasks"}, {"delete","deleteTask"}, 
+								{"undo"}, {"redo"},
+								{"addShortcut","addShort"}, {"viewShortcut","viewShortcuts","viewShort","viewShorts"}, 
+								{"deleteShortcut","deleteShort"},
+								{"resetShortcut","resetShortcuts"}, {"addTemplate","addTemp"}, {"editTemplate","editTemp","eT","addS"},
+								{"viewTemplate","viewTemplates","viewTemp","viewTemps"}, {"deleteTemplate","deleteTemp"}, 
+								{"resetTemplate","resetTemplates","resetTemp","resetTemps"}, 
+								{"help"}
 							};
 		for(int i = 0; i < expected5.length; ++i) { 
 			Assert.assertArrayEquals(results5[i], expected5[i]);
@@ -263,11 +269,14 @@ public class SystemTest {
 		String[] cmd7 = {"resetShortcut", null, null};
 		String[][] results7 = myshortcut.processShortcutCommand(cmd7);
 		String[][] expected7 = {
-				{"add"}, {"edit"}, {"view"}, {"delete"}, {"undo"}, {"redo"},
-				{"addShortcut"}, {"viewShortcuts"}, {"deleteShortcut"},
-				{"resetShortcuts"}, {"addTemplate"}, {"editTemplate"},
-				{"viewTemplates"}, {"deleteTemplate"}, {"resetTemplates"}, 
-				{"help"},
+								{"add","addTask"}, {"edit","editTask"}, {"view","viewTask","viewTasks"}, {"delete","deleteTask"}, 
+								{"undo"}, {"redo"},
+								{"addShortcut","addShort"}, {"viewShortcut","viewShortcuts","viewShort","viewShorts"}, 
+								{"deleteShortcut","deleteShort"},
+								{"resetShortcut","resetShortcuts"}, {"addTemplate","addTemp"}, {"editTemplate","editTemp"},
+								{"viewTemplate","viewTemplates","viewTemp","viewTemps"}, {"deleteTemplate","deleteTemp"}, 
+								{"resetTemplate","resetTemplates","resetTemp","resetTemps"}, 
+								{"help"}
 			};
 		for(int i = 0; i < expected7.length; ++i) {
 			Assert.assertArrayEquals(results7[i], expected7[i]);
