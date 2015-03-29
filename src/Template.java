@@ -65,6 +65,7 @@ public class Template {
 				else {
 					taskToBeAdded = system.requestTask(Integer.parseInt(command[1]));	
 				}
+				writeOutToFile();
 				return addTemplate(command[2], taskToBeAdded);
 				
 			case viewTemplates:
@@ -86,6 +87,24 @@ public class Template {
 		return null;
 	}
 	
+	private void writeOutToFile() {
+		if(system == null) {
+			system = SystemHandler.getSystemHandler();
+		}
+		Iterator<String> listing = templates.keySet().iterator();
+		ArrayList<String> match = new ArrayList<String>();
+		ArrayList<Task> templatesList = new ArrayList<Task>();
+		while(listing.hasNext()) {
+			String next = listing.next();
+			match.add(next);
+			templatesList.add(templates.get(next));
+			
+		}
+		system.writeTemplateToFile(templatesList, match);
+		
+	}
+
+
 	private Task editTemplate(String[] command) {
 		Task task = templates.get(command[1]);
 		if(task == null) {
