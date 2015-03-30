@@ -156,34 +156,9 @@ public class TaskTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Task task = taskArray.get(rowIndex);
-		Object value = null;
-		switch (columnIndex) {
-		case 0:
-			value = task.getTID();
-			break;
-		case 1:
-			value = task.getTaskName();
-			break;
-		case 2:
-			value = task.getDateFrom();
-			break;
-		case 3:
-			value = task.getDateTo();
-			break;
-		case 4:
-			value = task.getDeadline();
-			break;
-		case 5:
-			value = task.getLocation();
-			break;
-		case 6:
-			value = task.getDetails();
-			break;
-		case 7:
-			value = task.getPriority();
-			break;
-		}
+		String[] task = taskArrayString.get(rowIndex);
+		String value = null;
+		value = task[columnIndex];
 		return value;
 	}  
 
