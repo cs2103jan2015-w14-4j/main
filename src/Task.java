@@ -1,3 +1,4 @@
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -6,6 +7,17 @@ public class Task {
 	private static final int COMPLETED_TASK 	= 1;
 	private static final int INCOMPLETE_TASK 	= 2;
 	private static final int DISCARDED_TASK 	= 3;
+	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
+    private static final int TASK_ID = 0;
+    private static final int TASK_NAME = 1;
+    private static final int DATE_FROM = 2;
+    private static final int DATE_TO = 3;
+    private static final int DEADLINE = 4;
+    private static final int LOCATION = 5;
+    private static final int DETAILS = 6;
+    private static final int PRIORITY = 7;
+    private static final int REMINDER = 8;
+    private static final int DEFAULT_STRING_SIZE = 9;
 	
 	private int TID;
 	private String taskName;
@@ -230,4 +242,62 @@ public class Task {
 		return new Task(TID,taskName, newDateFrom, newDateTo, 
 				newDeadline, location, details, priority);
 	}
+	
+    public String[] toStringArray() {
+        String[] taskStringArray = new String[DEFAULT_STRING_SIZE];
+        
+	    taskStringArray[TASK_ID] = "" + TID;
+	    
+        if(taskName != null) {
+            taskStringArray[TASK_NAME] = taskName;
+        } else {
+            taskStringArray[TASK_NAME] = null;
+        }
+	    
+        if(dateFrom != null) {
+            taskStringArray[DATE_FROM] = convertToStringFromDate(dateFrom);
+        } else {
+            taskStringArray[DATE_FROM] = null;
+        }
+
+        if(dateTo != null) {
+            taskStringArray[DATE_TO] = convertToStringFromDate(dateTo);
+        } else {
+            taskStringArray[DATE_TO] = null;
+        }
+
+        if(deadline != null) {
+            taskStringArray[DEADLINE] = convertToStringFromDate(deadline);
+        } else {
+            taskStringArray[DEADLINE] = null;
+        }
+
+        if(location != null) {
+            taskStringArray[LOCATION] = location;
+        } else {
+            taskStringArray[LOCATION] = null;
+        }
+
+        if(details != null) {
+            taskStringArray[DETAILS] = details;
+        } else {
+            taskStringArray[DETAILS] = null;
+        }
+
+        taskStringArray[PRIORITY] = "" + priority;
+	    
+        if(reminders.size() == 1) {
+            taskStringArray[REMINDER] = convertToStringFromDate(reminders.get(0));
+        } else {
+            taskStringArray[REMINDER] = null;
+        }
+        
+	    return taskStringArray;
+	}
+    
+    private String convertToStringFromDate(Date dateObject) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+        String dateString = dateFormat.format(dateObject);
+        return dateString;
+    }
 }
