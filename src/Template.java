@@ -47,7 +47,10 @@ public class Template {
 	public ArrayList<Task> processCustomizingCommand(String[] command) 
 			throws NoSuchElementException, NumberFormatException {
 		
+		
 		COMMAND_TYPE_TEMPLATE commandType = getCommandType(command[0]);
+		ArrayList<Task> result;
+		
 		assertValidity(command, commandType);
 		
 		switch(commandType) {
@@ -72,17 +75,31 @@ public class Template {
 				return viewTemplates();
 				
 			case deleteTemplate:
-				return removeTemplate(command[1]);
+				result = removeTemplate(command[1]);
+				writeOutToFile();
+				return result;
 				
 			case editTemplate:
 				Task temp = editTemplate(command);
-				ArrayList<Task> result = new ArrayList<Task>(); 
+				result = new ArrayList<Task>(); 
 				result.add(temp);
+				writeOutToFile();
 				return result;
 				
 			case resetTemplates:
 				resetTemplates();
+				writeOutToFile();
 				return new ArrayList<Task>();
+			
+			case addTemplateInit:
+				if(system == null) {
+					system = SystemHandler.getSystemHandler();
+				}
+				Task taskToBeAddedInit = new Task(Integer.parseInt(command[1]),command[2], 
+						convertToDateObject(command[3]), convertToDateObject(command[4]), 
+						convertToDateObject(command[5]), command[5], command[6],
+						Integer.parseInt(command[7]));
+				addTemplate(command[2], taskToBeAddedInit);
 		}
 		return null;
 	}
@@ -97,7 +114,7 @@ public class Template {
 		while(listing.hasNext()) {
 			String next = listing.next();
 			match.add(next);
-			templatesList.add(templates.get(next));
+			templatesList.add(templates.get(next).clone());
 			
 		}
 		system.writeTemplateToFile(templatesList, match);
@@ -146,7 +163,7 @@ public class Template {
 	}
 
 	private void assertValidity(String[] command, COMMAND_TYPE_TEMPLATE cmdType) {
-		assert(command.length == 9);
+		assert(command.length == COMMAND_LENGTH);
 		assert(command[0] != null);
 		switch(cmdType) {
 			case viewTemplates:
@@ -158,6 +175,7 @@ public class Template {
 				for(int i = 3; i < COMMAND_LENGTH; ++i) {
 					assert(command[i] == null);
 				}
+			case addTemplateInit:
 			case editTemplate:
 		}
 	}
@@ -174,6 +192,8 @@ public class Template {
 				return COMMAND_TYPE_TEMPLATE.editTemplate;
 			case "resetTemplates":
 				return COMMAND_TYPE_TEMPLATE.resetTemplates;
+			case "addTemplateInit":
+				return COMMAND_TYPE_TEMPLATE.addTemplateInit;
 			default:
 				throw new NoSuchElementException("Wrong command received at Template Manager.");
 		}
@@ -212,7 +232,7 @@ public class Template {
 	private ArrayList<Task> copyOverToArrayList(Iterator<Task> templates) {
 		ArrayList<Task> templateList = new ArrayList<Task>();
 		while(templates.hasNext()) {
-			templateList.add(templates.next());
+			templateList.add(templates.next().clone());
 		}
 		return templateList;
 		
