@@ -16,8 +16,7 @@ public class Task {
     private static final int LOCATION = 5;
     private static final int DETAILS = 6;
     private static final int PRIORITY = 7;
-    private static final int REMINDER = 8;
-    private static final int DEFAULT_STRING_SIZE = 9;
+    private static final int DEFAULT_STRING_SIZE = 8;
 	
 	private int TID;
 	private String taskName;
@@ -27,7 +26,6 @@ public class Task {
 	private String location;
 	private String details;
 	private int priority; //Create first for future
-	private ArrayList<Date> reminders; 
 	private int status;
 	
 
@@ -42,7 +40,6 @@ public class Task {
 		this.location = location;
 		this.details = details;
 		this.priority = priority;
-		this.reminders = new ArrayList<Date>();
 		this.status = INCOMPLETE_TASK;
 	}
 	
@@ -80,24 +77,6 @@ public class Task {
 		this.priority = priority;
 	}
 
-	public void setReminders(ArrayList<Date> reminders) {
-		this.reminders = reminders;
-	}
-
-	//Reminders operation
-	public boolean addReminders(Date dateToBeReminded) {
-		reminders.add(dateToBeReminded);
-		return true;
-	}
-	public boolean deleteReminders(Date dateToBeDeleted) {
-		for(int i = 0; i < reminders.size(); ++i) {
-			if(reminders.get(i).compareTo(dateToBeDeleted) == 0) {
-				reminders.remove(i);
-				return true;
-			}
-		}
-		return false;
-	}
 	
 	//Update Status ************************
 	public void setComplete() {
@@ -145,9 +124,6 @@ public class Task {
 		return priority;
 	}
 
-	public ArrayList<Date> getReminders() {
-		return reminders;
-	}
 	
 	public int getStatus() {
 		return status;
@@ -178,17 +154,6 @@ public class Task {
 		}
 		if(!stringEqual(task.getDetails(), details)) {
 			return false;
-		}
-		ArrayList<Date> objDate = task.getReminders();
-		if(reminders.size() != objDate.size()) {
-			return false;
-		}
-		else {
-			for(int i = 0; i < reminders.size(); ++i) {
-				if(!dateEqual(objDate.get(i),reminders.get(i))) {
-					return false;
-				}
-			}
 		}
 		if(status != task.getStatus()) {
 			return false;
@@ -285,12 +250,6 @@ public class Task {
         }
 
         taskStringArray[PRIORITY] = "" + priority;
-	    
-        if(reminders.size() == 1) {
-            taskStringArray[REMINDER] = convertToStringFromDate(reminders.get(0));
-        } else {
-            taskStringArray[REMINDER] = null;
-        }
         
 	    return taskStringArray;
 	}
