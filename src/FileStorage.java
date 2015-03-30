@@ -507,11 +507,11 @@ public class FileStorage {
      */    
     public void readFromFile(TaskManager tm) throws ParseException {
         //not just textFile
-        if(templateFile.exists()) {
+        if(textFile.exists()) {
            
         	try {
                 
-        		Scanner sc = new Scanner(templateFile);
+        		Scanner sc = new Scanner(textFile);
                 
                 while (sc.hasNextLine()) {
                 	
