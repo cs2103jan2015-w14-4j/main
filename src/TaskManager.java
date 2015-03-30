@@ -946,8 +946,8 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private void saveTasksToFile() {
-        //SystemHandler handler = SystemHanlder.getSystemHandler()
-        //handler.saveToFile
+        SystemHandler handler = SystemHandler.getSystemHandler();
+        handler.writeToFile(tasks);
     }
     //--------------------Methods used more than once end----------------------
 
