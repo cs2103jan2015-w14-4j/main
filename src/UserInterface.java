@@ -105,6 +105,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 	/**
 	 * Launch the application.
 	 */
+	 /*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -118,8 +119,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 				}
 			}
 		});
-	}
-
+	}*/
 	/**
 	 * Initialize the contents of the frame.
 	 */
