@@ -49,15 +49,16 @@ public class UserInterface extends DefaultTableCellRenderer {
 	public static final String MSG_REMINDERS = "The following task(s) are due today: " + newline + newline;
 	public static final String MSG_SEPARATOR = "=========================================================";
 	
-    private static final double taskIndex = 5,
-            taskName = 20,
+	//percentage of each column
+    private static final double taskID = 5, 
+            taskName = 23,
             dateFrom = 10,
             dateTo = 10,
             deadline = 10,
-            location = 10,
-            details = 20,
-            priority = 5,
-            reminder = 10;
+            location = 15,
+            details = 22,
+            priority = 5;
+          
 
 	private boolean hasFilename;
 	private String prevInput;
@@ -65,6 +66,8 @@ public class UserInterface extends DefaultTableCellRenderer {
 	public void  displayTaskTable(ArrayList<Task> outputData, boolean success){
 		viewTaskPane();
 		ArrayList<String[]> outputDataString = new ArrayList<String[]>();
+		System.out.println( "outputData? = " +outputData);
+		System.out.println( "outputDataString? = " + outputDataString);
 		for (int i = 0 ; i < outputData.size(); i++){
 			outputDataString.add(outputData.get(i).toStringArray());
 		}
@@ -92,8 +95,15 @@ public class UserInterface extends DefaultTableCellRenderer {
         sysFeedbackArea.append(outputData);
 	}
 
-	public void displayTemplate(ArrayList<Task> outputData, boolean success){
-
+	public void displayTemplate(ArrayList<Task> outputData, ArrayList<String> templateName, boolean success){
+		//replace Task with String[] and replace TID with templateName
+		viewTaskPane();
+		ArrayList<String[]> outputDataString = new ArrayList<String[]>();
+		for (int i = 0 ; i < outputData.size(); i++){
+			outputDataString.add(outputData.get(i).toStringArray());
+			outputDataString.get(i)[0] = templateName.get(i);
+		}
+		model.refreshTable(outputDataString);
 	}
 
 	public String getRawUserInput(){
@@ -110,6 +120,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 	/**
 	 * Launch the application.
 	 */
+	/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -124,7 +135,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 			}
 		});
 	}
-
+*/
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -132,7 +143,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 		panel = new JPanel();
 		frame = new JFrame(APP_NAME);
-		frame.setBounds(100, 100, 800, 400);
+		frame.setBounds(100, 100, 1200, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{536, 0};
@@ -259,7 +270,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 	public JScrollPane createTaskTable(ArrayList<String[]> outputArrayString) {
 		ArrayList<String> columnNames = new ArrayList<String>();
-		columnNames.add("Index");
+		columnNames.add("ID");
 		columnNames.add("Task Name");
 		columnNames.add("Date From");
 		columnNames.add("Date To");
@@ -267,13 +278,12 @@ public class UserInterface extends DefaultTableCellRenderer {
 		columnNames.add("Location");
 		columnNames.add("Details");
 		columnNames.add("Priority");
-		columnNames.add("Reminder");
 
-		double[] preferredWidth = {taskIndex, taskName,dateFrom, dateTo, deadline , location, details, priority, reminder};
+		double[] preferredWidth = {taskID, taskName,dateFrom, dateTo, deadline , location, details, priority};
 		
 		model = new TaskTableModel(outputArrayString, columnNames, String[].class );
 		outputTable = new JTable (model);
-        setJTableColumnsWidth(outputTable, 800, preferredWidth ) ;
+        setJTableColumnsWidth(outputTable, 1200, preferredWidth ) ;
 		scrollPaneMain.setViewportView(outputTable);
 		System.out.println(model+ "in createTaskTable");
 		return scrollPaneMain;
@@ -372,7 +382,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 			prevInput = input;
 
 				if (!hasFilename){		
-					clearInput();
 					//Init system handler with filename
 
 					hasFilename = true;
@@ -382,6 +391,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 						mainHandler.rawUserInput("viewTask");
 					}else{
 						mainHandler.rawUserInput(input);
+						clearInput();
 					}
 					//addDummy();
 					//displayTaskTable(outputArray, true);

@@ -291,7 +291,7 @@ public class FlexiParser {
 						
 						if(inputArray[i].equals(KEYWORD_SHORTCUT) && inputArray.length>3){
 							outputArray[1] = inputArray[i-1];
-							outputArray[2] = inputArray[1+1];
+							outputArray[2] = inputArray[i+1];
 						}
 						
 						
@@ -593,7 +593,7 @@ public class FlexiParser {
     	FlexiParser test1 = new FlexiParser();
     	
     	
-    	String[] temp = test1.parseText("deleteShortcut new");
+    	String[] temp = test1.parseText("addShortcut new onto add");
     
     	
     	
