@@ -49,7 +49,8 @@ public class UserInterface extends DefaultTableCellRenderer {
 	public static final String MSG_REMINDERS = "The following task(s) are due today: " + newline + newline;
 	public static final String MSG_SEPARATOR = "=========================================================";
 	
-    private static final double taskIndex = 5,
+	//percentage of each column
+    private static final double taskIndex = 5, 
             taskName = 20,
             dateFrom = 10,
             dateTo = 10,
@@ -65,6 +66,8 @@ public class UserInterface extends DefaultTableCellRenderer {
 	public void  displayTaskTable(ArrayList<Task> outputData, boolean success){
 		viewTaskPane();
 		ArrayList<String[]> outputDataString = new ArrayList<String[]>();
+		System.out.println( "outputData? = " +outputData);
+		System.out.println( "outputDataString? = " + outputDataString);
 		for (int i = 0 ; i < outputData.size(); i++){
 			outputDataString.add(outputData.get(i).toStringArray());
 		}
@@ -132,7 +135,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 		panel = new JPanel();
 		frame = new JFrame(APP_NAME);
-		frame.setBounds(100, 100, 800, 400);
+		frame.setBounds(100, 100, 1200, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{536, 0};
@@ -273,7 +276,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 		
 		model = new TaskTableModel(outputArrayString, columnNames, String[].class );
 		outputTable = new JTable (model);
-        setJTableColumnsWidth(outputTable, 800, preferredWidth ) ;
+        setJTableColumnsWidth(outputTable, 1200, preferredWidth ) ;
 		scrollPaneMain.setViewportView(outputTable);
 		System.out.println(model+ "in createTaskTable");
 		return scrollPaneMain;
@@ -372,7 +375,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 			prevInput = input;
 
 				if (!hasFilename){		
-					clearInput();
 					//Init system handler with filename
 
 					hasFilename = true;
@@ -382,6 +384,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 						mainHandler.rawUserInput("viewTask");
 					}else{
 						mainHandler.rawUserInput(input);
+						clearInput();
 					}
 					//addDummy();
 					//displayTaskTable(outputArray, true);
