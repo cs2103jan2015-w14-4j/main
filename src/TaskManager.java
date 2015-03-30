@@ -145,10 +145,12 @@ public class TaskManager implements TaskManagerInterface {
 
         case undoTask:
             returningTasks = undoAnOperation();
+            saveTasksToFile();
             break;
 
         case redoTask:
             returningTasks = redoAnOperation();
+            saveTasksToFile();
             break;
 
         case invalidTask:
