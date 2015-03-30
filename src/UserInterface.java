@@ -36,6 +36,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 	private final static String newline = "\n";
 	private JScrollPane scrollPaneMain;
 	private ArrayList<Task> outputArray;
+	private ArrayList<String[]> outputArrayString;
 
 	private SystemHandler mainHandler;
 
@@ -63,7 +64,11 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 	public void  displayTaskTable(ArrayList<Task> outputData, boolean success){
 		viewTaskPane();
-		model.refreshTable(outputData);
+		ArrayList<String[]> outputDataString = new ArrayList<String[]>();
+		for (int i = 0 ; i < outputData.size(); i++){
+			outputDataString.add(outputData.get(i).toStringArray());
+		}
+		model.refreshTable(outputDataString);
 
 	}
 
@@ -105,7 +110,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 	/**
 	 * Launch the application.
 	 */
-	 /*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -119,7 +123,8 @@ public class UserInterface extends DefaultTableCellRenderer {
 				}
 			}
 		});
-	}*/
+	}
+
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -204,7 +209,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 		//until here this needs to refactored out
 
 
-		outputArray = new ArrayList<Task>();
+		outputArrayString = new ArrayList<String[]>();
 
 		initDisplay();
 
@@ -252,7 +257,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 	}
 
-	public JScrollPane createTaskTable(ArrayList<Task> outputArray) {
+	public JScrollPane createTaskTable(ArrayList<String[]> outputArrayString) {
 		ArrayList<String> columnNames = new ArrayList<String>();
 		columnNames.add("Index");
 		columnNames.add("Task Name");
@@ -266,7 +271,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 		double[] preferredWidth = {taskIndex, taskName,dateFrom, dateTo, deadline , location, details, priority, reminder};
 		
-		model = new TaskTableModel(outputArray, columnNames, Task.class );
+		model = new TaskTableModel(outputArrayString, columnNames, String[].class );
 		outputTable = new JTable (model);
         setJTableColumnsWidth(outputTable, 800, preferredWidth ) ;
 		scrollPaneMain.setViewportView(outputTable);
@@ -365,7 +370,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 		public void actionPerformed(ActionEvent e){
 			String input = textField.getText().trim();
 			prevInput = input;
-			if (input.length() != 0){
 
 				if (!hasFilename){		
 					clearInput();
@@ -373,23 +377,28 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 					hasFilename = true;
 					mainHandler = SystemHandler.getSystemHandler();
-					createTaskTable(outputArray);
-			
-					mainHandler.rawUserInput(input);
+					createTaskTable(outputArrayString);
+					if (input.length() == 0){
+						mainHandler.rawUserInput("viewTask");
+					}else{
+						mainHandler.rawUserInput(input);
+					}
 					//addDummy();
 					//displayTaskTable(outputArray, true);
 
 				}else{
-					clearInput();
-					//displayTaskTable(outputArray, true);
 
-					mainHandler.rawUserInput(input);
+					if (input.length() != 0){
+						mainHandler.rawUserInput(input);
+						clearInput();
+					}
 		
 				//		addDummy();
+					//displayTaskTable(outputArray, true);
 					 
 				}
 			}
-		}
+		
 
 	}
 
@@ -457,6 +466,15 @@ public class UserInterface extends DefaultTableCellRenderer {
         sysFeedbackArea.setText("");
     }
     
+	@Override
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	        c.setBackground(row % 2 == 0 ? Color.LIGHT_GRAY : Color.WHITE);
+	        System.out.println("row exists?" + row);
+
+	       return c;
+
+	}
 
 
 }
