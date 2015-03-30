@@ -11,6 +11,7 @@ public class Shortcut {
 										"viewTemplates", "deleteTemplate", "resetTemplates", "help"}; 
 
 	private ArrayList<ArrayList<String>> userShortcuts;
+	private SystemHandler system;
 	private static Shortcut centralizedShortcut;
 	
 	private Shortcut() {
@@ -37,18 +38,21 @@ public class Shortcut {
 				verifyCommand(command, 3);
 				results = new String[1][];
 				results[0] = insertShortcut(command[1],command[2]);
+				writeOutToFile();
 				break;
 				
 			case deleteShortcut:
 				verifyCommand(command, 2);
 				results = new String[1][];
 				results[0] = removeShortcut(command[1]);
+				writeOutToFile();
 				break;
 				
 			case resetShortcut:
 				verifyCommand(command, 1);
 				resetShortcut();
 				results = viewShortcuts();
+				writeOutToFile();
 				break;
 				
 			case viewShortcut:
@@ -61,6 +65,20 @@ public class Shortcut {
 				break;
 		}
 		return results; 
+	}
+	
+	private void writeOutToFile() {
+		String[][] shortcuts = new String[keywords.length][];
+		for(int i = 0; i < keywords.length; ++i) {
+			shortcuts[i] = new String[userShortcuts.get(i).size()];
+			userShortcuts.get(i).toArray(shortcuts[i]);
+		}
+		
+		if(system == null) {
+			system = SystemHandler.getSystemHandler();
+		}
+		system.writeShortcutToFile(shortcuts);
+		
 	}
 	
 	private void addShortcutInit(String[] command) throws NumberFormatException {
