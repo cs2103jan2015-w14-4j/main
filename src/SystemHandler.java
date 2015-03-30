@@ -43,16 +43,13 @@ public class SystemHandler {
 	 */
 	public SystemHandler (String fileName) {
 		this.fileName = fileName;
-		initializeSystem(fileName);
 	}
 	
 	/**
 	 * 	This constructor constructs System Handler object with default.txt as the save location
 	 */
 	private SystemHandler () {
-		String fileName = "default.txt";
-		initializeSystem(fileName);
-		
+		fileName = "default.txt";
 	}
 	
 	public static SystemHandler getSystemHandler() {
@@ -69,6 +66,7 @@ public class SystemHandler {
 	public static void main(String[] args) {
 
 		system = new SystemHandler();
+		system.initializeSystem();
 		system.activateUI();
 		
 	}
@@ -93,7 +91,7 @@ public class SystemHandler {
 	
 	public void initialize(String name) {
 		fileName = name;
-		initializeSystem(fileName);
+		initializeSystem();
 	}
 	
 	
@@ -113,7 +111,24 @@ public class SystemHandler {
 		return new Task(1000, "NEW",
 				convertToDateObject("12/09/2015 10:00"),
 				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0);
-
+		/*
+		return myTaskList.getTaskFromTID(id);
+		*/
+	}
+	
+	public boolean writeToFile(ArrayList<Task> taskList) {
+		externalStorage.writeToFile(taskList);
+		return true;
+	}
+	
+	public boolean writeShortcutToFile(String[][] shortcut) {
+		externalStorage.writeShortcutToFile(shortcut);
+		return true;
+	}
+	
+	public boolean writeTemplateToFile(ArrayList<Task> templates,ArrayList<String> matchingName) {
+		externalStorage.writeTemplateToFile(templates, matchingName);
+		return true;
 	}
 	
 	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
@@ -181,20 +196,23 @@ public class SystemHandler {
 	 * @param fileName	File location which the data saved at
 	 * @return			True if the system is initialized properly
 	 */
-	private boolean initializeSystem(String fileName) {
+	private boolean initializeSystem() {
 		
 		boolean isInitProperly = false;
 		myShortcut = Shortcut.getShortcut();
-		String[] cmd = {"resetShortcut",null,null};
-		myShortcut.processShortcutCommand(cmd);
+//		String[] cmd = {"resetShortcut",null,null};
+//		myShortcut.processShortcutCommand(cmd);
 		
 		logfile = CentralizedLog.getLogger();
 		myTemplates = Template.getTemplate();
 		myTaskList = new TaskManager();
 		parser = new FlexiParser();
 		externalStorage = new FileStorage(fileName, myTaskList, myTemplates, myShortcut);
+		
 		try{
 			externalStorage.readFromFile(myTaskList);
+			externalStorage.readShortcutFromFile(myShortcut);
+			externalStorage.readTemplateFromFile(myTemplates);
 		} catch(ParseException e) {
 			
 		}
@@ -279,7 +297,7 @@ public class SystemHandler {
 	 * @throws ParseException	The date format does not match the wanted format
 	 */
 	private ArrayList<Task> executeTaskManager(String[] command) throws ParseException {
-		ArrayList<Task> result = myTaskList.processTM(command, externalStorage);
+		ArrayList<Task> result = myTaskList.processTM(command);
 		return result;
 	}
 	
