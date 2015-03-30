@@ -45,7 +45,7 @@ public class FlexiParser {
     private static final int TASK_DETAILS_INDEX = 7;
     private static final int TASK_PRIORITY_INDEX = 8;
     
-    private static final int START_INDEX = 0;
+    private static final int START_TITLE_INDEX = 1;
     
     private static final String ERROR_EXCEPTION = "Exception caught";
     private static final String DATE_FROM = "from";
@@ -111,13 +111,15 @@ public class FlexiParser {
 					
 			    	//WARNING: NO CHECKING VALIDITY
 			    	outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
-			    	String title = extractTitle(inputArray,START_INDEX);
+			    	String title = extractTitle(inputArray,START_TITLE_INDEX);
 			    	
 			    	outputArray[TASK_NAME_INDEX] = title;
 			    	//maybe change to index_ssd
 			    	for(int i = 2; i < KEYWORDS_TASK.length; i++) {
 			    		int j = i + 1;
 			    		String value = extractAttribute(inputArray, KEYWORDS_TASK[i],KEYWORDS_TASK);
+			    		
+			    		
 			    		
 			    		if(isDateTime(i,value)) {
 			    			
@@ -200,7 +202,7 @@ public class FlexiParser {
 				case 3:
 					//WARNING: NO CHECKING VALIDITY
 			    	outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
-			    	outputArray[TASK_NAME_INDEX] = extractTitle(inputArray,START_INDEX);
+			    	outputArray[TASK_NAME_INDEX] = extractTitle(inputArray,START_TITLE_INDEX);
 			    	//maybe change to index_ssd
 			    	for(int i = 3; i < KEYWORDS_TASK.length; i++) {
 			    		
@@ -217,7 +219,7 @@ public class FlexiParser {
 					//WARNING: NO CHECKING VALIDITY
 					
 			    	outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
-			    	outputArray[TASK_NAME_INDEX] = extractTitle(inputArray,START_INDEX);
+			    	outputArray[TASK_NAME_INDEX] = extractTitle(inputArray,START_TITLE_INDEX);
 			    	//maybe change to index_ssd
 			    	for(int i = 3; i < KEYWORDS_TASK.length; i++) {
 			    		
@@ -282,7 +284,7 @@ public class FlexiParser {
 					break;
 				//addShortcut
 				case 10:
-					System.out.println("in");
+					
 					for(int i = 0; i < KEYWORDS_SHORTCUT.length; i++) {
 			    		int j = i + 1;
 			    		String value = extractAttribute(inputArray, KEYWORDS_SHORTCUT[i], KEYWORDS_SHORTCUT);
@@ -346,46 +348,44 @@ public class FlexiParser {
     private String extractTitle(String[] input,int index) {
     	String attribute = null;
     	StringBuilder strb = new StringBuilder();
+    	int start = -1;
+		int end = -1;
+		int i = index;
+		int j = 0;
     	try {
-    		
-    		
-    		for(int i = index;i<input.length;i++){
-    			if(input[i].contains("\'")) {
-
-    				int start = i;
-    				int end = -1;
-				
+    		while(start<0) {
+    			
 				if(input[i].split("\'", -1).length > 2) {
-					
+					start = i;
 					end = i;
 					
 				}
-				
-				while(end<0) {
-					
-					if(input[i+1].contains("\'")) {
-						end = i+1;
-						break;
-					}
-					//may be magic number 2
-					
-					
+				if(input[i].contains("\'")) {
+
+    				start = i;
+    				
+    			}
+				i++;
+    		}
+    		j = start+1;
+    		while(end<0){
+    			
+				if(input[j].contains("\'")) {
+					end = j;
 				}
-				for(int j = start; j <= end; j++) {
+				j++;
+    		}
+				for(int k = start; k <= end; k++) {
 					
-					strb.append(input[j]);
+					strb.append(input[k]);
 					strb.append(" ");
 					
 				}
 				attribute = extractFromSingleQuote(strb.toString());
-				break;
-			}
-    		
-    		}
-    		
+				
     	}catch(Exception e) {
 			
-			System.out.println("error");
+			System.out.println("error1");
 			
 		}
     	
@@ -407,39 +407,13 @@ public class FlexiParser {
 					//not title
 					int index = i+1;
 					
-					
-					if(input[index].contains("\'")) {
-						int start = index;
-						int end = -1;
-						
-						if(input[index].split("\'", -1).length > 2) {
-							
-							end = index;
-							
-						}
-						
-						while(end<0) {
-							
-							if(input[index+1].contains("\'")) {
-								end = index+1;
-								break;
-							}
-							//may be magic number 2
-							
-							
-						}
-						for(int j = start; j <= end; j++) {
-							
-							strb.append(input[j]);
-							strb.append(" ");
-							
-						}
-						attribute = extractFromSingleQuote(strb.toString());
-						
+					if(keyWord.equals("det") && input[index].contains("\'")) {
+						attribute = extractTitle(input,index);
 					}
+				
 					
-				else { 
-					while(isNotKeyWord(input[index],tempArr/*,keyWord*/) && index < input.length) { //tempArr = keyword
+					else{
+					while(isNotKeyWord(input[index],tempArr/*,keyWord*/) && index < input.length && !input[index].contains("\'")) { //tempArr = keyword
 						
 						strb.append(input[index]);
 						strb.append(" ");
@@ -453,14 +427,14 @@ public class FlexiParser {
 					}
 				
 					attribute = strb.toString();
-					
-				}
+					}
+				
 			
 				}
 			}
 		}catch(Exception e) {
 			
-			System.out.println("error");
+			System.out.println("ERROR");
 			
 		}
 		
@@ -573,6 +547,8 @@ public class FlexiParser {
 		
 	}
 	
+	
+	
     public static void main(String[] args) {
     
     	
@@ -580,7 +556,7 @@ public class FlexiParser {
     	FlexiParser test1 = new FlexiParser();
     	
     	
-    	String[] temp = test1.parseText("editTask 789 From 13/05/14 23:00 ");
+    	String[] temp = test1.parseText("addTask  'dssd' det ' at ad' ");
     
     	
     	
