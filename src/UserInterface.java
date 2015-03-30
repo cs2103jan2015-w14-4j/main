@@ -8,29 +8,29 @@ import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Date;
+import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.EventQueue;
 import java.awt.Insets;
-import java.util.Observable;
-import java.util.Observer;
 import java.awt.Font;
 import java.awt.Color;
 
 
-public class UserInterface  {
+public class UserInterface extends DefaultTableCellRenderer {
 
 	public JFrame frame;
 	public JPanel panel;
 	private JTextField textField;
 	private JTextArea outputArea;
-	//private JTextArea sysFeedbackArea;
+	private JTextArea sysFeedbackArea;
 	private JTable outputTable;
 	private TaskTableModel model;
 	private final static String newline = "\n";
@@ -41,17 +41,25 @@ public class UserInterface  {
 
 	public static final String APP_NAME = "Flexi Tracker";
 	public static final String MSG_WELCOME = "Welcome to Flexi Tracker!";
-	public static final String MSG_HELP = "Type \"help\" as a command into the  text field for help";
+	public static final String MSG_HELP = "Type \"help\" into the  text field if you need help.";
 	public static final String MSG_ASK_FILENAME = "Please enter the name of your file";
 	public static final String MSG_ASK_INPUT = "Please enter your command";
 	public static final String MSG_ECHO_FILENAME = "File location: %1$s";
+	public static final String MSG_REMINDERS = "The following task(s) are due today: " + newline + newline;
 	public static final String MSG_SEPARATOR = "=========================================================";
+	
+    private static final double taskIndex = 5,
+            taskName = 20,
+            dateFrom = 10,
+            dateTo = 10,
+            deadline = 10,
+            location = 10,
+            details = 20,
+            priority = 5,
+            reminder = 10;
 
 	private boolean hasFilename;
 	private String prevInput;
-	private JTextArea sysFeedbackArea;
-	//	private JScrollPane scrollPane;
-
 
 	public void  displayTaskTable(ArrayList<Task> outputData, boolean success){
 		viewTaskPane();
@@ -60,6 +68,7 @@ public class UserInterface  {
 	}
 
 	public void displayShortcuts(String[][] outputData, boolean success) {
+		clearTextPane();
 		viewTextPane();
 		for(int i = 0; i < outputData.length; i++){
 			String[] strArray = outputData[i];
@@ -73,9 +82,9 @@ public class UserInterface  {
 	}
 
 
-	public void displayMsg(ArrayList<String> outputData, boolean success){
-
-
+	public void displayMsg(String outputData, int success){
+        clearFeedbackArea();     
+        sysFeedbackArea.append(outputData);
 	}
 
 	public void displayTemplate(ArrayList<Task> outputData, boolean success){
@@ -92,6 +101,23 @@ public class UserInterface  {
 	 */
 	public UserInterface() {
 		initialize();
+	}
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+
+					UserInterface window = new UserInterface();
+					window.frame.setVisible(true);
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	/**
@@ -137,7 +163,7 @@ public class UserInterface  {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String input  = "undoTask";
-				ArrayList<Task> result = mainHandler.rawUserInput(input);
+				mainHandler.rawUserInput(input);
 
 			}
 
@@ -152,7 +178,7 @@ public class UserInterface  {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String input  = "redoTask";
-				ArrayList<Task> result = mainHandler.rawUserInput(input);
+				mainHandler.rawUserInput(input);
 			}
 
 		};
@@ -166,7 +192,7 @@ public class UserInterface  {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String input  = "viewTask";
-				ArrayList<Task> result = mainHandler.rawUserInput(input);
+				mainHandler.rawUserInput(input);
 			}
 
 		};
@@ -180,12 +206,11 @@ public class UserInterface  {
 
 		outputArray = new ArrayList<Task>();
 
-		initOutputArea();
-		//initMsgDisplay();
+		initDisplay();
 
 	}
 
-	public void initOutputArea() {
+	public void initDisplay() {
 		outputArea = new JTextArea();	
 		outputArea.setBackground(new Color(255, 250, 250));
 		outputArea.setEditable(false);
@@ -203,17 +228,6 @@ public class UserInterface  {
 		gbc_outputArea.gridx = 0;
 		gbc_outputArea.gridy = 0;
 		frame.getContentPane().add(scrollPaneMain, gbc_outputArea);
-		/*		
-		sysFeedbackArea = new JTextArea();
-		sysFeedbackArea.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 13));
-		sysFeedbackArea.setEditable(false);
-		sysFeedbackArea.setColumns(30);
-		sysFeedbackArea.setTabSize(10);
-		sysFeedbackArea.setRows(10);
-		sysFeedbackArea.setWrapStyleWord(true);
-		sysFeedbackArea.setBackground(new Color(240, 255, 255));
-		scrollPaneSysFeedback.setViewportView(sysFeedbackArea);
-		 */
 
 		sysFeedbackArea = new JTextArea();
 		sysFeedbackArea.setFont(new Font("Monospaced", Font.PLAIN, 15));
@@ -234,13 +248,13 @@ public class UserInterface  {
 		frame.getContentPane().add(textField, gbc_textField);
 		textField.setColumns(10);
 
-		outputArea.append(MSG_WELCOME + newline + newline + MSG_HELP +newline + MSG_ASK_FILENAME);
+		outputArea.append(MSG_WELCOME + newline + newline + MSG_HELP +newline + newline + MSG_REMINDERS);
 
 	}
 
 	public JScrollPane createTaskTable(ArrayList<Task> outputArray) {
 		ArrayList<String> columnNames = new ArrayList<String>();
-		columnNames.add("Task Index");
+		columnNames.add("Index");
 		columnNames.add("Task Name");
 		columnNames.add("Date From");
 		columnNames.add("Date To");
@@ -249,8 +263,12 @@ public class UserInterface  {
 		columnNames.add("Details");
 		columnNames.add("Priority");
 		columnNames.add("Reminder");
+
+		double[] preferredWidth = {taskIndex, taskName,dateFrom, dateTo, deadline , location, details, priority, reminder};
+		
 		model = new TaskTableModel(outputArray, columnNames, Task.class );
 		outputTable = new JTable (model);
+        setJTableColumnsWidth(outputTable, 800, preferredWidth ) ;
 		scrollPaneMain.setViewportView(outputTable);
 		System.out.println(model+ "in createTaskTable");
 		return scrollPaneMain;
@@ -286,7 +304,7 @@ public class UserInterface  {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String input  = "undo";
-				ArrayList<Task> result = mainHandler.rawUserInput(input);
+				mainHandler.rawUserInput(input);
 			}
 
 		};
@@ -300,7 +318,7 @@ public class UserInterface  {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String input  = "redo";
-				ArrayList<Task> result = mainHandler.rawUserInput(input);
+				 mainHandler.rawUserInput(input);
 			}
 
 		};
@@ -314,7 +332,7 @@ public class UserInterface  {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String input  = "view";
-				ArrayList<Task> result = mainHandler.rawUserInput(input);
+				mainHandler.rawUserInput(input);
 			}
 
 		};
@@ -327,12 +345,17 @@ public class UserInterface  {
 	}
 
 	private void addDummy() {
-		int tid =1001;
-		Task testTask = new Task( tid  , " (The rest are dummies)", new Date(115,3,8,14,0) , 
-				new Date(115,3,8,17,0), new Date(113,2,8,17,0), "HOME", null, 0);
+		
+		for (int tid = 1000; tid<1020;  tid++){
+			Task testTask = new Task( tid  , " (The rest are dummies)", new Date(115,3,8,14,0) , 
+					new Date(115,3,8,17,0), new Date(113,2,8,17,0), "HOME", null, 0);
+			
+			outputArray.add(testTask);
+		
+		//	model.addRow(testTask);
+			
+		}
 
-		System.out.println(model);
-		model.addRow(testTask);
 	}
 
 
@@ -340,7 +363,7 @@ public class UserInterface  {
 	private class inputListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent e){
-			String input = textField.getText();
+			String input = textField.getText().trim();
 			prevInput = input;
 			if (input.length() != 0){
 
@@ -350,25 +373,20 @@ public class UserInterface  {
 
 					hasFilename = true;
 					mainHandler = SystemHandler.getSystemHandler();
-					mainHandler.initialize(input);
 					createTaskTable(outputArray);
+			
+					mainHandler.rawUserInput(input);
+					//addDummy();
+					//displayTaskTable(outputArray, true);
 
-
-				}
-				else{
+				}else{
 					clearInput();
+					//displayTaskTable(outputArray, true);
 
 					mainHandler.rawUserInput(input);
-					//dummytest
-					/*
-				for (int i = 0 ; i<10 ;  i++){
-					Task testTask = new Task( i , " (The rest are dummies)", new Date(115,3,8,14,0) , 
-							new Date(115,3,8,17,0), new Date(113,2,8,17,0), "HOME", null, 0);
-
-					outputArray.add(testTask);
-				}
-
-					 */
+		
+				//		addDummy();
+					 
 				}
 			}
 		}
@@ -376,7 +394,7 @@ public class UserInterface  {
 	}
 
 	public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
-			double... percentages) {
+			double[] percentages) {
 		double total = 0;
 		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
 			total += percentages[i];
@@ -434,6 +452,12 @@ public class UserInterface  {
 	private void clearTextPane() {
 		outputArea.setText("");	
 	}
+	
+    private void clearFeedbackArea(){
+        sysFeedbackArea.setText("");
+    }
+    
+
 
 }
 
