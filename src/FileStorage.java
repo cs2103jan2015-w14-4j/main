@@ -31,13 +31,13 @@ public class FileStorage {
 	
 	private static final String ERROR_EXCEPTION = "Exception caught";
 	
-	private static final String DEFAULT_FILENAME = "default.txt";
+	private static final String DEFAULT_FILENAME = "default";
 	private static final String EMPTY_INPUT = "null";
 		
 	private static File textFile;
 	//include the two secret files;
-    private static final File templateFile = new File("template.txt");
-    private static final File shortcutFile = new File("shortcut.txt");
+    private File templateFile = new File("template");
+    private File shortcutFile = new File("shortcut");
 	/**
 	 * Constructor for FileStorage object, this will store the text file name
 	 * in a global variable textFile for reference.
@@ -51,6 +51,16 @@ public class FileStorage {
         	if(!textFile.exists()) {
             
             	textFile.createNewFile();
+            
+            }
+        	if(!templateFile.exists()) {
+                
+            	templateFile.createNewFile();
+            
+            }
+        	if(!shortcutFile.exists()) {
+                
+            	shortcutFile.createNewFile();
             
             }
 
@@ -95,7 +105,7 @@ public class FileStorage {
     }
     //TODO update template file
     //@param given an arraylist of task, update the the template file
-    public void writeTemplateToFile(ArrayList<Task> templateList) {
+    public void writeTemplateToFile(ArrayList<Task> templateList, ArrayList<String> matchingName) {
     	try {
         	//write template like normal tasks must check what is different is everything null
         	templateFile.delete();
@@ -104,7 +114,8 @@ public class FileStorage {
     		for (int i = 0; i < templateList.size(); i++) {
                 
             	Task tempTask = templateList.get(i);
-            	String[] taskArray = taskToStringArray(tempTask);
+            	String templateName = matchingName.get(i);
+            	String[] taskArray = taskToStringArray(tempTask, templateName);
             	for(int j = 0; j < taskArray.length; j++) {
             		
             		if ( j != taskArray.length-1) {
@@ -188,7 +199,7 @@ public class FileStorage {
 		for (int i = 0; i < taskList.size(); i++) {
             
         	Task tempTask = taskList.get(i);
-        	String[] taskArray = taskToStringArray(tempTask);
+        	String[] taskArray = taskToStringArray(tempTask, null);
         	for(int j = 0; j < taskArray.length; j++) {
         		
         		
@@ -223,12 +234,17 @@ public class FileStorage {
     
     
     //String array is size 8 as priority is not included yet
-    private String[] taskToStringArray(Task tempTask) {
+    private String[] taskToStringArray(Task tempTask, String tempName) {
     	
     	String[] strArr = new String[8];
 
     	//NO ERROR CATCHING FOR NULL ITEM
-    	strArr[0] = IntegerToString(tempTask.getTID());
+    	if(tempName == null) {
+    		strArr[0] = Integer.toString(tempTask.getTID());
+    	} else {
+    		strArr[0] = tempName;
+    	}
+    	
     	strArr[1] =	tempTask.getTaskName();
     	
     	Date tempDate = tempTask.getDateFrom();
@@ -333,21 +349,22 @@ public class FileStorage {
     public void readTemplateFromFile(Template template) throws ParseException {
     	//needs a different one because format may be diff slightly
     	//not just textFile
-        if(textFile.exists()) {
+        if(templateFile.exists()) {
            
         	try {
                 
-        		Scanner sc = new Scanner(textFile);
-                
+        		Scanner sc = new Scanner(templateFile);
                 while (sc.hasNextLine()) {
                 	
                 	
                 	String[] inputs = new String[9];
                 	String[] tempStringArray = new String[8];
-                	
-                	tempStringArray = sc.nextLine().split("\\s*,\\s*");
-                	             	
-                	inputs[COMMAND_TYPE_INDEX] = "addTemplate";
+                	String test = sc.nextLine();
+                	System.out.println(test);
+                	if(test.length() == 0) return;
+//                	tempStringArray = sc.nextLine().split("\\s*,\\s*");
+                	tempStringArray = test.split("\\s*,\\s*");          	
+                	inputs[COMMAND_TYPE_INDEX] = "addTemplateInit";
                 	inputs[TASK_ID_INDEX] = tempStringArray[0];
  
                 	
@@ -426,7 +443,9 @@ public class FileStorage {
                     	inputs[TASK_PRIORITY_INDEX] = null;
                     	
                     }
-                  
+                    for(int i =0; i < inputs.length; ++i) {
+                    	System.out.print(inputs[i] + ":");
+                    }
                     template.processCustomizingCommand(inputs);       
                
                 }
@@ -459,7 +478,7 @@ public class FileStorage {
                 	
                 	tempStringArray = sc.nextLine().split("\\s*,\\s*");
                 	             	
-                	inputs[COMMAND_TYPE_INDEX] = "addShortcutINIT";
+                	inputs[COMMAND_TYPE_INDEX] = "addShortcutInit";
                 	inputs[SHORTCUT_NAME_INDEX] = tempStringArray[0];
  
                 	
@@ -589,7 +608,7 @@ public class FileStorage {
                     	
                     }
                   
-                    tm.processAddForInitialization(inputs);       
+                    tm.processInitialization(inputs);       
                
                 }
                 
