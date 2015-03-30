@@ -41,8 +41,6 @@ public class TaskManager implements TaskManagerInterface {
     private static final boolean SEARCH_IS_NOT_FOUND = false;
     private static final int INDEX_ZERO = 0;
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
-    private static final int ZERO_REMINDER = 0;
-    private static final int ONE_REMINDER = 1;
 
 
     private ArrayList<Task> tasks;
@@ -155,20 +153,6 @@ public class TaskManager implements TaskManagerInterface {
 
         case invalidTask:
             //what do I do if command is invalid
-            break;
-
-        case addReminder:
-            if(isAbleToAddReminder(inputs)) {
-                returningTasks = processAddReminder(inputs);
-                saveTasksToFile();
-            }
-            break;
-
-        case deleteReminder:
-            if(isAbleToDeleteReminder(inputs)) {
-                returningTasks = processDeleteReminder(inputs);
-                saveTasksToFile();
-            }
             break;
         }
 
@@ -561,12 +545,6 @@ public class TaskManager implements TaskManagerInterface {
                 Task taskToEdit = getTaskFromTID(TIDToEdit);
                 returningTasks = editATaskForUndo(taskToEdit, undoOperation);
                 break;
-            case addReminder:
-                returningTasks = deleteReminder(undoOperation);
-                break;
-            case deleteReminder:
-                returningTasks = addReminder(undoOperation);
-                break;
             default:
                 break;
             }
@@ -613,12 +591,6 @@ public class TaskManager implements TaskManagerInterface {
                 Task taskToEdit = getTaskFromTID(TIDToEdit);
                 returningTasks = editATaskForRedo(taskToEdit, redoOperation);
                 break;
-            case addReminder:
-                returningTasks = addReminder(redoOperation);
-                break;
-            case deleteReminder:
-                returningTasks = deleteReminder(redoOperation);
-                break;
             default:
                 break;
             }
@@ -641,83 +613,6 @@ public class TaskManager implements TaskManagerInterface {
         undoStack.push(redoStack.pop());
     }
     //--------------------Redo method ends--------------------
-
-
-
-    //--------------------Add reminder method starts----------
-    private boolean isAbleToAddReminder(String[] inputs) {
-        Task taskToAddReminder = getTaskToAddReminder(inputs);
-        return isIDClashing(inputs[TID]) && hasNoReminder(taskToAddReminder);
-    }
-
-    private Task getTaskToAddReminder(String[] inputs) {
-        return getTaskFromTIDString(inputs);
-    }
-
-    private boolean hasNoReminder(Task task) {
-        return task.getReminders().size() == ZERO_REMINDER;
-    }
-
-    private ArrayList<Task> processAddReminder(String[] inputs) {
-        updateUndoStackForReminderOperations(inputs);
-        
-        return addReminder(inputs);
-    }
-
-    private ArrayList<Task> addReminder(String[] inputs) {
-        ArrayList<Task> returningTasks = new ArrayList<Task>();
-        
-        Task taskToAddReminder = getTaskToAddReminder(inputs);
-        Date reminderToAdd = convertToDateObject(inputs[REMINDER]);
-        taskToAddReminder.addReminders(reminderToAdd);
-        returningTasks.add(taskToAddReminder);
-        
-        return returningTasks;
-    }
-
-    //--------------------Add reminder method ends------------
-
-
-
-    //--------------------Delete reminder method starts-------
-    private boolean isAbleToDeleteReminder(String[] inputs) {
-        Task taskToDeleteReminder = getTaskToDeleteReminder(inputs);
-        return isIDClashing(inputs[TID]) && hasOnlyOneReminder(taskToDeleteReminder);
-    }
-
-    private Task getTaskToDeleteReminder(String[] inputs) {
-        return getTaskFromTIDString(inputs);
-    }
-
-    private boolean hasOnlyOneReminder(Task task) {
-        return task.getReminders().size() == ONE_REMINDER;
-    }
-
-    private ArrayList<Task> processDeleteReminder(String[] inputs) {
-        inputs[REMINDER] = getReminderInStringFormat(inputs);
-        updateUndoStackForReminderOperations(inputs);
-        
-        return deleteReminder(inputs);
-    }
-    
-    private String getReminderInStringFormat(String[] inputs) {
-        Task taskToDeleteReminder = getTaskToDeleteReminder(inputs);
-        Date reminderToDelete = taskToDeleteReminder.getReminders().get(INDEX_ZERO);
-        
-        return convertToStringFromDate(reminderToDelete);
-    }
-
-    private ArrayList<Task> deleteReminder(String[] inputs) {
-        ArrayList<Task> returningTasks = new ArrayList<Task>();
-        
-        Task taskToDeleteReminder = getTaskToDeleteReminder(inputs);
-        Date reminderToDelete = taskToDeleteReminder.getReminders().get(INDEX_ZERO);
-        taskToDeleteReminder.deleteReminders(reminderToDelete);
-        returningTasks.add(taskToDeleteReminder);
-        
-        return returningTasks;
-    }
-    //--------------------Delete reminder method ends---------
 
 
 
@@ -937,14 +832,6 @@ public class TaskManager implements TaskManagerInterface {
         case LOCATION: Collections.sort(tasks, new ComparatorLocation()); break;
         case PRIORITY: Collections.sort(tasks, new ComparatorPriority()); break;
         }
-    }
-
-    /**
-     * This method is used for processAddReminder() and processDeleteReminder()
-     * @param inputs
-     */
-    private void updateUndoStackForReminderOperations(String[] inputs) {
-        undoStack.add(inputs);
     }
 
     private void saveTasksToFile() {
