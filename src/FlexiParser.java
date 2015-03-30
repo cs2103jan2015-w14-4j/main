@@ -47,16 +47,18 @@ public class FlexiParser {
     
     private static final int START_TITLE_INDEX = 1;
     
+    private static final int SHORTCUT_KEY = 1;
+    
     private static final String ERROR_EXCEPTION = "Exception caught";
     private static final String DATE_FROM = "from";
     private static final String DATE_TO = "to";
     private static final String DATE_ON = "on";
     
-    private static final String EMPTY_STRING = "\"\" ";
+    private static final String EMPTY_STRING = "\"\"";
     //use for template also?
     private static final String[] KEYWORDS_TASK = {"ID","title","from","to","on","at","det","pri"};
     
-    private static final String[] KEYWORDS_SHORTCUT = {"ori","new"};
+    private static final String KEYWORD_SHORTCUT = "onto";
    
     private static final String[] commandArray = {"addTask","editTask","deleteTask","viewTask","Block","searchTask","undoTask","redoTask","addReminder","deleteReminder","addShortcut","deleteShortcut","viewShortcut","resetShortcut",
     														"addTemplate","deleteTemplate","viewTemplate","resetTemplate"};
@@ -111,7 +113,7 @@ public class FlexiParser {
 					
 			    	//WARNING: NO CHECKING VALIDITY
 			    	outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
-			    	String title = extractTitle(inputArray,START_TITLE_INDEX);
+			    	String title = extractText(inputArray,START_TITLE_INDEX);
 			    	
 			    	outputArray[TASK_NAME_INDEX] = title;
 			    	//maybe change to index_ssd
@@ -154,7 +156,7 @@ public class FlexiParser {
 		    			
 		    		}
 					outputArray[TASK_NAME_INDEX] = null;
-					for(int i = 2; i < KEYWORDS_TASK.length; i++) {
+					for(int i = 1; i < KEYWORDS_TASK.length; i++) {
 			    		int j = i + 1;
 			    		String value = extractAttribute(inputArray, KEYWORDS_TASK[i],KEYWORDS_TASK);
 			    		
@@ -202,7 +204,7 @@ public class FlexiParser {
 				case 3:
 					//WARNING: NO CHECKING VALIDITY
 			    	outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
-			    	outputArray[TASK_NAME_INDEX] = extractTitle(inputArray,START_TITLE_INDEX);
+			    	outputArray[TASK_NAME_INDEX] = extractText(inputArray,START_TITLE_INDEX);
 			    	//maybe change to index_ssd
 			    	for(int i = 3; i < KEYWORDS_TASK.length; i++) {
 			    		
@@ -219,7 +221,7 @@ public class FlexiParser {
 					//WARNING: NO CHECKING VALIDITY
 					
 			    	outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
-			    	outputArray[TASK_NAME_INDEX] = extractTitle(inputArray,START_TITLE_INDEX);
+			    	outputArray[TASK_NAME_INDEX] = extractText(inputArray,START_TITLE_INDEX);
 			    	//maybe change to index_ssd
 			    	for(int i = 3; i < KEYWORDS_TASK.length; i++) {
 			    		
@@ -285,24 +287,40 @@ public class FlexiParser {
 				//addShortcut
 				case 10:
 					
-					for(int i = 0; i < KEYWORDS_SHORTCUT.length; i++) {
-			    		int j = i + 1;
-			    		String value = extractAttribute(inputArray, KEYWORDS_SHORTCUT[i], KEYWORDS_SHORTCUT);
+					for(int i = 0; i < inputArray.length;i++) {
 						
+						if(inputArray[i].equals(KEYWORD_SHORTCUT) && inputArray.length>3){
+							outputArray[1] = inputArray[i-1];
+							outputArray[2] = inputArray[1+1];
+						}
+						
+						
+					}
 
-			    		if(value != null) {
-			    			
-			    			outputArray[j] = value.trim();
-			    		
-			    		}
-			    	
-			    	}
 					break;
+				//"deleteShortcut"
 				case 11:
+					
+					outputArray[SHORTCUT_KEY] = inputArray[SHORTCUT_KEY];
+					
 					break;
+				//"viewShortcut"
 				case 12:
+					for(int i = 1; i < outputArray.length;i++) {
+						
+						outputArray[i]= null;
+						
+					}
+					
+					
 					break;
+				//"resetShortcut"
 				case 13:
+					for(int i = 1; i < outputArray.length;i++) {
+						
+						outputArray[i]= null;
+						
+					}
 					break;
 				case 14:
 					break;
@@ -337,6 +355,7 @@ public class FlexiParser {
     	
     }
     
+    
     //not used as command must be exact?
     private String processCommand(String command) {
     	
@@ -345,7 +364,13 @@ public class FlexiParser {
     	return processedCommand;
     	
     }
-    private String extractTitle(String[] input,int index) {
+    
+    private void extractShortcut(String[] input) {
+    	
+    	
+    }
+    
+    private String extractText(String[] input,int index) {
     	String attribute = null;
     	StringBuilder strb = new StringBuilder();
     	int start = -1;
@@ -381,6 +406,13 @@ public class FlexiParser {
 					strb.append(" ");
 					
 				}
+				for(int m = start; m <= end; m++) {
+					
+					inputArray[m] = "";
+					
+				}
+				
+				
 				attribute = extractFromSingleQuote(strb.toString());
 				
     	}catch(Exception e) {
@@ -402,18 +434,21 @@ public class FlexiParser {
 			try {	
 				
 				for(int i = 0; i < input.length; i++) {
+				
 				String checkWord = input[i].toLowerCase(); // allow user to type keyword in anyform
-				if(checkWord.equals(keyWord) ) {
+				
+				
+				if(checkWord.equals(keyWord) && checkWord!=null) {
 					//not title
 					int index = i+1;
 					
-					if(keyWord.equals("det") && input[index].contains("\'")) {
-						attribute = extractTitle(input,index);
+					if(keyWord.equals("det") || keyWord.equals("at")  && input[index].contains("\'")) {
+						attribute = extractText(input,index);
 					}
 				
 					
 					else{
-					while(isNotKeyWord(input[index],tempArr/*,keyWord*/) && index < input.length && !input[index].contains("\'")) { //tempArr = keyword
+					while(isNotKeyWord(input[index],tempArr/*,keyWord*/) && index < input.length ) { //tempArr = keyword
 						
 						strb.append(input[index]);
 						strb.append(" ");
@@ -454,6 +489,8 @@ public class FlexiParser {
 		return false;
 		
 	}
+	
+	
 	
 	//method for taking in string marked by ' '
 	private String extractFromSingleQuote(String preprocessed) {
@@ -556,7 +593,7 @@ public class FlexiParser {
     	FlexiParser test1 = new FlexiParser();
     	
     	
-    	String[] temp = test1.parseText("addTask  'dssd' det ' at ad' ");
+    	String[] temp = test1.parseText("deleteShortcut new");
     
     	
     	
