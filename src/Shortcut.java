@@ -77,7 +77,7 @@ public class Shortcut {
 		if(system == null) {
 			system = SystemHandler.getSystemHandler();
 		}
-		system.writeShortcutToFile(shortcuts);
+		//system.writeShortcutToFile(shortcuts);
 		
 	}
 	
@@ -266,7 +266,7 @@ public class Shortcut {
 		return null;
 	}
 	
-	private String[] insertShortcut(String originShortcut, String newShortcut) {
+	private String[] insertShortcut(String newShortcut, String originShortcut) {
 		int belongTo = searchMatching(originShortcut);
 		if(!isKeyWords(belongTo)) {
 			return null;
