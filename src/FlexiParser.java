@@ -86,9 +86,9 @@ public class FlexiParser {
 			
 			
 			String command = inputArray[COMMAND_TYPE_INDEX];
-			//Shortcut shortcut = Shortcut.getShortcut();
+			Shortcut shortcut = Shortcut.getShortcut();
 			//what does his one return
-			//command = myshortcut.keywordMatching(command);
+			command = shortcut.keywordMatching(command);
 			String[] outputArray;
 			if(!command.contains("Shortcut")) {
 				
