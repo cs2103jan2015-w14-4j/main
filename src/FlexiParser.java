@@ -58,7 +58,7 @@ public class FlexiParser {
     
     private static final String[] KEYWORDS_SHORTCUT = {"ori","new"};
    
-    private static final String[] commandArray = {"addTask","editTask","deleteTask","viewTask","Block","SearchTask","undoTask","redoTask","addReminder","deleteReminder","addShortcut","deleteShortcut","viewShortcut","resetShortcut",
+    private static final String[] commandArray = {"addTask","editTask","deleteTask","viewTask","Block","searchTask","undoTask","redoTask","addReminder","deleteReminder","addShortcut","deleteShortcut","viewShortcut","resetShortcut",
     														"addTemplate","deleteTemplate","viewTemplate","resetTemplate"};
     
     private static String[] inputArray;
@@ -155,6 +155,7 @@ public class FlexiParser {
 					for(int i = 2; i < KEYWORDS_TASK.length; i++) {
 			    		int j = i + 1;
 			    		String value = extractAttribute(inputArray, KEYWORDS_TASK[i],KEYWORDS_TASK);
+			    		
 			    		//null not
 			    		
 			    		
@@ -214,6 +215,7 @@ public class FlexiParser {
 				//search
 				case 5:
 					//WARNING: NO CHECKING VALIDITY
+					
 			    	outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
 			    	outputArray[TASK_NAME_INDEX] = extractTitle(inputArray,START_INDEX);
 			    	//maybe change to index_ssd
@@ -496,11 +498,12 @@ public class FlexiParser {
 			
 			if(value.contains("/")) {
 				
-				DateFormat input = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.ENGLISH);
-				DateFormat output = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+				DateFormat input = new SimpleDateFormat("MM/dd/yy HH:mm", Locale.ENGLISH);
+				DateFormat output = new SimpleDateFormat("dd/MM/yy HH:mm");
 				
 				    try {
 						String temp = output.format(input.parse(value));
+						//System.out.println(temp);
 						Date now = output.parse(value);
 						//System.out.println("It is: "+output.format(now));
 						Calendar calendar = Calendar.getInstance();
@@ -577,7 +580,7 @@ public class FlexiParser {
     	FlexiParser test1 = new FlexiParser();
     	
     	
-    	String[] temp = test1.parseText("addShortcut Ori dft New addn");
+    	String[] temp = test1.parseText("editTask 789 From 13/05/14 23:00 ");
     
     	
     	
