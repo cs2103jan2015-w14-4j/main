@@ -62,8 +62,7 @@ public class TaskManagerTest {
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        SystemHandler handler = SystemHandler.getSystemHandler();
-        handler.initialize("testTaskManager.txt");
+        SystemHandler handler = SystemHandler.getSystemHandler("testTaskManager.txt");
     }
 
     @AfterClass

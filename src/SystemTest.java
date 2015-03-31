@@ -42,7 +42,7 @@ public class SystemTest {
 
 	@Before
 	public void setUp() throws Exception {
-		mySystem = new SystemHandler("assert.txt");
+		mySystem = SystemHandler.getSystemHandler("assert.txt");
 	}
 
 	@After
@@ -63,10 +63,12 @@ public class SystemTest {
 			System.out.println(dates.toLocaleString());   
 		}
 
-		groups = parser.parse("every thursday until June");
+		groups = parser.parse("\"do homework 03/04/2015 11:00 \" to 6pm from  4pm  on next wednesday before June");
 		for(DateGroup group:groups)  {
-			Date dates = group.getDates().get(0);   //Here to get the date (which we need mostly)
-			System.out.println(dates.toLocaleString());        
+			List<Date> dates = group.getDates();   //Here to get the date (which we need mostly)
+			for(int i = 0; i < dates.size(); ++i) {
+				System.out.println("count "+i+": "+dates.get(i).toLocaleString()); 
+			}
 			int line = group.getLine();			//Not sure what it does
 			int column = group.getPosition();	//Not sure what
 			String matchingValue = group.getText(); 	//thursday
@@ -79,19 +81,19 @@ public class SystemTest {
 
 		}
 		
-		groups = parser.parse("assignment from tuesday to wednesday");
-		for(DateGroup group:groups)  {
-			List<Date> dates = group.getDates();   //for range date
-			for(Date date:dates)
-				System.out.println(date);
-		}
+//		groups = parser.parse("assignment from tuesday to wednesday");
+//		for(DateGroup group:groups)  {
+//			List<Date> dates = group.getDates();   //for range date
+//			for(Date date:dates)
+//				System.out.println(date);
+//		}
 	}
 	
 	
 	@Test
 	public void testFullSystem() {
 		// TC 1 - simple multiple add
-		String test1 = "addTask Title NEW From 12/09/2015 10:00 To 12/09/2015 12:00 At ABC";
+		String test1 = "addTask 'NEW' from 12/09/2015 10:00 to 12/09/2015 12:00 at ABC";
 		ArrayList<Task> expect1 = new ArrayList<Task>();
 		//"ID","Title","From","To","On","At","Det","Pri"
 		expect1.add(new Task(1000, "NEW",
@@ -114,10 +116,10 @@ public class SystemTest {
 		expect1.add(new Task(1004, "NEW",
 				convertToDateObject("12/09/2015 10:00"),
 				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0));
-		mySystem.rawUserInput("add,NEW,at,ABC,on,12/09/2015,from,10:00,to,12:00");
-		mySystem.rawUserInput("add,NEW,at,ABC,on,12/09/2015,from,10:00,to,12:00");
-		mySystem.rawUserInput("add,NEW,at,ABC,on,12/09/2015,from,10:00,to,12:00");
-		mySystem.rawUserInput("add,NEW,at,ABC,on,12/09/2015,from,10:00,to,12:00");
+		mySystem.rawUserInput("addTask 'NEW' from 12/09/2015 10:00 to 12/09/2015 12:00 at ABC");
+		mySystem.rawUserInput("addTask 'NEW' from 12/09/2015 10:00 to 12/09/2015 12:00 at ABC");
+		mySystem.rawUserInput("addTask 'NEW' from 12/09/2015 10:00 to 12/09/2015 12:00 at ABC");
+		mySystem.rawUserInput("addTask 'NEW' from 12/09/2015 10:00 to 12/09/2015 12:00 at ABC");
 
 		assertTaskArrayListEquals(mySystem.rawUserInput("view"), expect1);
 
@@ -126,7 +128,7 @@ public class SystemTest {
 		expect2.add(new Task(1005, "TO BE DELETED",
 				convertToDateObject("16/10/2015 10:00"),
 				convertToDateObject("16/10/2015 12:00"), null, "XYZ", null, 0));
-		mySystem.rawUserInput("add,TO BE DELETED,at,XYZ,on,16/10/2015,from,10:00,to,12:00");
+		mySystem.rawUserInput("add TO BE DELETED at XYZ from 16/10/2015 10:00 to 16/10/201512:00");
 		assertTaskArrayListEquals(mySystem.rawUserInput("delete,1005"), expect2);
 		
 		// TC4 - continue -- edit and get back result
@@ -134,7 +136,7 @@ public class SystemTest {
 		expect3.add(new Task(1004, "EDITED",
 				convertToDateObject("12/09/2015 10:00"),
 				convertToDateObject("12/09/2015 12:00"), null, "NUS", null, 0));
-		assertTaskArrayListEquals(mySystem.rawUserInput("edit,1004,name,EDITED,at,NUS"), expect3);
+		assertTaskArrayListEquals(mySystem.rawUserInput("edit 1004 title EDITED at NUS"), expect3);
 		
 	}
 

@@ -37,24 +37,29 @@ public class SystemHandler {
 		return fileName;
 	}
 	
-	/**
-	 * This constructor constructs System Handler object with fileName as the save location 
-	 * @param fileName	File location which the data saved at
-	 */
-	public SystemHandler (String fileName) {
-		this.fileName = fileName;
-	}
+//	/**
+//	 * This constructor constructs System Handler object with fileName as the save location 
+//	 * @param fileName	File location which the data saved at
+//	 */
+//	public SystemHandler (String fileName) {
+//		this.fileName = fileName;
+//	}
 	
-	/**
-	 * 	This constructor constructs System Handler object with default.txt as the save location
-	 */
-	private SystemHandler () {
-		fileName = "default.txt";
-	}
+//	/**
+//	 * 	This constructor constructs System Handler object with default.txt as the save location
+//	 */
+//	private SystemHandler () {
+//		new SystemHandler("default.txt");
+//	}
 	
 	public static SystemHandler getSystemHandler() {
+		return getSystemHandler("default.txt");
+	}
+	
+	public static SystemHandler getSystemHandler(String fileName) {
 		if(system == null) {
 			system = new SystemHandler();
+			system.initializeSystem();
 		}
 		return system;
 	}
@@ -65,10 +70,12 @@ public class SystemHandler {
 	 */
 	public static void main(String[] args) {
 
-		system = new SystemHandler();
-		system.initializeSystem();
+		system = getSystemHandler();
+		system.myTemplates.setSystemPath(system);
+		system.myShortcut.setSystemPath(system);
+		
 		system.activateUI();
-//		system.rawUserInput("addShort abc onto addTask");
+		system.rawUserInput("viewTask");
 	}
 	
 	/**
@@ -91,7 +98,7 @@ public class SystemHandler {
 	
 	public void initialize(String name) {
 		fileName = name;
-		initializeSystem();
+		
 	}
 	
 	
@@ -166,7 +173,7 @@ public class SystemHandler {
 			case "addShortcut":
 			case "viewShortcuts":
 			case "deleteShortcut":
-			case "resetShortcut":
+			case "resetShortcuts":
 				return COMMAND_TYPE_GROUP.SHORTCUT_MANAGER;
 			//dummy command keyword
 			case "addTemplate":
@@ -191,12 +198,14 @@ public class SystemHandler {
 		return commandFromUser;
 	}
 	
-	
+	private boolean initializeSystem() {
+		return initializeSystem("default.txt");
+	}
 	/**
 	 * @param fileName	File location which the data saved at
 	 * @return			True if the system is initialized properly
 	 */
-	private boolean initializeSystem() {
+	private boolean initializeSystem(String fileName) {
 		
 		boolean isInitProperly = false;
 		myShortcut = Shortcut.getShortcut();
@@ -207,8 +216,8 @@ public class SystemHandler {
 		myTemplates = Template.getTemplate();
 		myTaskList = new TaskManager();
 		parser = new FlexiParser();
-		externalStorage = new FileStorage(fileName, myTaskList, myTemplates, myShortcut);
-		
+		externalStorage = new FileStorage(fileName);
+		system = this;
 		try{
 			externalStorage.readFromFile(myTaskList);
 			externalStorage.readShortcutFromFile(myShortcut);
@@ -255,7 +264,7 @@ public class SystemHandler {
 					
 					ArrayList<Task> display = executeTaskManager(parsedCommand);
 					window.displayTaskTable(display, true);
-					break;
+					return display;
 				case SHORTCUT_MANAGER:
 					String[][] displayS = executeShortcutManager(parsedCommand);
 					
