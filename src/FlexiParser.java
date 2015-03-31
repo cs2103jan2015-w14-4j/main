@@ -86,9 +86,9 @@ public class FlexiParser {
 			
 			
 			String command = inputArray[COMMAND_TYPE_INDEX];
-			Shortcut shortcut = Shortcut.getShortcut();
+			//Shortcut shortcut = Shortcut.getShortcut();
 			//what does his one return
-			command = shortcut.keywordMatching(command);
+			//command = myshortcut.keywordMatching(command);
 			String[] outputArray;
 			if(!command.contains("Shortcut")) {
 				
@@ -505,17 +505,29 @@ public class FlexiParser {
 	
 	private void storeDateTime(String[] outputArr,String value,int index) {
 		int j = index + 1;
+		value = value.trim();
 		if((KEYWORDS_TASK[index].equals(DATE_FROM) || KEYWORDS_TASK[index].equals(DATE_TO) || KEYWORDS_TASK[index].equals(DATE_ON)) && value != null) {
-			
+			DateFormat input;
+			DateFormat output;
+			DateFormat timeFormat;
+			String temp;
 			if(value.contains("/")) {
+				if(value.contains(":")) {
+					
+					input = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH);
 				
-				DateFormat input = new SimpleDateFormat("MM/dd/yy HH:mm", Locale.ENGLISH);
-				DateFormat output = new SimpleDateFormat("dd/MM/yy HH:mm");
+				}
+				else {
+					
+					input = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+					
+				}
+				 output = new SimpleDateFormat("dd/MM/yy HH:mm",Locale.ENGLISH);
 				
 				    try {
-						String temp = output.format(input.parse(value));
-						//System.out.println(temp);
-						Date now = output.parse(value);
+				    	temp = output.format(input.parse(value));
+				    	System.out.println(temp);
+				    	Date now = output.parse(temp);
 						//System.out.println("It is: "+output.format(now));
 						Calendar calendar = Calendar.getInstance();
 				        calendar.setTime(now);
@@ -534,6 +546,7 @@ public class FlexiParser {
 
 			}
 			else {
+				System.out.println("asdda");
 			ArrayList<Date> dateList = useNatty(value);
 			//System.out.println("The date is "+ dateList.get(0));
 			outputArr[j] = dateConverter(dateList.get(0)).trim();
@@ -593,7 +606,7 @@ public class FlexiParser {
     	FlexiParser test1 = new FlexiParser();
     	
     	
-    	String[] temp = test1.parseText("addShortcut new onto add");
+    	String[] temp = test1.parseText("addTask 'abc' from 04/05/15 ");
     
     	
     	
