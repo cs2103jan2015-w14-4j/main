@@ -516,15 +516,19 @@ public class TaskManager implements TaskManagerInterface {
         if(isSearchADateObject(inputs[SEARCH_INDEX])) {
             return null;
         } else {
-            return searchTask(inputs[SEARCH_INDEX]);
+            return searchTaskNonDateObject(inputs[SEARCH_INDEX]);
         }
     }
-    
+
     private boolean isSearchADateObject(String search) {
-        return false;
+        if(convertToDateObject(search) == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
-    
-    private ArrayList<Task> searchTask(String search) {
+
+    private ArrayList<Task> searchTaskNonDateObject(String search) {
         ArrayList<Task> returningTasks = new ArrayList<Task>();
 
         for(Task task: tasks) {
@@ -799,7 +803,6 @@ public class TaskManager implements TaskManagerInterface {
 
         try {
             if(dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
-                assert isDateValid(dateString);
                 DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
                 date = format.parse(dateString);
             }
