@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.joda.time.DateTimeComparator;
+
 
 public class TaskManager implements TaskManagerInterface {
     public static final int COMMAND_TYPE = 0;
@@ -514,7 +516,8 @@ public class TaskManager implements TaskManagerInterface {
     //--------------------Search method starts--------------------
     private ArrayList<Task> processSearchCommand(String[] inputs) {
         if(isSearchADateObject(inputs[SEARCH_INDEX])) {
-            return null;
+            Date searchDate = convertToDateWithoutPrintException(inputs[SEARCH_INDEX]);
+            return searchTaskDateObject(searchDate);
         } else {
             return searchTaskNonDateObject(inputs[SEARCH_INDEX]);
         }
@@ -543,16 +546,38 @@ public class TaskManager implements TaskManagerInterface {
         return date;
     }
     
-    private ArrayList<Task> searchTaskDateObject() {
+    private ArrayList<Task> searchTaskDateObject(Date searchDate) {
         ArrayList<Task> returningTasks = new ArrayList<Task>();
 
+        for(Task task: tasks) {
+            if(isDurationalTask(task)) {
+                if(compareTwoDateOnly(searchDate, task.getDateFrom()) >= 0 && 
+                        compareTwoDateOnly(searchDate, task.getDateTo()) <= 0) {
+                    returningTasks.add(task);
+                }
+            } else if(isDeadlineTask(task)) {
+                if(compareTwoDateOnly(searchDate, task.getDeadline()) == 0) {
+                    returningTasks.add(task);
+                }
+            } else if(isForeverTask(task)) {
+                if(compareTwoDateOnly(searchDate, task.getDateFrom()) >= 0) {
+                    returningTasks.add(task);
+                }
+            }
+        }
+        
         if(returningTasks.isEmpty()) {
             return null;
         } else {
             return returningTasks;
         }
     }
-    
+        
+    private int compareTwoDateOnly(Date searchDate, Date dateInTask) {
+        return DateTimeComparator.getDateOnlyInstance().compare(searchDate,
+                dateInTask);
+    }
+        
     private boolean isDurationalTask(Task task) {
         return task.getDateFrom() != null && task.getDateTo() != null &&
                 task.getDeadline() == null;
