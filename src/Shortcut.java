@@ -4,7 +4,7 @@ import java.util.NoSuchElementException;
 public class Shortcut {
 	 
 	
-	public static final String[] keywords = {	"addTask", "editTask","viewTasks","deleteTask", 
+	public static final String[] keywords = {	"addTask", "editTask","viewTask","deleteTask", 
 										"undoTask", "redoTask",
 										"addShortcut", "viewShortcuts", "deleteShortcut",
 										"resetShortcut", "addTemplate", "editTemplate", 
@@ -27,6 +27,11 @@ public class Shortcut {
 		}
 		return centralizedShortcut;
 	}
+	
+	public void setSystemPath(SystemHandler system) {
+		this.system = system;
+	}
+	
 	
 	public String[][] processShortcutCommand(String[] command) throws NoSuchElementException {
 		String[][] results = null;
@@ -74,9 +79,8 @@ public class Shortcut {
 			userShortcuts.get(i).toArray(shortcuts[i]);
 		}
 		
-		if(system == null) {
-			system = SystemHandler.getSystemHandler();
-		}
+		system = SystemHandler.getSystemHandler();
+		
 		//system.writeShortcutToFile(shortcuts);
 		
 	}

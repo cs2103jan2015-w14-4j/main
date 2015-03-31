@@ -18,6 +18,9 @@ public class Template {
 	
 	private static Template template;
 	
+	public void setSystemPath(SystemHandler system) {
+		this.system = system;
+	}
 	
 	private Template() {
 		templates = new HashMap<String,Task>();
@@ -55,9 +58,7 @@ public class Template {
 		
 		switch(commandType) {
 			case addTemplate:
-				if(system == null) {
-					system = SystemHandler.getSystemHandler();
-				}
+				
 				
 				Task taskToBeAdded;
 				if(isTest) {
