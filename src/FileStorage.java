@@ -81,14 +81,14 @@ public class FileStorage {
     //stub
     public FileStorage(String fileName, TaskManager myTaskList, Template myTemplate, Shortcut myShortcut) {
     	//stub
-    	textFile = new File(fileName);
+//    	textFile = new File(fileName);
 		try {
-            
-        	if(!textFile.exists()) {
-            
-            	textFile.createNewFile();
-            
-            }
+            new FileStorage(fileName);
+//        	if(!textFile.exists()) {
+//            
+//            	textFile.createNewFile();
+//            
+//            }
 
          }catch(Exception e) {
              
