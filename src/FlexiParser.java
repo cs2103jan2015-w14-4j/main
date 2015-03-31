@@ -34,6 +34,7 @@ public class FlexiParser {
     
 	
     private static final String TID_NOT_EXIST = null;
+    private static final String NOT_EXIST = null;
     
     private static final int COMMAND_TYPE_INDEX = 0;
     private static final int TASK_ID_INDEX = 1;
@@ -169,7 +170,7 @@ public class FlexiParser {
 			    			 continue;
 			    			
 			    		}
-			    		if(isDateTime(i,value)) {
+			    		if(isDateTime(i,value) && !isClearAttribute(value)) {
 			    			
 			    			storeDateTime(outputArray,value,i);
 			    			
@@ -338,6 +339,17 @@ public class FlexiParser {
     	
     }
     
+    private boolean isClearAttribute(String value) {
+    	
+    	if(value != NOT_EXIST) {
+    		value = value.trim();
+    		if(value.equals(EMPTY_STRING)) {
+    		return true;
+    		}
+    		
+    	}
+    	return false;
+    }
     private int getCommandIndex(String command) {
     	int index = -1;;
     	for(int i = 0; i < commandArray.length; i++) {
@@ -606,7 +618,7 @@ public class FlexiParser {
     	FlexiParser test1 = new FlexiParser();
     	
     	
-    	String[] temp = test1.parseText("addTask 1001 'meeting with huehue' On June 20th 20:00 To 16:00 ");
+    	String[] temp = test1.parseText("addTask 'help at homework from my house' at NUS from 11/04/2015 11:00");
     
     	
     	
