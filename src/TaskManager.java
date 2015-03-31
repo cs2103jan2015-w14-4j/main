@@ -521,11 +521,26 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private boolean isSearchADateObject(String search) {
-        if(convertToDateObject(search) == null) {
-            return false;
+        if(convertToDateWithoutPrintException(search) == null) {
+            return DATE_IS_INVALID;
         } else {
-            return true;
+            return DATE_IS_VALID;
         }
+    }
+    
+    //this method is only for isSearchADateObject(String)
+    private Date convertToDateWithoutPrintException(String str) {
+        Date date = null;
+
+        try {
+            if(str != null && !str.equals(CLEAR_INFO_INDICATOR)) {
+                DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+                date = format.parse(str);
+            }
+        } catch (ParseException ex) {
+        }
+        
+        return date;
     }
 
     private ArrayList<Task> searchTaskNonDateObject(String search) {
@@ -807,6 +822,7 @@ public class TaskManager implements TaskManagerInterface {
                 date = format.parse(dateString);
             }
         } catch (ParseException ex) {
+            //put a logger here
             System.out.println(ex);
         }
 
