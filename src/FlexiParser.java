@@ -546,7 +546,7 @@ public class FlexiParser {
 
 			}
 			else {
-				System.out.println("asdda");
+				
 			ArrayList<Date> dateList = useNatty(value);
 			//System.out.println("The date is "+ dateList.get(0));
 			outputArr[j] = dateConverter(dateList.get(0)).trim();
@@ -606,7 +606,7 @@ public class FlexiParser {
     	FlexiParser test1 = new FlexiParser();
     	
     	
-    	String[] temp = test1.parseText("addTask 'abc' from 04/05/15 ");
+    	String[] temp = test1.parseText("addTask 1001 'meeting with huehue' On June 20th 20:00 To 16:00 ");
     
     	
     	
