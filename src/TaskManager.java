@@ -542,6 +542,36 @@ public class TaskManager implements TaskManagerInterface {
         
         return date;
     }
+    
+    private ArrayList<Task> searchTaskDateObject() {
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
+
+        if(returningTasks.isEmpty()) {
+            return null;
+        } else {
+            return returningTasks;
+        }
+    }
+    
+    private boolean isDurationalTask(Task task) {
+        return task.getDateFrom() != null && task.getDateTo() != null &&
+                task.getDeadline() == null;
+    }
+    
+    private boolean isFloatingTask(Task task) {
+        return task.getDateFrom() == null && task.getDateTo() == null &&
+                task.getDeadline() == null;
+    }
+    
+    private boolean isDeadlineTask(Task task) {
+        return task.getDateFrom() == null && task.getDateTo() == null &&
+                task.getDeadline() != null; 
+    }
+    
+    private boolean isForeverTask(Task task) {
+        return task.getDateFrom() != null && task.getDateTo() == null &&
+                task.getDeadline() == null;
+    }
 
     private ArrayList<Task> searchTaskNonDateObject(String search) {
         ArrayList<Task> returningTasks = new ArrayList<Task>();
