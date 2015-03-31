@@ -49,7 +49,7 @@ public class Template {
 		
 		
 		COMMAND_TYPE_TEMPLATE commandType = getCommandType(command[0]);
-		ArrayList<Task> result;
+		ArrayList<Task> result = null;
 		
 		assertValidity(command, commandType);
 		
@@ -68,29 +68,28 @@ public class Template {
 				else {
 					taskToBeAdded = system.requestTask(Integer.parseInt(command[1]));	
 				}
+				result =  addTemplate(command[2], taskToBeAdded);
 				writeOutToFile();
-				return addTemplate(command[2], taskToBeAdded);
-				
+				break;
 			case viewTemplates:
-				return viewTemplates();
-				
+				result = viewTemplates();
+				break;
 			case deleteTemplate:
 				result = removeTemplate(command[1]);
 				writeOutToFile();
-				return result;
+				break;
 				
 			case editTemplate:
 				Task temp = editTemplate(command);
 				result = new ArrayList<Task>(); 
 				result.add(temp);
 				writeOutToFile();
-				return result;
-				
+				break;
 			case resetTemplates:
 				resetTemplates();
 				writeOutToFile();
-				return new ArrayList<Task>();
-			
+				result = viewTemplates();
+				break;
 			case addTemplateInit:
 				if(system == null) {
 					system = SystemHandler.getSystemHandler();
@@ -100,8 +99,9 @@ public class Template {
 						convertToDateObject(command[5]), command[5], command[6],
 						Integer.parseInt(command[7]));
 				addTemplate(command[2], taskToBeAddedInit);
+				break;
 		}
-		return null;
+		return result;
 	}
 	
 	private void writeOutToFile() {
@@ -117,7 +117,7 @@ public class Template {
 			templatesList.add(templates.get(next).clone());
 			
 		}
-		system.writeTemplateToFile(templatesList, match);
+		//system.writeTemplateToFile(templatesList, match);
 		
 	}
 

@@ -68,7 +68,7 @@ public class SystemHandler {
 		system = new SystemHandler();
 		system.initializeSystem();
 		system.activateUI();
-		
+//		system.rawUserInput("addShort abc onto addTask");
 	}
 	
 	/**
@@ -200,8 +200,8 @@ public class SystemHandler {
 		
 		boolean isInitProperly = false;
 		myShortcut = Shortcut.getShortcut();
-//		String[] cmd = {"resetShortcut",null,null};
-//		myShortcut.processShortcutCommand(cmd);
+		String[] cmd = {"resetShortcut",null,null};
+		myShortcut.processShortcutCommand(cmd);
 		
 		logfile = CentralizedLog.getLogger();
 		myTemplates = Template.getTemplate();
@@ -247,7 +247,7 @@ public class SystemHandler {
 	    		System.out.print("|");
 	    	}
 			
-			validateParsedCommand(parsedCommand);
+			//validateParsedCommand(parsedCommand);
 			
 			COMMAND_TYPE_GROUP commandGroupType = SystemHandler.getCommandGroupType(parsedCommand[0]);
 			switch(commandGroupType) {
@@ -258,6 +258,7 @@ public class SystemHandler {
 					break;
 				case SHORTCUT_MANAGER:
 					String[][] displayS = executeShortcutManager(parsedCommand);
+					
 					window.displayShortcuts(displayS, true);
 					break;
 				case CUSTOMIZED_MANAGER:
