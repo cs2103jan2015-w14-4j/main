@@ -512,10 +512,12 @@ public class TaskManager implements TaskManagerInterface {
 
 
     //--------------------Search method starts--------------------
+    private ArrayList<Task> processSearchCommand(String[] inputs) {
+        
+    }
+    
     private ArrayList<Task> searchTask(String[] inputs) {
         ArrayList<Task> returningTasks = new ArrayList<Task>();
-
-        assert inputs[SEARCH_INDEX].trim() != "";
 
         for(Task task: tasks) {
             if(isSearchFound(task, inputs[SEARCH_INDEX])) {
