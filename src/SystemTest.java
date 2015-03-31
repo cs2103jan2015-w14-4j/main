@@ -187,7 +187,7 @@ public class SystemTest {
 
 	@Test
 	public void testShortcutManager() {
-		Shortcut myshortcut = Shortcut.getShortcut();
+		Shortcut myshortcut = new Shortcut(true);
 		String[] cmd0 = {"resetShortcut",null,null};
 		myshortcut.processShortcutCommand(cmd0);
 		
@@ -216,7 +216,7 @@ public class SystemTest {
 		}
 		
 		//TC2 - add a shortcut
-		String[] cmd2 = {"addShortcut","add","+"};
+		String[] cmd2 = {"addShortcut","+","add"};
 		String[][] results2 = myshortcut.processShortcutCommand(cmd2);
 		String[][] expected2 = {{"addTask","add","+"}};
 		for(int i = 0; i < expected2.length; ++i) {
@@ -224,7 +224,7 @@ public class SystemTest {
 		}
 		
 		//TC3 - add another shortcut
-		String[] cmd3 = {"addShortcut","editTemplate","eT"};
+		String[] cmd3 = {"addShortcut","eT","editTemplate"};
 		String[][] results3 = myshortcut.processShortcutCommand(cmd3);
 		String[][] expected3 = {{"editTemplate","editTemplate","eT"}};
 		for(int i = 0; i < expected3.length; ++i) {
@@ -232,7 +232,7 @@ public class SystemTest {
 		}
 		
 		//TC4 - use added shortcut to do something
-		String[] cmd4 = {"addShortcut","eT","addS"};
+		String[] cmd4 = {"addShortcut","addS","eT"};
 		String[][] results4 = myshortcut.processShortcutCommand(cmd4);
 		String[][] expected4 = {{"editTemplate","eT","addS"}};
 		for(int i = 0; i < expected4.length; ++i) {

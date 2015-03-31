@@ -14,6 +14,10 @@ public class Shortcut {
 	private SystemHandler system;
 	private static Shortcut centralizedShortcut;
 	
+	public Shortcut(boolean x) {
+		userShortcuts = new ArrayList<ArrayList<String>>();
+	}
+	
 	private Shortcut() {
 		userShortcuts = new ArrayList<ArrayList<String>>();
 		for(int i = 0; i < keywords.length; ++i) {
