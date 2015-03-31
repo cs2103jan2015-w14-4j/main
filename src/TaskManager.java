@@ -144,7 +144,7 @@ public class TaskManager implements TaskManagerInterface {
             break;
 
         case searchTask:
-            returningTasks = searchTask(inputs);
+            returningTasks = processSearchCommand(inputs);
             break;
 
         case undoTask:
@@ -513,14 +513,22 @@ public class TaskManager implements TaskManagerInterface {
 
     //--------------------Search method starts--------------------
     private ArrayList<Task> processSearchCommand(String[] inputs) {
-        
+        if(isSearchADateObject(inputs[SEARCH_INDEX])) {
+            return null;
+        } else {
+            return searchTask(inputs[SEARCH_INDEX]);
+        }
     }
     
-    private ArrayList<Task> searchTask(String[] inputs) {
+    private boolean isSearchADateObject(String search) {
+        return false;
+    }
+    
+    private ArrayList<Task> searchTask(String search) {
         ArrayList<Task> returningTasks = new ArrayList<Task>();
 
         for(Task task: tasks) {
-            if(isSearchFound(task, inputs[SEARCH_INDEX])) {
+            if(isSearchFound(task, search)) {
                 returningTasks.add(task.clone());
             }
         }
