@@ -360,7 +360,7 @@ public class TaskManagerTest {
         myTaskManager.processTM(ADD_TASK_13);
         myTaskManager.processTM(ADD_TASK_14);
 
-        String[] viewTaskByDateFrom = {"viewTask", null, "3", null, null, null, 
+        String[] viewTaskByDateFrom = {"viewTask", null, "Date From", null, null, null, 
                 null, null, null};
 
         ArrayList<Task> expectView = new ArrayList<Task>();
@@ -392,7 +392,7 @@ public class TaskManagerTest {
         myTaskManager.processTM(ADD_TASK_13);
         myTaskManager.processTM(ADD_TASK_14);
 
-        String[] viewTaskByDeadline = {"viewTask", null, "5", null, null, null, 
+        String[] viewTaskByDeadline = {"viewTask", null, "Deadline", null, null, null, 
                 null, null, null};
 
         ArrayList<Task> expectView = new ArrayList<Task>();
@@ -424,7 +424,7 @@ public class TaskManagerTest {
         myTaskManager.processTM(ADD_TASK_13);
         myTaskManager.processTM(ADD_TASK_14);
 
-        String[] viewTaskByPriority = {"viewTask", null, "8", null, null, null, 
+        String[] viewTaskByPriority = {"viewTask", null, "Priority", null, null, null, 
                 null, null, null};
 
         ArrayList<Task> expectView = new ArrayList<Task>();
@@ -456,7 +456,7 @@ public class TaskManagerTest {
         myTaskManager.processTM(ADD_TASK_13);
         myTaskManager.processTM(ADD_TASK_14);
 
-        String[] viewTaskByTaskName = {"viewTask", null, "2", null, null, null, 
+        String[] viewTaskByTaskName = {"viewTask", null, "Task Name", null, null, null, 
                 null, null, null};
 
         ArrayList<Task> expectView = new ArrayList<Task>();
@@ -488,7 +488,7 @@ public class TaskManagerTest {
         myTaskManager.processTM(ADD_TASK_13);
         myTaskManager.processTM(ADD_TASK_14);
 
-        String[] viewTaskByLocation = {"viewTask", null, "6", null, null, null, 
+        String[] viewTaskByLocation = {"viewTask", null, "location", null, null, null, 
                 null, null, null};
 
         ArrayList<Task> expectView = new ArrayList<Task>();
