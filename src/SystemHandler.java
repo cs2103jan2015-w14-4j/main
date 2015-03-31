@@ -59,7 +59,7 @@ public class SystemHandler {
 	public static SystemHandler getSystemHandler(String fileName) {
 		if(system == null) {
 			system = new SystemHandler();
-			system.initializeSystem();
+			system.initializeSystem(fileName);
 		}
 		return system;
 	}

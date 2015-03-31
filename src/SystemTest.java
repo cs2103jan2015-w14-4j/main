@@ -57,29 +57,29 @@ public class SystemTest {
 
 		Parser parser = new Parser();
 		
-		List<DateGroup> groups = parser.parse("the day before next thursday");
-		for(DateGroup group:groups)  {
-			Date dates = group.getDates().get(0);   //Here to get the date (which we need mostly)
-			System.out.println(dates.toLocaleString());   
-		}
-
-		groups = parser.parse("\"do homework 03/04/2015 11:00 \" to 6pm from  4pm  on next wednesday before June");
-		for(DateGroup group:groups)  {
-			List<Date> dates = group.getDates();   //Here to get the date (which we need mostly)
-			for(int i = 0; i < dates.size(); ++i) {
-				System.out.println("count "+i+": "+dates.get(i).toLocaleString()); 
-			}
-			int line = group.getLine();			//Not sure what it does
-			int column = group.getPosition();	//Not sure what
-			String matchingValue = group.getText(); 	//thursday
-			String syntaxTree = group.getSyntaxTree().toStringTree(); //Not sure what
-			Map parseMap = group.getParseLocations();	//Not sure what
-			boolean isRecurreing = group.isRecurring();	//True
-			Date recursUntil = group.getRecursUntil();	//Mon Jun 01 21:25:06 SGT 2015
-			System.out.println(recursUntil);	
-			System.out.println(line);
-
-		}
+//		List<DateGroup> groups = parser.parse("the day before next thursday");
+//		for(DateGroup group:groups)  {
+//			Date dates = group.getDates().get(0);   //Here to get the date (which we need mostly)
+//			System.out.println(dates.toLocaleString());   
+//		}
+//
+//		groups = parser.parse("\"do homework 03/04/2015 11:00 \" to 6pm from  4pm  on next wednesday before June");
+//		for(DateGroup group:groups)  {
+//			List<Date> dates = group.getDates();   //Here to get the date (which we need mostly)
+//			for(int i = 0; i < dates.size(); ++i) {
+//				System.out.println("count "+i+": "+dates.get(i).toLocaleString()); 
+//			}
+//			int line = group.getLine();			//Not sure what it does
+//			int column = group.getPosition();	//Not sure what
+//			String matchingValue = group.getText(); 	//thursday
+//			String syntaxTree = group.getSyntaxTree().toStringTree(); //Not sure what
+//			Map parseMap = group.getParseLocations();	//Not sure what
+//			boolean isRecurreing = group.isRecurring();	//True
+//			Date recursUntil = group.getRecursUntil();	//Mon Jun 01 21:25:06 SGT 2015
+//			System.out.println(recursUntil);	
+//			System.out.println(line);
+//
+//		}
 		
 //		groups = parser.parse("assignment from tuesday to wednesday");
 //		for(DateGroup group:groups)  {
@@ -93,50 +93,47 @@ public class SystemTest {
 	@Test
 	public void testFullSystem() {
 		// TC 1 - simple multiple add
-		String test1 = "addTask 'NEW' from 12/09/2015 10:00 to 12/09/2015 12:00 at ABC";
 		ArrayList<Task> expect1 = new ArrayList<Task>();
 		//"ID","Title","From","To","On","At","Det","Pri"
-		expect1.add(new Task(1000, "NEW",
-				convertToDateObject("12/09/2015 10:00"),
-				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0));
+		expect1.add(new Task(10, "NEW",
+				convertToDateObject("10/04/2015 19:00"),
+				convertToDateObject("10/05/2015 19:00"), null, "ABC", null, 0));
+		String test1 = "addTask 'NEW' from 10th April evening to 10th May evening at ABC";
 		
 		assertTaskArrayListEquals(mySystem.rawUserInput(test1), expect1);
 
 		// TC2 - continue -- multiple add same inputs then view
 
-		expect1.add(new Task(1001, "NEW",
-				convertToDateObject("12/09/2015 10:00"),
-				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0));
-		expect1.add(new Task(1002, "NEW",
-				convertToDateObject("12/09/2015 10:00"),
-				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0));
-		expect1.add(new Task(1003, "NEW",
-				convertToDateObject("12/09/2015 10:00"),
-				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0));
-		expect1.add(new Task(1004, "NEW",
-				convertToDateObject("12/09/2015 10:00"),
-				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0));
-		mySystem.rawUserInput("addTask 'NEW' from 12/09/2015 10:00 to 12/09/2015 12:00 at ABC");
-		mySystem.rawUserInput("addTask 'NEW' from 12/09/2015 10:00 to 12/09/2015 12:00 at ABC");
-		mySystem.rawUserInput("addTask 'NEW' from 12/09/2015 10:00 to 12/09/2015 12:00 at ABC");
-		mySystem.rawUserInput("addTask 'NEW' from 12/09/2015 10:00 to 12/09/2015 12:00 at ABC");
+		expect1.add(new Task(11, "NEW",
+						convertToDateObject("10/04/2015 19:00"),
+						convertToDateObject("10/05/2015 19:00"), null, "ABC", null, 0));
+		expect1.add(new Task(12, "NEW",
+				convertToDateObject("10/04/2015 19:00"),
+				convertToDateObject("10/05/2015 19:00"), null, "ABC", null, 0));
+		expect1.add(new Task(13, "NEW",
+				convertToDateObject("10/04/2015 19:00"),
+				convertToDateObject("10/05/2015 19:00"), null, "ABC", null, 0));
+		mySystem.rawUserInput("addTask 'NEW' from 10th April evening to 10th May evening at ABC");
+		mySystem.rawUserInput("addTask 'NEW' from 10th April evening to 10th May evening at ABC");
+		mySystem.rawUserInput("addTask 'NEW' from 10th April evening to 10th May evening at ABC");
 
 		assertTaskArrayListEquals(mySystem.rawUserInput("view"), expect1);
 
 		// TC3 - continue -- delete and get deleted task
 		ArrayList<Task> expect2 = new ArrayList<Task>();
-		expect2.add(new Task(1005, "TO BE DELETED",
-				convertToDateObject("16/10/2015 10:00"),
-				convertToDateObject("16/10/2015 12:00"), null, "XYZ", null, 0));
-		mySystem.rawUserInput("add TO BE DELETED at XYZ from 16/10/2015 10:00 to 16/10/201512:00");
-		assertTaskArrayListEquals(mySystem.rawUserInput("delete,1005"), expect2);
+		expect2.add(new Task(14, "TO BE DELETED",
+				convertToDateObject("16/04/2015 19:00"),
+				convertToDateObject("17/05/2015 19:00"), null, "XYZ", null, 0));
+		mySystem.rawUserInput("add 'TO BE DELETED' at XYZ from 16th April evening to 17th May evening");
+		assertTaskArrayListEquals(mySystem.rawUserInput("delete 14"), expect2);
 		
 		// TC4 - continue -- edit and get back result
 		ArrayList<Task> expect3 = new ArrayList<Task>();
-		expect3.add(new Task(1004, "EDITED",
-				convertToDateObject("12/09/2015 10:00"),
-				convertToDateObject("12/09/2015 12:00"), null, "NUS", null, 0));
-		assertTaskArrayListEquals(mySystem.rawUserInput("edit 1004 title EDITED at NUS"), expect3);
+		expect3.add(new Task(15, "EDITED",
+				convertToDateObject("24/08/2015 19:00"),
+				convertToDateObject("24/08/2015 20:00"), null, "NUS", null, 0));
+		mySystem.rawUserInput("add 'TO BE DELETED' at XYZ from 24th August evening to 24th August 8pm");
+		assertTaskArrayListEquals(mySystem.rawUserInput("edit 15 title EDITED at NUS"), expect3);
 		
 	}
 
@@ -293,11 +290,11 @@ public class SystemTest {
 	@Test
 	public void testParser() {
 
-		FlexiParser test1 = new FlexiParser();
-		String[] expect1  = {"add",null,"homework",
-								"20/04/2015 20:00","20/04/2015 22:00",null,
-								null,null,null};
-		String[] abc = test1.parseText("add,homework,on,20/04/2015,from,20:00,to,22:00");
+//		FlexiParser test1 = new FlexiParser();
+//		String[] expect1  = {"add",null,"homework",
+//								"20/04/2015 20:00","20/04/2015 22:00",null,
+//								null,null,null};
+//		String[] abc = test1.parseText("add,homework,on,20/04/2015,from,20:00,to,22:00");
 //		for(int i=0;i<expect1.length;++i) {
 //			
 //			if(abc[i] == expect1[i] ||
@@ -309,7 +306,7 @@ public class SystemTest {
 //			}
 //			
 //		}
-		Assert.assertArrayEquals(abc, expect1);
+//		Assert.assertArrayEquals(abc, expect1);
 	}
  
 	@Test
@@ -360,11 +357,11 @@ public class SystemTest {
 			ArrayList<Task> expect) {
 		Assert.assertEquals(test.size(), expect.size());
 		for (int i = 0; i < test.size(); ++i) {
-			if(!assertTaskEqual(test.get(i), expect.get(i))) {
-				showNotMatch(test.get(i), expect.get(i));
-				showTask(test.get(i));
-				showTask(expect.get(i));	
-			}
+//			if(!assertTaskEqual(test.get(i), expect.get(i))) {
+//				showNotMatch(test.get(i), expect.get(i));
+//				showTask(test.get(i));
+//				showTask(expect.get(i));	
+//			}
 			Assert.assertTrue(assertTaskEqual(test.get(i), expect.get(i)));
 		}
 

@@ -44,6 +44,9 @@ public class Template {
 		if(template == null) {
 			template = new Template(test);
 		}
+		else if(test) {
+			template.isTest = true;
+		}
 		return template;
 	}
 	
