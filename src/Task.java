@@ -216,22 +216,29 @@ public class Task {
         } else {
             taskStringArray[TASK_NAME] = null;
         }
-	            
-        if(dateFrom != null) {
+        
+        if(isDurationalTask()) {
             taskStringArray[DATE_FROM] = convertToStringFromDate(dateFrom);
-        } else {
-            taskStringArray[DATE_FROM] = null;
-        }
-
-        if(dateTo != null) {
             taskStringArray[DATE_TO] = convertToStringFromDate(dateTo);
-        } else {
+        }
+        
+        if(isDeadlineTask()) {
+            taskStringArray[DATE_FROM] = null;
+            if(dateTo != null) {
+                taskStringArray[DATE_TO] = convertToStringFromDate(dateTo);
+            }
+            if(deadline != null) {
+                taskStringArray[DATE_TO] = convertToStringFromDate(deadline);
+            }
+        }
+        
+        if(isFloatingTask()) {
+            taskStringArray[DATE_FROM] = null;
             taskStringArray[DATE_TO] = null;
         }
-
-        if(deadline != null) {
-            taskStringArray[DATE_TO] = convertToStringFromDate(deadline);
-        } else {
+        
+        if(isForeverTask()) {
+            taskStringArray[DATE_FROM] = convertToStringFromDate(dateFrom);
             taskStringArray[DATE_TO] = null;
         }
 
