@@ -446,7 +446,12 @@ public class FileStorage {
                     for(int i =0; i < inputs.length; ++i) {
                     	System.out.print(inputs[i] + ":");
                     }
-                    template.processCustomizingCommand(inputs);       
+                    try {
+                    	template.processCustomizingCommand(inputs);     
+                    } catch(Exception e) {
+                    	
+                    }
+                      
                
                 }
                 
