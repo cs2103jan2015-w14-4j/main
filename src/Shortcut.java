@@ -5,11 +5,25 @@ public class Shortcut {
 	 
 	
 	public static final String[] keywords = {	"addTask", "editTask","viewTask","deleteTask", 
-										"undoTask", "redoTask",
+										"clearAttr", "undoTask", "redoTask",
 										"addShortcut", "viewShortcuts", "deleteShortcut",
 										"resetShortcut", "addTemplate", "editTemplate", 
-										"viewTemplates", "deleteTemplate", "resetTemplates", "help"}; 
-	private static final String[] reservedWords = {"at","location","from","datefrom","to","dateto","on","before","by","detail","priority","name","title"};
+										"viewTemplates", "useTemplate", "deleteTemplate", 
+										"resetTemplates", "help"}; 
+	
+	public static final String[][] defaultWordsSet = {{"add","addTask"}, {"edit","editTask"},
+													{"view","viewTask"}, {"delete","deleteTask"},
+													{"clear","clearAttr"}, {"undo","undoTask"}, {"redo","redoTask"},
+													{"addShortcut","addShort"}, {"viewShortcut","viewShort"}, 
+													{"deleteShortcut","deleteShort"}, {"resetShortcut","resetShort"},
+													{"addTemplate","addTemp"}, {"editTemplate","editTemp"},
+													{"viewTemplate","viewTemp"}, {"useTemplate", "useTemp"} , 
+													{"deleteTemplate","deleteTemp"}, {"resetTemplate", "resetTemp"}, 
+													{"help"}
+													};
+	
+	private static final String[] reservedWords = {"at","location","from","datefrom","to","dateto","on",
+													"before","by","detail","priority","name","title"};
 	private ArrayList<ArrayList<String>> userShortcuts;
 	private SystemHandler system;
 	private static Shortcut centralizedShortcut;
@@ -131,130 +145,20 @@ public class Shortcut {
 	
 	private void resetShortcut() {
 		userShortcuts = new ArrayList<ArrayList<String>>();
-		userShortcuts.add(buildAddTask());
-		userShortcuts.add(buildEditTask());
-		userShortcuts.add(buildViewTask());
-		userShortcuts.add(buildDeleteTask());
-		userShortcuts.add(buildUndoTask());
-		userShortcuts.add(buildRedoTask());
-		userShortcuts.add(buildAddShortcut());
-		userShortcuts.add(buildViewShortcut());
-		userShortcuts.add(buildDeleteShortcut());
-		userShortcuts.add(buildResetShortcut());
-		userShortcuts.add(buildAddTemplate());
-		userShortcuts.add(buildEditTemplate());
-		userShortcuts.add(buildViewTemplates());
-		userShortcuts.add(buildDeleteTemplate());
-		userShortcuts.add(buildResetTemplates());
-		userShortcuts.add(buildHelp());
+		for(int i = 0; i < keywords.length; ++i) {
+			userShortcuts.add(buildDefaultKeyword(i));
+		}
 	}
 	
-	
+	private ArrayList<String> buildDefaultKeyword(int index) {
+		ArrayList<String> customizedWord = new ArrayList<String>();
+		String[] defaultwords = defaultWordsSet[index];
+		for(int i = 0; i < defaultwords.length; ++i) {
+			customizedWord.add(defaultwords[i]);
+		}
+		return customizedWord;
+	}
 
-	private ArrayList<String> buildAddTask() {
-		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("add");
-		defaults.add("addTask");
-		
-		return defaults;
-	}
-	private ArrayList<String> buildEditTask() {
-		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("edit");
-		defaults.add("editTask");
-		return defaults;
-	}
-	private ArrayList<String> buildViewTask() {
-		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("view");
-		defaults.add("viewTask");
-		defaults.add("viewTasks");
-		return defaults;
-	}
-	private ArrayList<String> buildDeleteTask() {
-		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("delete");
-		defaults.add("deleteTask");
-		return defaults;
-	}
-	private ArrayList<String> buildUndoTask() {
-		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("undo");
-		return defaults;
-	}
-	private ArrayList<String> buildRedoTask() {
-		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("redo");
-		return defaults;
-	}
-	private ArrayList<String> buildAddShortcut() {
-		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("addShortcut");
-		defaults.add("addShort");
-		return defaults;
-	}
-	private ArrayList<String> buildDeleteShortcut() {
-		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("deleteShortcut");
-		defaults.add("deleteShort");
-		return defaults;
-	}
-	private ArrayList<String> buildViewShortcut() {
-		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("viewShortcut");
-		defaults.add("viewShortcuts");
-		defaults.add("viewShort");
-		defaults.add("viewShorts");
-		return defaults;
-	}
-	private ArrayList<String> buildResetShortcut() {
-		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("resetShortcut");
-		defaults.add("resetShortcuts");
-		return defaults;
-	}
-	private ArrayList<String> buildAddTemplate() {
-		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("addTemplate");
-		defaults.add("addTemp");
-		return defaults;
-	}
-	private ArrayList<String> buildEditTemplate() {
-		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("editTemplate");
-		defaults.add("editTemp");
-		return defaults;
-	}
-	private ArrayList<String> buildViewTemplates() {
-		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("viewTemplate");
-		defaults.add("viewTemplates");
-		defaults.add("viewTemp");
-		defaults.add("viewTemps");
-		return defaults;
-	}
-	private ArrayList<String> buildDeleteTemplate() {
-		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("deleteTemplate");
-		defaults.add("deleteTemp");
-		return defaults;
-	}
-	private ArrayList<String> buildResetTemplates() {
-		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("resetTemplate");
-		defaults.add("resetTemplates");
-		defaults.add("resetTemp");
-		defaults.add("resetTemps");
-		return defaults;
-	}
-	private ArrayList<String> buildHelp() {
-		ArrayList<String> defaults = new ArrayList<String>();
-		defaults.add("help");
-		return defaults;
-	}
-	
-	
-	
 	private String[][] viewShortcuts() {
 		return cloneShortcuts();
 	}
@@ -286,7 +190,7 @@ public class Shortcut {
 		if(!isKeyWords(belongTo)) {
 			return null;
 		}
-		else if(isKeyWords(newShortcut)) {
+		else if(isExactKeyWords(newShortcut)) {
 			return null;
 		}
 		else if (isReservedWord(newShortcut)) {
@@ -311,25 +215,63 @@ public class Shortcut {
 	}
 	
 	private boolean isKeyWords(String command) {
-		int matchingIndex = searchMatching(command);
+		int matchingIndex = searchMatching(command, false);
 		return matchingIndex > -1;
 	}
 	
-	private int searchMatching (String command) {
+	private boolean isExactKeyWords(String command) {
+		int matchingIndex = searchMatching(command, true);
+		return matchingIndex > -1;
+	}
+	
+	private int searchMatching(String command) {
+		return searchMatching(command, false);
+	}
+	
+	private int searchMatching (String command, boolean exactMatch) {
 		for(int i = 0; i < userShortcuts.size(); ++i) {
 			ArrayList<String> singleShortcut = userShortcuts.get(i);
+			
 			for(int j = 0; j < singleShortcut.size(); ++j) {
-				if(command.equals(singleShortcut.get(j))) {
+				if(exactMatch) {
+					if(isExactMatchingWord(command, singleShortcut.get(j))) {
+						return i;
+					}
+				} else if(isTheMatchingWord(command, singleShortcut.get(j))) {
 					return i;
 				}
+				
 			}
+			
 		}
 		return -1;
 	}
 	
+	private boolean isExactMatchingWord(String command, String matching) {
+		if(command.equals(matching)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private boolean isTheMatchingWord(String command, String matching) {
+		
+		if(command.toLowerCase().charAt(command.length() - 1) == 's') {
+			command = command.substring(0, command.length() - 1);
+		}
+		
+		if(command.equalsIgnoreCase(matching)) {
+			return true;
+		} else {
+			return false;
+		}
+		
+	}
+	
 	private boolean isReservedWord(String word) {
 		for(int i = 0; i < reservedWords.length; ++i) {
-			if(word.equals(reservedWords[i])) {
+			if(word.equalsIgnoreCase(reservedWords[i])) {
 				return true;
 			}
 		}
