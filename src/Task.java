@@ -263,8 +263,10 @@ public class Task {
     }
     
     private boolean isDeadlineTask() {
-        return getDateFrom() == null && getDateTo() == null &&
-                getDeadline() != null; 
+        return (getDateFrom() == null && getDateTo() == null &&
+                getDeadline() != null) || 
+                (getDateFrom() == null && getDateTo() != null &&
+                getDeadline() == null); 
     }
     
     private boolean isForeverTask() {
