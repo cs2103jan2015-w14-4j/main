@@ -2,6 +2,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.junit.After;
@@ -992,6 +993,30 @@ public class TaskManagerTest {
         tks.get(0).setTID(5000);
         Assert.assertFalse(assertTaskEqual(tks.get(0), myTaskManager.getTasks().get(0)));
 
+    }
+    
+    @Test
+    public void testTaskToStringArray() {
+        Task durationalTask = new Task(10, "durationalTask", convertToDateObject("18/03/2015 12:00"), 
+                convertToDateObject("18/03/2015 15:00"), null, null, null, 0);
+        Task deadlineTaskDateTo = new Task(11, "deadlineTaskDateTo", null, 
+                convertToDateObject("18/03/2015 15:00"), null, null, null, 0);
+        Task deadlineTaskDeadline = new Task(12, "deadlineTaskDeadline", null, null, 
+                convertToDateObject("18/03/2015 15:00"), null, null, 0);
+        Task foreverTask = new Task(17, "foreverTask", null, 
+                convertToDateObject("21/03/2015 23:59"), null, null, null, 0);
+        Task floatingTask = new Task(18, "floatingTask", null, null, null, null, null, 0);
+
+        Assert.assertEquals("[10, durationalTask, 18/03/2015 12:00, 18/03/2015 15:00, null, "
+                + "null, 0]", Arrays.toString(durationalTask.toStringArray()));
+        Assert.assertEquals("[11, deadlineTaskDateTo, null, 18/03/2015 15:00, null, "
+                + "null, 0]", Arrays.toString(deadlineTaskDateTo.toStringArray()));
+        Assert.assertEquals("[12, deadlineTaskDeadline, null, 18/03/2015 15:00, null, "
+                + "null, 0]", Arrays.toString(deadlineTaskDeadline.toStringArray()));
+        Assert.assertEquals("[17, foreverTask, null, 21/03/2015 23:59, null, "
+                + "null, 0]", Arrays.toString(foreverTask.toStringArray()));
+        Assert.assertEquals("[18, floatingTask, null, null, null, "
+                + "null, 0]", Arrays.toString(floatingTask.toStringArray()));
     }
     //--------------------testing others ends-----------------------------------
 
