@@ -175,7 +175,7 @@ public class TaskManagerTest {
     }
 
     @Test
-    public void testClasedTasks() {
+    public void testClashedTasks() {
         myTaskManager = new TaskManager();
         ArrayList<Task> expectTasks = new ArrayList<Task>();
         ArrayList<Task> clashTasks = new ArrayList<Task>();
