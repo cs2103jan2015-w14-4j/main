@@ -264,10 +264,17 @@ public class Shortcut {
 		for(int i = 0; i < userShortcuts.size(); ++i) {
 			ArrayList<String> singleShortcut = userShortcuts.get(i);
 			for(int j = 0; j < singleShortcut.size(); ++j) {
+				
 				if(shortcut.equals(singleShortcut.get(j))) {
-					String removed = singleShortcut.remove(j);
-					String[] result = {keywords[i], removed};
-					return result;
+					if(singleShortcut.size() < 2) {
+						return null;
+					}
+					else {
+						String removed = singleShortcut.remove(j);
+						String[] result = {keywords[i], removed};
+						return result;
+					}
+					
 				}
 			}
 		}
@@ -288,7 +295,7 @@ public class Shortcut {
 		else {
 			
 			ArrayList<String> toBeAddedInto = userShortcuts.get(belongTo);
-			if(toBeAddedInto.size() < 2) {
+			if(toBeAddedInto.size() > 5) {
 				return null;
 			}
 			else {
