@@ -333,7 +333,7 @@ public class Shortcut {
 				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 	
 	private String[][] cloneShortcuts() {

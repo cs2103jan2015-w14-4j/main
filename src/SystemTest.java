@@ -90,7 +90,7 @@ public class SystemTest {
 	}
 	
 	
-	@Test
+//	@Test
 	public void testFullSystem() {
 		// TC 1 - simple multiple add
 		ArrayList<Task> expect1 = new ArrayList<Task>();
@@ -137,7 +137,7 @@ public class SystemTest {
 		
 	}
 
-	@Test
+//	@Test
 	public void testTaskManager() {
 		// TC1 - test add normal result
 		ArrayList<Task> test1 = new ArrayList<Task>();
@@ -219,7 +219,8 @@ public class SystemTest {
 		String[] cmd2 = {"addShortcut","+","add"};
 		String[][] results2 = myshortcut.processShortcutCommand(cmd2);
 		String[][] expected2 = {{"addTask","add","+"}};
-		for(int i = 0; i < expected2.length; ++i) {
+		for(int i = 0; i < results2.length; ++i) {
+			System.out.println("---"+results2[i][0] + results2[i][1] + results2[i][2]+"---");
 			Assert.assertArrayEquals(results2[i], expected2[i]);
 		}
 		
@@ -312,7 +313,7 @@ public class SystemTest {
 	@Test
 	public void testCustomizedManager() {
 		//TC1 - test adding
-		Template template = Template.getTemplate(true);
+		Template template = new Template(true);
 		String[] cmd1 = {"addTemplate","1000","task1", null, null, null, null, null, null};
 		ArrayList<Task> result1 = template.processCustomizingCommand(cmd1);
 		ArrayList<Task> expected1 = new ArrayList<Task>();
