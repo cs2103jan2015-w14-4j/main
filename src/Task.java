@@ -15,6 +15,7 @@ public class Task {
     private static final int DETAILS = 5;
     private static final int PRIORITY = 6;
     private static final int DEFAULT_STRING_SIZE = 7;
+    private static final String ZERO_TIME = " 00:00";
 	
 	private int TID;
 	private String taskName;
@@ -218,17 +219,17 @@ public class Task {
         }
         
         if(isDurationalTask()) {
-            taskStringArray[DATE_FROM] = convertToStringFromDate(dateFrom);
-            taskStringArray[DATE_TO] = convertToStringFromDate(dateTo);
+            taskStringArray[DATE_FROM] = removeTimePartFromDate(convertToStringFromDate(dateFrom));
+            taskStringArray[DATE_TO] = removeTimePartFromDate(convertToStringFromDate(dateTo));
         }
         
         if(isDeadlineTask()) {
             taskStringArray[DATE_FROM] = null;
             if(dateTo != null) {
-                taskStringArray[DATE_TO] = convertToStringFromDate(dateTo);
+                taskStringArray[DATE_TO] = removeTimePartFromDate(convertToStringFromDate(dateTo));
             }
             if(deadline != null) {
-                taskStringArray[DATE_TO] = convertToStringFromDate(deadline);
+                taskStringArray[DATE_TO] = removeTimePartFromDate(convertToStringFromDate(deadline));
             }
         }
         
@@ -238,7 +239,7 @@ public class Task {
         }
         
         if(isForeverTask()) {
-            taskStringArray[DATE_FROM] = convertToStringFromDate(dateFrom);
+            taskStringArray[DATE_FROM] = removeTimePartFromDate(convertToStringFromDate(dateFrom));
             taskStringArray[DATE_TO] = null;
         }
 
@@ -279,6 +280,10 @@ public class Task {
     private boolean isForeverTask() {
         return getDateFrom() != null && getDateTo() == null &&
                 getDeadline() == null;
+    }
+    
+    private String removeTimePartFromDate(String dateString) {
+        return dateString.replace(ZERO_TIME, "");
     }
     
     private String convertToStringFromDate(Date dateObject) {
