@@ -9,7 +9,7 @@ public class Shortcut {
 										"addShortcut", "viewShortcuts", "deleteShortcut",
 										"resetShortcut", "addTemplate", "editTemplate", 
 										"viewTemplates", "deleteTemplate", "resetTemplates", "help"}; 
-
+	private static final String[] reservedWords = {"at","location","from","datefrom","to","dateto","on","before","by","detail","priority","name","title"};
 	private ArrayList<ArrayList<String>> userShortcuts;
 	private SystemHandler system;
 	private static Shortcut centralizedShortcut;
@@ -279,14 +279,23 @@ public class Shortcut {
 		if(!isKeyWords(belongTo)) {
 			return null;
 		}
-		else if(isKeyWords(searchMatching(newShortcut))) {
+		else if(isKeyWords(newShortcut)) {
+			return null;
+		}
+		else if (isReservedWord(newShortcut)) {
 			return null;
 		}
 		else {
+			
 			ArrayList<String> toBeAddedInto = userShortcuts.get(belongTo);
-			toBeAddedInto.add(newShortcut);
-			String[] result = {keywords[belongTo], originShortcut, newShortcut};
-			return result;
+			if(toBeAddedInto.size() < 2) {
+				return null;
+			}
+			else {
+				toBeAddedInto.add(newShortcut);
+				String[] result = {keywords[belongTo], originShortcut, newShortcut};
+				return result;	
+			}
 		}
 	}
 	
@@ -309,6 +318,15 @@ public class Shortcut {
 			}
 		}
 		return -1;
+	}
+	
+	private boolean isReservedWord(String word) {
+		for(int i = 0; i < reservedWords.length; ++i) {
+			if(word.equals(reservedWords[i])) {
+				return true;
+			}
+		}
+		return true;
 	}
 	
 	private String[][] cloneShortcuts() {
