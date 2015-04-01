@@ -207,14 +207,14 @@ public class SystemHandler {
 	private boolean initializeSystem(String fileName) {
 		
 		boolean isInitProperly = false;
-		myShortcut = Shortcut.getShortcut();
+		myShortcut = new Shortcut();
 		String[] cmd = {"resetShortcut",null,null};
 		myShortcut.processShortcutCommand(cmd);
 		
 		logfile = CentralizedLog.getLogger();
 		myTemplates = new Template();
 		myTaskList = new TaskManager();
-		parser = new FlexiParser();
+		parser = new FlexiParser(myShortcut);
 		externalStorage = new FileStorage(fileName);
 		system = this;
 		try{
@@ -311,19 +311,20 @@ public class SystemHandler {
 	
 	
 	private String[][] executeShortcutManager(String[] command) {
-		//stub
-		//Not implemented
 		String[][] result = myShortcut.processShortcutCommand(command);
 		window.displayShortcuts(result, true);
 		return result;
 	}
 	
 	private void executeCustomizer(String[] command) {
-		//stub
-		//Not implemented
-		ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
-		ArrayList<Task> fullList = myTemplates.processCustomizingCommand(CMD_GET_TEMPLATE);
-		window.displayTaskTable(result, true);
+		try {
+			ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
+			ArrayList<Task> fullList = myTemplates.processCustomizingCommand(CMD_GET_TEMPLATE);
+			window.displayTaskTable(result, true);
+		} catch (Exception e) {
+			
+		}
+			
 		
 	}
 	

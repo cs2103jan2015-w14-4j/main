@@ -13,45 +13,36 @@ public class Shortcut {
 	
 	public static final String[][] defaultWordsSet = {{"add","addTask"}, {"edit","editTask"},
 													{"view","viewTask"}, {"delete","deleteTask"},
-													{"clear","clearAttr"}, {"undo","undoTask"}, {"redo","redoTask"},
-													{"addShortcut","addShort"}, {"viewShortcut","viewShort"}, 
-													{"deleteShortcut","deleteShort"}, {"resetShortcut","resetShort"},
-													{"addTemplate","addTemp"}, {"editTemplate","editTemp"},
-													{"viewTemplate","viewTemp"}, {"useTemplate", "useTemp"} , 
-													{"deleteTemplate","deleteTemp"}, {"resetTemplate", "resetTemp"}, 
-													{"help"}
+													{"clear","clearAttr"}, {"undo","undoTask"}, 
+													{"redo","redoTask"}, {"addShortcut","addShort"}, 
+													{"viewShortcut","viewShort"}, {"deleteShortcut","deleteShort"}, 
+													{"resetShortcut","resetShort"}, {"addTemplate","addTemp"}, 
+													{"editTemplate","editTemp"}, {"viewTemplate","viewTemp"}, 
+													{"useTemplate", "useTemp"}, {"deleteTemplate","deleteTemp"}, 
+													{"resetTemplate", "resetTemp"}, {"help"}
 													};
 	
 	private static final String[] reservedWords = {"at","location","from","datefrom","to","dateto","on",
 													"before","by","detail","priority","name","title"};
+	
 	private ArrayList<ArrayList<String>> userShortcuts;
 	private SystemHandler system;
-	private static Shortcut centralizedShortcut;
 	
-	public Shortcut(boolean x) {
-		userShortcuts = new ArrayList<ArrayList<String>>();
-	}
-	
-	private Shortcut() {
+	public Shortcut() {
 		userShortcuts = new ArrayList<ArrayList<String>>();
 		for(int i = 0; i < keywords.length; ++i) {
 			userShortcuts.add(new ArrayList<String>());
 		}
 	}
 	
-	public static Shortcut getShortcut() {
-		if(centralizedShortcut == null) {
-			centralizedShortcut = new Shortcut();
-		}
-		return centralizedShortcut;
-	}
-	
+
 	public void setSystemPath(SystemHandler system) {
 		this.system = system;
 	}
 	
 	
-	public String[][] processShortcutCommand(String[] command) throws NoSuchElementException {
+	public String[][] processShortcutCommand(String[] command) 
+			throws NoSuchElementException, IllegalArgumentException {
 		String[][] results = null;
 		
 		assert(command.length == 3);
@@ -83,9 +74,14 @@ public class Shortcut {
 				results = cloneShortcuts();
 				break;
 			case addShortcutInit:
-				verifyCommand(command, 3);
-				addShortcutInit(command);
-				break;
+				try {
+					verifyCommand(command, 3);
+					addShortcutInit(command);
+					break;
+				} catch (NumberFormatException e) {
+					System.out.println(e);
+				}
+				
 		}
 		return results; 
 	}

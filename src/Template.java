@@ -38,7 +38,7 @@ public class Template {
 	
 	
 	public ArrayList<Task> processCustomizingCommand(String[] command) 
-			throws NoSuchElementException, NumberFormatException {
+			throws Exception {
 		
 		
 		COMMAND_TYPE_TEMPLATE commandType = getCommandType(command[0]);
@@ -95,7 +95,7 @@ public class Template {
 					String[] convertedTask = convertTasktoTaskManagerInput(fetchedTask, command);
 					system.addTaskFromTemplate(convertedTask);
 			}
-		} catch (Exception e) {
+		} catch (IllegalArgumentException e) {
 			System.out.println("ERROR :"+ e);
 		}
 			
@@ -276,7 +276,7 @@ public class Template {
 		
 	}
 	
-	private String getFieldValue(Task task, int index, String change) throws Exception {
+	private String getFieldValue(Task task, int index, String change) throws IllegalArgumentException {
 		if(change == null) {
 			switch(index) {
 				case 2: 
@@ -294,14 +294,15 @@ public class Template {
 				case 8: 
 					return Integer.toString(task.getPriority());
 				default:
-					throw new Exception(MSG_INVALID_GET_FIELD);
+					throw new IllegalArgumentException(MSG_INVALID_GET_FIELD);
 			}
 		} else {
 			return change;
 		}
 	}
 	
-	private String[] convertTasktoTaskManagerInput(Task task, String[] changes) throws Exception {
+	private String[] convertTasktoTaskManagerInput(Task task, String[] changes) 
+			throws IllegalArgumentException {
 		String[] converted = new String[COMMAND_LENGTH];
 		converted[TaskManager.COMMAND_TYPE] = COMMAND_ADD_TASK;
 		converted[TaskManager.TID] = null;
