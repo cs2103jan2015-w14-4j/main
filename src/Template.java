@@ -12,43 +12,30 @@ public class Template {
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
 	public static final int COMMAND_LENGTH = 9;
 	public static final String NO_SUCH_TEMPLATE = "No such template saved in the system";
+	private static final String COMMAND_ADD_TASK = "addTask";
+	private static final String MSG_INVALID_GET_FIELD = "No such field value to get from";
 	private HashMap<String,Task> templates; 
-	private boolean isTest;
 	private SystemHandler system;
 	
-	private static Template template;
+
+	private boolean isTest;
 	
 	public void setSystemPath(SystemHandler system) {
 		this.system = system;
 	}
 	
-	private Template() {
+	public Template() {
 		templates = new HashMap<String,Task>();
 		isTest = false;
 	}
 	
 	
-	private Template(boolean test) {
+	public Template(boolean test) {
 		templates = new HashMap<String,Task>();
 		isTest = test;
 	}
 	
-	public static Template getTemplate() {
-		if(template == null) {
-			template = new Template();
-		}
-		return template;
-	}
 	
-	public static Template getTemplate(boolean test) {
-		if(template == null) {
-			template = new Template(test);
-		}
-		else if(test) {
-			template.isTest = true;
-		}
-		return template;
-	}
 	
 	public ArrayList<Task> processCustomizingCommand(String[] command) 
 			throws NoSuchElementException, NumberFormatException {
@@ -58,53 +45,60 @@ public class Template {
 		ArrayList<Task> result = null;
 		
 		assertValidity(command, commandType);
-		
-		switch(commandType) {
-			case addTemplate:
-				
-				
-				Task taskToBeAdded;
-				if(isTest) {
-					taskToBeAdded = new Task(1000, "NEW",
-							convertToDateObject("12/09/2015 10:00"),
-							convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0);
-				}
-				else {
-					taskToBeAdded = system.requestTask(Integer.parseInt(command[1]));	
-				}
-				result =  addTemplate(command[2], taskToBeAdded);
-				writeOutToFile();
-				break;
-			case viewTemplates:
-				result = viewTemplates();
-				break;
-			case deleteTemplate:
-				result = removeTemplate(command[1]);
-				writeOutToFile();
-				break;
-				
-			case editTemplate:
-				Task temp = editTemplate(command);
-				result = new ArrayList<Task>(); 
-				result.add(temp);
-				writeOutToFile();
-				break;
-			case resetTemplates:
-				resetTemplates();
-				writeOutToFile();
-				result = viewTemplates();
-				break;
-			case addTemplateInit:
-				if(system == null) {
-					system = SystemHandler.getSystemHandler();
-				}
-				Task taskToBeAddedInit = new Task(Integer.parseInt(command[1]),command[2], 
-						convertToDateObject(command[3]), convertToDateObject(command[4]), 
-						convertToDateObject(command[5]), command[5], command[6],
-						Integer.parseInt(command[7]));
-				addTemplate(command[2], taskToBeAddedInit);
-				break;
+		try {
+			switch(commandType) {
+				case addTemplate:
+					Task taskToBeAdded;
+					if(isTest) {
+						taskToBeAdded = new Task(1000, "NEW",
+								convertToDateObject("12/09/2015 10:00"),
+								convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0);
+					}
+					else {
+						taskToBeAdded = system.requestTask(Integer.parseInt(command[1]));	
+					}
+					result =  addTemplate(command[2], taskToBeAdded);
+					writeOutToFile();
+					break;
+					
+				case addTemplateInit:
+					if(system == null) {
+						system = SystemHandler.getSystemHandler();
+					}
+					Task taskToBeAddedInit = new Task(Integer.parseInt(command[1]),command[2], 
+							convertToDateObject(command[3]), convertToDateObject(command[4]), 
+							convertToDateObject(command[5]), command[5], command[6],
+							Integer.parseInt(command[7]));
+					addTemplate(command[2], taskToBeAddedInit);
+					break;
+				case viewTemplates:
+					result = viewTemplates();
+					break;
+				case deleteTemplate:
+					result = removeTemplate(command[1]);
+					writeOutToFile();
+					break;
+					
+				case editTemplate:
+					Task temp = editTemplate(command);
+					result = new ArrayList<Task>(); 
+					result.add(temp);
+					writeOutToFile();
+					break;
+				case resetTemplates:
+					resetTemplates();
+					writeOutToFile();
+					result = viewTemplates();
+					break;
+				case useTemplate:
+					Task fetchedTask = fetchTemplate(command[1]);
+					String[] convertedTask = convertTasktoTaskManagerInput(fetchedTask, command);
+					system.addTaskFromTemplate(convertedTask);
+			}
+		} catch (Exception e) {
+			System.out.println("ERROR :"+ e);
 		}
+			
 		return result;
 	}
 	
@@ -179,6 +173,7 @@ public class Template {
 				for(int i = 3; i < COMMAND_LENGTH; ++i) {
 					assert(command[i] == null);
 				}
+			case useTemplate:
 			case addTemplateInit:
 			case editTemplate:
 		}
@@ -267,6 +262,56 @@ public class Template {
 	
 	private boolean hasSameName(String name) {
 		return templates.containsKey(name);
+	}
+	
+	
+	private Task fetchTemplate(String key) throws NoSuchElementException {
+		Task task = templates.get(key);
+		if(task != null) {
+			return task;
+		}
+		else {
+			throw new NoSuchElementException(NO_SUCH_TEMPLATE);
+		}
+		
+	}
+	
+	private String getFieldValue(Task task, int index, String change) throws Exception {
+		if(change == null) {
+			switch(index) {
+				case 2: 
+					return task.getTaskName();
+				case 3: 
+					return task.getDateFromString();
+				case 4: 
+					return task.getDateToString();
+				case 5: 
+					return task.getDeadlineString();
+				case 6: 
+					return task.getLocation();
+				case 7: 
+					return task.getDetails();
+				case 8: 
+					return Integer.toString(task.getPriority());
+				default:
+					throw new Exception(MSG_INVALID_GET_FIELD);
+			}
+		} else {
+			return change;
+		}
+	}
+	
+	private String[] convertTasktoTaskManagerInput(Task task, String[] changes) throws Exception {
+		String[] converted = new String[COMMAND_LENGTH];
+		converted[TaskManager.COMMAND_TYPE] = COMMAND_ADD_TASK;
+		converted[TaskManager.TID] = null;
+		
+		
+		for(int i = 2; i < COMMAND_LENGTH; ++i) {
+			converted[i] = getFieldValue(task, i, changes[i]);
+		}
+		
+		return converted;
 	}
 	
 	private Date convertToDateObject(String dateString) {
