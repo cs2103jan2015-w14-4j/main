@@ -14,9 +14,15 @@ public class SystemHandler {
 	//dummy string acting like UI prompt
 	public static final String MSG_ASK_FILENAME = "Please enter the name of your file";
 	public static final String MSG_ASK_INPUT = "Please enter your command";
+//	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
+//	private static final String CLEAR_INFO_INDICATOR = "";
+	private static final String[] CMD_GET_TEMPLATE = {"viewTask",null,null,null,null,null,null,null,null};
+	private static final String[] CMD_GET_TASK_LIST = {"viewTemplates",null,null,null,null,null,null,null,null};
 	
 	//Intended length of command array
 	public static final int LENGTH_COMMAND = 9;
+	private static final int ERROR = 0;
+	private static final int ERROR_INIT = 1;
 	
 	private CentralizedLog 	logfile;
 	private TaskManager 	myTaskList;
@@ -75,7 +81,6 @@ public class SystemHandler {
 		system.myShortcut.setSystemPath(system);
 		
 		system.activateUI();
-		system.rawUserInput("viewTask");
 	}
 	
 	/**
@@ -115,12 +120,21 @@ public class SystemHandler {
 	
 	public Task requestTask(int id) {
 		//stub
-		return new Task(1000, "NEW",
-				convertToDateObject("12/09/2015 10:00"),
-				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0);
-		/*
+//		return new Task(1000, "NEW",
+//				convertToDateObject("12/09/2015 10:00"),
+//				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0);
+		
 		return myTaskList.getTaskFromTID(id);
-		*/
+		
+	}
+	
+	public void addTaskFromTemplate(String[] fetchedTask) {
+		try {
+			executeTaskManager(fetchedTask);
+		} catch (ParseException e) {
+			window.displayMsg(e.getMessage(), ERROR);
+		}
+		
 	}
 	
 	public boolean writeToFile(ArrayList<Task> taskList) {
@@ -138,22 +152,20 @@ public class SystemHandler {
 		return true;
 	}
 	
-	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
-	private static final String CLEAR_INFO_INDICATOR = "";
 
-	private Date convertToDateObject(String dateString) {
-		try {
-			Date date = null;
-			if (dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
-				DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
-				date = format.parse(dateString);
-			}
-			return date;
-		} catch (ParseException e) {
-			System.out.println(e);
-			return null;
-		}
-	}
+//	private Date convertToDateObject(String dateString) {
+//		try {
+//			Date date = null;
+//			if (dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
+//				DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+//				date = format.parse(dateString);
+//			}
+//			return date;
+//		} catch (ParseException e) {
+//			System.out.println(e);
+//			return null;
+//		}
+//	}
 	
 	/**
 	 * @param commandType	Command Type string extracted from first word of strings of user command
@@ -186,21 +198,8 @@ public class SystemHandler {
 		}
 		return null;
 	}
-	/**
-	 * This is a dummy user interface to simulate user interaction
-	 * @param msg	Message to show user
-	 * @param sc	Scanner class to read user input
-	 * @return		User input in a string
-	 */
-	private static String dummyUI(String msg, Scanner sc) {
-		System.out.println(msg);
-		String commandFromUser = sc.nextLine();
-		return commandFromUser;
-	}
 	
-	private boolean initializeSystem() {
-		return initializeSystem("default.txt");
-	}
+	
 	/**
 	 * @param fileName	File location which the data saved at
 	 * @return			True if the system is initialized properly
@@ -213,7 +212,7 @@ public class SystemHandler {
 		myShortcut.processShortcutCommand(cmd);
 		
 		logfile = CentralizedLog.getLogger();
-		myTemplates = Template.getTemplate();
+		myTemplates = new Template();
 		myTaskList = new TaskManager();
 		parser = new FlexiParser();
 		externalStorage = new FileStorage(fileName);
@@ -223,7 +222,7 @@ public class SystemHandler {
 			externalStorage.readShortcutFromFile(myShortcut);
 			externalStorage.readTemplateFromFile(myTemplates);
 		} catch(ParseException e) {
-			
+			window.displayMsg(e.getMessage(), ERROR_INIT);
 		}
 		
 		if(isInitProperly) {
@@ -261,23 +260,20 @@ public class SystemHandler {
 			COMMAND_TYPE_GROUP commandGroupType = SystemHandler.getCommandGroupType(parsedCommand[0]);
 			switch(commandGroupType) {
 				case TASK_MANAGER:
+					return executeTaskManager(parsedCommand);
 					
-					ArrayList<Task> display = executeTaskManager(parsedCommand);
-					window.displayTaskTable(display, true);
-					return display;
 				case SHORTCUT_MANAGER:
 					String[][] displayS = executeShortcutManager(parsedCommand);
-					
-					window.displayShortcuts(displayS, true);
 					break;
 				case CUSTOMIZED_MANAGER:
 					executeCustomizer(parsedCommand);
+					break;
 				default:
 					assert(isAGroupCommand(getCommandGroupType(parsedCommand[0])));
 			}
 			
 		} catch(ParseException e) {
-			System.out.println(e);
+			window.displayMsg(e.getMessage(), ERROR);
 		} 
 		return null;
 		
@@ -308,6 +304,8 @@ public class SystemHandler {
 	 */
 	private ArrayList<Task> executeTaskManager(String[] command) throws ParseException {
 		ArrayList<Task> result = myTaskList.processTM(command);
+		ArrayList<Task> fullList = myTaskList.processTM(CMD_GET_TASK_LIST);
+		window.displayTaskTable(result, true);
 		return result;
 	}
 	
@@ -315,14 +313,17 @@ public class SystemHandler {
 	private String[][] executeShortcutManager(String[] command) {
 		//stub
 		//Not implemented
-		return myShortcut.processShortcutCommand(command);
-
+		String[][] result = myShortcut.processShortcutCommand(command);
+		window.displayShortcuts(result, true);
+		return result;
 	}
 	
 	private void executeCustomizer(String[] command) {
 		//stub
 		//Not implemented
-		myTemplates.processCustomizingCommand(command);
+		ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
+		ArrayList<Task> fullList = myTemplates.processCustomizingCommand(CMD_GET_TEMPLATE);
+		window.displayTaskTable(result, true);
 		
 	}
 	
