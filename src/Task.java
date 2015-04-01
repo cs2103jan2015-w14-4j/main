@@ -110,6 +110,31 @@ public class Task {
 	public Date getDeadline() {
 		return deadline;
 	}
+	
+	public String getDateFromString() {
+		if(dateFrom != null) {
+			return convertToStringFromDate(dateFrom);
+		} else {
+			return null;
+		}
+		
+	}
+
+	public String getDateToString() {
+		if(dateTo != null) {
+			return convertToStringFromDate(dateTo);
+		} else {
+			return null;
+		}
+	}
+
+	public String getDeadlineString() {
+		if(deadline != null) {
+			return convertToStringFromDate(deadline);
+		} else {
+			return null;
+		}
+	}
 
 	public String getLocation() {
 		return location;
