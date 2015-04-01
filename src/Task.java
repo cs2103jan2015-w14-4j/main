@@ -11,11 +11,10 @@ public class Task {
     private static final int TASK_NAME = 1;
     private static final int DATE_FROM = 2;
     private static final int DATE_TO = 3;
-    private static final int DEADLINE = 4;
-    private static final int LOCATION = 5;
-    private static final int DETAILS = 6;
-    private static final int PRIORITY = 7;
-    private static final int DEFAULT_STRING_SIZE = 8;
+    private static final int LOCATION = 4;
+    private static final int DETAILS = 5;
+    private static final int PRIORITY = 6;
+    private static final int DEFAULT_STRING_SIZE = 7;
 	
 	private int TID;
 	private String taskName;
@@ -217,7 +216,7 @@ public class Task {
         } else {
             taskStringArray[TASK_NAME] = null;
         }
-	    
+	            
         if(dateFrom != null) {
             taskStringArray[DATE_FROM] = convertToStringFromDate(dateFrom);
         } else {
@@ -231,9 +230,9 @@ public class Task {
         }
 
         if(deadline != null) {
-            taskStringArray[DEADLINE] = convertToStringFromDate(deadline);
+            taskStringArray[DATE_TO] = convertToStringFromDate(deadline);
         } else {
-            taskStringArray[DEADLINE] = null;
+            taskStringArray[DATE_TO] = null;
         }
 
         if(location != null) {
@@ -252,6 +251,26 @@ public class Task {
         
 	    return taskStringArray;
 	}
+    
+    private boolean isDurationalTask() {
+        return getDateFrom() != null && getDateTo() != null &&
+                getDeadline() == null;
+    }
+    
+    private boolean isFloatingTask() {
+        return getDateFrom() == null && getDateTo() == null &&
+                getDeadline() == null;
+    }
+    
+    private boolean isDeadlineTask() {
+        return getDateFrom() == null && getDateTo() == null &&
+                getDeadline() != null; 
+    }
+    
+    private boolean isForeverTask() {
+        return getDateFrom() != null && getDateTo() == null &&
+                getDeadline() == null;
+    }
     
     private String convertToStringFromDate(Date dateObject) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
