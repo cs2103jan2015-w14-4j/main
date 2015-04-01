@@ -399,7 +399,7 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private void clearTaskDateFrom(Task task) {
-        task.setTaskName(null);
+        task.setDateFrom(null);
     }
 
     private void clearTaskDateTo(Task task) {
