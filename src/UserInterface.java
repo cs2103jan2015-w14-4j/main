@@ -98,7 +98,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 	ArrayList<Task> dummy2;
 	
 	//doesnt work properly, edited task shown first not yet implemented
-	public void  displayTaskTable(ArrayList<Task> affectedTask, ArrayList<Task> fullListTask){
+	public void  displayTaskTable(ArrayList<Task> affectedTask, ArrayList<Task> fullListTask, int status){
 		viewTaskTable();
 		ArrayList<String[]> outputDataString = new ArrayList<String[]>();
 		
