@@ -1051,15 +1051,15 @@ public class TaskManagerTest {
         Task floatingTask = new Task(18, "floatingTask", null, null, null, null, null, 0);
 
         Assert.assertEquals("[10, durationalTask, 18/03/2015 12:00, 18/03/2015, null, "
-                + "null, 0]", Arrays.toString(durationalTask.toStringArray()));
+                + "null, Normal]", Arrays.toString(durationalTask.toStringArray()));
         Assert.assertEquals("[11, deadlineTaskDateTo, null, 18/03/2015 15:00, null, "
-                + "null, 0]", Arrays.toString(deadlineTaskDateTo.toStringArray()));
+                + "null, Normal]", Arrays.toString(deadlineTaskDateTo.toStringArray()));
         Assert.assertEquals("[12, deadlineTaskDeadline, null, 18/03/2015, null, "
-                + "null, 0]", Arrays.toString(deadlineTaskDeadline.toStringArray()));
+                + "null, Normal]", Arrays.toString(deadlineTaskDeadline.toStringArray()));
         Assert.assertEquals("[17, foreverTask, null, 21/03/2015 23:59, null, "
-                + "null, 0]", Arrays.toString(foreverTask.toStringArray()));
+                + "null, Normal]", Arrays.toString(foreverTask.toStringArray()));
         Assert.assertEquals("[18, floatingTask, null, null, null, "
-                + "null, 0]", Arrays.toString(floatingTask.toStringArray()));
+                + "null, Normal]", Arrays.toString(floatingTask.toStringArray()));
     }
     //--------------------testing others ends-----------------------------------
 

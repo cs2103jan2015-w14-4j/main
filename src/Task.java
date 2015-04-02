@@ -63,7 +63,7 @@ public class Task {
 		this.location = location;
 		this.details = details;
 		this.priority = priority;
-		this.status = INCOMPLETE_TASK;
+		this.status = INDEX_STATUS_NORMAL;
 	}
 	
 	
@@ -282,7 +282,7 @@ public class Task {
 	
 	public Task clone() {
 		return new Task(TID,taskName, cloneDate(dateFrom), cloneDate(dateTo), 
-				cloneDate(dateTo), location, details, priority);
+				cloneDate(deadline), location, details, priority);
 	}
 	
 	private Date cloneDate(Date date) {
