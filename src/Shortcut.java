@@ -109,9 +109,8 @@ public class Shortcut {
 	private void addShortcutInit(String[] command) throws NumberFormatException {
 		int row = Integer.parseInt(command[2]);
 		
-		//assert(row < keywords.length);
+		assert(row < keywords.length);
 		assert(row >= 0);
-		//assert(!isKeyWords(command[1]));
 		
 		ArrayList<String> toBeAddedInto = userShortcuts.get(row);
 		
@@ -171,8 +170,13 @@ public class Shortcut {
 		int index = getShortcutMatchingIndex(shortcut);
 		if(index == INDEX_NOT_FOUND) {
 			return null;
+			
 		} else if(isShortcutKeyAtMinimumCapacity(index)){
 			return null;
+			
+		} else if(isDefaultShortcut(shortcut)) {
+			return null;
+			
 		} else {
 			removeShortcutfromUserList(index, shortcut);
 			
@@ -182,6 +186,19 @@ public class Shortcut {
 		
 	}
 	
+	private boolean isDefaultShortcut(String shortcut) {
+		for(int i = 0; i < defaultWordsSet.length; ++i) {
+			String[] defaultWords = defaultWordsSet[i];
+			for(int j = 0; j < defaultWords.length; ++j) {
+				if(shortcut.equalsIgnoreCase(defaultWords[j])) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+
 	private boolean removeShortcutfromUserList(int index, String shortcut) {
 		ArrayList<String> userDefinedShortcut = userShortcuts.get(index);
 		for(int i = 0; i < userDefinedShortcut.size(); ++i) {
@@ -213,7 +230,7 @@ public class Shortcut {
 		if(!isKeyWords(belongTo)) {
 			return null;
 		}
-		else if(isExactKeyWords(newShortcut)) {
+		else if(isKeyWords(newShortcut)) {
 			return null;
 		}
 		else if (isReservedWord(newShortcut)) {
@@ -267,29 +284,17 @@ public class Shortcut {
 	}
 	
 	private boolean isKeyWords(String command) {
-		int matchingIndex = searchMatching(command, false);
+		int matchingIndex = searchMatching(command);
 		return matchingIndex > -1;
 	}
 	
-	private boolean isExactKeyWords(String command) {
-		int matchingIndex = searchMatching(command, true);
-		return matchingIndex > -1;
-	}
 	
-	private int searchMatching(String command) {
-		return searchMatching(command, false);
-	}
-	
-	private int searchMatching (String command, boolean exactMatch) {
+	private int searchMatching (String command) {
 		for(int i = 0; i < userShortcuts.size(); ++i) {
 			ArrayList<String> singleShortcut = userShortcuts.get(i);
 			
 			for(int j = 0; j < singleShortcut.size(); ++j) {
-				if(exactMatch) {
-					if(isExactMatchingWord(command, singleShortcut.get(j))) {
-						return i;
-					}
-				} else if(isTheMatchingWord(command, singleShortcut.get(j))) {
+				if(isTheMatchingWord(command, singleShortcut.get(j))) {
 					return i;
 				}
 				
@@ -299,14 +304,6 @@ public class Shortcut {
 		return -1;
 	}
 	
-	private boolean isExactMatchingWord(String command, String matching) {
-		if(command.equals(matching)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 	private boolean isTheMatchingWord(String command, String matching) {
 		
 		if(command.equalsIgnoreCase(matching)) {
