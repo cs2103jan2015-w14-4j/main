@@ -14,6 +14,7 @@ public class Template {
 	public static final String NO_SUCH_TEMPLATE = "No such template saved in the system";
 	private static final String COMMAND_ADD_TASK = "addTask";
 	private static final String MSG_INVALID_GET_FIELD = "No such field value to get from";
+	private static final String MSG_ERR_NO_SUCH_COMMAND = "No such command in Template Manager: %1$s";
 	private HashMap<String,Task> templates; 
 	private SystemHandler system;
 	
@@ -189,23 +190,13 @@ public class Template {
 		}
 	}
 	
-	private COMMAND_TYPE_TEMPLATE getCommandType(String command) throws NoSuchElementException {
-		switch(command) {
-			case "addTemplate":
-				return COMMAND_TYPE_TEMPLATE.addTemplate;
-			case "viewTemplates":
-				return COMMAND_TYPE_TEMPLATE.viewTemplates;
-			case "deleteTemplate":
-				return COMMAND_TYPE_TEMPLATE.deleteTemplate;
-			case "editTemplate":
-				return COMMAND_TYPE_TEMPLATE.editTemplate;
-			case "resetTemplates":
-				return COMMAND_TYPE_TEMPLATE.resetTemplates;
-			case "addTemplateInit":
-				return COMMAND_TYPE_TEMPLATE.addTemplateInit;
-			default:
-				throw new NoSuchElementException("Wrong command received at Template Manager.");
-		}
+	private COMMAND_TYPE_TEMPLATE getCommandType(String command) throws IllegalArgumentException {
+		try{
+        	return COMMAND_TYPE_TEMPLATE.valueOf(command);
+        } catch (IllegalArgumentException e) {
+        	throw new IllegalArgumentException(String.format(MSG_ERR_NO_SUCH_COMMAND, 
+        			e.getMessage().substring(39)));
+        }
 	}
 	
 	private ArrayList<Task> removeTemplate(String name) throws NoSuchElementException {

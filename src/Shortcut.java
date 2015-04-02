@@ -31,6 +31,8 @@ public class Shortcut {
 	private static final int MAXIMUM_CAPACITY = 10;
 
 	private static final int INDEX_NOT_FOUND = -1;
+
+	private static final String MSG_ERR_NO_SUCH_COMMAND = "No such command in Shortcut Manager: %1$s";
 	
 	private ArrayList<ArrayList<String>> userShortcuts;
 	private SystemHandler system;
@@ -127,22 +129,15 @@ public class Shortcut {
 		}
 	}
 	
-	private COMMAND_TYPE_SHORTCUT matchCommand(String command) throws NoSuchElementException {
-		switch(command) {
-			case "addShortcut":
-				return COMMAND_TYPE_SHORTCUT.addShortcut;
-			case "viewShortcuts":
-				return COMMAND_TYPE_SHORTCUT.viewShortcut;
-			case "deleteShortcut":
-				return COMMAND_TYPE_SHORTCUT.deleteShortcut;
-			case "resetShortcut":
-				return COMMAND_TYPE_SHORTCUT.resetShortcut;
-			case "addShortcutInit":
-				return COMMAND_TYPE_SHORTCUT.addShortcutInit;
-			default:
-				throw new NoSuchElementException("Wrong command received at Shortcut Manager.");
-		}
-		
+	private COMMAND_TYPE_SHORTCUT matchCommand(String command) 
+			throws IllegalArgumentException {
+        try{
+        	return COMMAND_TYPE_SHORTCUT.valueOf(command);
+        } catch (IllegalArgumentException e) {
+        	throw new IllegalArgumentException(String.format(MSG_ERR_NO_SUCH_COMMAND, 
+        			e.getMessage().substring(39)));
+        }
+        
 	}
 	
 	private void resetShortcut() {
