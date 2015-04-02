@@ -41,8 +41,8 @@ public class TaskManagerTest {
         "18/03/2015 15:30", null, null, null, null};
     public static final String[] EDIT_TASK_11 = {"editTask", "11", null, null, 
         "20/03/2015 15:30", null, "LT108", null, null};
-    public static final String[] EDIT_TASK_12 = {"editTask", "12", null, null,
-        null, null, "IVLE", "", null};
+    public static final String[] EDIT_TASK_12 = {"clearAttr", "12", null, null,
+        null, null, "", "", null};
     public static final String[] EDIT_TASK_9999 = {"editTask", "9999", null, null, 
         "20/03/2015 15:30", null, null, null, null};
     public static final String[] VIEW_TASK = {"viewTask", null, null, null, null, null, 
@@ -279,7 +279,7 @@ public class TaskManagerTest {
 
         //test the ArrayList before edit
         assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
-        expectTasks.get(TASK12).setLocation("IVLE");
+        expectTasks.get(TASK12).setLocation(null);
         expectTasks.get(TASK12).setDetails(null);
         ArrayList<Task> expectEdit = new ArrayList<Task>();
         expectEdit.add(expectTasks.get(TASK12));
@@ -790,6 +790,49 @@ public class TaskManagerTest {
         assertTaskArrayListEquals(myTaskManager.processTM(REDO_OPERATION), expectRedo);
         assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+    }
+    
+    @Test
+    public void testUndoRedoForEdit_V2() {
+        String[] addTask10 = {"addTask", "10", "CS2331 Reflection", null, 
+            null, null, "SOC", null, "1"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processInitialization(addTask10);
+        
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2331 Reflection", null, 
+                null, null, "SOC", null, 1);
+        expectTasks.add(expectTask10);
+        
+        //test before doing any undo and redo
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+        
+        String[] clear = {"clearAttr", "10", null, "", 
+                "", "", "", "", null};
+        expectTasks.get(TASK10).setLocation(null);
+        ArrayList<Task> expectEdit = new ArrayList<Task>();
+        expectEdit.add(expectTasks.get(0));    
+        assertTaskArrayListEquals(myTaskManager.processTM(clear), expectEdit);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], COMMAND_EDIT);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+        
+        expectTasks.get(TASK10).setLocation("SOC");
+        ArrayList<Task> expectUndo = new ArrayList<Task>();
+        expectUndo.add(expectTasks.get(0));
+        assertTaskArrayListEquals(myTaskManager.processTM(UNDO_OPERATION), expectUndo);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getRedoStack().peek()[COMMAND_TYPE], COMMAND_EDIT);
+
+        
+        expectTasks.get(TASK10).setLocation(null);
+        ArrayList<Task> expectRedo = new ArrayList<Task>();
+        expectRedo.add(expectTasks.get(0));
+        assertTaskArrayListEquals(myTaskManager.processTM(REDO_OPERATION), expectRedo);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], COMMAND_EDIT);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
     }
 

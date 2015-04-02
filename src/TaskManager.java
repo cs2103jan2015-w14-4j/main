@@ -127,8 +127,9 @@ public class TaskManager implements TaskManagerInterface {
             }
             break;
 
-        case editTask:
+        case editTask: case clearAttr:
             if(isAbleToEdit(inputs[TID])) {
+                inputs[COMMAND_TYPE] = changeClearAttrToEditTask();
                 returningTasks = processEditCommand(inputs);
                 saveTasksToFile();
             }
@@ -290,6 +291,10 @@ public class TaskManager implements TaskManagerInterface {
         return isIDClashing(TaskID);
     }
 
+    private String changeClearAttrToEditTask() {
+        return COMMAND_TYPE_TASK_MANAGER.editTask.toString();
+    }
+
     private ArrayList<Task> processEditCommand(String[] inputs) {
         Task taskToEdit = getTaskToEdit(inputs);
         updateStackForEdit(taskToEdit, inputs, undoStack);
@@ -351,6 +356,7 @@ public class TaskManager implements TaskManagerInterface {
 
     private void editTaskLocation(String[] inputs, Task task) {
         task.setLocation(inputs[LOCATION]);
+
     }
 
     private void editTaskDeadline(String[] inputs, Task task) {
@@ -393,7 +399,7 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private void clearTaskDateFrom(Task task) {
-        task.setTaskName(null);
+        task.setDateFrom(null);
     }
 
     private void clearTaskDateTo(Task task) {
@@ -530,7 +536,7 @@ public class TaskManager implements TaskManagerInterface {
             return DATE_IS_VALID;
         }
     }
-    
+
     //this method is only for isSearchADateObject(String)
     private Date convertToDateWithoutPrintException(String str) {
         Date date = null;
@@ -542,10 +548,10 @@ public class TaskManager implements TaskManagerInterface {
             }
         } catch (ParseException ex) {
         }
-        
+
         return date;
     }
-    
+
     private ArrayList<Task> searchTaskDateObject(Date searchDate) {
         ArrayList<Task> returningTasks = new ArrayList<Task>();
 
@@ -565,34 +571,34 @@ public class TaskManager implements TaskManagerInterface {
                 }
             }
         }
-        
+
         if(returningTasks.isEmpty()) {
             return null;
         } else {
             return returningTasks;
         }
     }
-        
+
     private int compareTwoDateOnly(Date searchDate, Date dateInTask) {
         return DateTimeComparator.getDateOnlyInstance().compare(searchDate,
                 dateInTask);
     }
-        
+
     private boolean isDurationalTask(Task task) {
         return task.getDateFrom() != null && task.getDateTo() != null &&
                 task.getDeadline() == null;
     }
-    
+
     private boolean isFloatingTask(Task task) {
         return task.getDateFrom() == null && task.getDateTo() == null &&
                 task.getDeadline() == null;
     }
-    
+
     private boolean isDeadlineTask(Task task) {
         return task.getDateFrom() == null && task.getDateTo() == null &&
                 task.getDeadline() != null; 
     }
-    
+
     private boolean isForeverTask(Task task) {
         return task.getDateFrom() != null && task.getDateTo() == null &&
                 task.getDeadline() == null;
