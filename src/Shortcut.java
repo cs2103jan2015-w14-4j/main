@@ -3,9 +3,8 @@ import java.util.NoSuchElementException;
 
 public class Shortcut {
 	 
-	
 	public static final String[] keywords = {	"addTask", "editTask","viewTask","deleteTask", 
-										"clearAttr", "searchTask", "undoTask", "redoTask",
+										"clearAttr", "searchTask", "undoTask", "redoTask", "markTask",
 										"addShortcut", "viewShortcuts", "deleteShortcut",
 										"resetShortcut", "addTemplate", "editTemplate", 
 										"viewTemplates", "useTemplate", "deleteTemplate", 
@@ -14,8 +13,8 @@ public class Shortcut {
 	public static final String[][] defaultWordsSet = {{"add","addTask"}, {"edit","editTask"},
 													{"view","viewTask"}, {"delete","deleteTask"},
 													{"clear","clearAttr"}, {"search", "searchTask"}, 
-													{"undo","undoTask"}, 
-													{"redo","redoTask"}, {"addShortcut","addKeyword"}, 
+													{"undo","undoTask"}, {"redo","redoTask"},
+													{"mark","markTask"}, {"addShortcut","addKeyword"}, 
 													{"viewShortcut","viewKeyword"}, {"deleteShortcut","deleteKeyword"}, 
 													{"resetShortcut","resetKeyword"}, {"addTemplate","addTemp"}, 
 													{"editTemplate","editTemp"}, {"viewTemplate","viewTemp"}, 
@@ -103,16 +102,16 @@ public class Shortcut {
 		
 		system = SystemHandler.getSystemHandler();
 		
-		//system.writeShortcutToFile(shortcuts);
+		system.writeShortcutToFile(shortcuts);
 		
 	}
 	
 	private void addShortcutInit(String[] command) throws NumberFormatException {
 		int row = Integer.parseInt(command[2]);
 		
-		assert(row < keywords.length);
+		//assert(row < keywords.length);
 		assert(row >= 0);
-		assert(!isKeyWords(command[1]));
+		//assert(!isKeyWords(command[1]));
 		
 		ArrayList<String> toBeAddedInto = userShortcuts.get(row);
 		
