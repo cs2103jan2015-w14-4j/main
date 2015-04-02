@@ -5,7 +5,7 @@ public class Shortcut {
 	 
 	
 	public static final String[] keywords = {	"addTask", "editTask","viewTask","deleteTask", 
-										"clearAttr", "undoTask", "redoTask",
+										"clearAttr", "searchTask", "undoTask", "redoTask",
 										"addShortcut", "viewShortcuts", "deleteShortcut",
 										"resetShortcut", "addTemplate", "editTemplate", 
 										"viewTemplates", "useTemplate", "deleteTemplate", 
@@ -13,7 +13,8 @@ public class Shortcut {
 	
 	public static final String[][] defaultWordsSet = {{"add","addTask"}, {"edit","editTask"},
 													{"view","viewTask"}, {"delete","deleteTask"},
-													{"clear","clearAttr"}, {"undo","undoTask"}, 
+													{"clear","clearAttr"}, {"search", "searchTask"}, 
+													{"undo","undoTask"}, 
 													{"redo","redoTask"}, {"addShortcut","addShort"}, 
 													{"viewShortcut","viewShort"}, {"deleteShortcut","deleteShort"}, 
 													{"resetShortcut","resetShort"}, {"addTemplate","addTemp"}, 
@@ -24,6 +25,13 @@ public class Shortcut {
 	
 	private static final String[] reservedWords = {"at","location","from","datefrom","to","dateto","on",
 													"before","by","detail","priority","name","title"};
+
+	private static final int MINIMUM_LENGTH = 3;
+	private static final int MAXIMUM_LENGTH = 15;
+	private static final int MINIMUM_CAPACITY = 1;
+	private static final int MAXIMUM_CAPACITY = 10;
+
+	private static final int INDEX_NOT_FOUND = -1;
 	
 	private ArrayList<ArrayList<String>> userShortcuts;
 	private SystemHandler system;
@@ -161,24 +169,44 @@ public class Shortcut {
 	
 	private String[] removeShortcut(String shortcut) {
 		
+		int index = getShortcutMatchingIndex(shortcut);
+		if(index == INDEX_NOT_FOUND) {
+			return null;
+		} else if(isShortcutKeyAtMinimumCapacity(index)){
+			return null;
+		} else {
+			removeShortcutfromUserList(index, shortcut);
+			
+			String[] result = constructOutputString(index, shortcut);
+			return result;
+		}
+		
+	}
+	
+	private boolean removeShortcutfromUserList(int index, String shortcut) {
+		ArrayList<String> userDefinedShortcut = userShortcuts.get(index);
+		for(int i = 0; i < userDefinedShortcut.size(); ++i) {
+			if(userDefinedShortcut.get(i).equals(shortcut)) {
+				userDefinedShortcut.remove(i);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean isShortcutKeyAtMinimumCapacity(int index) {
+		return userShortcuts.get(index).size() < MINIMUM_CAPACITY;
+	}
+	private int getShortcutMatchingIndex(String shortcut) {
 		for(int i = 0; i < userShortcuts.size(); ++i) {
 			ArrayList<String> singleShortcut = userShortcuts.get(i);
 			for(int j = 0; j < singleShortcut.size(); ++j) {
-				
 				if(shortcut.equals(singleShortcut.get(j))) {
-					if(singleShortcut.size() < 2) {
-						return null;
-					}
-					else {
-						String removed = singleShortcut.remove(j);
-						String[] result = {keywords[i], removed};
-						return result;
-					}
-					
+					return i;
 				}
 			}
 		}
-		return null;
+		return INDEX_NOT_FOUND;
 	}
 	
 	private String[] insertShortcut(String newShortcut, String originShortcut) {
@@ -192,18 +220,47 @@ public class Shortcut {
 		else if (isReservedWord(newShortcut)) {
 			return null;
 		}
-		else {
-			
-			ArrayList<String> toBeAddedInto = userShortcuts.get(belongTo);
-			if(toBeAddedInto.size() > 5) {
-				return null;
-			}
-			else {
-				toBeAddedInto.add(newShortcut);
-				String[] result = {keywords[belongTo], originShortcut, newShortcut};
-				return result;	
-			}
+		else if (isWordLengthInappropriate(newShortcut)) {
+			return null;
 		}
+		else if(isShortcutAtMaximumCapacity(belongTo)) {
+			return null;
+		}
+		else {
+			addShortcut(newShortcut, belongTo);
+			String[] result = constructOutputString(belongTo,originShortcut,newShortcut);
+			return result;	
+			
+		}
+	}
+	
+	private String[] constructOutputString(int index, String deleted) {
+		String[] result = {keywords[index], deleted};
+		return result;
+	}
+	
+	private String[] constructOutputString(int index, String original, String newlyAdded) {
+		String[] result = {keywords[index], original, newlyAdded};
+		return result;
+	}
+
+	private boolean isWordLengthInappropriate(String newShortcut) {
+		return newShortcut.length() < MINIMUM_LENGTH || newShortcut.length() > MAXIMUM_LENGTH;
+	}
+
+
+	private boolean isShortcutAtMaximumCapacity(int index) {
+		return userShortcuts.get(index).size() > MAXIMUM_CAPACITY;
+	}
+
+
+	/**
+	 * @param newShortcut
+	 * @param belongTo
+	 */
+	private void addShortcut(String newShortcut, int belongTo) {
+		ArrayList<String> toBeAddedInto = userShortcuts.get(belongTo);
+		toBeAddedInto.add(newShortcut);
 	}
 	
 	private boolean isKeyWords(int index) {

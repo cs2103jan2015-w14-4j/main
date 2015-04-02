@@ -208,25 +208,25 @@ public class SystemTest {
 		}
 		
 		//TC2 - add a shortcut
-		String[] cmd2 = {"addShortcut","+","add"};
+		String[] cmd2 = {"addShortcut","addM","add"};
 		String[][] results2 = myshortcut.processShortcutCommand(cmd2);
-		String[][] expected2 = {{"addTask","add","+"}};
+		String[][] expected2 = {{"addTask","add","addM"}};
 		for(int i = 0; i < results2.length; ++i) {
 			Assert.assertArrayEquals(results2[i], expected2[i]);
 		}
 		
 		//TC3 - add another shortcut
-		String[] cmd3 = {"addShortcut","eT","editTemplate"};
+		String[] cmd3 = {"addShortcut","eTemp","editTemplate"};
 		String[][] results3 = myshortcut.processShortcutCommand(cmd3);
-		String[][] expected3 = {{"editTemplate","editTemplate","eT"}};
+		String[][] expected3 = {{"editTemplate","editTemplate","eTemp"}};
 		for(int i = 0; i < expected3.length; ++i) {
 			Assert.assertArrayEquals(results3[i], expected3[i]);
 		}
 		
 		//TC4 - use added shortcut to do something
-		String[] cmd4 = {"addShortcut","addS","eT"};
+		String[] cmd4 = {"addShortcut","addS","eTemp"};
 		String[][] results4 = myshortcut.processShortcutCommand(cmd4);
-		String[][] expected4 = {{"editTemplate","eT","addS"}};
+		String[][] expected4 = {{"editTemplate","eTemp","addS"}};
 		for(int i = 0; i < expected4.length; ++i) {
 			Assert.assertArrayEquals(results4[i], expected4[i]);
 		}
@@ -235,18 +235,18 @@ public class SystemTest {
 		String[] cmd5 = {"viewShortcuts", null, null};
 		String[][] results5 = myshortcut.processShortcutCommand(cmd5);
 		String[][] expected5 = Shortcut.defaultWordsSet;
-		String[] changes1 = {"add","addTask","+"};
+		String[] changes1 = {"add","addTask","addM"};
 		expected5[0] = changes1;
-		String[] changes2= {"editTemplate","editTemp","eT","addS"};
-		expected5[12] = changes2;
+		String[] changes2= {"editTemplate","editTemp","eTemp","addS"};
+		expected5[13] = changes2;
 		for(int i = 0; i < expected5.length; ++i) { 
 			Assert.assertArrayEquals(results5[i], expected5[i]);
 		}
 		
 		//TC6 - delete shortcut
-		String[] cmd6 = {"deleteShortcut", "eT", null};
+		String[] cmd6 = {"deleteShortcut", "eTemp", null};
 		String[][] results6 = myshortcut.processShortcutCommand(cmd6);
-		String[][] expected6 = {{"editTemplate","eT"}};
+		String[][] expected6 = {{"editTemplate","eTemp"}};
 		for(int i = 0; i < expected6.length; ++i) {
 			Assert.assertArrayEquals(results6[i], expected6[i]);
 		}
