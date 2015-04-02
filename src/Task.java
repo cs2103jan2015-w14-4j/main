@@ -3,27 +3,36 @@ import java.util.Date;
 
 public class Task {
 	
-	private static final int MINIMUM_LENGTH_TASK_NAME = 1;
-	private static final int MAXIMUM_LENGTH_TASK_NAME = 30;
-	private static final int MAXIMUM_LENGTH_LOCATION = 30;
+	public static final int MINIMUM_LENGTH_TASK_NAME = 1;
+	public static final int MAXIMUM_LENGTH_TASK_NAME = 30;
+	public static final int MAXIMUM_LENGTH_LOCATION = 30;
+
+	public static final String STRING_STATUS_URGENT = "Urgent";
+	public static final String STRING_STATUS_MAJOR = "Major";
+	public static final String STRING_STATUS_NORMAL = "Normal";
+	public static final String STRING_STATUS_MINOR = "Minor";
+	public static final String STRING_STATUS_CASUAL = "Casual";
+	public static final String STRING_STATUS_COMPLETE 	= "Complete";
+	public static final String STRING_STATUS_OVERDUE 	= "Overdue";
 	
-	private static final int INDEX_STATUS_URGENT = 1;
-	private static final int INDEX_STATUS_MAJOR = 2;
-	private static final int INDEX_STATUS_NORMAL = 3;
-	private static final int INDEX_STATUS_MINOR = 4;
-	private static final int INDEX_STATUS_CASUAL = 5;
-	private static final int INDEX_STATUS_COMPLATE 	= 6;
-	private static final int INDEX_STATUS_OVERDUE 	= 7;
+	public static final int INDEX_STATUS_URGENT = 1;
+	public static final int INDEX_STATUS_MAJOR = 2;
+	public static final int INDEX_STATUS_NORMAL = 3;
+	public static final int INDEX_STATUS_MINOR = 4;
+	public static final int INDEX_STATUS_CASUAL = 5;
+	public static final int INDEX_STATUS_COMPLETE 	= 6;
+	public static final int INDEX_STATUS_OVERDUE 	= 7;
 
 	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
-    private static final int TASK_ID = 0;
-    private static final int TASK_NAME = 1;
-    private static final int DATE_FROM = 2;
-    private static final int DATE_TO = 3;
-    private static final int LOCATION = 4;
-    private static final int DETAILS = 5;
-    private static final int PRIORITY = 6;
-    private static final int DEFAULT_STRING_SIZE = 7;
+    public static final int INDEX_TASK_ID = 0;
+    public static final int INDEX_TASK_NAME = 1;
+    public static final int INDEX_DATE_FROM = 2;
+    public static final int INDEX_DATE_TO = 3;
+    public static final int INDEX_LOCATION = 4;
+    public static final int INDEX_DETAILS = 5;
+    public static final int INDEX_PRIORITY = 6;
+    public static final int INDEX_STATUS = 6;
+    public static final int DEFAULT_STRING_SIZE = 7;
     private static final String ZERO_TIME = " 00:00";
     
     //TO BE CHANGED
@@ -38,11 +47,12 @@ public class Task {
 	private Date deadline;
 	private String location;
 	private String details;
-	private int priority; //Create first for future
+	private int priority; //To be replaced by status
 	private int status;
 	
 
 	//Constructor 
+	//To be updated - remove priority
 	public Task(int TID, String taskName, Date dateFrom, 
 			Date dateTo, Date deadline, String location, String details, int priority) {
 		this.TID = TID;
@@ -86,6 +96,7 @@ public class Task {
 		this.details = details;
 	}
 
+	//Should be removed use setter below instead
 	public void setPriority(int priority) {
 		this.priority = priority;
 	}
@@ -108,7 +119,7 @@ public class Task {
 	}
 	
 	public void setComplate() {
-		this.status = INDEX_STATUS_COMPLATE;
+		this.status = INDEX_STATUS_COMPLETE;
 	}
 	
 	public void setMinor() {
@@ -177,20 +188,45 @@ public class Task {
 		return priority;
 	}
 
-	
 	public int getStatus() {
 		return status;
+	}
+	public String getStatusString() {
+		switch(status) {
+			case INDEX_STATUS_URGENT:
+				return STRING_STATUS_URGENT;
+			case INDEX_STATUS_MAJOR:
+				return STRING_STATUS_MAJOR;
+			case INDEX_STATUS_NORMAL:
+				return STRING_STATUS_NORMAL;
+			case INDEX_STATUS_MINOR:
+				return STRING_STATUS_MINOR;
+			case INDEX_STATUS_CASUAL:
+				return STRING_STATUS_CASUAL;
+			case INDEX_STATUS_COMPLETE:
+				return STRING_STATUS_COMPLETE;
+			case INDEX_STATUS_OVERDUE:
+				return STRING_STATUS_OVERDUE;
+			default:
+				return STRING_STATUS_NORMAL;
+		}
 	}
 	
 	
 	public boolean isEqual(Task task) {
 		if( !dateEqual(task.getDateFrom(), dateFrom)) {
+//			System.out.println(task.getDateFrom() + " "+ dateFrom);
+//			System.out.println("**************");
 			return false;
 		}
 		if( !dateEqual(task.getDateTo(), dateTo)) {
+//			System.out.println(task.getDateTo() + " "+ dateTo);
+//			System.out.println("**************");
 			return false;
 		}
 		if( !dateEqual(task.getDeadline(), deadline)) {
+//			System.out.println(task.getDeadline() + " "+ deadline);
+//			System.out.println("**************");
 			return false;
 		}
 		if(!stringEqual(task.getTaskName(), taskName)) {
@@ -245,71 +281,67 @@ public class Task {
 	}
 	
 	public Task clone() {
-		Date newDateFrom = null;
-		Date newDateTo = null;
-		Date newDeadline = null;
-		if(dateFrom != null) {
-			newDateFrom = new Date(dateFrom.getTime());
+		return new Task(TID,taskName, cloneDate(dateFrom), cloneDate(dateTo), 
+				cloneDate(dateTo), location, details, priority);
+	}
+	
+	private Date cloneDate(Date date) {
+		if(date == null) {
+			return null;
+		} else {
+			return new Date(date.getTime());
 		}
-		if(dateTo != null) {
-			newDateTo = new Date(dateTo.getTime());
-		}
-		if(deadline != null) {
-			newDeadline = new Date(deadline.getTime());
-		}
-		return new Task(TID,taskName, newDateFrom, newDateTo, 
-				newDeadline, location, details, priority);
 	}
 	
     public String[] toStringArray() {
         String[] taskStringArray = new String[DEFAULT_STRING_SIZE];
         
-	    taskStringArray[TASK_ID] = "" + TID;
+	    taskStringArray[INDEX_TASK_ID] = Integer.toString(TID);
 	    
         if(taskName != null) {
-            taskStringArray[TASK_NAME] = taskName;
+            taskStringArray[INDEX_TASK_NAME] = taskName;
         } else {
-            taskStringArray[TASK_NAME] = null;
+            taskStringArray[INDEX_TASK_NAME] = null;
         }
         
         if(isDurationalTask()) {
-            taskStringArray[DATE_FROM] = removeTimePartFromDate(convertToStringFromDate(dateFrom));
-            taskStringArray[DATE_TO] = removeTimePartFromDate(convertToStringFromDate(dateTo));
+            taskStringArray[INDEX_DATE_FROM] = removeTimePartFromDate(convertToStringFromDate(dateFrom));
+            taskStringArray[INDEX_DATE_TO] = removeTimePartFromDate(convertToStringFromDate(dateTo));
         }
         
         if(isDeadlineTask()) {
-            taskStringArray[DATE_FROM] = null;
+            taskStringArray[INDEX_DATE_FROM] = null;
             if(dateTo != null) {
-                taskStringArray[DATE_TO] = removeTimePartFromDate(convertToStringFromDate(dateTo));
+                taskStringArray[INDEX_DATE_TO] = removeTimePartFromDate(convertToStringFromDate(dateTo));
             }
             if(deadline != null) {
-                taskStringArray[DATE_TO] = removeTimePartFromDate(convertToStringFromDate(deadline));
+                taskStringArray[INDEX_DATE_TO] = removeTimePartFromDate(convertToStringFromDate(deadline));
             }
         }
         
         if(isFloatingTask()) {
-            taskStringArray[DATE_FROM] = null;
-            taskStringArray[DATE_TO] = null;
+            taskStringArray[INDEX_DATE_FROM] = null;
+            taskStringArray[INDEX_DATE_TO] = null;
         }
         
         if(isForeverTask()) {
-            taskStringArray[DATE_FROM] = removeTimePartFromDate(convertToStringFromDate(dateFrom));
-            taskStringArray[DATE_TO] = null;
+            taskStringArray[INDEX_DATE_FROM] = removeTimePartFromDate(convertToStringFromDate(dateFrom));
+            taskStringArray[INDEX_DATE_TO] = null;
         }
 
         if(location != null) {
-            taskStringArray[LOCATION] = location;
+            taskStringArray[INDEX_LOCATION] = location;
         } else {
-            taskStringArray[LOCATION] = null;
+            taskStringArray[INDEX_LOCATION] = null;
         }
 
         if(details != null) {
-            taskStringArray[DETAILS] = details;
+            taskStringArray[INDEX_DETAILS] = details;
         } else {
-            taskStringArray[DETAILS] = null;
+            taskStringArray[INDEX_DETAILS] = null;
         }
 
-        taskStringArray[PRIORITY] = "" + priority;
+        taskStringArray[INDEX_STATUS] = getStatusString();
         
 	    return taskStringArray;
 	}
@@ -331,6 +363,7 @@ public class Task {
                 getDeadline() == null); 
     }
     
+    //Same as floating task
     private boolean isForeverTask() {
         return getDateFrom() != null && getDateTo() == null &&
                 getDeadline() == null;
