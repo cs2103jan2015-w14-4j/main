@@ -28,7 +28,7 @@ public class Template {
 	private static final int INDEX_LOCATION = 6;
 	private static final int INDEX_DETAILS = 7;
     private static final int INDEX_PRIORITY = 8;
-	
+    
 	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
 	public static final int COMMAND_LENGTH = 9;
 	public static final String MSG_ERR_NO_SUCH_TEMPLATE = "No such template saved in the system";
@@ -71,8 +71,7 @@ public class Template {
 				Task taskToBeAdded;
 				if(isTest) {
 					taskToBeAdded = new Task(1000, "NEW",
-							convertToDateObject("12/09/2015 10:00"),
-							convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0);
+							null, null, null, "ABC", null, 0);
 				}
 				else {
 					taskToBeAdded = system.requestTask(Integer.parseInt(command[1]));	

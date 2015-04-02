@@ -3,9 +3,18 @@ import java.util.Date;
 
 public class Task {
 	
-	private static final int COMPLETED_TASK 	= 1;
-	private static final int INCOMPLETE_TASK 	= 2;
-	private static final int DISCARDED_TASK 	= 3;
+	private static final int MINIMUM_LENGTH_TASK_NAME = 1;
+	private static final int MAXIMUM_LENGTH_TASK_NAME = 30;
+	private static final int MAXIMUM_LENGTH_LOCATION = 30;
+	
+	private static final int INDEX_STATUS_URGENT = 1;
+	private static final int INDEX_STATUS_MAJOR = 2;
+	private static final int INDEX_STATUS_NORMAL = 3;
+	private static final int INDEX_STATUS_MINOR = 4;
+	private static final int INDEX_STATUS_CASUAL = 5;
+	private static final int INDEX_STATUS_COMPLATE 	= 6;
+	private static final int INDEX_STATUS_OVERDUE 	= 7;
+
 	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
     private static final int TASK_ID = 0;
     private static final int TASK_NAME = 1;
@@ -16,6 +25,11 @@ public class Task {
     private static final int PRIORITY = 6;
     private static final int DEFAULT_STRING_SIZE = 7;
     private static final String ZERO_TIME = " 00:00";
+    
+    //TO BE CHANGED
+	private static final int COMPLETE_TASK = 1;
+	private static final int INCOMPLETE_TASK = 2;
+	private static final int DISCARDED_TASK = 3;
 	
 	private int TID;
 	private String taskName;
@@ -78,16 +92,31 @@ public class Task {
 
 	
 	//Update Status ************************
-	public void setComplete() {
-		this.status = COMPLETED_TASK;
+	public void setUrgent() {
+		this.status = INDEX_STATUS_URGENT;
+	}
+	public void setMajor() {
+		this.status = INDEX_STATUS_MAJOR;
 	}
 	
-	public void setIncomplete() {
-		this.status = INCOMPLETE_TASK;
+	public void setNormal() {
+		this.status = INDEX_STATUS_NORMAL;
 	}
 	
-	public void setDiscard() {
-		this.status = DISCARDED_TASK;
+	public void setOverdue() {
+		this.status = INDEX_STATUS_OVERDUE;
+	}
+	
+	public void setComplate() {
+		this.status = INDEX_STATUS_COMPLATE;
+	}
+	
+	public void setMinor() {
+		this.status = INDEX_STATUS_MINOR;
+	}
+	
+	public void setCasual() {
+		this.status = INDEX_STATUS_CASUAL;
 	}
 		
 	//GETTER ***********************************
