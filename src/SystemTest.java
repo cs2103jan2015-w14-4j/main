@@ -185,9 +185,9 @@ public class SystemTest {
 
 		
 	}
-
+	
 	@Test
-	public void testShortcutManager() {
+	public void testMatchingShortcut() {
 		Shortcut myshortcut = new Shortcut();
 		String[] cmd0 = {"resetShortcut",null,null};
 		myshortcut.processShortcutCommand(cmd0);
@@ -197,6 +197,20 @@ public class SystemTest {
 		Assert.assertEquals(result, "addTask");
 		result = myshortcut.keywordMatching("deleteShortcut");
 		Assert.assertEquals(result, "deleteShortcut");
+		
+		String[] cmd2 = {"addShortcut","addM","add"};
+		myshortcut.processShortcutCommand(cmd2);
+		
+		result = myshortcut.keywordMatching("addM");
+		Assert.assertEquals(result, "addTask");
+		
+	}
+
+	@Test
+	public void testShortcutManager() {
+		Shortcut myshortcut = new Shortcut();
+		String[] cmd0 = {"resetShortcut",null,null};
+		myshortcut.processShortcutCommand(cmd0);
 		
 		
 		//TC1 - test view and initialize shortcut list
@@ -238,7 +252,7 @@ public class SystemTest {
 		String[] changes1 = {"add","addTask","addM"};
 		expected5[0] = changes1;
 		String[] changes2= {"editTemplate","editTemp","eTemp","addS"};
-		expected5[13] = changes2;
+		expected5[14] = changes2;
 		for(int i = 0; i < expected5.length; ++i) { 
 			Assert.assertArrayEquals(results5[i], expected5[i]);
 		}
@@ -292,30 +306,27 @@ public class SystemTest {
 		Template template = new Template(true);
 		try {
 			//TC1 - test adding
+			Task temp = new Task(1000, "NEW",
+					null,
+					null, null, "ABC", null, 0);
 			String[] cmd1 = {"addTemplate","1000","task1", null, null, null, null, null, null};
 			ArrayList<Task> result1 = template.processCustomizingCommand(cmd1);
 			ArrayList<Task> expected1 = new ArrayList<Task>();
-			expected1.add(new Task(1000, "NEW",
-					convertToDateObject("12/09/2015 10:00"),
-					convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0));
+			expected1.add(temp);
 			assertTaskArrayListEquals(expected1, result1);
 			
 			//TC2 - test view
 			String[] cmd2 = {"viewTemplates", null, null, null, null, null, null, null, null};
 			ArrayList<Task> result2 = template.processCustomizingCommand(cmd2);
 			ArrayList<Task> expected2 = new ArrayList<Task>();
-			expected2.add(new Task(1000, "NEW",
-					convertToDateObject("12/09/2015 10:00"),
-					convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0));
+			expected2.add(temp);
 			assertTaskArrayListEquals(expected2, result2);
 			
 			//TC3 - test delete
 			String[] cmd3 = {"deleteTemplate", "task1", null, null, null, null, null, null, null};
 			ArrayList<Task> result3 = template.processCustomizingCommand(cmd3);
 			ArrayList<Task> expected3 = new ArrayList<Task>();
-			expected3.add(new Task(1000, "NEW",
-					convertToDateObject("12/09/2015 10:00"),
-					convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0));
+			expected3.add(temp);
 			assertTaskArrayListEquals(expected3, result3);
 		} catch (Exception e) {
 			
