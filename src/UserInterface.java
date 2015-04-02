@@ -62,7 +62,8 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 	private boolean hasFilename;
 	private String prevInput;
-
+	private int dummy;
+	
 	public void  displayTaskTable(ArrayList<Task> outputData, boolean success){
 		viewTaskPane();
 		ArrayList<String[]> outputDataString = new ArrayList<String[]>();
@@ -76,13 +77,14 @@ public class UserInterface extends DefaultTableCellRenderer {
 	}
 
 	public void displayShortcuts(String[][] outputData, boolean success) {
+		//change to table
 		clearTextPane();
 		viewTextPane();
 		for(int i = 0; i < outputData.length; i++){
 			String[] strArray = outputData[i];
 			String nextLine = "";
 			for(int j = 0; j < strArray.length; ++j) {
-				nextLine += " " + strArray[j];
+				nextLine += " | " + strArray[j];
 			}
 			outputArea.append(nextLine + newline);
 		}
@@ -91,6 +93,8 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 
 	public void displayMsg(String outputData, int success){
+		//fix the area, maybe change to string array in future
+		//write messages to display
         clearFeedbackArea();     
         sysFeedbackArea.append(outputData);
 	}
@@ -120,12 +124,12 @@ public class UserInterface extends DefaultTableCellRenderer {
 	/**
 	 * Launch the application.
 	 */
-	/*
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-
+					
 					UserInterface window = new UserInterface();
 					window.frame.setVisible(true);
 					
@@ -135,7 +139,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 			}
 		});
 	}
-*/
+
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -223,6 +227,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 		outputArrayString = new ArrayList<String[]>();
 
 		initDisplay();
+		outputArray  =  new ArrayList<Task>();
 
 	}
 
@@ -383,28 +388,31 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 				if (!hasFilename){		
 					//Init system handler with filename
-
-					hasFilename = true;
-					mainHandler = SystemHandler.getSystemHandler();
 					createTaskTable(outputArrayString);
+					hasFilename = true;
+				/*	mainHandler = SystemHandler.getSystemHandler();
+					
 					if (input.length() == 0){
 						mainHandler.rawUserInput("viewTask");
 					}else{
 						mainHandler.rawUserInput(input);
 						clearInput();
 					}
-					//addDummy();
-					//displayTaskTable(outputArray, true);
+					*/
+					addDummy();
+					displayTaskTable(outputArray, true);
 
 				}else{
-
+/*					
 					if (input.length() != 0){
 						mainHandler.rawUserInput(input);
 						clearInput();
 					}
-		
-				//		addDummy();
-					//displayTaskTable(outputArray, true);
+					
+		*/			dummy++;
+					addDummy();
+					displayTaskTable(outputArray, true);
+					displayMsg("adding dummies " + dummy, dummy);
 					 
 				}
 			}
@@ -425,43 +433,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 					(tablePreferredWidth * (percentages[i] / total)));
 		}
 	}
-
-
-
-
-	/**
-
-	private void printOutput(String commandType, ArrayList<Task> returnedOutput){
-		if(returnedOutput == null) return;
-		for(int i = 0; i < returnedOutput.size(); i++){
-			Task nextTask = returnedOutput.get(i);
-			outputArea.append(commandType);
-			outputArea.append(" the following:"+newline);
-			outputArea.append("ID    : "+ nextTask.getTID() + newline);
-			outputArea.append("Name  : "+ nextTask.getTaskName() + newline);
-			if(nextTask.getLocation() != null) {
-				outputArea.append("Location  : "+nextTask.getLocation() + newline);
-			}
-			if(nextTask.getDateFrom() != null) {
-				outputArea.append("Date From  : "+nextTask.getDateFrom().toLocaleString() + newline);
-			}
-			if(nextTask.getDateTo() != null) {
-				outputArea.append("Date To  : "+nextTask.getDateTo().toLocaleString() + newline);
-			}
-
-			if(nextTask.getDeadline() != null) {
-				outputArea.append("Deadline  : "+nextTask.getDeadline() + newline);
-			}
-			if(nextTask.getDetails() != null) {
-				outputArea.append("Detail  : "+nextTask.getDetails() + newline);
-			}
-			outputArea.append(newline);
-		}
-
-	}
-
-	 */
-
 
 	private void clearInput() {
 		textField.selectAll();

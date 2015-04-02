@@ -97,6 +97,7 @@ public class TaskTableModel extends AbstractTableModel {
 		rowColours.set(row, c);
 		fireTableRowsUpdated(row, row);
 	}
+	
 	public Color getRowColour(int row) {
 		return rowColours.get(row);
 	}
@@ -194,12 +195,11 @@ public class TaskTableModel extends AbstractTableModel {
 	public void insertRows(int row, ArrayList<String[]> rowList)
 	{	
 		taskArrayString.addAll(row, rowList);
-	/*	for (int i = 0; i < getRowCount(); i++){
+		for (int i = 0; i < getRowCount(); i++){
 			int colour  = i%2;
-			System.out.println("colour = " + colour );
 			setRowColour(i, rowColours.get(colour));
 		}
-		*/
+		
 		//setRowColour(row, Color.GRAY);
 		fireTableRowsInserted(row, row + rowList.size() - 1);
 	}
