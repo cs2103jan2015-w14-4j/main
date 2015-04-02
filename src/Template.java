@@ -240,7 +240,9 @@ public class Template {
 	private ArrayList<Task> addTemplate(String name, Task template) {
 		boolean sameName = hasSameName(name);
 		if(!sameName) {
-			
+			template.setDateFrom(null);
+			template.setDateTo(null);
+			template.setDeadline(null);
 			Task returnTemplate = insertTemplateIntoMap(name, template);
 			assert(returnTemplate == null);
 			
