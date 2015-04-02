@@ -95,7 +95,7 @@ public class FileStorage {
         	 System.out.println(ERROR_EXCEPTION); 
          
          }
-    	//TODO read from file and add respective info to the 3 parts
+    	// read from file and add respective info to the 3 parts
 		//to call TM, same as before
 		//to call template, use processCustomizingCommand(String[] cmd) 
 		//	cmd = {"addTemplate", , <template name>,<datefrom>......} //same as task manager 
@@ -103,7 +103,7 @@ public class FileStorage {
 		// cmd = {"addShortcutINIT", shortcutname, id} // id the the row, eg addTask = row 0, deleteTask = row 3
 														// refer to shortcut keywords for the row
     }
-    //TODO update template file
+    // update template file
     //@param given an arraylist of task, update the the template file
     public void writeTemplateToFile(ArrayList<Task> templateList, ArrayList<String> matchingName) {
     	try {
@@ -148,7 +148,7 @@ public class FileStorage {
     
     
     
-	//TODO update shortcut file
+	// update shortcut file
     //@param shortcuts String[][] of size 9 each string[i] keeps a variable length represent certain keyword 
     //store in order , one row is one id during retrieve
     public void writeShortcutToFile(String[][] shortcuts) {

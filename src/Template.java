@@ -94,6 +94,7 @@ public class Template {
 					Task fetchedTask = fetchTemplate(command[1]);
 					String[] convertedTask = convertTasktoTaskManagerInput(fetchedTask, command);
 					system.addTaskFromTemplate(convertedTask);
+					break;
 			}
 		} catch (IllegalArgumentException e) {
 			System.out.println("ERROR :"+ e);
@@ -125,27 +126,36 @@ public class Template {
 		if(task == null) {
 			throw new NoSuchElementException(NO_SUCH_TEMPLATE);
 		}
-		if(command[3] != null) {
-			task.setTaskName(command[3]);
+		for(int i = 0; i < COMMAND_LENGTH; ++i) {
+			if(command[i] != null) {
+				switch(i) {
+				case 2:
+					task.setTaskName(command[2]);
+					break;
+				case 3:
+					Date dateFrom = getDate(command[4]);
+					task.setDateFrom(dateFrom);
+					break;
+				case 4:
+					Date dateTo = getDate(command[5]);
+					task.setDateFrom(dateTo);
+					break;
+				case 5:
+					Date deadline = getDate(command[5]);
+					task.setDateFrom(deadline);
+					break;
+				case 6:
+					task.setLocation(command[6]);
+					break;
+				case 7:
+					task.setDetails(command[8]);
+					break;
+				case 8:
+					task.setPriority(Integer.parseInt(command[8]));
+					break;
+				}
+			}
 		}
-		if(command[4] != null) {
-			Date dateFrom = getDate(command[4]);
-			task.setDateFrom(dateFrom);
-		}
-		if(command[5] != null) {
-			Date dateTo = getDate(command[5]);
-			task.setDateFrom(dateTo);
-		}
-		if(command[6] != null) {
-			Date deadline = getDate(command[5]);
-			task.setDateFrom(deadline);
-		}
-		if(command[7] != null) {
-			task.setLocation(command[7]);
-		}
-		if(command[8] != null) {
-			task.setDetails(command[8]);
-		}	
 		return task.clone();
 	}
 		
