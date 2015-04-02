@@ -1,4 +1,5 @@
 import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -12,17 +13,28 @@ import java.text.SimpleDateFormat;
 public class SystemHandler {
 	
 	//dummy string acting like UI prompt
+	private static final String MSG_ERR_NO_SUCH_COMMAND = "System does not recognize this command";
+	private static final String MSG_LOG_USER_COMMAND = "user enters: $1%s";
 	public static final String MSG_ASK_FILENAME = "Please enter the name of your file";
 	public static final String MSG_ASK_INPUT = "Please enter your command";
 //	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
 //	private static final String CLEAR_INFO_INDICATOR = "";
-	private static final String[] CMD_GET_TEMPLATE = {"viewTemplate",null,null,null,null,null,null,null,null};
-	private static final String[] CMD_GET_TASK_LIST = {"viewTask",null,null,null,null,null,null,null,null};
+	private static final String[] COMMAND_GET_TEMPLATE = {"viewTemplate",null,null,null,null,null,null,null,null};
+	private static final String[] COMMAND_GET_TASK_LIST = {"viewTask",null,null,null,null,null,null,null,null};
+	private static final String[] COMMAND_RESET_SHORTCUT = {"resetShortcut", null, null};
 
 	//Intended length of command array
-	public static final int LENGTH_COMMAND = 9;
-	private static final int ERROR = 0;
+	public static final int LENGTH_COMMAND_TASK_MANAGER = 9;
+	public static final int LENGTH_COMMAND_SHORTCUT = 3;
+	public static final int LENGTH_COMMAND_TEMPLATE = 9;
+	private static final int INDEX_COMMAND_TASK_MANAGER = 0;
+	private static final int INDEX_COMMAND_SHORTCUT = 1;
+	private static final int INDEX_COMMAND_TEMPLATE = 2;
+	private static final int INDEX_EXECUTION_ERROR = 0;
 	private static final int ERROR_INIT = 1;
+	private static final int INDEX_EXECUTION_SUCCESS = 1;
+	private static final boolean EXECUTION_SUCCESS = true;
+	
 	
 	private CentralizedLog 	logfile;
 	private TaskManager 	myTaskList;
@@ -107,8 +119,8 @@ public class SystemHandler {
 	}
 	
 	public void resetShortcutToDefault() {
-		String[] command = {"resetShortcut", null, null};
-		myShortcut.processShortcutCommand(command);
+		
+		myShortcut.processShortcutCommand(COMMAND_RESET_SHORTCUT);
 	}
 	
 	/**
@@ -122,7 +134,7 @@ public class SystemHandler {
 		return processUserInput(userInput);
 	}
 	
-	public Task requestTask(int id) {
+	public Task requestTask(int id) throws NoSuchElementException {
 		//stub
 //		return new Task(1000, "NEW",
 //				convertToDateObject("12/09/2015 10:00"),
@@ -136,7 +148,7 @@ public class SystemHandler {
 		try {
 			executeTaskManager(fetchedTask);
 		} catch (ParseException e) {
-			window.displayMsg(e.getMessage(), ERROR);
+			window.displayMsg(e.getMessage(), INDEX_EXECUTION_ERROR);
 		}
 		
 	}
@@ -175,34 +187,23 @@ public class SystemHandler {
 	 * @param commandType	Command Type string extracted from first word of strings of user command
 	 * @return	COMMAND_TYPE_GROUP to allocate the command to correct component
 	 */
-	private static COMMAND_TYPE_GROUP getCommandGroupType(String commandType) {
-		switch(commandType) {
-			case "addTask":
-			case "viewTask":
-			case "deleteTask":
-			case "editTask":
-			case "undoTask":
-			case "redoTask":
-			case "searchTask":
-			case "init":
-				return COMMAND_TYPE_GROUP.TASK_MANAGER;
-			//dummy command keyword
-			case "addShortcut":
-			case "viewShortcut":
-			case "deleteShortcut":
-			case "resetShortcut":
-				return COMMAND_TYPE_GROUP.SHORTCUT_MANAGER;
-			//dummy command keyword
-			case "addTemplate":
-			case "editTemplate":
-			case "viewTemplate":
-			case "deleteTemplate":
-			case "useTemplate":
-			case "resetTemplate":
-				return COMMAND_TYPE_GROUP.CUSTOMIZED_MANAGER;
-			default:
+	private static int getCommandGroupType(String commandType) {
+		for(COMMAND_TYPE_TASK_MANAGER command : COMMAND_TYPE_TASK_MANAGER.values()) {
+			if(command.name().equals(commandType)) {
+				return INDEX_COMMAND_TASK_MANAGER;
+			}
 		}
-		return null;
+		for(COMMAND_TYPE_SHORTCUT command : COMMAND_TYPE_SHORTCUT.values()) {
+			if(command.name().equals(commandType)) {
+				return INDEX_COMMAND_SHORTCUT;
+			}
+		}
+		for(COMMAND_TYPE_TEMPLATE command : COMMAND_TYPE_TEMPLATE.values()) {
+			if(command.name().equals(commandType)) {
+				return INDEX_COMMAND_TEMPLATE;
+			}
+		}
+		throw new IllegalArgumentException(MSG_ERR_NO_SUCH_COMMAND);
 	}
 	
 	
@@ -247,7 +248,8 @@ public class SystemHandler {
 	 */
 	private ArrayList<Task> processUserInput(String inputFromUser) {
 		try {
-			logfile.log(Level.CONFIG,"user enters: "+inputFromUser);
+			
+			logfile.log(Level.CONFIG, String.format(MSG_LOG_USER_COMMAND, inputFromUser));
 			
 			//Parse command
 			
@@ -261,46 +263,49 @@ public class SystemHandler {
 	    		System.out.print("|");
 	    	}
 			
-			//validateParsedCommand(parsedCommand);
-			
-			COMMAND_TYPE_GROUP commandGroupType = SystemHandler.getCommandGroupType(parsedCommand[0]);
+			int commandGroupType = SystemHandler.getCommandGroupType(parsedCommand[0]);
+			validateParsedCommandLength(parsedCommand, commandGroupType);
 			switch(commandGroupType) {
-				case TASK_MANAGER:
+				case INDEX_COMMAND_TASK_MANAGER:
 					return executeTaskManager(parsedCommand);
 					
-				case SHORTCUT_MANAGER:
+				case INDEX_COMMAND_SHORTCUT:
 					String[][] displayS = executeShortcutManager(parsedCommand);
 					break;
-				case CUSTOMIZED_MANAGER:
+					
+				case INDEX_COMMAND_TEMPLATE:
 					executeCustomizer(parsedCommand);
 					break;
-				default:
-					assert(isAGroupCommand(getCommandGroupType(parsedCommand[0])));
 			}
 			
 		} catch(ParseException e) {
-			window.displayMsg(e.getMessage(), ERROR);
-		} 
+			window.displayMsg(e.getMessage(), INDEX_EXECUTION_ERROR);
+		} catch(IllegalArgumentException e) {
+			window.displayMsg(e.getMessage(), INDEX_EXECUTION_ERROR);
+		} catch(NoSuchElementException e) {
+			window.displayMsg(e.getMessage(), INDEX_EXECUTION_ERROR);
+		}
 		return null;
 		
 	}
 
-	private boolean isAGroupCommand(COMMAND_TYPE_GROUP command) {
-		return command != null;
-	}
-	
 	/**
 	 * @param parsedCommand		A parsed command received from parser 
 	 * @throws ParseException	The length of parsed command array is not the wanted length
 	 */
-	private boolean validateParsedCommand(String[] parsedCommand)
-			throws ParseException {
-		assert(parsedCommand.length == LENGTH_COMMAND);
-		if(parsedCommand.length != LENGTH_COMMAND) {
-			throw new ParseException("Invalid length of parsed command", 
-					parsedCommand.length - LENGTH_COMMAND);
+	private void validateParsedCommandLength(String[] parsedCommand, int type) {
+		switch(type) {
+			case INDEX_COMMAND_TASK_MANAGER:
+				assert(parsedCommand.length == LENGTH_COMMAND_TASK_MANAGER);
+				break;
+			case INDEX_COMMAND_SHORTCUT:
+				assert(parsedCommand.length == LENGTH_COMMAND_SHORTCUT);
+				break;
+			case INDEX_COMMAND_TEMPLATE:
+				assert(parsedCommand.length == LENGTH_COMMAND_TEMPLATE);
+				break;
 		}
-		return true;
+		
 	}
 	
 	/**
@@ -308,30 +313,30 @@ public class SystemHandler {
 	 * @return			An ArrayList of task objects that are affected by the command
 	 * @throws ParseException	The date format does not match the wanted format
 	 */
-	private ArrayList<Task> executeTaskManager(String[] command) throws ParseException {
+	private ArrayList<Task> executeTaskManager(String[] command) 
+			throws ParseException {
 		ArrayList<Task> result = myTaskList.processTM(command);
-		ArrayList<Task> fullList = myTaskList.processTM(CMD_GET_TASK_LIST);
-		window.displayTaskTable(result, fullList, true);
+		ArrayList<Task> fullList = myTaskList.processTM(COMMAND_GET_TASK_LIST);
+		window.displayTaskTable(result, fullList, INDEX_EXECUTION_SUCCESS);
 		return result;
 	}
 	
 	
-	private String[][] executeShortcutManager(String[] command) {
-		String[][] result = myShortcut.processShortcutCommand(command);
-		window.displayShortcuts(result, true);
-		return result;
-	}
-	
-	private void executeCustomizer(String[] command) {
-		try {
-			ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
-//			ArrayList<Task> fullList = myTemplates.processCustomizingCommand(CMD_GET_TEMPLATE);
-			window.displayTaskTable(result, true);
-		} catch (Exception e) {
-			
-		}
-			
+	private String[][] executeShortcutManager(String[] command) 
+			throws NoSuchElementException, IllegalArgumentException {
 		
+		String[][] result = myShortcut.processShortcutCommand(command);
+		window.displayShortcuts(result, EXECUTION_SUCCESS);
+		return result;
+	}
+	
+	private void executeCustomizer(String[] command) 
+			throws IllegalArgumentException {
+
+		ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
+//		ArrayList<Task> fullList = myTemplates.processCustomizingCommand(CMD_GET_TEMPLATE);
+		window.displayTaskTable(result, true);
+	
 	}
 	
 	
