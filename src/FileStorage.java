@@ -474,22 +474,24 @@ public class FileStorage {
         	try {
                 
         		Scanner sc = new Scanner(shortcutFile);
-                
+                int i = 0;
                 while (sc.hasNextLine()) {
                 	
                 	
-                	String[] inputs = new String[9];
+                	String[] inputs = new String[3];
                 	String[] tempStringArray = new String[8];
-                	
-                	tempStringArray = sc.nextLine().split("\\s*,\\s*");
-                	             	
                 	inputs[COMMAND_TYPE_INDEX] = "addShortcutInit";
-                	inputs[SHORTCUT_NAME_INDEX] = tempStringArray[0];
- 
-                	
-                	inputs[SHORTCUT_ID_INDEX] = tempStringArray[1];
-                 
-                    shortcut.processShortcutCommand(inputs);       
+                	tempStringArray = sc.nextLine().split("\\s*,\\s*");
+                	for(int j = 0; j < tempStringArray.length; ++j) {
+                		System.out.println(tempStringArray[j]);
+	                	inputs[SHORTCUT_NAME_INDEX] = tempStringArray[j];
+	 
+	                	
+	                	inputs[SHORTCUT_ID_INDEX] = Integer.toString(i);
+	                 
+	                    shortcut.processShortcutCommand(inputs);    
+                	}
+                	++i;
                
                 }
                 

@@ -15,9 +15,9 @@ public class Shortcut {
 													{"view","viewTask"}, {"delete","deleteTask"},
 													{"clear","clearAttr"}, {"search", "searchTask"}, 
 													{"undo","undoTask"}, 
-													{"redo","redoTask"}, {"addShortcut","addShort"}, 
-													{"viewShortcut","viewShort"}, {"deleteShortcut","deleteShort"}, 
-													{"resetShortcut","resetShort"}, {"addTemplate","addTemp"}, 
+													{"redo","redoTask"}, {"addShortcut","addKeyword"}, 
+													{"viewShortcut","viewKeyword"}, {"deleteShortcut","deleteKeyword"}, 
+													{"resetShortcut","resetKeyword"}, {"addTemplate","addTemp"}, 
 													{"editTemplate","editTemp"}, {"viewTemplate","viewTemp"}, 
 													{"useTemplate", "useTemp"}, {"deleteTemplate","deleteTemp"}, 
 													{"resetTemplate", "resetTemp"}, {"help"}
@@ -309,10 +309,6 @@ public class Shortcut {
 	}
 
 	private boolean isTheMatchingWord(String command, String matching) {
-		
-		if(command.toLowerCase().charAt(command.length() - 1) == 's') {
-			command = command.substring(0, command.length() - 1);
-		}
 		
 		if(command.equalsIgnoreCase(matching)) {
 			return true;
