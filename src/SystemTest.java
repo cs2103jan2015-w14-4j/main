@@ -214,7 +214,7 @@ public class SystemTest {
 		
 		
 		//TC1 - test view and initialize shortcut list
-		String[] cmd = {"viewShortcuts",null,null};
+		String[] cmd = {"viewShortcut",null,null};
 		String[][] results = myshortcut.processShortcutCommand(cmd);
 		String[][] expected1 = Shortcut.defaultWordsSet;
 		for(int i = 0; i < expected1.length; ++i) {
@@ -246,7 +246,7 @@ public class SystemTest {
 		}
 		
 		//TC5 - view all changes
-		String[] cmd5 = {"viewShortcuts", null, null};
+		String[] cmd5 = {"viewShortcut", null, null};
 		String[][] results5 = myshortcut.processShortcutCommand(cmd5);
 		String[][] expected5 = Shortcut.defaultWordsSet;
 		String[] changes1 = {"add","addTask","addM"};
@@ -256,6 +256,10 @@ public class SystemTest {
 		for(int i = 0; i < expected5.length; ++i) { 
 			Assert.assertArrayEquals(results5[i], expected5[i]);
 		}
+		String[] revert1 = {"add","addTask"};
+		expected5[0] = revert1;
+		String[] revert2= {"editTemplate","editTemp"};
+		expected5[14] = revert2;
 		
 		//TC6 - delete shortcut
 		String[] cmd6 = {"deleteShortcut", "eTemp", null};

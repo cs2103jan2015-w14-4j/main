@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 public class Shortcut {
-	 
+
 	public static final String[] keywords = {	"addTask", "editTask","viewTask","deleteTask", 
 										"clearAttr", "searchTask", "undoTask", "redoTask", "markTask",
 										"addShortcut", "viewShortcuts", "deleteShortcut",
@@ -25,14 +25,30 @@ public class Shortcut {
 	private static final String[] reservedWords = {"at","location","from","datefrom","to","dateto","on",
 													"before","by","detail","priority","name","title"};
 
+	private static final int ARRAY_SIZE_SHORTCUT = 3;
+	private static final int ADD_SHORTCUT_ARRAY_USED_SIZE = 3;
+	private static final int ADD_SHORTCUT_INIT_ARRAY_USED_SIZE = 3;
+	private static final int VIEW_SHORTCUT_ARRAY_USED_SIZE = 1;
+	private static final int DELETE_SHORTCUT_ARRAY_USED_SIZE = 2;
+	private static final int RESET_SHORTCUT_ARRAY_USED_SIZE = 1;
+	 
+	private static final int INDEX_DELETING_SHORTCUT = 1;
+	private static final int INDEX_REFERED_SHORTCUT = 2;
+	private static final int INDEX_NEW_SHORTCUT = 1;
+	private static final int INDEX_INIT_REFERED_ROW = 2;
+	
 	private static final int MINIMUM_LENGTH = 3;
 	private static final int MAXIMUM_LENGTH = 15;
 	private static final int MINIMUM_CAPACITY = 1;
 	private static final int MAXIMUM_CAPACITY = 10;
 
 	private static final int INDEX_NOT_FOUND = -1;
+	private static final int INDEX_COMMAND = 0;
+	
 
 	private static final String MSG_ERR_NO_SUCH_COMMAND = "No such command in Shortcut Manager: %1$s";
+
+
 	
 	private ArrayList<ArrayList<String>> userShortcuts;
 	private SystemHandler system;
@@ -54,37 +70,37 @@ public class Shortcut {
 			throws NoSuchElementException, IllegalArgumentException {
 		String[][] results = null;
 		
-		assert(command.length == 3);
-		
-		switch(matchCommand(command[0])) {
+
+		switch(matchCommand(command[INDEX_COMMAND])) {
 			case addShortcut:
-				verifyCommand(command, 3);
+				verifyCommand(command, ADD_SHORTCUT_ARRAY_USED_SIZE);
 				results = new String[1][];
-				results[0] = insertShortcut(command[1],command[2]);
+				results[0] = insertShortcut(command[INDEX_NEW_SHORTCUT],
+											command[INDEX_REFERED_SHORTCUT]);
 				writeOutToFile();
 				break;
 				
 			case deleteShortcut:
-				verifyCommand(command, 2);
+				verifyCommand(command, DELETE_SHORTCUT_ARRAY_USED_SIZE);
 				results = new String[1][];
-				results[0] = removeShortcut(command[1]);
+				results[0] = removeShortcut(command[INDEX_DELETING_SHORTCUT]);
 				writeOutToFile();
 				break;
 				
 			case resetShortcut:
-				verifyCommand(command, 1);
+				verifyCommand(command, RESET_SHORTCUT_ARRAY_USED_SIZE);
 				resetShortcut();
 				results = viewShortcuts();
 				writeOutToFile();
 				break;
 				
 			case viewShortcut:
-				verifyCommand(command, 1);
+				verifyCommand(command, VIEW_SHORTCUT_ARRAY_USED_SIZE);
 				results = cloneShortcuts();
 				break;
 			case addShortcutInit:
 				try {
-					verifyCommand(command, 3);
+					verifyCommand(command, ADD_SHORTCUT_INIT_ARRAY_USED_SIZE);
 					addShortcutInit(command);
 					break;
 				} catch (NumberFormatException e) {
@@ -109,14 +125,14 @@ public class Shortcut {
 	}
 	
 	private void addShortcutInit(String[] command) throws NumberFormatException {
-		int row = Integer.parseInt(command[2]);
+		int row = Integer.parseInt(command[INDEX_INIT_REFERED_ROW]);
 		
 		assert(row < keywords.length);
 		assert(row >= 0);
 		
 		ArrayList<String> toBeAddedInto = userShortcuts.get(row);
-		
-		toBeAddedInto.add(command[1]);
+
+		toBeAddedInto.add(command[INDEX_NEW_SHORTCUT]);
 	}
 
 	public String keywordMatching(String command) {
@@ -128,6 +144,8 @@ public class Shortcut {
 			return null;
 		}
 	}
+	
+	
 	
 	private COMMAND_TYPE_SHORTCUT matchCommand(String command) 
 			throws IllegalArgumentException {
@@ -221,8 +239,8 @@ public class Shortcut {
 	}
 	
 	private String[] insertShortcut(String newShortcut, String originShortcut) {
-		int belongTo = searchMatching(originShortcut);
-		if(!isKeyWords(belongTo)) {
+		int indexBelongTo = searchMatching(originShortcut);
+		if(!isKeyWords(indexBelongTo)) {
 			return null;
 		}
 		else if(isKeyWords(newShortcut)) {
@@ -234,12 +252,12 @@ public class Shortcut {
 		else if (isWordLengthInappropriate(newShortcut)) {
 			return null;
 		}
-		else if(isShortcutAtMaximumCapacity(belongTo)) {
+		else if(isShortcutAtMaximumCapacity(indexBelongTo)) {
 			return null;
 		}
 		else {
-			addShortcut(newShortcut, belongTo);
-			String[] result = constructOutputString(belongTo,originShortcut,newShortcut);
+			addShortcut(newShortcut, indexBelongTo);
+			String[] result = constructOutputString(indexBelongTo,originShortcut,newShortcut);
 			return result;	
 			
 		}
@@ -275,13 +293,14 @@ public class Shortcut {
 	}
 	
 	private boolean isKeyWords(int index) {
-		return (index > -1);
+		return (index > INDEX_NOT_FOUND);
 	}
 	
 	private boolean isKeyWords(String command) {
 		int matchingIndex = searchMatching(command);
-		return matchingIndex > -1;
+		return matchingIndex > INDEX_NOT_FOUND;
 	}
+
 	
 	
 	private int searchMatching (String command) {
@@ -296,7 +315,7 @@ public class Shortcut {
 			}
 			
 		}
-		return -1;
+		return INDEX_NOT_FOUND;
 	}
 	
 	private boolean isTheMatchingWord(String command, String matching) {
@@ -328,9 +347,9 @@ public class Shortcut {
 		
 		return cloneList;
 	}
-	
+
 	private boolean verifyCommand(String[] command, int lengthToCheck) {
-		assert(command.length == 3);
+		assert(command.length == ARRAY_SIZE_SHORTCUT);
 		for(int i = 0; i < lengthToCheck; ++i) {
 			assert(command[i] != null);
 		}
