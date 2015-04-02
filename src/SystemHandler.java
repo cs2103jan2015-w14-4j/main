@@ -106,6 +106,10 @@ public class SystemHandler {
 		
 	}
 	
+	public void resetShortcutToDefault() {
+		String[] command = {"resetShortcut", null, null};
+		myShortcut.processShortcutCommand(command);
+	}
 	
 	/**
 	 * It reads in user command and process it.
@@ -184,17 +188,17 @@ public class SystemHandler {
 				return COMMAND_TYPE_GROUP.TASK_MANAGER;
 			//dummy command keyword
 			case "addShortcut":
-			case "viewShortcuts":
+			case "viewShortcut":
 			case "deleteShortcut":
-			case "resetShortcuts":
+			case "resetShortcut":
 				return COMMAND_TYPE_GROUP.SHORTCUT_MANAGER;
 			//dummy command keyword
 			case "addTemplate":
 			case "editTemplate":
-			case "viewTemplates":
+			case "viewTemplate":
 			case "deleteTemplate":
 			case "useTemplate":
-			case "resetTemplates":
+			case "resetTemplate":
 				return COMMAND_TYPE_GROUP.CUSTOMIZED_MANAGER;
 			default:
 		}
@@ -210,8 +214,8 @@ public class SystemHandler {
 		
 		boolean isInitProperly = false;
 		myShortcut = new Shortcut();
-		String[] cmd = {"resetShortcut",null,null};
-		myShortcut.processShortcutCommand(cmd);
+//		String[] cmd = {"resetShortcut",null,null};
+//		myShortcut.processShortcutCommand(cmd);
 		
 		logfile = CentralizedLog.getLogger();
 		myTemplates = new Template();
