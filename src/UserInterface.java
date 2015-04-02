@@ -63,6 +63,9 @@ public class UserInterface extends DefaultTableCellRenderer {
 	private boolean hasFilename;
 	private String prevInput;
 
+	public void  displayTaskTable(ArrayList<Task> affectedTask, ArrayList<Task> fulllListTask, boolean success){}
+
+	
 	public void  displayTaskTable(ArrayList<Task> outputData, boolean success){
 		viewTaskPane();
 		ArrayList<String[]> outputDataString = new ArrayList<String[]>();

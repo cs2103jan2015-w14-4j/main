@@ -16,9 +16,9 @@ public class SystemHandler {
 	public static final String MSG_ASK_INPUT = "Please enter your command";
 //	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
 //	private static final String CLEAR_INFO_INDICATOR = "";
-	private static final String[] CMD_GET_TEMPLATE = {"viewTask",null,null,null,null,null,null,null,null};
-	private static final String[] CMD_GET_TASK_LIST = {"viewTemplates",null,null,null,null,null,null,null,null};
-	
+	private static final String[] CMD_GET_TEMPLATE = {"viewTemplate",null,null,null,null,null,null,null,null};
+	private static final String[] CMD_GET_TASK_LIST = {"viewTask",null,null,null,null,null,null,null,null};
+
 	//Intended length of command array
 	public static final int LENGTH_COMMAND = 9;
 	private static final int ERROR = 0;
@@ -311,7 +311,7 @@ public class SystemHandler {
 	private ArrayList<Task> executeTaskManager(String[] command) throws ParseException {
 		ArrayList<Task> result = myTaskList.processTM(command);
 		ArrayList<Task> fullList = myTaskList.processTM(CMD_GET_TASK_LIST);
-		window.displayTaskTable(result, true);
+		window.displayTaskTable(result, fullList, true);
 		return result;
 	}
 	
@@ -325,7 +325,7 @@ public class SystemHandler {
 	private void executeCustomizer(String[] command) {
 		try {
 			ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
-			ArrayList<Task> fullList = myTemplates.processCustomizingCommand(CMD_GET_TEMPLATE);
+//			ArrayList<Task> fullList = myTemplates.processCustomizingCommand(CMD_GET_TEMPLATE);
 			window.displayTaskTable(result, true);
 		} catch (Exception e) {
 			
