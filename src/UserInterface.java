@@ -9,6 +9,7 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import java.awt.event.ActionListener;
@@ -31,12 +32,14 @@ public class UserInterface extends DefaultTableCellRenderer {
 	private JTextField textField;
 	private JTextArea outputArea;
 	private JTextArea sysFeedbackArea;
-	private JTable outputTable;
+	private JTable taskTable;
+	private JTable shortcutTable;
 	private TaskTableModel model;
 	private final static String newline = "\n";
 	private JScrollPane scrollPaneMain;
 	private ArrayList<Task> outputArray;
 	private ArrayList<String[]> outputArrayString;
+	private ArrayList<String[]> shortcutArrayString;
 
 	private SystemHandler mainHandler;
 
@@ -48,36 +51,101 @@ public class UserInterface extends DefaultTableCellRenderer {
 	public static final String MSG_ECHO_FILENAME = "File location: %1$s";
 	public static final String MSG_REMINDERS = "The following task(s) are due today: " + newline + newline;
 	public static final String MSG_SEPARATOR = "=========================================================";
+	public static final String MSG_EMPTY_TASKLIST = "There are no tasks to display.";
 	
-	//percentage of each column
+	//setting values for column widths in percentage
+	// column widths for task table
     private static final double taskID = 5, 
-            taskName = 23,
-            dateFrom = 10,
-            dateTo = 10,
-            deadline = 10,
-            location = 15,
-            details = 22,
-            priority = 5;
-          
-
+					            taskName = 30,
+					            dateFrom = 10,
+					            dateTo = 10,
+					            location = 15,
+					            details = 25,
+					            status = 5;
+    private static final double[] PREFERRED_WIDTH_TASKTABLE = {taskID, taskName,dateFrom, dateTo, location, details, status};
+    //column widths for shortcuts table
+    private static final double systemKW = 15, userDefinedKW = 85;       
+    private static final double[] PREFERRED_WIDTH_SHORTCUTS = {systemKW, userDefinedKW};
+    private static final int windowWidth = 1200;
+    private static final String[] SYS_KEYWORDS = {"Create a new task", "Edit an existing task", "View list of tasks", "Delete a task", 
+    											 "undo", "redo", "Add a new keyword", "View available keywords", "Delete a keyword", 
+    											 "Reset keywords", "Create a template", "Edit existing template", "View list of templates",
+    											 "Delete a template", "Clear all templates", "Help"};
+    
 	private boolean hasFilename;
 	private String prevInput;
-	private int dummy;
 	
-	public void  displayTaskTable(ArrayList<Task> outputData, boolean success){
-		viewTaskPane();
+	private static final Color YELLOW = new Color(200,250,250); 
+	private static final Color LIGHT_BLUE = new Color(200,250,250); 
+	private static final Color BLUE_GRID= new Color(82,108,148); 
+	private static final Color TASK_FONT= new Color(255,240,175); 
+	private static final Color DARK_BLUE= new Color(18,41,77); 
+	private static final Color BLUE_BG = new Color(44,71,122); 
+	private static final Color INPUT = new Color(18,42,77); 
+	private static final Color INPUT_FONT = new Color(136,157,191); 
+	private static final Color FEEDBACK = new Color(4,18,62); 
+	private static final Color FEEDBACK_FONT = new Color(200,255,255); 
+	private static final Color SHORTCUT_FONT = new Color(187,197,255); 
+	private static final Color SHORTCUT_BG = new Color( 18,41,77); 
+	private static final Color SHORTCUT_BG2 = new Color(44,71,112);
+	private static final Color SHORTCUT_GRID = new Color(18,41,77);
+	private static final Color OUTPUT_FONT = new Color(187,197,255); 
+	private static final Color OUTPUT_BG = new Color( 18,41,77); 
+	
+	
+	private int dummy;
+	ArrayList<Task> dummy2;
+	
+	//doesnt work properly, edited task shown first not yet implemented
+	public void  displayTaskTable(ArrayList<Task> affectedTask, ArrayList<Task> fullListTask){
+		viewTaskTable();
 		ArrayList<String[]> outputDataString = new ArrayList<String[]>();
-		System.out.println( "outputData? = " +outputData);
-		System.out.println( "outputDataString? = " + outputDataString);
-		for (int i = 0 ; i < outputData.size(); i++){
-			outputDataString.add(outputData.get(i).toStringArray());
+		
+		if(affectedTask == null && fullListTask == null){
+			displayMsg(MSG_EMPTY_TASKLIST, 1);
+		}else if(affectedTask == null){
+			for (int i = 0 ; i < fullListTask.size(); i++){
+					outputDataString.add(fullListTask.get(i).toStringArray());
+			}
+			model.refreshTable(outputDataString);
+		}else{
+			for (int i = 0 ; i < affectedTask.size(); i++){
+					outputDataString.add(affectedTask.get(i).toStringArray());
+			}
+			for (int i = 0 ; i < fullListTask.size(); i++){
+				//if(alreadyAdded(unaffectedData, changedData))
+				outputDataString.add(fullListTask.get(i).toStringArray());
+			}
+	
+			model.refreshTable(outputDataString);
 		}
-		model.refreshTable(outputDataString);
 
 	}
 
+	//displays a table of shortcuts with 2 columns
 	public void displayShortcuts(String[][] outputData, boolean success) {
-		//change to table
+		viewShortcutTable();
+		String[] keywords;
+		
+		ArrayList<String[]> outputDataString = new ArrayList<String[]>();
+		System.out.println(outputData.length);
+		for(int i = 0; i < outputData.length; i++){
+			keywords= new String[2];
+			keywords[0] = SYS_KEYWORDS[i];
+		
+			String[] strArray = outputData[i];
+			String nextLine = "";
+			for(int j = 0; j < strArray.length; j++) {
+				nextLine += "'" + strArray[j] + "'" + " || " ;
+			}
+			keywords[1] = nextLine;
+			outputDataString.add(keywords);
+		}
+		model.refreshTable(outputDataString);	
+				
+	}
+	
+	public void displayTextPane(String[][] outputData, boolean success) {
 		clearTextPane();
 		viewTextPane();
 		for(int i = 0; i < outputData.length; i++){
@@ -101,7 +169,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 	public void displayTemplate(ArrayList<Task> outputData, ArrayList<String> templateName, boolean success){
 		//replace Task with String[] and replace TID with templateName
-		viewTaskPane();
+		viewTaskTable();
 		ArrayList<String[]> outputDataString = new ArrayList<String[]>();
 		for (int i = 0 ; i < outputData.size(); i++){
 			outputDataString.add(outputData.get(i).toStringArray());
@@ -157,7 +225,8 @@ public class UserInterface extends DefaultTableCellRenderer {
 		frame.getContentPane().setLayout(gridBagLayout);
 
 		textField = new JTextField();
-		textField.setBackground(new Color(240, 248, 255));
+		textField.setBackground(INPUT);
+		textField.setForeground(INPUT_FONT);
 		inputListener listener = new inputListener();
 		textField.addActionListener(listener);
 
@@ -225,9 +294,11 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 
 		outputArrayString = new ArrayList<String[]>();
-
-		initDisplay();
 		outputArray  =  new ArrayList<Task>();
+		shortcutArrayString = new ArrayList<String[]>();
+		mainHandler = SystemHandler.getSystemHandler();
+		initDisplay();
+		
 
 	}
 
@@ -240,6 +311,8 @@ public class UserInterface extends DefaultTableCellRenderer {
 		outputArea.setTabSize(10);
 		outputArea.setRows(10);
 		outputArea.setLineWrap(true);
+		outputArea.setBackground(OUTPUT_BG);
+		outputArea.setForeground(OUTPUT_FONT);
 		scrollPaneMain = new JScrollPane(); 
 		scrollPaneMain.setViewportView(outputArea);
 
@@ -251,9 +324,10 @@ public class UserInterface extends DefaultTableCellRenderer {
 		frame.getContentPane().add(scrollPaneMain, gbc_outputArea);
 
 		sysFeedbackArea = new JTextArea();
-		sysFeedbackArea.setFont(new Font("Monospaced", Font.PLAIN, 15));
+		sysFeedbackArea.setFont(new Font("Trebuchet MS", Font.BOLD, 20));
+		sysFeedbackArea.setForeground(FEEDBACK_FONT);
 		sysFeedbackArea.setEditable(false);
-		sysFeedbackArea.setBackground(new Color(245, 255, 250));
+		sysFeedbackArea.setBackground(FEEDBACK);
 		GridBagConstraints gbc_sysFeedbackArea = new GridBagConstraints();
 		gbc_sysFeedbackArea.gridheight = 2;
 		gbc_sysFeedbackArea.insets = new Insets(0, 0, 5, 0);
@@ -268,29 +342,82 @@ public class UserInterface extends DefaultTableCellRenderer {
 		gbc_textField.gridy = 3;
 		frame.getContentPane().add(textField, gbc_textField);
 		textField.setColumns(10);
+		textField.setFont(new Font("Trebuchet MS", Font.PLAIN, 18));
+		
+		createShortcutTable(shortcutArrayString);
+		createTaskTable(outputArrayString);
 
 		outputArea.append(MSG_WELCOME + newline + newline + MSG_HELP +newline + newline + MSG_REMINDERS);
 
 	}
 
-	public JScrollPane createTaskTable(ArrayList<String[]> outputArrayString) {
-		ArrayList<String> columnNames = new ArrayList<String>();
-		columnNames.add("ID");
-		columnNames.add("Task Name");
-		columnNames.add("Date From");
-		columnNames.add("Date To");
-		columnNames.add("Deadline");
-		columnNames.add("Location");
-		columnNames.add("Details");
-		columnNames.add("Priority");
-
-		double[] preferredWidth = {taskID, taskName,dateFrom, dateTo, deadline , location, details, priority};
+	private JScrollPane createTaskTable(ArrayList<String[]> outputArrayString) {
+		ArrayList<String> columnNamesTaskTable = new ArrayList<String>();
+		columnNamesTaskTable.add("ID");
+		columnNamesTaskTable.add("Task Name");
+		columnNamesTaskTable.add("Date From");
+		columnNamesTaskTable.add("Date To");
+		columnNamesTaskTable.add("Location");
+		columnNamesTaskTable.add("Details");
+		columnNamesTaskTable.add("Status");
 		
-		model = new TaskTableModel(outputArrayString, columnNames, String[].class );
-		outputTable = new JTable (model);
-        setJTableColumnsWidth(outputTable, 1200, preferredWidth ) ;
-		scrollPaneMain.setViewportView(outputTable);
-		System.out.println(model+ "in createTaskTable");
+		model = new TaskTableModel(outputArrayString, columnNamesTaskTable, String[].class );
+		taskTable = new JTable (model)
+		{
+			public Component prepareRenderer(TableCellRenderer renderer, int row, int column)
+			{
+				Component c = super.prepareRenderer(renderer, row, column);
+
+				if (!isRowSelected(row))
+					c.setBackground(row % 2 == 0 ? getBackground() : DARK_BLUE);
+
+				return c;
+			}
+		};
+        setJTableColumnsWidth(taskTable, windowWidth, PREFERRED_WIDTH_TASKTABLE ) ;
+    	taskTable.setRowHeight(25);
+    	taskTable.setFont(new Font("Arial", Font.BOLD, 15));
+    	taskTable.setGridColor(BLUE_GRID);
+    	taskTable.setForeground(TASK_FONT);
+    	taskTable.setBackground(BLUE_BG);
+        for (int c = 0; c < taskTable.getColumnCount(); c++)
+		{
+		    Class<?> col_class = taskTable.getColumnClass(c);
+		    taskTable.setDefaultEditor(col_class, null);        // remove editor
+		}
+		
+		return scrollPaneMain;
+	}
+	
+	private JScrollPane createShortcutTable(ArrayList<String[]> shortcutArrayString){
+		ArrayList<String>columnNamesST = new ArrayList<String>();
+		columnNamesST.add("System Default Keyword");
+		columnNamesST.add("User-Defined Keywords");
+		
+		model = new TaskTableModel(shortcutArrayString, columnNamesST, String[].class );
+		shortcutTable = new JTable (model){
+			public Component prepareRenderer(TableCellRenderer renderer, int row, int column)
+			{
+				Component c = super.prepareRenderer(renderer, row, column);
+
+				if (!isRowSelected(row)){
+					c.setBackground(row % 2 == 0 ? getBackground() : SHORTCUT_BG2);
+				}
+				return c;
+			}
+		};
+        setJTableColumnsWidth(shortcutTable, windowWidth, PREFERRED_WIDTH_SHORTCUTS ) ;
+    	shortcutTable.setRowHeight(25);
+    	shortcutTable.setFont(new Font("Arial", Font.BOLD, 15));
+    	shortcutTable.setGridColor(SHORTCUT_GRID);
+    	shortcutTable.setForeground(SHORTCUT_FONT);
+    	shortcutTable.setBackground(SHORTCUT_BG);
+        for (int c = 0; c < shortcutTable.getColumnCount(); c++)
+		{
+		    Class<?> col_class = shortcutTable.getColumnClass(c);
+		    shortcutTable.setDefaultEditor(col_class, null);        // remove editor
+		}
+		
 		return scrollPaneMain;
 	}
 
@@ -299,8 +426,12 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 	}
 
-	private void viewTaskPane(){
-		scrollPaneMain.setViewportView(outputTable);
+	private void viewTaskTable(){
+		scrollPaneMain.setViewportView(taskTable);
+	}
+	
+	private void viewShortcutTable(){
+		scrollPaneMain.setViewportView(shortcutTable);
 	}
 
 	private void kbShortcuts() {
@@ -364,7 +495,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 		//until here this needs to refactored out
 	}
 
-	private void addDummy() {
+	private void addDummyTask() {
 		
 		for (int tid = 1000; tid<1020;  tid++){
 			Task testTask = new Task( tid  , " (The rest are dummies)", new Date(115,3,8,14,0) , 
@@ -377,20 +508,47 @@ public class UserInterface extends DefaultTableCellRenderer {
 		}
 
 	}
+	
+	
+	private void addDummy2(){
+		dummy2 = new ArrayList<Task>();
+		for (int tid = 1000; tid<1005;  tid++){
+			Task testTask = new Task( tid  , " (The rest are dummies)", new Date(115,3,8,14,0) , 
+					new Date(115,3,8,17,0), new Date(113,2,8,17,0), "HOME", null, 0);
+			
+			dummy2.add(testTask);
+		}
+	}
+	
+	private void addDummyShortcut() {
+		
+		
+			String[][] keywordArray = new String[SYS_KEYWORDS.length][5];
+			
+			for ( int i = 0 ; i < SYS_KEYWORDS.length ; i++){
+				for ( int j = 0; j<5 ; j ++){
+					keywordArray[i][j] = i + "shortcut" + j ;
+				}
+			}
+					
+			displayShortcuts(keywordArray, true);
+
+	}
 
 
 
 	private class inputListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent e){
+			
+			clearFeedbackArea();
 			String input = textField.getText().trim();
 			prevInput = input;
-
+			System.out.println("input = " + input);
 				if (!hasFilename){		
-					//Init system handler with filename
-					createTaskTable(outputArrayString);
+				
 					hasFilename = true;
-				/*	mainHandler = SystemHandler.getSystemHandler();
+					
 					
 					if (input.length() == 0){
 						mainHandler.rawUserInput("viewTask");
@@ -398,22 +556,29 @@ public class UserInterface extends DefaultTableCellRenderer {
 						mainHandler.rawUserInput(input);
 						clearInput();
 					}
-					*/
-					addDummy();
-					displayTaskTable(outputArray, true);
+					
+					//addDummyTask();
+					//displayTaskTable(outputArray, dummy2);
 
-				}else{
-/*					
+				}else{					
 					if (input.length() != 0){
 						mainHandler.rawUserInput(input);
 						clearInput();
 					}
-					
-		*/			dummy++;
-					addDummy();
-					displayTaskTable(outputArray, true);
-					displayMsg("adding dummies " + dummy, dummy);
-					 
+									
+		/*			
+					if( input.equals("1")){
+						System.out.println("input is 1 ");
+						addDummyShortcut();
+						clearInput();
+					}else{
+						dummy++;
+						addDummyTask();
+						displayTaskTable(outputArray, dummy2);
+						displayMsg("adding dummies " + dummy, dummy);
+						clearInput();
+					}
+					*/
 				}
 			}
 		
