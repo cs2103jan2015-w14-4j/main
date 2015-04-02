@@ -179,6 +179,7 @@ public class SystemHandler {
 			case "editTask":
 			case "undoTask":
 			case "redoTask":
+			case "searchTask":
 			case "init":
 				return COMMAND_TYPE_GROUP.TASK_MANAGER;
 			//dummy command keyword
@@ -192,6 +193,7 @@ public class SystemHandler {
 			case "editTemplate":
 			case "viewTemplates":
 			case "deleteTemplate":
+			case "useTemplate":
 			case "resetTemplates":
 				return COMMAND_TYPE_GROUP.CUSTOMIZED_MANAGER;
 			default:
