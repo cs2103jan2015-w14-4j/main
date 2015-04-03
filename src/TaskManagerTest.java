@@ -800,20 +800,27 @@ public class TaskManagerTest {
 
 
     //--------------------testing undo and redo command starts------------------
-    /*@Test
+    @Test
     public void testUndoAndRedoForAdd() {
+        String[] addTask10 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "3"};
+        String[] addTask11 = {"addTask", "11", "LAG3203 MidTerm", 
+                "20/03/2015 12:00", "20/03/2015 13:30", null, "LT27", null, "3"};
+        String[] addTask12 = {"addTask", "12", "CS2211 Reflection", null, 
+                null, "21/03/2015 23:59", null, "name the file properly", "normal"};
+        
         myTaskManager = new TaskManager();
-        myTaskManager.processInitialization(ADD_TASK_10);
-        myTaskManager.processInitialization(ADD_TASK_11);
-        myTaskManager.processTM(ADD_TASK_12);
+        myTaskManager.processInitialization(addTask10);
+        myTaskManager.processInitialization(addTask11);
+        myTaskManager.processTM(addTask12);
 
         ArrayList<Task> expectTasks = new ArrayList<Task>();
         Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
+                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 3);
         Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
-                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 1);
+                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 3);
         Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
-                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 1);
+                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 3);
         expectTasks.add(expectTask10);
         expectTasks.add(expectTask11);
         expectTasks.add(expectTask12);
@@ -851,18 +858,24 @@ public class TaskManagerTest {
 
     @Test
     public void testUndoRedoForDelete() {
+        String[] addTask10 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "3"};
+        String[] addTask11 = {"addTask", "11", "LAG3203 MidTerm", 
+                "20/03/2015 12:00", "20/03/2015 13:30", null, "LT27", null, "3"};
+        String[] addTask12 = {"addTask", "12", "CS2211 Reflection", null, 
+                null, "21/03/2015 23:59", null, "name the file properly", "3"};
         myTaskManager = new TaskManager();
-        myTaskManager.processInitialization(ADD_TASK_10);
-        myTaskManager.processInitialization(ADD_TASK_11);
-        myTaskManager.processInitialization(ADD_TASK_12);
+        myTaskManager.processInitialization(addTask10);
+        myTaskManager.processInitialization(addTask11);
+        myTaskManager.processInitialization(addTask12);
 
         ArrayList<Task> expectTasks = new ArrayList<Task>();
         Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
+                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 3);
         Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
-                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 1);
+                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 3);
         Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
-                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 1);
+                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 3);
         expectTasks.add(expectTask10);
         expectTasks.add(expectTask11);
         expectTasks.add(expectTask12);
@@ -902,6 +915,7 @@ public class TaskManagerTest {
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
     }
 
+    /*
     @Test
     public void testUndoRedoForEdit() {
         myTaskManager = new TaskManager();
@@ -992,12 +1006,14 @@ public class TaskManagerTest {
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
         Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], COMMAND_EDIT);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
-    }
+    }*/
 
     @Test
     public void testUndoWithoutChangesToCache() {
+        String[] addTask10 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "3"};
         myTaskManager = new TaskManager();
-        myTaskManager.processInitialization(ADD_TASK_10);
+        myTaskManager.processInitialization(addTask10);
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
 
@@ -1012,8 +1028,10 @@ public class TaskManagerTest {
 
     @Test
     public void testRedoWithoutUndo() {
+        String[] addTask10 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "3"};
         myTaskManager = new TaskManager();
-        myTaskManager.processInitialization(ADD_TASK_10);
+        myTaskManager.processInitialization(addTask10);
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
 
@@ -1028,8 +1046,10 @@ public class TaskManagerTest {
 
     @Test
     public void testUndoWithNoMoreUndoForAdd() {
+        String[] addTask10 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "urgent"};
         myTaskManager = new TaskManager();
-        myTaskManager.processTM(ADD_TASK_10);
+        myTaskManager.processTM(addTask10);
         Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], 
                 COMMAND_ADD);
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
@@ -1105,7 +1125,7 @@ public class TaskManagerTest {
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 2);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
     }
-
+/*
     @Test
     public void testUndoWithNoMoreUndoForEdit() {
         myTaskManager = new TaskManager();
@@ -1140,7 +1160,7 @@ public class TaskManagerTest {
         }
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 2);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
-    }*/
+    }/*
     //--------------------testing undo and redo command ends--------------------
 
 
@@ -1211,8 +1231,10 @@ public class TaskManagerTest {
 
     @Test
     public void testClone() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "normal"};
         myTaskManager = new TaskManager();
-        ArrayList<Task> tks = myTaskManager.processTM(ADD_TASK_10);
+        ArrayList<Task> tks = myTaskManager.processTM(addTask10);
         tks.get(0).setTID(5000);
         Assert.assertFalse(assertTaskEqual(tks.get(0), myTaskManager.getTasks().get(0)));
 
