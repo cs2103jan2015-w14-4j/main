@@ -39,7 +39,7 @@ public class TaskManager implements TaskManagerInterface {
     private static final String MSG_ERR_SEARCH = "Search cannot be empty";
     private static final String MSG_ERR_NO_SUCH_STATUS = "System does not recognize this status";
     private static final String MSG_ERR_INVALID_CLEAR = "System cannot clear this";
-    
+
     private static final int URGENT = 1;
     private static final int MAJOR = 2;
     private static final int NORMAL = 3;
@@ -47,7 +47,7 @@ public class TaskManager implements TaskManagerInterface {
     private static final int CASUAL = 5;
     private static final int COMPLETE = 6;
     private static final int OVERDUE = 7;
-    
+
     private static final String URGENT_STRING = "urgent";
     private static final String MAJOR_STRING = "major";
     private static final String NORMAL_STRING = "normal";
@@ -119,7 +119,6 @@ public class TaskManager implements TaskManagerInterface {
     //--------------------other methods-----------------------------------
     //--------------------Initialization method starts--------------------
     public void processInitialization(String[] inputs) {
-        checkInputTaskDetails(inputs);
 
         Task newTask;
         if(isInputsHavingTID(inputs)){
@@ -127,6 +126,9 @@ public class TaskManager implements TaskManagerInterface {
         } else {  
             newTask = processInitializationWithoutID(inputs);
         }
+
+        checkTaskDetails(newTask.clone());
+
 
         addIDToTaskIDs(newTask.getTID());
 
@@ -138,27 +140,27 @@ public class TaskManager implements TaskManagerInterface {
         return processAddWithID(inputs);
     }
 
-    private void checkInputTaskDetails(String[] inputs) {
+    private void checkTaskDetails(Task task) {
         int dummy;
-        if(!isStringLengthLessThanThirty(inputs[TASK_NAME])) {
+        if(!isStringLengthLessThanThirty(task.getTaskName())) {
             throw new StringIndexOutOfBoundsException(String.format(MSG_ERR_LENGTH, 
                     TASK_TITLE_STRING));
         }
 
-        if(!isStringLengthLessThanThirty(inputs[LOCATION])) {
+        if(!isStringLengthLessThanThirty(task.getLocation())) {
             throw new StringIndexOutOfBoundsException(String.format(MSG_ERR_LENGTH, 
                     LOCATION_STRING));
         }
 
-        if(!isTaskDateNumberValid(inputs)) {
+        if(!isTaskDateNumberValid(task)) {
             throw new IllegalStateException(MSG_ERR_WRONG_DATE_NUMBER);
         }
 
-        if(!isDateFromBeforeDateTo(inputs)) {
+        if(!isDateFromBeforeDateTo(task)) {
             throw new IllegalStateException(MSG_ERR_WRONG_DATE_DURATION);
         }
 
-        if(isStringEmpty(inputs[TASK_NAME])) {
+        if(isStringEmpty(task.getTaskName())) {
             throw new IllegalStateException(MSG_ERR_EMPTY_TASK_NAME);
         }
     }
@@ -255,7 +257,7 @@ public class TaskManager implements TaskManagerInterface {
 
         return returningTasks;
     }
-    
+
     private void changeStatusToIntString(String[] inputs) {
         if(inputs[PRIORITY] == null) {
             inputs[PRIORITY] = convertToStringFromInt(NORMAL);
@@ -300,16 +302,17 @@ public class TaskManager implements TaskManagerInterface {
 
     //--------------------Add method starts--------------------
     private ArrayList<Task> addATask(String[] inputs) {
-        checkInputTaskDetails(inputs);
 
-        
-        
+
+
         Task newTask;
         if(isInputsHavingTID(inputs)){
             newTask = processAddWithID(inputs);       
         } else {
             newTask = processAddWithoutID(inputs);
         }
+
+        checkTaskDetails(newTask.clone());
 
         assert newTask.getTID() >= INITIAL_TID;
         addIDToTaskIDs(newTask.getTID());
@@ -411,7 +414,7 @@ public class TaskManager implements TaskManagerInterface {
     private ArrayList<Task> processEditCommand(String[] inputs) {
         Task taskToEdit = getTaskToEdit(inputs);
         //check at here to see whether need to throw exceptions or not
-        
+
         updateStackForEdit(taskToEdit, inputs, undoStack);
 
         return editATask(taskToEdit, inputs);
@@ -633,7 +636,7 @@ public class TaskManager implements TaskManagerInterface {
         if(isStringEmpty(inputs[SEARCH_INDEX])) {
             throw new IllegalStateException(MSG_ERR_SEARCH);
         }
-        
+
         if(isSearchADateObject(inputs[SEARCH_INDEX])) {
             Date searchDate = convertToDateWithoutPrintException(inputs[SEARCH_INDEX]);
             return searchTaskDateObject(searchDate);
@@ -1141,9 +1144,9 @@ public class TaskManager implements TaskManagerInterface {
         return isLeapYear;
     }
 
-    protected boolean isDateFromBeforeDateTo(String[] inputs) {
-        Date dateFrom = convertToDateObject(inputs[DATE_FROM]);
-        Date dateTo = convertToDateObject(inputs[DATE_TO]);
+    protected boolean isDateFromBeforeDateTo(Task task) {
+        Date dateFrom = task.getDateFrom();
+        Date dateTo = task.getDateTo();
 
         if(dateFrom == null || dateTo == null) {
             return true;
@@ -1156,34 +1159,34 @@ public class TaskManager implements TaskManagerInterface {
         }
     }
 
-    protected boolean isTaskDateNumberValid(String[] inputs) {
+    protected boolean isTaskDateNumberValid(Task task) {
         //durational task
-        if(inputs[DATE_FROM] != null && inputs[DATE_TO] != null && 
-                inputs[DEADLINE] == null) {
+        if(task.getDateFrom() != null && task.getDateTo() != null && 
+                task.getDeadline() == null) {
             return true;
         }
 
         //forever task
-        if(inputs[DATE_FROM] != null && inputs[DATE_TO] == null && 
-                inputs[DEADLINE] == null) {
+        if(task.getDateFrom() != null && task.getDateTo() == null && 
+                task.getDeadline() == null) {
             return true;
         }
 
         //deadline task
-        if(inputs[DATE_FROM] == null && inputs[DATE_TO] == null && 
-                inputs[DEADLINE] != null) {
+        if(task.getDateFrom() == null && task.getDateTo() == null && 
+                task.getDeadline() != null) {
             return true;
         }
 
         //another form of deadline task
-        if(inputs[DATE_FROM] == null && inputs[DATE_TO] != null && 
-                inputs[DEADLINE] == null) {
+        if(task.getDateFrom() == null && task.getDateTo() != null && 
+                task.getDeadline() == null) {
             return true;
         }
 
         //floating task
-        if(inputs[DATE_FROM] == null && inputs[DATE_TO] == null && 
-                inputs[DEADLINE] == null) {
+        if(task.getDateFrom() == null && task.getDateTo() == null && 
+                task.getDeadline() == null) {
             return true;
         }
 
