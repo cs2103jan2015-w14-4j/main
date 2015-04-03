@@ -26,7 +26,8 @@ public class TaskManager implements TaskManagerInterface {
     public static final int PRIORITY = 8;
     public static final int DEFAULT_STRING_SIZE = 9;
     public static final int VIEW_TYPE = 2;
-    public static final int REMINDER = 3;
+    public static final int FILTER_TYPE = 8;
+
 
     private static final String MSG_ERR_NO_SUCH_ID = "ID does not exist";
     private static final String MSG_ERR_NO_SUCH_COMMAND = "System does not recognize this command";
@@ -39,6 +40,9 @@ public class TaskManager implements TaskManagerInterface {
     private static final String MSG_ERR_SEARCH = "Search cannot be empty";
     private static final String MSG_ERR_NO_SUCH_STATUS = "System does not recognize this status";
     private static final String MSG_ERR_INVALID_CLEAR = "System cannot clear this";
+    private static final String MSG_ERR_NO_SUCH_FILTER = "System does not recognize this filter option";
+    private static final String MSG_ERR_NO_SUCH_ARRANGE = "System cannot arrange like this";
+
 
     private static final int URGENT = 1;
     private static final int MAJOR = 2;
@@ -132,7 +136,7 @@ public class TaskManager implements TaskManagerInterface {
 
         addIDToTaskIDs(newTask.getTID());
 
-        sortTasks(tasks, TID);
+        sortTasks(tasks, DATE_FROM);
         tasks.add(newTask);
     }
 
@@ -141,7 +145,6 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private void checkTaskDetails(Task task) {
-        int dummy;
         if(!isStringLengthLessThanThirty(task.getTaskName())) {
             throw new StringIndexOutOfBoundsException(String.format(MSG_ERR_LENGTH, 
                     TASK_TITLE_STRING));
@@ -326,7 +329,7 @@ public class TaskManager implements TaskManagerInterface {
             addClashingTasksForReturning(newTask, returningTasks);
         }
 
-        sortTasks(tasks, TID);
+        sortTasks(tasks, DATE_FROM);
 
         return returningTasks;
     }
@@ -416,7 +419,7 @@ public class TaskManager implements TaskManagerInterface {
         //check at here to see whether need to throw exceptions or not
         Task taskAfterEditing = editATask(taskToEdit.clone(), inputs).get(0);
         //this lousy code need to change later!!!
-        
+
         checkTaskDetails(taskAfterEditing);
         updateStackForEdit(taskToEdit, inputs, undoStack);
 
@@ -547,9 +550,19 @@ public class TaskManager implements TaskManagerInterface {
             return null;
         } else {
             ArrayList<Task> returningTasks = new ArrayList<Task>();
-            for(Task task: tasks) {
-                returningTasks.add(task.clone());
+
+            if(isFilterOptionDefault(inputs)) {
+                for(Task task: tasks) {
+                    returningTasks.add(task.clone());
+                }
+            } else {
+                int filterType = getFileterOption(inputs);
+                for(Task task: tasks) {
+                    if(task.getPriority() == filterType)
+                        returningTasks.add(task.clone());
+                }
             }
+
             if(isViewOptionDefault(inputs)) {
                 return returningTasks;
             } else {
@@ -558,6 +571,31 @@ public class TaskManager implements TaskManagerInterface {
                 return returningTasks;
             }
         }
+    }
+
+    private int getFileterOption(String[] inputs) {
+        int filterType = getFilterTypeInt(inputs[FILTER_TYPE]);
+        return filterType;
+    }
+
+    private int getFilterTypeInt(String filterType) {
+        filterType = filterType.toLowerCase();
+        int dummy;
+        switch(filterType) {
+        case URGENT_STRING: return URGENT;
+        case MAJOR_STRING: return MAJOR;
+        case NORMAL_STRING: return NORMAL;
+        case MINOR_STRING: return MINOR;
+        case CASUAL_STRING: return CASUAL;
+        case COMPLETE_STRING: return COMPLETE;
+        case OVERDUE_STRING: return OVERDUE;
+        default: throw new NoSuchElementException(MSG_ERR_NO_SUCH_FILTER);
+        }
+
+    }
+
+    private boolean isFilterOptionDefault(String[] inputs) {
+        return inputs[FILTER_TYPE] == null;
     }
 
     private boolean isViewOptionDefault(String[] inputs) {
@@ -573,21 +611,13 @@ public class TaskManager implements TaskManagerInterface {
     private int getViewTypeInt(String viewType) {
         viewType = viewType.toLowerCase();
         switch (viewType) {
-        case ID_STRING: 
-            return TID;
-        case TASK_NAME_STRING: 
-            return TASK_NAME;
-        case DATE_FROM_STRING:
-            return DATE_FROM;
-        case DEADLINE_STRING:
-            return DEADLINE;
-        case LOCATION_STRING:
-            return LOCATION;
-        case PRIORITY_STRING:
-            return PRIORITY;
-        default:
-            //need to change to throw exception later
-            return TID;
+        case ID_STRING: return TID;
+        case TASK_NAME_STRING: return TASK_NAME;
+        case DATE_FROM_STRING: return DATE_FROM;
+        case DEADLINE_STRING: return DEADLINE;
+        case LOCATION_STRING: return LOCATION;
+        case PRIORITY_STRING: return PRIORITY;
+        default: throw new NoSuchElementException(MSG_ERR_NO_SUCH_ARRANGE);
         }
     }
     //--------------------View method ends--------------------
@@ -726,7 +756,7 @@ public class TaskManager implements TaskManagerInterface {
         return task.getDateFrom() != null && task.getDateTo() == null &&
                 task.getDeadline() == null;
     }
-    
+
     private boolean isOnlyDateToTask(Task task) {
         return task.getDateFrom() == null && task.getDateTo() != null &&
                 task.getDeadline() == null; 
