@@ -225,7 +225,7 @@ public class SystemHandler {
 		externalStorage = new FileStorage(fileName);
 		system = this;
 		try{
-			externalStorage.readFromFile(myTaskList);
+			externalStorage.readTaskFromFile(myTaskList);
 			externalStorage.readShortcutFromFile(myShortcut);
 			externalStorage.readTemplateFromFile(myTemplates);
 		} catch(ParseException e) {
@@ -335,7 +335,7 @@ public class SystemHandler {
 
 		ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
 //		ArrayList<Task> fullList = myTemplates.processCustomizingCommand(CMD_GET_TEMPLATE);
-		window.displayTaskTable(result, true);
+		//window.displayTaskTable(result, true);
 	
 	}
 	
