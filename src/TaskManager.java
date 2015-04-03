@@ -31,7 +31,7 @@ public class TaskManager implements TaskManagerInterface {
     private static final String MSG_ERR_NO_SUCH_ID = "ID does not exist";
     private static final String MSG_ERR_NO_SUCH_COMMAND = "System does not recognize this command";
     private static final String MSG_ERR_LENGTH = "%s has maximum length of 30";
-    private static final String MSG_ERR_WRONG_DATE_NUMBER = "Wrong date entered";
+    private static final String MSG_ERR_WRONG_DATE_NUMBER = "Wrong dates entered";
     private static final String MSG_ERR_WRONG_DATE_DURATION = "Start must be before end";
     private static final String MSG_ERR_EMPTY_TASK_NAME = "Task name cannot be empty";
     private static final String MSG_ERR_UNDO = "No operation to undo";
@@ -163,6 +163,9 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private boolean isStringEmpty(String str) {
+        if(str == null) {
+            return true;
+        }
         str = str.trim();
         return str.isEmpty();
     }
@@ -199,7 +202,7 @@ public class TaskManager implements TaskManagerInterface {
 
         case editTask: case clearAttr: case markTask:
             if(isAbleToEdit(inputs[TID])) {
-                inputs[COMMAND_TYPE] = changeClearAttrToEditTask();
+                inputs[COMMAND_TYPE] = changeCommandToEditTask();
                 returningTasks = processEditCommand(inputs);
                 saveTasksToFile();
             } else {
@@ -253,7 +256,8 @@ public class TaskManager implements TaskManagerInterface {
         if(inputs[PRIORITY] == null) {
             inputs[PRIORITY] = convertToStringFromInt(NORMAL);
         } else {
-            switch(inputs[PRIORITY]) {
+            String temp = inputs[PRIORITY].toLowerCase();
+            switch(temp) {
             case URGENT_STRING: inputs[PRIORITY] = convertToStringFromInt(URGENT); break;
             case MAJOR_STRING: inputs[PRIORITY] = convertToStringFromInt(MAJOR); break;
             case NORMAL_STRING: inputs[PRIORITY] = convertToStringFromInt(NORMAL); break;
@@ -396,7 +400,7 @@ public class TaskManager implements TaskManagerInterface {
         return isIDClashing(TaskID);
     }
 
-    private String changeClearAttrToEditTask() {
+    private String changeCommandToEditTask() {
         return COMMAND_TYPE_TASK_MANAGER.editTask.toString();
     }
 
