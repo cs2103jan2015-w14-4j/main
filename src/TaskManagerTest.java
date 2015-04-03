@@ -151,7 +151,6 @@ public class TaskManagerTest {
 
         Assert.assertEquals(myTaskManager.getTasks().get(0).getTID(), 10);
         assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
-
     }
 
     @Test
@@ -571,6 +570,22 @@ public class TaskManagerTest {
 
 
     //--------------------testing search command starts------------------
+    @Test
+    public void testSearchEmptyString() {
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(ADD_TASK_10);
+     
+        String[] searchEmptyString = {"searchTask", null, "   ", null, null, null, 
+                null, null, null};
+        
+        try{
+            myTaskManager.processTM(searchEmptyString);
+        } catch (IllegalStateException e) {
+            Assert.assertEquals(e.getMessage(), "Search cannot be empty");
+        }
+        
+    }
+    
     @Test
     public void testSearchTaskNonDateObject() {
         myTaskManager = new TaskManager();
