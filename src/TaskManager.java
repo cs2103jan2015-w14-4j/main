@@ -29,7 +29,20 @@ public class TaskManager implements TaskManagerInterface {
     public static final int REMINDER = 3;
 
     private static final String MSG_ERR_NO_SUCH_ID = "ID does not exist";
-    
+    private static final String MSG_ERR_NO_SUCH_COMMAND = "System does not recognize this command";
+    private static final String MSG_ERR_LENGTH = "%s has maximum length of 30";
+    private static final String MSG_ERR_WRONG_DATE_NUMBER = "Wrong date entered";
+    private static final String MSG_ERR_WRONG_DATE_DURATION = "Start must be before end";
+    private static final String MSG_ERR_EMPTY_TASK_NAME = "Task name cannot be empty";
+
+    /*private static final int URGENT = 1;
+    private static final int MAJOR = 2;
+    private static final int NORMAL = 3;
+    private static final int MINOR = 4;
+    private static final int CASUAL = 5;
+    private static final int COMPLETE = 6;
+    private static final int OVERDUE = 7;*/
+
     private static final int INITIAL_TID = 10;
     private static final int NUM_ATTRIBUTE_FOR_DATE_OBJECT = 5;
     private static final int DAY_INDEX = 0;
@@ -53,6 +66,7 @@ public class TaskManager implements TaskManagerInterface {
     private static final String DATE_FROM_STRING = "date";
     private static final String DEADLINE_STRING = "deadline";
     private static final String LOCATION_STRING = "location";
+    private static final String TASK_TITLE_STRING = "task title";
 
 
     private ArrayList<Task> tasks;
@@ -92,6 +106,8 @@ public class TaskManager implements TaskManagerInterface {
     //--------------------other methods-----------------------------------
     //--------------------Initialization method starts--------------------
     public void processInitialization(String[] inputs) {
+        checkTaskDetails(inputs);
+
         Task newTask;
         if(isInputsHavingTID(inputs)){
             newTask = processInitializationWithID(inputs);
@@ -100,7 +116,6 @@ public class TaskManager implements TaskManagerInterface {
         }
 
         addIDToTaskIDs(newTask.getTID());
-        assertTaskDatesAreValid(newTask);
 
         sortTasks(tasks, TID);
         tasks.add(newTask);
@@ -108,6 +123,44 @@ public class TaskManager implements TaskManagerInterface {
 
     private Task processInitializationWithID(String[] inputs) {
         return processAddWithID(inputs);
+    }
+
+    private void checkTaskDetails(String[] inputs) {
+        int dummy;
+        if(!isStringLengthLessThanThirty(inputs[TASK_NAME])) {
+            throw new StringIndexOutOfBoundsException(String.format(MSG_ERR_LENGTH, 
+                    TASK_TITLE_STRING));
+        }
+
+        if(!isStringLengthLessThanThirty(inputs[LOCATION])) {
+            throw new StringIndexOutOfBoundsException(String.format(MSG_ERR_LENGTH, 
+                    LOCATION_STRING));
+        }
+
+        if(!isTaskDateNumberValid(inputs)) {
+            throw new IllegalStateException(MSG_ERR_WRONG_DATE_NUMBER);
+        }
+
+        if(!isDateFromBeforeDateTo(inputs)) {
+            throw new IllegalStateException(MSG_ERR_WRONG_DATE_DURATION);
+        }
+
+        if(isStringEmpty(inputs[TASK_NAME])) {
+            throw new IllegalStateException(MSG_ERR_EMPTY_TASK_NAME);
+        }
+    }
+
+    private boolean isStringEmpty(String str) {
+        str = str.trim();
+        return str.isEmpty();
+    }
+
+    private boolean isStringLengthLessThanThirty(String str) {
+        if(str != null) {
+            return str.length() <= 30;
+        } else {
+            return true;
+        }
     }
 
     private Task processInitializationWithoutID(String[] inputs) {
@@ -131,7 +184,7 @@ public class TaskManager implements TaskManagerInterface {
             }
             break;
 
-        case editTask: case clearAttr:
+        case editTask: case clearAttr: case markTask:
             if(isAbleToEdit(inputs[TID])) {
                 inputs[COMMAND_TYPE] = changeClearAttrToEditTask();
                 returningTasks = processEditCommand(inputs);
@@ -159,21 +212,29 @@ public class TaskManager implements TaskManagerInterface {
             break;
 
         case undoTask:
+            if(isStackEmpty(undoStack)) {
+                
+            } else {
             returningTasks = undoAnOperation();
             saveTasksToFile();
+            }
             break;
 
         case redoTask:
+            if(isStackEmpty(redoStack))
             returningTasks = redoAnOperation();
             saveTasksToFile();
             break;
 
         case invalidTask:
-            //what do I do if command is invalid
-            break;
+            throw new NoSuchElementException(MSG_ERR_NO_SUCH_COMMAND);
         }
 
         return returningTasks;
+    }
+    
+    private boolean isStackEmpty(Stack stack) {
+        return stack.isEmpty();
     }
 
 
@@ -198,6 +259,8 @@ public class TaskManager implements TaskManagerInterface {
 
     //--------------------Add method starts--------------------
     private ArrayList<Task> addATask(String[] inputs) {
+        checkTaskDetails(inputs);
+
         Task newTask;
         if(isInputsHavingTID(inputs)){
             newTask = processAddWithID(inputs);       
@@ -205,7 +268,6 @@ public class TaskManager implements TaskManagerInterface {
             newTask = processAddWithoutID(inputs);
         }
 
-        assertTaskDatesAreValid(newTask);
         assert newTask.getTID() >= INITIAL_TID;
         addIDToTaskIDs(newTask.getTID());
 
@@ -326,8 +388,6 @@ public class TaskManager implements TaskManagerInterface {
         }
         ArrayList<Task> returningTasks = new ArrayList<Task>();
         returningTasks.add(taskToEdit.clone());
-
-        assertTaskDatesAreValid(taskToEdit);
 
         //add clashed durational tasks to the return
         if(isTaskADurationalTask(taskToEdit)) {
@@ -1035,7 +1095,14 @@ public class TaskManager implements TaskManagerInterface {
         return isLeapYear;
     }
 
-    protected boolean isDateFromSmallerThanDateTo(Date dateFrom, Date dateTo) {
+    protected boolean isDateFromBeforeDateTo(String[] inputs) {
+        Date dateFrom = convertToDateObject(inputs[DATE_FROM]);
+        Date dateTo = convertToDateObject(inputs[DATE_TO]);
+
+        if(dateFrom == null || dateTo == null) {
+            return true;
+        }
+        
         if(dateFrom.compareTo(dateTo) < 0) {
             return true;
         } else {
@@ -1043,44 +1110,38 @@ public class TaskManager implements TaskManagerInterface {
         }
     }
 
-    protected boolean isDeadlineAfterCurrentTime(Date deadline) {
-        Date date = new Date();
-        if(deadline.compareTo(date) > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    protected boolean isTaskDateNumberValid(Task task) {
+    protected boolean isTaskDateNumberValid(String[] inputs) {
         //durational task
-        if(task.getDateFrom() != null && task.getDateTo() != null && 
-                task.getDeadline() == null) {
+        if(inputs[DATE_FROM] != null && inputs[DATE_TO] != null && 
+                inputs[DEADLINE] == null) {
+            return true;
+        }
+
+        //forever task
+        if(inputs[DATE_FROM] != null && inputs[DATE_TO] == null && 
+                inputs[DEADLINE] == null) {
             return true;
         }
 
         //deadline task
-        if(task.getDateFrom() == null && task.getDateTo() == null && 
-                task.getDeadline() != null) {
+        if(inputs[DATE_FROM] == null && inputs[DATE_TO] == null && 
+                inputs[DEADLINE] != null) {
+            return true;
+        }
+
+        //another form of deadline task
+        if(inputs[DATE_FROM] == null && inputs[DATE_TO] != null && 
+                inputs[DEADLINE] == null) {
             return true;
         }
 
         //floating task
-        if(task.getDateFrom() == null && task.getDateTo() == null && 
-                task.getDeadline() == null) {
+        if(inputs[DATE_FROM] == null && inputs[DATE_TO] == null && 
+                inputs[DEADLINE] == null) {
             return true;
         }
 
         return false;
-    }
-
-    private void assertTaskDatesAreValid(Task newTask) {
-        assert isTaskDateNumberValid(newTask);
-        if(isTaskADurationalTask(newTask)) {
-            assert newTask.getDateTo() != null;
-            assert isDateFromSmallerThanDateTo(newTask.getDateFrom(), 
-                    newTask.getDateTo());
-        }
     }
     //--------------------Assertion methods ends----------------------
 }
