@@ -38,6 +38,7 @@ public class TaskManager implements TaskManagerInterface {
     private static final String MSG_ERR_REDO = "No operation to redo";
     private static final String MSG_ERR_SEARCH = "Search cannot be empty";
     private static final String MSG_ERR_NO_SUCH_STATUS = "System does not recognize this status";
+    private static final String MSG_ERR_INVALID_CLEAR = "System cannot clear this";
     
     private static final int URGENT = 1;
     private static final int MAJOR = 2;
@@ -491,19 +492,16 @@ public class TaskManager implements TaskManagerInterface {
 
     private void clearTaskInfo(Task task, int i) {
         switch(i) {
-        case TASK_NAME: clearTaskName(task); break;
         case DATE_FROM: clearTaskDateFrom(task); break;
         case DATE_TO: clearTaskDateTo(task); break;
         case DEADLINE: clearTaskDeadline(task); break;
         case LOCATION: clearTaskLocation(task); break;
         case DETAILS: clearTaskDetails(task); break;
         case PRIORITY: clearTaskPriority(task); break;
+        default: throw new NoSuchElementException(MSG_ERR_INVALID_CLEAR);
         }
     }
 
-    private void clearTaskName(Task task) {
-        task.setTaskName(null);
-    }
 
     private void clearTaskDateFrom(Task task) {
         task.setDateFrom(null);
