@@ -136,6 +136,8 @@ public class TaskManager implements TaskManagerInterface {
                 inputs[COMMAND_TYPE] = changeClearAttrToEditTask();
                 returningTasks = processEditCommand(inputs);
                 saveTasksToFile();
+            } else {
+                throw new NoSuchElementException(MSG_ERR_NO_SUCH_ID);
             }
             break;
 

@@ -222,7 +222,12 @@ public class TaskManagerTest {
     public void testUnableToEdit() {
         myTaskManager = new TaskManager();
         myTaskManager.processTM(ADD_TASK_10);
-        assertTaskArrayListEquals(myTaskManager.processTM(EDIT_TASK_9999), null);
+        
+        try {
+            myTaskManager.processTM(EDIT_TASK_9999);
+        } catch (NoSuchElementException e) {
+            Assert.assertEquals(e.getMessage(), "ID does not exist");
+        }
     }
 
     @Test
@@ -554,6 +559,7 @@ public class TaskManagerTest {
     public void testUnableToDelete() {
         myTaskManager = new TaskManager();
         myTaskManager.processTM(ADD_TASK_10);
+        
         try {
             myTaskManager.processTM(DELETE_TASK_9999);
         } catch (NoSuchElementException e) {
