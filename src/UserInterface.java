@@ -1,4 +1,3 @@
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFrame;
@@ -15,6 +14,7 @@ import javax.swing.table.TableColumn;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.awt.Component;
 import java.awt.GridBagLayout;
@@ -85,7 +85,8 @@ public class UserInterface extends DefaultTableCellRenderer {
 	private static final Color INPUT = new Color(18,42,77); 
 	private static final Color INPUT_FONT = new Color(136,157,191); 
 	private static final Color FEEDBACK = new Color(4,18,62); 
-	private static final Color FEEDBACK_FONT = new Color(200,255,255); 
+	private static final Color FEEDBACK_FONT = new Color(255,240,175); 
+	private static final Color FEEDBACK_FONT2 = new Color(200,255,255); 
 	private static final Color SHORTCUT_FONT = new Color(187,197,255); 
 	private static final Color SHORTCUT_BG = new Color( 18,41,77); 
 	private static final Color SHORTCUT_BG2 = new Color(44,71,112);
@@ -98,29 +99,37 @@ public class UserInterface extends DefaultTableCellRenderer {
 	ArrayList<Task> dummy2;
 	
 	//doesnt work properly, edited task shown first not yet implemented
-	public void  displayTaskTable(ArrayList<Task> affectedTask, ArrayList<Task> fullListTask){
+	public void  displayTaskTable(ArrayList<Task> affectedTask, ArrayList<Task> fullListTask, int status){
 		viewTaskTable();
 		ArrayList<String[]> outputDataString = new ArrayList<String[]>();
 		
-		if(affectedTask == null && fullListTask == null){
+		if(fullListTask == null){
 			displayMsg(MSG_EMPTY_TASKLIST, 1);
 		}else if(affectedTask == null){
 			for (int i = 0 ; i < fullListTask.size(); i++){
 					outputDataString.add(fullListTask.get(i).toStringArray());
 			}
-			model.refreshTable(outputDataString);
 		}else{
-			for (int i = 0 ; i < affectedTask.size(); i++){
-					outputDataString.add(affectedTask.get(i).toStringArray());
+			System.out.println("affected Task");
+			for (int j = 0 ; j < affectedTask.size(); j++){
+					outputDataString.add(affectedTask.get(j).toStringArray());
 			}
-			for (int i = 0 ; i < fullListTask.size(); i++){
-				//if(alreadyAdded(unaffectedData, changedData))
-				outputDataString.add(fullListTask.get(i).toStringArray());
+			for (int k = 0 ; k < fullListTask.size(); k++){
+				String[] strArray = fullListTask.get(k).toStringArray();
+				if (!isAlreadyAdded(strArray, outputDataString)){
+					outputDataString.add(strArray);
+				}
 			}
-	
-			model.refreshTable(outputDataString);
 		}
+		model.refreshTable(outputDataString);
+	}
 
+	private boolean isAlreadyAdded(String[] task, ArrayList<String[]> taskOutput) {
+		for(String[] t: taskOutput){
+			if (Arrays.equals(task, t))
+				return true;
+		}
+		return false;
 	}
 
 	//displays a table of shortcuts with 2 columns
@@ -129,7 +138,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 		String[] keywords;
 		
 		ArrayList<String[]> outputDataString = new ArrayList<String[]>();
-		System.out.println(outputData.length);
 		for(int i = 0; i < outputData.length; i++){
 			keywords= new String[2];
 			keywords[0] = SYS_KEYWORDS[i];
@@ -503,8 +511,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 					new Date(115,3,8,17,0), new Date(113,2,8,17,0), "HOME", null, 0);
 			
 			outputArray.add(testTask);
-		
-		//	model.addRow(testTask);
 			
 		}
 
@@ -513,7 +519,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 	
 	private void addDummy2(){
 		dummy2 = new ArrayList<Task>();
-		for (int tid = 1000; tid<1005;  tid++){
+		for (int tid = 1005; tid<1010;  tid++){
 			Task testTask = new Task( tid  , " (The rest are dummies)", new Date(115,3,8,14,0) , 
 					new Date(115,3,8,17,0), new Date(113,2,8,17,0), "HOME", null, 0);
 			
@@ -546,10 +552,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 			String input = textField.getText().trim();
 			prevInput = input;
 			System.out.println("input = " + input);
-				if (!hasFilename){		
-				
-					hasFilename = true;
-					
 					
 					if (input.length() == 0){
 						mainHandler.rawUserInput("viewTask");
@@ -557,30 +559,22 @@ public class UserInterface extends DefaultTableCellRenderer {
 						mainHandler.rawUserInput(input);
 						clearInput();
 					}
-					
-					//addDummyTask();
-					//displayTaskTable(outputArray, dummy2);
-
-				}else{					
-					if (input.length() != 0){
-						mainHandler.rawUserInput(input);
-						clearInput();
-					}
-									
-		/*			
-					if( input.equals("1")){
-						System.out.println("input is 1 ");
+				
+				/*
+				 	if( input.equals("1")){
+						displayMsg("input is 1 ",1);
 						addDummyShortcut();
 						clearInput();
 					}else{
 						dummy++;
 						addDummyTask();
-						displayTaskTable(outputArray, dummy2);
+						addDummy2();
+						displayTaskTable( dummy2, outputArray, 1);
 						displayMsg("adding dummies " + dummy, dummy);
 						clearInput();
 					}
-					*/
-				}
+					
+				*/
 			}
 		
 
@@ -617,8 +611,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 	        c.setBackground(row % 2 == 0 ? Color.LIGHT_GRAY : Color.WHITE);
-	        System.out.println("row exists?" + row);
-
 	       return c;
 
 	}
