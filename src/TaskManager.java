@@ -6,9 +6,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.joda.time.DateTimeComparator;
 
 
@@ -26,6 +28,8 @@ public class TaskManager implements TaskManagerInterface {
     public static final int VIEW_TYPE = 2;
     public static final int REMINDER = 3;
 
+    private static final String MSG_ERR_NO_SUCH_ID = "ID does not exist";
+    
     private static final int INITIAL_TID = 10;
     private static final int NUM_ATTRIBUTE_FOR_DATE_OBJECT = 5;
     private static final int DAY_INDEX = 0;
@@ -143,6 +147,8 @@ public class TaskManager implements TaskManagerInterface {
             if(isAbleToDelete(inputs[TID])) {
                 returningTasks = processDeleteCommand(inputs);
                 saveTasksToFile();
+            } else {
+                throw new NoSuchElementException(MSG_ERR_NO_SUCH_ID);
             }
             break;
 
