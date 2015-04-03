@@ -414,7 +414,10 @@ public class TaskManager implements TaskManagerInterface {
     private ArrayList<Task> processEditCommand(String[] inputs) {
         Task taskToEdit = getTaskToEdit(inputs);
         //check at here to see whether need to throw exceptions or not
-
+        Task taskAfterEditing = editATask(taskToEdit.clone(), inputs).get(0);
+        //this lousy code need to change later!!!
+        
+        checkTaskDetails(taskAfterEditing);
         updateStackForEdit(taskToEdit, inputs, undoStack);
 
         return editATask(taskToEdit, inputs);
