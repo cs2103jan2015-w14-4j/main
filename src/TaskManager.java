@@ -504,13 +504,12 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private ArrayList<Task> deleteATask(int TID) {
-        ArrayList<Task> returningTasks = null;
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
         Iterator<Task> iterator = tasks.iterator();
 
         while (iterator.hasNext()) {
             Task nextTask = (Task) iterator.next();
             if(TID == nextTask.getTID()) {
-                returningTasks = new ArrayList<Task>();
                 returningTasks.add(nextTask.clone());
                 iterator.remove();
             }
