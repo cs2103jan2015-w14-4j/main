@@ -37,14 +37,23 @@ public class TaskManager implements TaskManagerInterface {
     private static final String MSG_ERR_UNDO = "No operation to undo";
     private static final String MSG_ERR_REDO = "No operation to redo";
     private static final String MSG_ERR_SEARCH = "Search cannot be empty";
-
-    /*private static final int URGENT = 1;
+    private static final String MSG_ERR_NO_SUCH_STATUS = "System does not recognize this status";
+    
+    private static final int URGENT = 1;
     private static final int MAJOR = 2;
     private static final int NORMAL = 3;
     private static final int MINOR = 4;
     private static final int CASUAL = 5;
     private static final int COMPLETE = 6;
-    private static final int OVERDUE = 7;*/
+    private static final int OVERDUE = 7;
+    
+    private static final String URGENT_STRING = "urgent";
+    private static final String MAJOR_STRING = "major";
+    private static final String NORMAL_STRING = "normal";
+    private static final String MINOR_STRING = "minor";
+    private static final String CASUAL_STRING = "casual";
+    private static final String COMPLETE_STRING = "complete";
+    private static final String OVERDUE_STRING = "overdue";
 
     private static final int INITIAL_TID = 10;
     private static final int NUM_ATTRIBUTE_FOR_DATE_OBJECT = 5;
@@ -180,6 +189,7 @@ public class TaskManager implements TaskManagerInterface {
         switch(commandObtained) {
 
         case addTask:
+            changeStatusToIntString(inputs);
             returningTasks = addATask(inputs);
             if(returningTasks != null) {
                 updateUndoStackFromTask(returningTasks.get(INDEX_ZERO), inputs[COMMAND_TYPE]);
@@ -238,8 +248,25 @@ public class TaskManager implements TaskManagerInterface {
 
         return returningTasks;
     }
+    
+    private void changeStatusToIntString(String[] inputs) {
+        if(inputs[PRIORITY] == null) {
+            inputs[PRIORITY] = convertToStringFromInt(NORMAL);
+        } else {
+            switch(inputs[PRIORITY]) {
+            case URGENT_STRING: inputs[PRIORITY] = convertToStringFromInt(URGENT); break;
+            case MAJOR_STRING: inputs[PRIORITY] = convertToStringFromInt(MAJOR); break;
+            case NORMAL_STRING: inputs[PRIORITY] = convertToStringFromInt(NORMAL); break;
+            case MINOR_STRING: inputs[PRIORITY] = convertToStringFromInt(MINOR); break;
+            case CASUAL_STRING: inputs[PRIORITY] = convertToStringFromInt(CASUAL); break;
+            case COMPLETE_STRING: inputs[PRIORITY] = convertToStringFromInt(COMPLETE); break;
+            case OVERDUE_STRING: inputs[PRIORITY] = convertToStringFromInt(OVERDUE); break;
+            default: throw new NoSuchElementException(MSG_ERR_NO_SUCH_STATUS);
+            }
+        }
+    }
 
-    private boolean isStackEmpty(Stack stack) {
+    private boolean isStackEmpty(Stack<String[]> stack) {
         return stack.isEmpty();
     }
 
@@ -267,6 +294,8 @@ public class TaskManager implements TaskManagerInterface {
     private ArrayList<Task> addATask(String[] inputs) {
         checkInputTaskDetails(inputs);
 
+        
+        
         Task newTask;
         if(isInputsHavingTID(inputs)){
             newTask = processAddWithID(inputs);       
