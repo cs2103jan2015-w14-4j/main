@@ -2,6 +2,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.junit.After;
@@ -40,8 +41,8 @@ public class TaskManagerTest {
         "18/03/2015 15:30", null, null, null, null};
     public static final String[] EDIT_TASK_11 = {"editTask", "11", null, null, 
         "20/03/2015 15:30", null, "LT108", null, null};
-    public static final String[] EDIT_TASK_12 = {"editTask", "12", null, null,
-        null, null, "IVLE", "", null};
+    public static final String[] EDIT_TASK_12 = {"clearAttr", "12", null, null,
+        null, null, "", "", null};
     public static final String[] EDIT_TASK_9999 = {"editTask", "9999", null, null, 
         "20/03/2015 15:30", null, null, null, null};
     public static final String[] VIEW_TASK = {"viewTask", null, null, null, null, null, 
@@ -175,7 +176,7 @@ public class TaskManagerTest {
     }
 
     @Test
-    public void testClasedTasks() {
+    public void testClashedTasks() {
         myTaskManager = new TaskManager();
         ArrayList<Task> expectTasks = new ArrayList<Task>();
         ArrayList<Task> clashTasks = new ArrayList<Task>();
@@ -278,7 +279,7 @@ public class TaskManagerTest {
 
         //test the ArrayList before edit
         assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
-        expectTasks.get(TASK12).setLocation("IVLE");
+        expectTasks.get(TASK12).setLocation(null);
         expectTasks.get(TASK12).setDetails(null);
         ArrayList<Task> expectEdit = new ArrayList<Task>();
         expectEdit.add(expectTasks.get(TASK12));
@@ -791,6 +792,49 @@ public class TaskManagerTest {
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
     }
+    
+    @Test
+    public void testUndoRedoForEdit_V2() {
+        String[] addTask10 = {"addTask", "10", "CS2331 Reflection", null, 
+            null, null, "SOC", null, "1"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processInitialization(addTask10);
+        
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2331 Reflection", null, 
+                null, null, "SOC", null, 1);
+        expectTasks.add(expectTask10);
+        
+        //test before doing any undo and redo
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+        
+        String[] clear = {"clearAttr", "10", null, "", 
+                "", "", "", "", null};
+        expectTasks.get(TASK10).setLocation(null);
+        ArrayList<Task> expectEdit = new ArrayList<Task>();
+        expectEdit.add(expectTasks.get(0));    
+        assertTaskArrayListEquals(myTaskManager.processTM(clear), expectEdit);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], COMMAND_EDIT);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+        
+        expectTasks.get(TASK10).setLocation("SOC");
+        ArrayList<Task> expectUndo = new ArrayList<Task>();
+        expectUndo.add(expectTasks.get(0));
+        assertTaskArrayListEquals(myTaskManager.processTM(UNDO_OPERATION), expectUndo);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getRedoStack().peek()[COMMAND_TYPE], COMMAND_EDIT);
+
+        
+        expectTasks.get(TASK10).setLocation(null);
+        ArrayList<Task> expectRedo = new ArrayList<Task>();
+        expectRedo.add(expectTasks.get(0));
+        assertTaskArrayListEquals(myTaskManager.processTM(REDO_OPERATION), expectRedo);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], COMMAND_EDIT);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+    }
 
     @Test
     public void testUndoWithoutChangesToCache() {
@@ -992,6 +1036,30 @@ public class TaskManagerTest {
         tks.get(0).setTID(5000);
         Assert.assertFalse(assertTaskEqual(tks.get(0), myTaskManager.getTasks().get(0)));
 
+    }
+    
+    @Test
+    public void testTaskToStringArray() {
+        Task durationalTask = new Task(10, "durationalTask", convertToDateObject("18/03/2015 12:00"), 
+                convertToDateObject("18/03/2015 00:00"), null, null, null, 0);
+        Task deadlineTaskDateTo = new Task(11, "deadlineTaskDateTo", null, 
+                convertToDateObject("18/03/2015 15:00"), null, null, null, 0);
+        Task deadlineTaskDeadline = new Task(12, "deadlineTaskDeadline", null, null, 
+                convertToDateObject("18/03/2015 00:00"), null, null, 0);
+        Task foreverTask = new Task(17, "foreverTask", null, 
+                convertToDateObject("21/03/2015 23:59"), null, null, null, 0);
+        Task floatingTask = new Task(18, "floatingTask", null, null, null, null, null, 0);
+
+        Assert.assertEquals("[10, durationalTask, 18/03/2015 12:00, 18/03/2015, null, "
+                + "null, Normal]", Arrays.toString(durationalTask.toStringArray()));
+        Assert.assertEquals("[11, deadlineTaskDateTo, null, 18/03/2015 15:00, null, "
+                + "null, Normal]", Arrays.toString(deadlineTaskDateTo.toStringArray()));
+        Assert.assertEquals("[12, deadlineTaskDeadline, null, 18/03/2015, null, "
+                + "null, Normal]", Arrays.toString(deadlineTaskDeadline.toStringArray()));
+        Assert.assertEquals("[17, foreverTask, null, 21/03/2015 23:59, null, "
+                + "null, Normal]", Arrays.toString(foreverTask.toStringArray()));
+        Assert.assertEquals("[18, floatingTask, null, null, null, "
+                + "null, Normal]", Arrays.toString(floatingTask.toStringArray()));
     }
     //--------------------testing others ends-----------------------------------
 

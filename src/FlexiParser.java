@@ -77,10 +77,11 @@ public class FlexiParser {
     public static final int TASK_LENGTH = 9;
     public static final int SHORTCUT_LENGTH = 3;
     
+    private Shortcut shortcut;
     
-    public FlexiParser() {
+    public FlexiParser(Shortcut shortcut) {
 		
-    	
+    	this.shortcut = shortcut;
     	
 	}
 	
@@ -96,9 +97,9 @@ public class FlexiParser {
 			
 			
 			String command = inputArray[COMMAND_TYPE_INDEX];
-			//Shortcut shortcut = Shortcut.getShortcut();
+			
 			//what does his one return
-			//command = myshortcut.keywordMatching(command);
+			command = shortcut.keywordMatching(command);
 			String[] outputArray;
 			if(!command.contains("Shortcut")) {
 				
@@ -843,7 +844,7 @@ public class FlexiParser {
     
     	
     	
-    	FlexiParser test1 = new FlexiParser();
+    	FlexiParser test1 = new FlexiParser(new Shortcut());
     	
     	
     	String[] temp = test1.parseText("addTask wakawaks from 11/04/15");

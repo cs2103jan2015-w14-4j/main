@@ -95,7 +95,7 @@ public class FileStorage {
         	 System.out.println(ERROR_EXCEPTION); 
          
          }
-    	//TODO read from file and add respective info to the 3 parts
+    	// read from file and add respective info to the 3 parts
 		//to call TM, same as before
 		//to call template, use processCustomizingCommand(String[] cmd) 
 		//	cmd = {"addTemplate", , <template name>,<datefrom>......} //same as task manager 
@@ -103,7 +103,7 @@ public class FileStorage {
 		// cmd = {"addShortcutINIT", shortcutname, id} // id the the row, eg addTask = row 0, deleteTask = row 3
 														// refer to shortcut keywords for the row
     }
-    //TODO update template file
+    // update template file
     //@param given an arraylist of task, update the the template file
     public void writeTemplateToFile(ArrayList<Task> templateList, ArrayList<String> matchingName) {
     	try {
@@ -148,7 +148,7 @@ public class FileStorage {
     
     
     
-	//TODO update shortcut file
+	// update shortcut file
     //@param shortcuts String[][] of size 9 each string[i] keeps a variable length represent certain keyword 
     //store in order , one row is one id during retrieve
     public void writeShortcutToFile(String[][] shortcuts) {
@@ -446,7 +446,12 @@ public class FileStorage {
                     for(int i =0; i < inputs.length; ++i) {
                     	System.out.print(inputs[i] + ":");
                     }
-                    template.processCustomizingCommand(inputs);       
+                    try {
+                    	template.processCustomizingCommand(inputs);     
+                    } catch(Exception e) {
+                    	
+                    }
+                      
                
                 }
                 
@@ -469,22 +474,24 @@ public class FileStorage {
         	try {
                 
         		Scanner sc = new Scanner(shortcutFile);
-                
+                int i = 0;
                 while (sc.hasNextLine()) {
                 	
                 	
-                	String[] inputs = new String[9];
+                	String[] inputs = new String[3];
                 	String[] tempStringArray = new String[8];
-                	
-                	tempStringArray = sc.nextLine().split("\\s*,\\s*");
-                	             	
                 	inputs[COMMAND_TYPE_INDEX] = "addShortcutInit";
-                	inputs[SHORTCUT_NAME_INDEX] = tempStringArray[0];
- 
-                	
-                	inputs[SHORTCUT_ID_INDEX] = tempStringArray[1];
-                 
-                    shortcut.processShortcutCommand(inputs);       
+                	tempStringArray = sc.nextLine().split("\\s*,\\s*");
+                	for(int j = 0; j < tempStringArray.length; ++j) {
+                		System.out.println(tempStringArray[j]);
+	                	inputs[SHORTCUT_NAME_INDEX] = tempStringArray[j];
+	 
+	                	
+	                	inputs[SHORTCUT_ID_INDEX] = Integer.toString(i);
+	                 
+	                    shortcut.processShortcutCommand(inputs);    
+                	}
+                	++i;
                
                 }
                 
