@@ -14,20 +14,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TaskManagerTest {
-    public static final String[] ADD_TASK_7 = {"addTask", "7", "CS3103T Tutorial", 
-        "18/03/2015 12:00", "18/03/2015 15:00", null, "SOC", null, "normal"};
-    public static final String[] ADD_TASK_10 = {"addTask", null, "CS2103T Tutorial", 
-        "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "normal"};
-    public static final String[] ADD_TASK_11 = {"addTask", null, "LAG3203 MidTerm", 
-        "20/03/2015 12:00", "20/03/2015 13:30", null, "LT27", null, "normal"};
-    public static final String[] ADD_TASK_12 = {"addTask", null, "CS2211 Reflection", null, 
-        null, "21/03/2015 23:59", null, "name the file properly", "normal"};
-    public static final String[] ADD_TASK_13 = {"addTask", null, "Homework!", null, 
-        null, "21/04/2015 23:59", null, null, "URGENT"};
-    public static final String[] ADD_TASK_14 = {"addTask", null, "CS2107 Lecture", 
-        "18/04/2015 14:00", "18/04/2015 15:00", null, "SOC", null, "Major"};
-    public static final String[] ADD_TASK_17 = {"addTask", "17", "CS2331 Reflection", null, 
-        null, "21/03/2015 23:59", null, "name the file properly", "urgent"};
     public static final String[] DELETE_TASK_10 = {"deleteTask", "10", null, null, null, 
         null, null, null, null};    
     public static final String[] DELETE_TASK_11 = {"deleteTask", "11", null, null, null, 
@@ -1087,8 +1073,10 @@ public class TaskManagerTest {
 
     @Test
     public void testUndoWithNoMoreUndoForDelete() {
+        String[] addTask10 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "urgent"};
         myTaskManager = new TaskManager();
-        myTaskManager.processTM(ADD_TASK_10);
+        myTaskManager.processTM(addTask10);
         Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], 
                 COMMAND_ADD);
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
