@@ -204,6 +204,9 @@ public class TaskManager implements TaskManagerInterface {
         case editTask: case clearAttr: case markTask:
             if(isAbleToEdit(inputs[TID])) {
                 inputs[COMMAND_TYPE] = changeCommandToEditTask();
+                if(inputs[PRIORITY] != null) {
+                    changeStatusToIntString(inputs);
+                } 
                 returningTasks = processEditCommand(inputs);
                 saveTasksToFile();
             } else {
@@ -407,6 +410,8 @@ public class TaskManager implements TaskManagerInterface {
 
     private ArrayList<Task> processEditCommand(String[] inputs) {
         Task taskToEdit = getTaskToEdit(inputs);
+        //check at here to see whether need to throw exceptions or not
+        
         updateStackForEdit(taskToEdit, inputs, undoStack);
 
         return editATask(taskToEdit, inputs);
@@ -524,7 +529,7 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private void clearTaskPriority(Task task) {
-        task.setPriority(0);
+        task.setPriority(NORMAL);
     }
     //----------Edit method ends----------
 
