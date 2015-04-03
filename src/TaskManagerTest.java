@@ -854,7 +854,11 @@ public class TaskManagerTest {
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
 
-        assertTaskArrayListEquals(myTaskManager.processTM(UNDO_OPERATION), null);
+        try{
+            myTaskManager.processTM(UNDO_OPERATION);
+        } catch (NoSuchElementException e) {
+            Assert.assertEquals(e.getMessage(), "No operation to undo");
+        }
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
     }
@@ -865,8 +869,12 @@ public class TaskManagerTest {
         myTaskManager.processInitialization(ADD_TASK_10);
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
-
-        assertTaskArrayListEquals(myTaskManager.processTM(REDO_OPERATION), null);
+        
+        try{
+            myTaskManager.processTM(REDO_OPERATION);
+        } catch (NoSuchElementException e) {
+            Assert.assertEquals(e.getMessage(), "No operation to redo");
+        }
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
     }
@@ -888,21 +896,25 @@ public class TaskManagerTest {
         myTaskManager.processTM(UNDO_OPERATION);
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 1);
-        myTaskManager.processTM(UNDO_OPERATION);
-        myTaskManager.processTM(UNDO_OPERATION);
+        
+        try{
+            myTaskManager.processTM(UNDO_OPERATION);
+        } catch (NoSuchElementException e) {
+            Assert.assertEquals(e.getMessage(), "No operation to undo");
+        }
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 1);
 
-        assertTaskArrayListEquals(myTaskManager.processTM(UNDO_OPERATION),null);
-        Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
-        Assert.assertEquals(myTaskManager.getRedoStack().size(), 1);
 
         //test the undo redo cycle
         assertTaskArrayListEquals(myTaskManager.processTM(REDO_OPERATION), expectTasks);
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
-        assertTaskArrayListEquals(myTaskManager.processTM(REDO_OPERATION), null);
-        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        try{
+            myTaskManager.processTM(REDO_OPERATION);
+        } catch (NoSuchElementException e) {
+            Assert.assertEquals(e.getMessage(), "No operation to redo");
+        }        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
     }
 
@@ -937,7 +949,12 @@ public class TaskManagerTest {
                 COMMAND_DELETE);
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 2);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
-        assertTaskArrayListEquals(myTaskManager.processTM(REDO_OPERATION), null);
+        
+        try{
+            myTaskManager.processTM(REDO_OPERATION);
+        } catch (NoSuchElementException e) {
+            Assert.assertEquals(e.getMessage(), "No operation to redo");
+        }
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 2);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
     }
@@ -969,7 +986,11 @@ public class TaskManagerTest {
                 COMMAND_EDIT);
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 2);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
-        assertTaskArrayListEquals(myTaskManager.processTM(REDO_OPERATION), null);
+        try{
+            myTaskManager.processTM(REDO_OPERATION);
+        } catch (NoSuchElementException e) {
+            Assert.assertEquals(e.getMessage(), "No operation to redo");
+        }
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 2);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
     }
@@ -1013,6 +1034,7 @@ public class TaskManagerTest {
         Assert.assertEquals(myTaskManager.isDateValid(invalidDate8), false);
     }
 
+    /*
     @Test
     public void testIsDateFromSmallerThanDateTo() {
         myTaskManager = new TaskManager();
@@ -1028,9 +1050,9 @@ public class TaskManagerTest {
         Date dateFrom3 = convertToDateObject("18/02/2015 14:00");
         Date dateTo3 = convertToDateObject("18/02/2010 14:00");
         Assert.assertFalse(myTaskManager.isDateFromSmallerThanDateTo(dateFrom3, dateTo3));
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void testIsDeadlineAfterCurrentTime() {
         myTaskManager = new TaskManager();
         Date deadline1 = convertToDateObject("18/02/2010 14:00");
@@ -1038,7 +1060,7 @@ public class TaskManagerTest {
 
         Date deadline2 = convertToDateObject("18/02/2050 14:00");
         Assert.assertTrue(myTaskManager.isDeadlineAfterCurrentTime(deadline2));
-    }
+    }*/
 
     @Test
     public void testClone() {
