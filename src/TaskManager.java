@@ -34,6 +34,8 @@ public class TaskManager implements TaskManagerInterface {
     private static final String MSG_ERR_WRONG_DATE_NUMBER = "Wrong date entered";
     private static final String MSG_ERR_WRONG_DATE_DURATION = "Start must be before end";
     private static final String MSG_ERR_EMPTY_TASK_NAME = "Task name cannot be empty";
+    private static final String MSG_ERR_UNDO = "No operation to undo";
+    private static final String MSG_ERR_REDO = "No operation to redo";
 
     /*private static final int URGENT = 1;
     private static final int MAJOR = 2;
@@ -213,17 +215,20 @@ public class TaskManager implements TaskManagerInterface {
 
         case undoTask:
             if(isStackEmpty(undoStack)) {
-                
+                throw new NoSuchElementException(MSG_ERR_UNDO);
             } else {
-            returningTasks = undoAnOperation();
-            saveTasksToFile();
+                returningTasks = undoAnOperation();
+                saveTasksToFile();
             }
             break;
 
         case redoTask:
-            if(isStackEmpty(redoStack))
-            returningTasks = redoAnOperation();
-            saveTasksToFile();
+            if(isStackEmpty(redoStack)) {
+                throw new NoSuchElementException(MSG_ERR_REDO);
+            } else {
+                returningTasks = redoAnOperation();
+                saveTasksToFile();
+            }
             break;
 
         case invalidTask:
@@ -232,7 +237,7 @@ public class TaskManager implements TaskManagerInterface {
 
         return returningTasks;
     }
-    
+
     private boolean isStackEmpty(Stack stack) {
         return stack.isEmpty();
     }
@@ -1102,7 +1107,7 @@ public class TaskManager implements TaskManagerInterface {
         if(dateFrom == null || dateTo == null) {
             return true;
         }
-        
+
         if(dateFrom.compareTo(dateTo) < 0) {
             return true;
         } else {
