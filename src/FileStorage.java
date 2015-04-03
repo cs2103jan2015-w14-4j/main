@@ -184,6 +184,30 @@ public class FileStorage {
         }   
     }
     
+    public void writeTaskToFile(ArrayList<Task> taskList) {
+        try {
+            taskFile.delete();
+            taskFile.createNewFile();
+            BufferedWriter bw = new BufferedWriter(new FileWriter(taskFile));
+            for (int i = 0; i < taskList.size(); i++) {
+                Task tempTask = taskList.get(i);
+                String[] taskArray = taskToStringArray(tempTask, null);
+                for(int j = 0; j < taskArray.length; j++) {
+                    if ( j != taskArray.length-1) {
+                        taskArray[j] += (",");
+                        bw.write(taskArray[j]);
+                    } else {
+                        bw.write(taskArray[j]);
+                    }
+                }
+                bw.newLine();
+            }
+            bw.close();
+        } catch(Exception e) {
+            System.out.println(ERROR_EXCEPTION);
+        }
+    }
+    
     
     // update template file
     //@param given an arraylist of task, update the the template file
@@ -244,30 +268,7 @@ public class FileStorage {
     }
 
     //stores each task as a string delimited by ,
-    public void writeToFile(ArrayList<Task> taskList) {
-
-        try {
-            taskFile.delete();
-            taskFile.createNewFile();
-            BufferedWriter bw = new BufferedWriter(new FileWriter(taskFile));
-            for (int i = 0; i < taskList.size(); i++) {
-                Task tempTask = taskList.get(i);
-                String[] taskArray = taskToStringArray(tempTask, null);
-                for(int j = 0; j < taskArray.length; j++) {
-                    if ( j != taskArray.length-1) {
-                        taskArray[j] += (",");
-                        bw.write(taskArray[j]);
-                    } else {
-                        bw.write(taskArray[j]);
-                    }
-                }
-                bw.newLine();
-            }
-            bw.close();
-        } catch(Exception e) {
-            System.out.println(ERROR_EXCEPTION);
-        }
-    }
+    
 
 
     //String array is size 8 as priority is not included yet

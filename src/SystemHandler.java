@@ -154,7 +154,7 @@ public class SystemHandler {
 	}
 	
 	public boolean writeToFile(ArrayList<Task> taskList) {
-		externalStorage.writeToFile(taskList);
+		externalStorage.writeTaskToFile(taskList);
 		return true;
 	}
 	
