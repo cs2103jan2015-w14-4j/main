@@ -872,6 +872,46 @@ public class TaskManagerTest {
         assertTaskArrayListEquals(myTaskManager.processTM(search_18032015), expectSearch);
 
     }
+    
+    @Test
+    public void testSearchTaskDateObjectAgain() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, null, null, null};
+        String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
+                "18/03/2015 12:00", null, null, null, null, "normal"};
+        String[] addTask12 = {"addTask", null, "LAG3203 MidTerm", 
+                null, "18/03/2015 12:00", null, null, null, "normal"};
+        String[] addTask13 = {"addTask", null, "CS2211 Reflection", null, 
+                null, "18/03/2015 23:59", null, null, "normal"};
+        String[] addTask14 = {"addTask", null, "CS2211 Reflection", null, 
+                null, null, null, null, "normal"};
+
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+        myTaskManager.processTM(addTask11);
+        myTaskManager.processTM(addTask12);
+        myTaskManager.processTM(addTask13);
+        myTaskManager.processTM(addTask14);
+       
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
+                convertToDateObject("18/03/2015 15:00"), null, null, null, 3);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("18/03/2015 12:00"), 
+                null, null, null, null, 3);
+        Task expectTask12 = new Task(12, "LAG3203 MidTerm", null, 
+                convertToDateObject("18/03/2015 12:00"), null, null, null, 3);
+        Task expectTask13 = new Task(13, "CS2211 Reflection", null, null, 
+                convertToDateObject("18/03/2015 23:59"), null, null, 3);
+        ArrayList<Task> expectSearch = new ArrayList<Task>();
+
+        expectSearch.add(expectTask10);
+        expectSearch.add(expectTask11);
+        expectSearch.add(expectTask12);
+        expectSearch.add(expectTask13);    
+        
+        String[] search_18032015 = {"searchTask", null, "18/03/2015 15:00", null, null, null, 
+                null, null, null};
+        assertTaskArrayListEquals(myTaskManager.processTM(search_18032015), expectSearch);
+    }
     //--------------------testing search command ends--------------------
 
 
