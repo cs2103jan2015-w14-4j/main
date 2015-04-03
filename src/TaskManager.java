@@ -36,6 +36,7 @@ public class TaskManager implements TaskManagerInterface {
     private static final String MSG_ERR_EMPTY_TASK_NAME = "Task name cannot be empty";
     private static final String MSG_ERR_UNDO = "No operation to undo";
     private static final String MSG_ERR_REDO = "No operation to redo";
+    private static final String MSG_ERR_SEARCH = "Search cannot be empty";
 
     /*private static final int URGENT = 1;
     private static final int MAJOR = 2;
@@ -108,7 +109,7 @@ public class TaskManager implements TaskManagerInterface {
     //--------------------other methods-----------------------------------
     //--------------------Initialization method starts--------------------
     public void processInitialization(String[] inputs) {
-        checkTaskDetails(inputs);
+        checkInputTaskDetails(inputs);
 
         Task newTask;
         if(isInputsHavingTID(inputs)){
@@ -127,7 +128,7 @@ public class TaskManager implements TaskManagerInterface {
         return processAddWithID(inputs);
     }
 
-    private void checkTaskDetails(String[] inputs) {
+    private void checkInputTaskDetails(String[] inputs) {
         int dummy;
         if(!isStringLengthLessThanThirty(inputs[TASK_NAME])) {
             throw new StringIndexOutOfBoundsException(String.format(MSG_ERR_LENGTH, 
@@ -264,7 +265,7 @@ public class TaskManager implements TaskManagerInterface {
 
     //--------------------Add method starts--------------------
     private ArrayList<Task> addATask(String[] inputs) {
-        checkTaskDetails(inputs);
+        checkInputTaskDetails(inputs);
 
         Task newTask;
         if(isInputsHavingTID(inputs)){
@@ -593,6 +594,10 @@ public class TaskManager implements TaskManagerInterface {
 
     //--------------------Search method starts--------------------
     private ArrayList<Task> processSearchCommand(String[] inputs) {
+        if(isStringEmpty(inputs[SEARCH_INDEX])) {
+            throw new IllegalStateException(MSG_ERR_SEARCH);
+        }
+        
         if(isSearchADateObject(inputs[SEARCH_INDEX])) {
             Date searchDate = convertToDateWithoutPrintException(inputs[SEARCH_INDEX]);
             return searchTaskDateObject(searchDate);
