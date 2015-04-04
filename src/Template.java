@@ -339,6 +339,7 @@ public class Template {
 	
 	private void resetTemplates() {
 		templates.clear();
+		tempNames.clear();
 	}
 	
 	private void insertTemplateIntoArray(String name, Task template) {
@@ -380,7 +381,7 @@ public class Template {
 				case INDEX_DETAILS: 
 					return task.getDetails();
 				case INDEX_PRIORITY: 
-					return Integer.toString(task.getPriority());
+					return task.getStatusString();
 				default:
 					throw new IllegalArgumentException(MSG_INVALID_GET_FIELD);
 			}
