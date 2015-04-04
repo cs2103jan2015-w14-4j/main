@@ -15,8 +15,8 @@ public class Shortcut {
 										"clearAttr", "searchTask", "undoTask", "redoTask", "markTask",
 										"addShortcut", "viewShortcut", "deleteShortcut",
 										"resetShortcut", "addTemplate", "editTemplate", 
-										"viewTemplates", "useTemplate", "deleteTemplate", 
-										"resetTemplates", "help"}; 
+										"viewTemplate", "useTemplate", "deleteTemplate", 
+										"resetTemplate", "help"}; 
 	
 	public static final String[][] defaultWordsSet = {{"add","addTask"}, {"edit","editTask"},
 													{"view","viewTask"}, {"delete","deleteTask"},

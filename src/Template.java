@@ -101,7 +101,7 @@ public class Template {
 				addTemplate(command[INDEX_NEW_TEMPLATE_NAME], taskToBeAddedInit);
 				break;
 				
-			case viewTemplates:
+			case viewTemplate:
 				result = viewTemplates();
 				break;
 				
@@ -117,7 +117,7 @@ public class Template {
 				writeOutToFile();
 				break;
 				
-			case resetTemplates:
+			case resetTemplate:
 				resetTemplates();
 				writeOutToFile();
 				result = viewTemplates();
@@ -256,8 +256,8 @@ public class Template {
 		assert(command.length == COMMAND_LENGTH);
 		assert(command[INDEX_COMMAND] != null);
 		switch(cmdType) {
-			case viewTemplates:
-			case resetTemplates:
+			case viewTemplate:
+			case resetTemplate:
 				assert(command[1] == null);
 				
 			case deleteTemplate:
