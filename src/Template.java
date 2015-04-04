@@ -7,26 +7,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+//@author A0108385B
 public class Template {
 
 	private static final String MSG_ERR_DUPLICATE_NAME = "Template name:\"%s\" has been used by another template.";
-
-
 	private static final String MSG_ERR_TASK_NUMBER_NOT_EXIST = "Task number: %s does not exist.";
+	private static final String MSG_INVALID_GET_FIELD = "No such field value to get from";
+	private static final String MSG_ERR_NO_SUCH_COMMAND = "No such command in Template Manager: %1$s";
+	public static final String MSG_ERR_NO_SUCH_TEMPLATE = "No such template saved in the system";
 
 
 	private static final int INDEX_NOT_FOUND = -1;
-
-
-	private static final int STARTING_INDEX_CHANGEABLE_FIELD = 2;
-
-
-	private static final int STRING_POSITION_INVALID_COMMAND = 39;
-
-
-	private static final int DUMMY_TID = 0;
-	
-	
 	private static final int INDEX_COMMAND = 0;
 	private static final int INDEX_TEMPLATE_NAME = 1;
 	private static final int INDEX_NEW_TEMPLATE_NAME = 2;
@@ -38,38 +29,46 @@ public class Template {
 	private static final int INDEX_DETAILS = 7;
     private static final int INDEX_PRIORITY = 8;
     
-	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
-	public static final int COMMAND_LENGTH = 9;
-	public static final String MSG_ERR_NO_SUCH_TEMPLATE = "No such template saved in the system";
+	private static final int STARTING_INDEX_CHANGEABLE_FIELD = 2;
+	private static final int STRING_POSITION_INVALID_COMMAND = 39;
+
+	private static final int DUMMY_TID = 0;
+
 	private static final String COMMAND_ADD_TASK = "addTask";
-	private static final String MSG_INVALID_GET_FIELD = "No such field value to get from";
-	private static final String MSG_ERR_NO_SUCH_COMMAND = "No such command in Template Manager: %1$s";
+	
+    
+	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
+	public static final int LENGTH_COMMAND_TEMPLATE = 9;
+	
 	private ArrayList<Task> templates;
 	private ArrayList<String> tempNames;
 	private SystemHandler system;
 	
-
-	private boolean isTest;
-	
-	public void setSystemPath(SystemHandler system) {
-		this.system = system;
-	}
-	
 	public Template() {
 		templates = new ArrayList<Task>();
 		tempNames = new ArrayList<String>();
-		isTest = false;
 	}
 	
 	
 	public Template(boolean test) {
 		templates = new ArrayList<Task>();
 		tempNames = new ArrayList<String>();
-		isTest = test;
+	}
+	
+
+	/**
+	 * @param system
+	 */
+	public void setSystemPath(SystemHandler system) {
+		this.system = system;
 	}
 	
 	
-	
+	/**
+	 * @param command
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
 	public ArrayList<Task> processCustomizingCommand(String[] command) 
 			throws IllegalArgumentException {
 		
@@ -80,25 +79,12 @@ public class Template {
 		assertValidity(command, commandType);
 		switch(commandType) {
 			case addTemplate:
-				Task taskToBeAdded;
-				if(isTest) {
-					taskToBeAdded = new Task(1000, "NEW",
-							null, null, null, "ABC", null, 0);
-				}
-				else {
-					taskToBeAdded = system.requestTask(Integer.parseInt(command[1]));	
-				}
-				if(taskToBeAdded == null) {
-					throw new NoSuchElementException(String.format(MSG_ERR_TASK_NUMBER_NOT_EXIST,command[1]));
-				} else {
-					result =  addTemplate(command[INDEX_NEW_TEMPLATE_NAME], taskToBeAdded);
-					writeOutToFile();
-				}
+				result = addTemplate(command, result);
+				writeOutToFile();
 				break;
 				
 			case addTemplateInit:
-				Task taskToBeAddedInit = createNewTemplate(command);
-				addTemplate(command[INDEX_NEW_TEMPLATE_NAME], taskToBeAddedInit);
+				initTemplate(command);
 				break;
 				
 			case viewTemplate:
@@ -111,9 +97,7 @@ public class Template {
 				break;
 				
 			case editTemplate:
-				Task temp = editTemplate(command);
-				result = new ArrayList<Task>(); 
-				result.add(temp);
+				result = editTemplate(command);
 				writeOutToFile();
 				break;
 				
@@ -132,21 +116,82 @@ public class Template {
 		
 		return result;
 	}
-	
-	public ArrayList<String> getTemplateNames(ArrayList<Task> templates) {
-		ArrayList<String> result = new ArrayList<String>();
-		for(int i = 0; i < templates.size(); ++i) {
-			result.add(getMatchingName(templates.get(i)));
+
+	/**
+	 * @param command
+	 */
+	private void initTemplate(String[] command) {
+		Task taskToBeAddedInit = createNewTemplate(command);
+		addTemplateToArray(command[INDEX_NEW_TEMPLATE_NAME], taskToBeAddedInit);
+	}
+
+	/**
+	 * @param command
+	 * @param result
+	 * @return
+	 */
+	private ArrayList<Task> addTemplate(String[] command, ArrayList<Task> result) {
+		Task taskToBeAdded = system.requestTask(Integer.parseInt(command[1]));	
+		
+		if(taskToBeAdded == null) {
+			throw new NoSuchElementException(String.format(MSG_ERR_TASK_NUMBER_NOT_EXIST,command[1]));
+		} else {
+			result =  addTemplateToArray(command[INDEX_NEW_TEMPLATE_NAME], taskToBeAdded);
+			
 		}
 		return result;
 	}
+	
+	/**
+	 * @param name
+	 * @param template
+	 * @return
+	 */
+	private ArrayList<Task> addTemplateToArray(String name, Task template) {
+		boolean sameName = hasSameName(name);
+		if(!sameName) {
+			
+			clearTaskDateField(template);
+			insertTemplateIntoArray(name, template);
+			
+			ArrayList<Task> result = new ArrayList<Task>();
+			result.add(template.clone());
+			return result;
+			
+		} else {
+			//Wrong type 
+			throw new NoSuchElementException(String.format(MSG_ERR_DUPLICATE_NAME,name));
+		
+		}
+	}
+	
+	/**
+	 * @param templates
+	 * @return
+	 */
+	public ArrayList<String> getTemplateNames(ArrayList<Task> templates) {
+		ArrayList<String> result = new ArrayList<String>();
+		
+		for(int i = 0; i < templates.size(); ++i) {
+			result.add(getMatchingName(templates.get(i)));
+		}
+		
+		return result;
+	}
 
+	/**
+	 * @param task
+	 * @return
+	 */
 	private String getMatchingName(Task task) {
 		for(int i = 0; i < templates.size(); ++i) {
+			
 			if(task.isEqual(templates.get(i))) {
 				return tempNames.get(i);
 			}
+			
 		}
+		
 		return null;
 	}
 
@@ -171,6 +216,7 @@ public class Template {
 
 	private int getTemplateIndex(String name) {
 		for(int i = 0; i < tempNames.size(); ++i) {
+			
 			if(tempNames.get(i).equals(name)) {
 				return i;
 			}
@@ -180,6 +226,7 @@ public class Template {
 	
 	private Task getTemplate(String name) {
 		int index = getTemplateIndex(name);
+		
 		if(index == INDEX_NOT_FOUND) {
 			return null;
 		} else {
@@ -187,48 +234,62 @@ public class Template {
 		}
 	}
 
-	private Task editTemplate(String[] command) {
+	private ArrayList<Task> editTemplate(String[] command) {
 		Task task = getTemplate(command[1]);
+		ArrayList<Task> result = new ArrayList<Task>();
+		
 		if(task == null) {
 			throw new NoSuchElementException(MSG_ERR_NO_SUCH_TEMPLATE);
 		}
-		for(int index = 0; index < COMMAND_LENGTH; ++index) {
+		
+		for(int index = 0; index < LENGTH_COMMAND_TEMPLATE; ++index) {
 			if(isFieldToBeEdited(command, index)) {
-				switch(index) {
-					case INDEX_TASK_NAME:
-						task.setTaskName(command[INDEX_TASK_NAME]);
-						break;
-						
-					case INDEX_DATE_FROM:
-						Date dateFrom = getDate(command[INDEX_DATE_FROM]);
-						task.setDateFrom(dateFrom);
-						break;
-						
-					case INDEX_DATE_TO:
-						Date dateTo = getDate(command[INDEX_DATE_TO]);
-						task.setDateFrom(dateTo);
-						break;
-						
-					case INDEX_DEADLINE:
-						Date deadline = getDate(command[INDEX_DEADLINE]);
-						task.setDateFrom(deadline);
-						break;
-					case INDEX_LOCATION:
-						task.setLocation(command[INDEX_LOCATION]);
-						break;
-						
-					case INDEX_DETAILS:
-						task.setDetails(command[INDEX_DETAILS]);
-						break;
-						
-					case INDEX_PRIORITY:
-						task.setPriority(Integer.parseInt(command[INDEX_PRIORITY]));
-						break;
-						
-				}
+				editRequiredField(command[index], task, index);
 			}
 		}
-		return task.clone();
+		
+		result.add(task.clone());
+		return result;
+	}
+
+	/**
+	 * @param command
+	 * @param task
+	 * @param index
+	 */
+	private void editRequiredField(String command, Task task, int index) {
+		switch(index) {
+			case INDEX_TASK_NAME:
+				task.setTaskName(command);
+				break;
+				
+			case INDEX_DATE_FROM:
+				Date dateFrom = getDate(command);
+				task.setDateFrom(dateFrom);
+				break;
+				
+			case INDEX_DATE_TO:
+				Date dateTo = getDate(command);
+				task.setDateFrom(dateTo);
+				break;
+				
+			case INDEX_DEADLINE:
+				Date deadline = getDate(command);
+				task.setDateFrom(deadline);
+				break;
+			case INDEX_LOCATION:
+				task.setLocation(command);
+				break;
+				
+			case INDEX_DETAILS:
+				task.setDetails(command);
+				break;
+				
+			case INDEX_PRIORITY:
+				task.setPriority(Integer.parseInt(command));
+				break;
+				
+		}
 	}
 
 	/**
@@ -252,8 +313,12 @@ public class Template {
 		return null;
 	}
 
+	/**
+	 * @param command
+	 * @param cmdType
+	 */
 	private void assertValidity(String[] command, COMMAND_TYPE_TEMPLATE cmdType) {
-		assert(command.length == COMMAND_LENGTH);
+		assert(command.length == LENGTH_COMMAND_TEMPLATE);
 		assert(command[INDEX_COMMAND] != null);
 		switch(cmdType) {
 			case viewTemplate:
@@ -264,7 +329,7 @@ public class Template {
 				assert(command[2] == null);
 				
 			case addTemplate:
-				for(int i = 3; i < COMMAND_LENGTH; ++i) {
+				for(int i = 3; i < LENGTH_COMMAND_TEMPLATE; ++i) {
 					assert(command[i] == null);
 				}
 				
@@ -274,6 +339,11 @@ public class Template {
 		}
 	}
 	
+	/**
+	 * @param command
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
 	private COMMAND_TYPE_TEMPLATE getCommandType(String command) throws IllegalArgumentException {
 		try{
         	return COMMAND_TYPE_TEMPLATE.valueOf(command);
@@ -283,8 +353,13 @@ public class Template {
         }
 	}
 	
+	/**
+	 * @param name
+	 * @return
+	 * @throws NoSuchElementException
+	 */
 	private ArrayList<Task> removeTemplate(String name) throws NoSuchElementException {
-		Task deletedTask = removeFromMap(name);
+		Task deletedTask = removeFromArray(name);
 		
 		if(deletedTask == null) {
 			throw new NoSuchElementException(MSG_ERR_NO_SUCH_TEMPLATE);
@@ -299,7 +374,7 @@ public class Template {
 	 * @param name
 	 * @return
 	 */
-	private Task removeFromMap(String name) {
+	private Task removeFromArray(String name) {
 		int index = getTemplateIndex(name);
 		if(index == INDEX_NOT_FOUND) {
 			return null;
@@ -309,49 +384,56 @@ public class Template {
 		}
 	}
 	
+	/**
+	 * @return
+	 */
 	private ArrayList<Task> viewTemplates() {
 		return templates;
 	}
 	
 	
-	private ArrayList<Task> addTemplate(String name, Task template) {
-		boolean sameName = hasSameName(name);
-		if(!sameName) {
-			
-			clearTaskDateField(template);
-			insertTemplateIntoArray(name, template);
-			
-			ArrayList<Task> result = new ArrayList<Task>();
-			result.add(template.clone());
-			return result;
-		}
-		else {
-			//Wrong type 
-			throw new NoSuchElementException(String.format(MSG_ERR_DUPLICATE_NAME,name));
-		}
-	}
 	
+	
+	/**
+	 * @param template
+	 */
 	private void clearTaskDateField(Task template) {
 		template.setDateFrom(null);
 		template.setDateTo(null);
 		template.setDeadline(null);
 	}
 	
+	/**
+	 * 
+	 */
 	private void resetTemplates() {
 		templates.clear();
 		tempNames.clear();
 	}
 	
+	/**
+	 * @param name
+	 * @param template
+	 */
 	private void insertTemplateIntoArray(String name, Task template) {
 		templates.add(template);
 		tempNames.add(name);
 	}
 	
+	/**
+	 * @param name
+	 * @return
+	 */
 	private boolean hasSameName(String name) {
 		return getTemplateIndex(name) != INDEX_NOT_FOUND;
 	}
 	
 	
+	/**
+	 * @param name
+	 * @return
+	 * @throws NoSuchElementException
+	 */
 	private Task fetchTemplate(String name) throws NoSuchElementException {
 		int index = getTemplateIndex(name);
 		
@@ -365,6 +447,13 @@ public class Template {
 		
 	}
 	
+	/**
+	 * @param task
+	 * @param index
+	 * @param change
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
 	private String getFieldValue(Task task, int index, String change) throws IllegalArgumentException {
 		if(change == null) {
 			switch(index) {
@@ -390,20 +479,30 @@ public class Template {
 		}
 	}
 	
+	/**
+	 * @param task
+	 * @param changes
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
 	private String[] convertTasktoTaskManagerInput(Task task, String[] changes) 
 			throws IllegalArgumentException {
-		String[] converted = new String[COMMAND_LENGTH];
+		String[] converted = new String[LENGTH_COMMAND_TEMPLATE];
 		converted[TaskManager.COMMAND_TYPE] = COMMAND_ADD_TASK;
 		converted[TaskManager.TID] = null;
 		
 		
-		for(int i = STARTING_INDEX_CHANGEABLE_FIELD; i < COMMAND_LENGTH; ++i) {
+		for(int i = STARTING_INDEX_CHANGEABLE_FIELD; i < LENGTH_COMMAND_TEMPLATE; ++i) {
 			converted[i] = getFieldValue(task, i, changes[i]);
 		}
 		
 		return converted;
 	}
 	
+	/**
+	 * @param dateString
+	 * @return
+	 */
 	private Date convertToDateObject(String dateString) {
 		try {
 			Date date = null;
@@ -413,7 +512,6 @@ public class Template {
 			}
 			return date;
 		} catch (ParseException e) {
-			System.out.println(e);
 			return null;
 		}
 	}
