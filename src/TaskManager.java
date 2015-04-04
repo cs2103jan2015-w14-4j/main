@@ -136,8 +136,8 @@ public class TaskManager implements TaskManagerInterface {
 
         addIDToTaskIDs(newTask.getTID());
 
-        sortTasks(tasks, DATE_FROM);
         tasks.add(newTask);
+        sortTasks(tasks, DATE_FROM);
     }
 
     private Task processInitializationWithID(String[] inputs) {
