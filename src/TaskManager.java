@@ -877,7 +877,7 @@ public class TaskManager implements TaskManagerInterface {
                 break;
             case editTask:
                 int TIDToEdit = getTaskTID(undoOperation);
-                Task taskToEdit = getTaskFromTID(TIDToEdit);
+                Task taskToEdit = getNonCloneTaskFromTID(TIDToEdit);
                 returningTasks = editATaskForUndo(taskToEdit, undoOperation);
                 break;
             default:
@@ -923,7 +923,7 @@ public class TaskManager implements TaskManagerInterface {
                 break;
             case editTask:
                 int TIDToEdit = getTaskTID(redoOperation);
-                Task taskToEdit = getTaskFromTID(TIDToEdit);
+                Task taskToEdit = getNonCloneTaskFromTID(TIDToEdit);
                 returningTasks = editATaskForRedo(taskToEdit, redoOperation);
                 break;
             default:
@@ -1066,7 +1066,20 @@ public class TaskManager implements TaskManagerInterface {
 
     private Task getTaskFromTIDString(String[] inputs) {
         int TID = getTaskTID(inputs);
-        return getTaskFromTID(TID);
+        return getNonCloneTaskFromTID(TID);
+    }
+    
+    private Task getNonCloneTaskFromTID(int TID) {
+        Task taskFound = null;
+
+        for(Task task : tasks) {
+            if(task.getTID() == TID) {
+                taskFound = task;
+                break;
+            }
+        }
+
+        return taskFound;
     }
 
     /**
@@ -1079,7 +1092,7 @@ public class TaskManager implements TaskManagerInterface {
 
         for(Task task : tasks) {
             if(task.getTID() == TID) {
-                taskFound = task;
+                taskFound = task.clone();
                 break;
             }
         }
