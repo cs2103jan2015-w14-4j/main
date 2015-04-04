@@ -151,11 +151,11 @@ public class UserInterface extends DefaultTableCellRenderer {
 		ArrayList<String[]> outputDataString = new ArrayList<String[]>();
 		for(int i = 0; i < outputData.length; i++){
 			keywords= new String[2];
-			keywords[0] = SYS_KEYWORDS[i];
-		
+			
 			String[] strArray = outputData[i];
+			keywords[0] = SYS_KEYWORDS[Integer.parseInt(strArray[0])];
 			String nextLine = "";
-			for(int j = 0; j < strArray.length; j++) {
+			for(int j = 1; j < strArray.length; j++) {
 				nextLine += "'" + strArray[j] + "'" + " || " ;
 			}
 			

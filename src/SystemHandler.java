@@ -12,11 +12,26 @@ import java.text.SimpleDateFormat;
 
 public class SystemHandler {
 	
-	//dummy string acting like UI prompt
+	private static final String MSG_TASK_STATUS = "The task:\"%s\" has been marked as %s";
+	private static final String MSG_TASK_REDO = "A task operation has been redo.";
+	private static final String MSG_TASK_SEARCH = "There are %s task(s) fulfilling the searching requirement.";
+	private static final String MSG_TASK_UNDO = "A task operation has been undo.";
+	private static final String MSG_TASK_DELETE = "The task:\"%s\" has been deleted from the Flexi Tracker.";
+	private static final String MSG_TASK_CLASH_TASK = "%s(%s)";
+	private static final String MSG_TASK_CLASH = "The newly added task has clashed with the following task(ID): ";
+	private static final String MSG_TASK_UPDATE = "The task:\"%s\" has been updated from the Flexi Tracker under ID number %s.";
+	private static final String MSG_TASK_VIEW = "The tasks list has been retrieved from the Flexi Tracker.";
+	private static final String MSG_TEMP_DELETE = "The template:\"%s\" has been deleted from the Flexi Tracker.";
+	private static final String MSG_TEMP_UPDATE = "The template:\"%s\" has been updated from the Flexi Tracker ";
+	private static final String MSG_TEMP_VIEW = "The template list has been retrieved from the Flexi Tracker.";
+	private static final String MSG_TEMP_NO_TEMPLATE = "No templates found in Flexi Tracker";
+	private static final String MSG_SHORTCUT_DELETED = "Keyword \"%s\" has been deleted.";
+	private static final String MSG_SHORTCUT_RESET = "All keywords have been reset to the list above";
+	private static final String MSG_SHORTCUT_VIEW = "All keywords have been retrieved";
+	private static final String MSG_SHORTCUT_ADDED_NEW = "New keyword \"%s\" has been added. It will function the same as \"%s\"";
 	private static final String MSG_ERR_NO_SUCH_COMMAND = "SystemHandler does not recognize this command";
 	private static final String MSG_LOG_USER_COMMAND = "user enters: %s";
-//	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
-//	private static final String CLEAR_INFO_INDICATOR = "";
+
 	private static final String[] COMMAND_GET_TEMPLATE = {"viewTemplate",null,null,null,null,null,null,null,null};
 	private static final String[] COMMAND_GET_TASK_LIST = {"viewTask",null,null,null,null,null,null,null,null};
 	private static final String[] COMMAND_RESET_SHORTCUT = {"resetShortcut", null, null};
@@ -328,60 +343,59 @@ public class SystemHandler {
 	 */
 	private void displayTMResultToUI(String[] command, ArrayList<Task> result,
 			ArrayList<Task> fullList) {
-		String[] message = constructTMMessage(command,result, fullList);
+		String[] message = constructTMMessage(command, result);
 		window.displayTaskTable(result, fullList, INDEX_EXECUTION_SUCCESS);
 		window.displayMsg(message, getTaskManagerExecutionStatus(command,result));
 	}
 	
-	private String[] constructTMMessage(String[] command, ArrayList<Task> result,
-			ArrayList<Task> fullList) {
+	private String[] constructTMMessage(String[] command, ArrayList<Task> result) {
 		String[] message = null;
 		switch(command[0]) {
 		case "viewTask":
 			message = new String[1];
-			message[0] = "The tasks list has been retrieved from the Flexi Tracker.";
+			message[0] = MSG_TASK_VIEW;
 			break;
 		case "addTask":
 		case "editTask":
 			message = new String[2];
-			message[0] = "The task:\""+result.get(0).getTaskName()+"\" has been updated from the Flexi Tracker under ID number "+result.get(0).getTID()+".";
+			message[0] = String.format(MSG_TASK_UPDATE,result.get(0).getTaskName(),result.get(0).getTID());
 			if(result.size() > 1) {
-				message[1] = "The newly added task has clashed with the following task(s): ";
+				message[1] = MSG_TASK_CLASH;
 				for(int i = 1; i < result.size(); ++i) {
-					message[1] += result.get(i).getTaskName()+"("+result.get(i).getTID()+"), ";
+					message[1] += String.format(MSG_TASK_CLASH_TASK, result.get(i).getTaskName(), result.get(i).getTID());
 				}
-				message[1] = message[1].substring(0, message[1].length() - 3) + ".";
+				message[1] = message[1].substring(0, message[1].length() - 2) + ".";
 			}
 			break;
 				
 		case "deleteTask":
 			message = new String[1];
-			message[0] = "The task:\""+result.get(0).getTaskName()+"\" has been deleted from the Flexi Tracker.";
+			message[0] = String.format(MSG_TASK_DELETE,result.get(0).getTaskName());
 			break;
 			
 		case "searchTask":
 			message = new String[1];
-			message[0] = "There are"+result.size()+" task(s) fulfilling the searching requirement.";
+			message[0] = String.format(MSG_TASK_SEARCH, result.size());
 			break;
 			
 		case "undoTask":
 			message = new String[1];
-			message[0] = "A task operation has been undo.";
+			message[0] = MSG_TASK_UNDO;
 			break;
 			
 		case "redoTask":
 			message = new String[1];
-			message[0] = "A task operation has been redo.";
+			message[0] = MSG_TASK_REDO;
 			break;
 			
 		case "clearAttr":
 			message = new String[1];
-			message[0] = "The task:\""+result.get(0).getTaskName()+"\" has been updated from the Flexi Tracker under ID number "+result.get(0).getTID()+".";
+			message[0] = String.format(MSG_TASK_UPDATE,result.get(0).getTaskName(),result.get(0).getTID());
 			break;
 			
 		case "markTask":
 			message = new String[2];
-			message[0] = "The task:\""+result.get(0).getTaskName() + "\" has been marked as " + result.get(0).getStatusString();
+			message[0] = String.format(MSG_TASK_STATUS, result.get(0).getTaskName(), result.get(0).getStatusString());
 			break;
 		}
 		return message;
@@ -414,21 +428,83 @@ public class SystemHandler {
 			throws NoSuchElementException, IllegalArgumentException {
 		
 		String[][] result = myShortcut.processShortcutCommand(command);
-		window.displayShortcuts(result, EXECUTION_SUCCESS);
-		window.displayMsg(command[0] + " has been executed successfully",INDEX_EXECUTION_SUCCESS);
+		displayShortcutResultToUI(command, result);
 		return result;
 	}
+
+	/**
+	 * @param command
+	 * @param result
+	 */
+	private void displayShortcutResultToUI(String[] command, String[][] result) {
+		window.displayShortcuts(result, EXECUTION_SUCCESS);
+		String[] message = constructShortcutMessage(command, result);
+		window.displayMsg(message, INDEX_EXECUTION_SUCCESS);
+	}
 	
+	private String[] constructShortcutMessage(String[] command,
+			String[][] result) {
+		String[] message = new String[1];
+		switch(command[0]) {
+			case "addShortcut":
+				message[0] = String.format(MSG_SHORTCUT_ADDED_NEW, command[1], command[2]);
+				break;
+			case "viewShortcut":
+				message[0] = MSG_SHORTCUT_VIEW;
+				break;
+			case "deleteShortcut":
+				message[0] = String.format(MSG_SHORTCUT_DELETED, command[1]);
+				break;
+			case "resetShortcut":
+				message[0] = MSG_SHORTCUT_RESET;
+				break;
+		}
+		return message;
+	}
+
 	private void executeCustomizer(String[] command) 
 			throws IllegalArgumentException {
 
 		ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
-//		ArrayList<Task> fullList = myTemplates.processCustomizingCommand(COMMAND_GET_TEMPLATE);
-//		window.displayTaskTable(result, fullList, INDEX_EXECUTION_SUCCESS);
-//		ArrayList<Task> fullList = myTemplates.processCustomizingCommand(CMD_GET_TEMPLATE);
-		window.displayTaskTable(result, result, INDEX_EXECUTION_SUCCESS);
-		window.displayMsg(command[0] + " has been executed successfully",INDEX_EXECUTION_SUCCESS);
+		ArrayList<String> tempNames = myTemplates.getTemplateNames(result);
+		displayTemplateResulttoUI(command, tempNames, result);
+	}
+
+	/**
+	 * @param command
+	 * @param result
+	 */
+	private void displayTemplateResulttoUI(String[] command, ArrayList<String> names, ArrayList<Task> result) {
+		window.displayTemplate(result, names, EXECUTION_SUCCESS);
+		String[] message = constructTempMessage(command, result);
+		window.displayMsg(message,INDEX_EXECUTION_SUCCESS);
 	}
 	
-	
+	private String[] constructTempMessage(String[] command, ArrayList<Task> result) {
+		String[] message = null;
+		switch(command[0]) {
+		case "viewTemplate":
+			message = new String[1];
+			if(result.size() == 0) {
+				message[0] = MSG_TEMP_NO_TEMPLATE;
+			} else {
+				message[0] = MSG_TEMP_VIEW;
+			}
+			break;
+			
+		case "addTemplate":
+		case "editTemplate":
+			message = new String[1];
+			message[0] = String.format(MSG_TEMP_UPDATE, command[2]);
+			break;
+				
+		case "deleteTemplate":
+			message = new String[1];
+			message[0] = String.format(MSG_TEMP_DELETE, command[1]);
+			break;
+			
+		}
+		return message;
+	}
+
 }
