@@ -5,11 +5,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -20,9 +24,11 @@ import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.EventQueue;
-import java.awt.Insets;
 import java.awt.Font;
 import java.awt.Color;
+
+import javax.swing.ScrollPaneConstants;
+
 
 
 @SuppressWarnings("serial")
@@ -32,12 +38,14 @@ public class UserInterface extends DefaultTableCellRenderer {
 	public JPanel panel;
 	private JTextField textField;
 	private JTextArea outputArea;
-	private JTextArea sysFeedbackArea;
+	private JTextPane sysFeedbackArea;
 	private JTable taskTable;
 	private JTable shortcutTable;
 	private TaskTableModel model;
 	private final static String newline = "\n";
 	private JScrollPane scrollPaneMain;
+	private JScrollPane scrollPaneFB;
+	private JScrollPane scrollPaneInput;
 	private ArrayList<Task> outputArray;
 	private ArrayList<String[]> outputArrayString;
 	private ArrayList<String[]> shortcutArrayString;
@@ -64,38 +72,36 @@ public class UserInterface extends DefaultTableCellRenderer {
 					            details = 25,
 					            status = 5;
     private static final double[] PREFERRED_WIDTH_TASKTABLE = {taskID, taskName,dateFrom, dateTo, location, details, status};
-    //column widths for shortcuts table
     private static final double systemKW = 15, userDefinedKW = 85;       
     private static final double[] PREFERRED_WIDTH_SHORTCUTS = {systemKW, userDefinedKW};
-    private static final int windowWidth = 1200;
+   
+    private static final int WINDOW_WIDTH = 1200;
     private static final String[] SYS_KEYWORDS = {"Create a new task", "Edit an existing task", "View list of tasks", "Delete a task", 
     											 "undo", "redo", "Add a new keyword", "View available keywords", "Delete a keyword", 
     											 "Reset keywords", "Create a template", "Edit existing template", "View list of templates",
     											 "Delete a template", "Clear all templates", "Help"};
-    
-	private boolean hasFilename;
-	private String prevInput;
-	
-	private static final Color YELLOW = new Color(200,250,250); 
-	private static final Color LIGHT_BLUE = new Color(200,250,250); 
-	private static final Color BLUE_GRID= new Color(82,108,148); 
+      
 	private static final Color TASK_FONT= new Color(255,240,175); 
-	private static final Color DARK_BLUE= new Color(18,41,77); 
-	private static final Color BLUE_BG = new Color(44,71,122); 
-	private static final Color INPUT = new Color(18,42,77); 
-	private static final Color INPUT_FONT = new Color(136,157,191); 
-	private static final Color FEEDBACK = new Color(4,18,62); 
-	private static final Color FEEDBACK_FONT = new Color(255,240,175); 
-	private static final Color FEEDBACK_FONT2 = new Color(200,255,255); 
+	private static final Color TASK_BG= new Color(18,41,77); 
+	private static final Color TASK_BG2 = new Color(44,71,122); 
+	private static final Color TASK_GRID= new Color(82,108,148);
+	
 	private static final Color SHORTCUT_FONT = new Color(187,197,255); 
 	private static final Color SHORTCUT_BG = new Color( 18,41,77); 
 	private static final Color SHORTCUT_BG2 = new Color(44,71,112);
 	private static final Color SHORTCUT_GRID = new Color(18,41,77);
+	
+	private static final Color INPUT = new Color(18,42,77); 
+	private static final Color INPUT_FONT = new Color(136,157,191); 
+	private static final Color FEEDBACK = new Color(4,18,62); 
+	private static final Color FEEDBACK_FONT = new Color(255,240,175); 
 	private static final Color OUTPUT_FONT = new Color(187,197,255); 
 	private static final Color OUTPUT_BG = new Color( 18,41,77); 
 	
+	private boolean hasFilename;
+	private String prevInput;
 	
-	private int dummy;
+	
 	ArrayList<Task> dummy2;
 	
 	//doesnt work properly, edited task shown first not yet implemented
@@ -173,11 +179,10 @@ public class UserInterface extends DefaultTableCellRenderer {
 		//fix the area, maybe change to string array in future
 		//write messages to display
         clearFeedbackArea();     
-        sysFeedbackArea.append(outputData);
+        sysFeedbackArea.setText(outputData);
 	}
 
 	public void displayTemplate(ArrayList<Task> outputData, ArrayList<String> templateName, boolean success){
-		//replace Task with String[] and replace TID with templateName
 		viewTaskTable();
 		ArrayList<String[]> outputDataString = new ArrayList<String[]>();
 		for (int i = 0 ; i < outputData.size(); i++){
@@ -222,20 +227,108 @@ public class UserInterface extends DefaultTableCellRenderer {
 	 */
 	private void initialize() {
 
+		initFrame();
+		initDisplay();
+		initTextArea();
+		
+		outputArrayString = new ArrayList<String[]>();
+		outputArray  =  new ArrayList<Task>();
+		shortcutArrayString = new ArrayList<String[]>();
+		mainHandler = SystemHandler.getSystemHandler();
+		
+		createShortcutTable(shortcutArrayString);
+		createTaskTable(outputArrayString);
+
+	}
+
+	private void initFrame() {
 		panel = new JPanel();
 		frame = new JFrame(APP_NAME);
+		frame.getContentPane().setBackground(new Color(25, 25, 112));
 		frame.setBounds(100, 100, 1200, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{536, 0};
-		gridBagLayout.rowHeights = new int[]{278, 0, 0, 40, 0};
-		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{1.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[] {1200};
+		gridBagLayout.rowHeights = new int[]{300, 40, 40, 0};
+		gridBagLayout.columnWeights = new double[]{1.0};
+		gridBagLayout.rowWeights = new double[]{1.0, 0.0, 0.0, Double.MIN_VALUE};
 		frame.getContentPane().setLayout(gridBagLayout);
+		panel.setBorder(null);
+	}
 
+	
+	private void initDisplay() {
+		initOutputArea();
+		initSysFBArea();
+		initInputArea();
+
+		outputArea.append(MSG_WELCOME + newline + newline + MSG_HELP +newline + newline + MSG_REMINDERS);
+
+	}
+
+	private void initInputArea() {
 		textField = new JTextField();
 		textField.setBackground(INPUT);
 		textField.setForeground(INPUT_FONT);
+		textField.setFont(new Font("Verdana", Font.PLAIN, 18));
+		textField.setBorder(null);
+		scrollPaneInput = new JScrollPane(textField);
+		scrollPaneInput.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPaneInput.setViewportBorder(null);
+		
+		GridBagConstraints gbc_textField = new GridBagConstraints();
+		gbc_textField.fill = GridBagConstraints.BOTH;
+		gbc_textField.gridx = 0;
+		gbc_textField.gridy = 2;
+		frame.getContentPane().add(scrollPaneInput, gbc_textField);
+	}
+
+	private void initSysFBArea() {
+		sysFeedbackArea = new JTextPane();
+		sysFeedbackArea.setEditable(false);
+		sysFeedbackArea.setFont(new Font("Candara", Font.PLAIN, 26));
+		sysFeedbackArea.setForeground(FEEDBACK_FONT);
+		sysFeedbackArea.setBackground(FEEDBACK);
+		sysFeedbackArea.setBorder(null);
+		
+	/*	StyledDocument doc = sysFeedbackArea.getStyledDocument();
+		SimpleAttributeSet center = new SimpleAttributeSet();
+		StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+		doc.setParagraphAttributes(0, doc.getLength(), center, false);
+	*/
+		GridBagConstraints gbc_sysFeedbackArea = new GridBagConstraints();
+		gbc_sysFeedbackArea.fill = GridBagConstraints.BOTH;
+		gbc_sysFeedbackArea.gridx = 0;
+		gbc_sysFeedbackArea.gridy = 1;
+		frame.getContentPane().add(sysFeedbackArea, gbc_sysFeedbackArea);
+	}
+
+	private void initOutputArea() {
+		outputArea = new JTextArea();	
+		outputArea.setBackground(new Color(255, 250, 250));
+		outputArea.setEditable(false);
+		outputArea.setFont(new Font("Verdana", Font.PLAIN, 18));
+		outputArea.setColumns(30);
+		outputArea.setTabSize(10);
+		outputArea.setRows(10);
+		outputArea.setLineWrap(true);
+		outputArea.setBackground(OUTPUT_BG);
+		outputArea.setForeground(OUTPUT_FONT);
+		outputArea.setBorder(null);
+		scrollPaneMain = new JScrollPane(); 
+		scrollPaneMain.setViewportBorder(null);
+		scrollPaneMain.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPaneMain.setViewportView(outputArea);
+		
+
+		GridBagConstraints gbc_outputArea = new GridBagConstraints();
+		gbc_outputArea.fill = GridBagConstraints.BOTH;
+		gbc_outputArea.gridx = 0;
+		gbc_outputArea.gridy = 0;
+		frame.getContentPane().add(scrollPaneMain, gbc_outputArea);
+	}
+	
+	private void initTextArea() {
 		inputListener listener = new inputListener();
 		textField.addActionListener(listener);
 
@@ -296,69 +389,13 @@ public class UserInterface extends DefaultTableCellRenderer {
 		};
 
 		textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-		.put(KeyStroke.getKeyStroke("ctrl D"), "viewTask");
+		.put(KeyStroke.getKeyStroke("TAB"), "viewTask");
 		textField.getActionMap().put("viewTask", view );
-
+		
 		//until here this needs to refactored out
-
-
-		outputArrayString = new ArrayList<String[]>();
-		outputArray  =  new ArrayList<Task>();
-		shortcutArrayString = new ArrayList<String[]>();
-		mainHandler = SystemHandler.getSystemHandler();
-		initDisplay();
-		
-
 	}
 
-	public void initDisplay() {
-		outputArea = new JTextArea();	
-		outputArea.setBackground(new Color(255, 250, 250));
-		outputArea.setEditable(false);
-		outputArea.setFont(new Font("Arial", Font.PLAIN, 18));
-		outputArea.setColumns(30);
-		outputArea.setTabSize(10);
-		outputArea.setRows(10);
-		outputArea.setLineWrap(true);
-		outputArea.setBackground(OUTPUT_BG);
-		outputArea.setForeground(OUTPUT_FONT);
-		scrollPaneMain = new JScrollPane(); 
-		scrollPaneMain.setViewportView(outputArea);
-
-		GridBagConstraints gbc_outputArea = new GridBagConstraints();
-		gbc_outputArea.insets = new Insets(0, 0, 5, 0);
-		gbc_outputArea.fill = GridBagConstraints.BOTH;
-		gbc_outputArea.gridx = 0;
-		gbc_outputArea.gridy = 0;
-		frame.getContentPane().add(scrollPaneMain, gbc_outputArea);
-
-		sysFeedbackArea = new JTextArea();
-		sysFeedbackArea.setFont(new Font("Trebuchet MS", Font.BOLD, 20));
-		sysFeedbackArea.setForeground(FEEDBACK_FONT);
-		sysFeedbackArea.setEditable(false);
-		sysFeedbackArea.setBackground(FEEDBACK);
-		GridBagConstraints gbc_sysFeedbackArea = new GridBagConstraints();
-		gbc_sysFeedbackArea.gridheight = 2;
-		gbc_sysFeedbackArea.insets = new Insets(0, 0, 5, 0);
-		gbc_sysFeedbackArea.fill = GridBagConstraints.BOTH;
-		gbc_sysFeedbackArea.gridx = 0;
-		gbc_sysFeedbackArea.gridy = 1;
-		frame.getContentPane().add(sysFeedbackArea, gbc_sysFeedbackArea);
-
-		GridBagConstraints gbc_textField = new GridBagConstraints();
-		gbc_textField.fill = GridBagConstraints.BOTH;
-		gbc_textField.gridx = 0;
-		gbc_textField.gridy = 3;
-		frame.getContentPane().add(textField, gbc_textField);
-		textField.setColumns(10);
-		textField.setFont(new Font("Trebuchet MS", Font.PLAIN, 18));
-		
-		createShortcutTable(shortcutArrayString);
-		createTaskTable(outputArrayString);
-
-		outputArea.append(MSG_WELCOME + newline + newline + MSG_HELP +newline + newline + MSG_REMINDERS);
-
-	}
+	
 
 	private JScrollPane createTaskTable(ArrayList<String[]> outputArrayString) {
 		ArrayList<String> columnNamesTaskTable = new ArrayList<String>();
@@ -378,17 +415,18 @@ public class UserInterface extends DefaultTableCellRenderer {
 				Component c = super.prepareRenderer(renderer, row, column);
 
 				if (!isRowSelected(row))
-					c.setBackground(row % 2 == 0 ? getBackground() : DARK_BLUE);
+					c.setBackground(row % 2 == 0 ? getBackground() : TASK_BG);
 
 				return c;
 			}
 		};
-        setJTableColumnsWidth(taskTable, windowWidth, PREFERRED_WIDTH_TASKTABLE ) ;
+        setJTableColumnsWidth(taskTable, WINDOW_WIDTH, PREFERRED_WIDTH_TASKTABLE ) ;
     	taskTable.setRowHeight(25);
     	taskTable.setFont(new Font("Arial", Font.BOLD, 15));
-    	taskTable.setGridColor(BLUE_GRID);
+    	taskTable.setGridColor(TASK_GRID);
     	taskTable.setForeground(TASK_FONT);
-    	taskTable.setBackground(BLUE_BG);
+    	taskTable.setBackground(TASK_BG2);
+    	taskTable.setBorder(null);
         for (int c = 0; c < taskTable.getColumnCount(); c++)
 		{
 		    Class<?> col_class = taskTable.getColumnClass(c);
@@ -415,7 +453,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 				return c;
 			}
 		};
-        setJTableColumnsWidth(shortcutTable, windowWidth, PREFERRED_WIDTH_SHORTCUTS ) ;
+        setJTableColumnsWidth(shortcutTable, WINDOW_WIDTH, PREFERRED_WIDTH_SHORTCUTS ) ;
     	shortcutTable.setRowHeight(25);
     	shortcutTable.setFont(new Font("Arial", Font.BOLD, 15));
     	shortcutTable.setGridColor(SHORTCUT_GRID);
@@ -432,7 +470,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 	private void viewTextPane(){
 		scrollPaneMain.setViewportView(outputArea);
-
 	}
 
 	private void viewTaskTable(){
@@ -443,68 +480,81 @@ public class UserInterface extends DefaultTableCellRenderer {
 		scrollPaneMain.setViewportView(shortcutTable);
 	}
 
-	private void kbShortcuts() {
-		//keyboard shortcuts needs to be refactored out from here
+	private class inputListener implements ActionListener {
 
-		//pressing up restores previous input in textField
-		Action lastInput = new AbstractAction(){
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				textField.setText(prevInput);			
-			}		
-		};
-
-		textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-		.put(KeyStroke.getKeyStroke("UP"), "lastInput");
-		textField.getActionMap().put("lastInput", lastInput );
-
-		Action undo = new AbstractAction(){
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				String input  = "undo";
-				mainHandler.rawUserInput(input);
+		public void actionPerformed(ActionEvent e){
+			
+			clearFeedbackArea();
+			String input = textField.getText().trim();
+			prevInput = input;
+			System.out.println("input = " + input);
+			clearInput();	
+			/*	
+					if (input.length() == 0){
+						mainHandler.rawUserInput("viewTask");
+					}else{
+						mainHandler.rawUserInput(input);
+			
+					}
+				
+				*/
+				 	if( input.equals("1")){
+						displayMsg("Display List of Shortcuts ",1);
+						addDummyShortcut();
+						
+					}else{
+						addDummyTask();
+						addDummy2();
+						displayTaskTable( dummy2, outputArray, 1);
+						displayMsg("adding dummies", 1);
+					}
+					
+				
 			}
+		
 
-		};
-
-		textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-		.put(KeyStroke.getKeyStroke("ctrl Z"), "undo");
-		textField.getActionMap().put("undo", undo );
-
-		Action redo = new AbstractAction(){
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				String input  = "redo";
-				 mainHandler.rawUserInput(input);
-			}
-
-		};
-
-		textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-		.put(KeyStroke.getKeyStroke("ctrl Y"), "redo");
-		textField.getActionMap().put("redo", redo );
-
-		Action view = new AbstractAction(){
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				String input  = "view";
-				mainHandler.rawUserInput(input);
-			}
-
-		};
-
-		textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-		.put(KeyStroke.getKeyStroke("ctrl D"), "view");
-		textField.getActionMap().put("view", view );
-
-		//until here this needs to refactored out
 	}
 
-	private void addDummyTask() {
+
+	private void clearInput() {
+		textField.selectAll();
+		textField.setText("");
+	}
+
+	private void clearTextPane() {
+		outputArea.setText("");	
+	}
+	
+    private void clearFeedbackArea(){
+        sysFeedbackArea.setText("");
+    }
+    
+	public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
+			double[] percentages) {
+		double total = 0;
+		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
+			total += percentages[i];
+		}
+
+		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
+			TableColumn column = table.getColumnModel().getColumn(i);
+			column.setPreferredWidth((int)
+					(tablePreferredWidth * (percentages[i] / total)));
+		}
+	}
+	
+	@Override
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	        c.setBackground(row % 2 == 0 ? Color.LIGHT_GRAY : Color.WHITE);
+	       return c;
+
+	}
+
+    
+
+	
+private void addDummyTask() {
 		
 		for (int tid = 1000; tid<1020;  tid++){
 			Task testTask = new Task( tid  , " (The rest are dummies)", new Date(115,3,8,14,0) , 
@@ -536,83 +586,8 @@ public class UserInterface extends DefaultTableCellRenderer {
 				for ( int j = 0; j<5 ; j ++){
 					keywordArray[i][j] = i + "shortcut" + j ;
 				}
-			}
-					
+			}				
 			displayShortcuts(keywordArray, true);
-
-	}
-
-
-
-	private class inputListener implements ActionListener {
-
-		public void actionPerformed(ActionEvent e){
-			
-			clearFeedbackArea();
-			String input = textField.getText().trim();
-			prevInput = input;
-			System.out.println("input = " + input);
-					
-					if (input.length() == 0){
-						mainHandler.rawUserInput("viewTask");
-					}else{
-						mainHandler.rawUserInput(input);
-						clearInput();
-					}
-				
-				/*
-				 	if( input.equals("1")){
-						displayMsg("input is 1 ",1);
-						addDummyShortcut();
-						clearInput();
-					}else{
-						dummy++;
-						addDummyTask();
-						addDummy2();
-						displayTaskTable( dummy2, outputArray, 1);
-						displayMsg("adding dummies " + dummy, dummy);
-						clearInput();
-					}
-					
-				*/
-			}
-		
-
-	}
-
-	public static void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
-			double[] percentages) {
-		double total = 0;
-		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
-			total += percentages[i];
-		}
-
-		for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
-			TableColumn column = table.getColumnModel().getColumn(i);
-			column.setPreferredWidth((int)
-					(tablePreferredWidth * (percentages[i] / total)));
-		}
-	}
-
-	private void clearInput() {
-		textField.selectAll();
-		textField.setText("");
-	}
-
-	private void clearTextPane() {
-		outputArea.setText("");	
-	}
-	
-    private void clearFeedbackArea(){
-        sysFeedbackArea.setText("");
-    }
-    
-	@Override
-	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-	        c.setBackground(row % 2 == 0 ? Color.LIGHT_GRAY : Color.WHITE);
-	       return c;
-
 	}
 
 
