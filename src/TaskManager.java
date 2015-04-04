@@ -23,7 +23,7 @@ public class TaskManager implements TaskManagerInterface {
     public static final int DEADLINE = 5;
     public static final int LOCATION = 6;
     public static final int DETAILS = 7;
-    public static final int PRIORITY = 8;
+    public static final int STATUS = 8;
     public static final int DEFAULT_STRING_SIZE = 9;
     public static final int VIEW_TYPE = 2;
     public static final int FILTER_TYPE = 8;
@@ -80,7 +80,7 @@ public class TaskManager implements TaskManagerInterface {
     private static final String ID_STRING = "id";
     private static final String TASK_NAME_STRING = "name";
     private static final String PRIORITY_STRING = "priority";
-    private static final String DATE_FROM_STRING = "date";
+    private static final String DATE_STRING = "date";
     private static final String DEADLINE_STRING = "deadline";
     private static final String LOCATION_STRING = "location";
     private static final String TASK_TITLE_STRING = "task title";
@@ -137,7 +137,13 @@ public class TaskManager implements TaskManagerInterface {
         addIDToTaskIDs(newTask.getTID());
 
         tasks.add(newTask);
-        sortTasks(tasks, DATE_FROM);
+        defaultSortTaskByCompleteAndDate();
+    }
+
+    //completed task will be put at the back
+    //both categories of tasks will be sorted by date
+    private void defaultSortTaskByCompleteAndDate() {
+        Collections.sort(tasks, new ComparatorDateAndStatus());
     }
 
     private Task processInitializationWithID(String[] inputs) {
@@ -208,8 +214,9 @@ public class TaskManager implements TaskManagerInterface {
 
         case editTask: case clearAttr: case markTask:
             if(isAbleToEdit(inputs[TID])) {
+                checkEditIsValid(inputs);
                 inputs[COMMAND_TYPE] = changeCommandToEditTask();
-                if(inputs[PRIORITY] != null) {
+                if(inputs[STATUS] != null) {
                     changeStatusToIntString(inputs);
                 } 
                 returningTasks = processEditCommand(inputs);
@@ -261,19 +268,32 @@ public class TaskManager implements TaskManagerInterface {
         return returningTasks;
     }
 
+    private void checkEditIsValid(String[] inputs) {
+        boolean isValid = false;
+        for(int i = TASK_NAME; i < inputs.length; ++i) {
+            if(inputs[i] != null) {
+                isValid = true;
+            }
+        }
+
+        if(!isValid) {
+            throw new IllegalArgumentException("Action cannot be carried");
+        }
+    }
+
     private void changeStatusToIntString(String[] inputs) {
-        if(inputs[PRIORITY] == null) {
-            inputs[PRIORITY] = convertToStringFromInt(NORMAL);
+        if(inputs[STATUS] == null) {
+            inputs[STATUS] = convertToStringFromInt(NORMAL);
         } else {
-            String temp = inputs[PRIORITY].toLowerCase();
+            String temp = inputs[STATUS].toLowerCase();
             switch(temp) {
-            case URGENT_STRING: inputs[PRIORITY] = convertToStringFromInt(URGENT); break;
-            case MAJOR_STRING: inputs[PRIORITY] = convertToStringFromInt(MAJOR); break;
-            case NORMAL_STRING: inputs[PRIORITY] = convertToStringFromInt(NORMAL); break;
-            case MINOR_STRING: inputs[PRIORITY] = convertToStringFromInt(MINOR); break;
-            case CASUAL_STRING: inputs[PRIORITY] = convertToStringFromInt(CASUAL); break;
-            case COMPLETE_STRING: inputs[PRIORITY] = convertToStringFromInt(COMPLETE); break;
-            case OVERDUE_STRING: inputs[PRIORITY] = convertToStringFromInt(OVERDUE); break;
+            case URGENT_STRING: inputs[STATUS] = convertToStringFromInt(URGENT); break;
+            case MAJOR_STRING: inputs[STATUS] = convertToStringFromInt(MAJOR); break;
+            case NORMAL_STRING: inputs[STATUS] = convertToStringFromInt(NORMAL); break;
+            case MINOR_STRING: inputs[STATUS] = convertToStringFromInt(MINOR); break;
+            case CASUAL_STRING: inputs[STATUS] = convertToStringFromInt(CASUAL); break;
+            case COMPLETE_STRING: inputs[STATUS] = convertToStringFromInt(COMPLETE); break;
+            case OVERDUE_STRING: inputs[STATUS] = convertToStringFromInt(OVERDUE); break;
             default: throw new NoSuchElementException(MSG_ERR_NO_SUCH_STATUS);
             }
         }
@@ -329,7 +349,7 @@ public class TaskManager implements TaskManagerInterface {
             addClashingTasksForReturning(newTask, returningTasks);
         }
 
-        sortTasks(tasks, DATE_FROM);
+        defaultSortTaskByCompleteAndDate();
 
         return returningTasks;
     }
@@ -346,7 +366,7 @@ public class TaskManager implements TaskManagerInterface {
         Task newTask = new Task(convertToIntType(inputs[TID]), inputs[TASK_NAME], 
                 convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
                 convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
-                convertToIntType(inputs[PRIORITY]));
+                convertToIntType(inputs[STATUS]));
 
         updateIDCounter(inputs[TID]);
 
@@ -361,7 +381,7 @@ public class TaskManager implements TaskManagerInterface {
         Task newTask = new Task(getNewTID(), inputs[TASK_NAME], 
                 convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
                 convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
-                convertToIntType(inputs[PRIORITY]));
+                convertToIntType(inputs[STATUS]));
 
         return newTask;
     }
@@ -463,12 +483,12 @@ public class TaskManager implements TaskManagerInterface {
         case DEADLINE: editTaskDeadline(inputs, task); break;
         case LOCATION: editTaskLocation(inputs, task); break;
         case DETAILS: editTaskDetails(inputs, task); break;
-        case PRIORITY: editTaskPriority(inputs, task); break;
+        case STATUS: editTaskPriority(inputs, task); break;
         }
     }
 
     private void editTaskPriority(String[] inputs, Task task) {
-        int newPriority = convertToIntType(inputs[PRIORITY]);
+        int newPriority = convertToIntType(inputs[STATUS]);
         task.setPriority(newPriority);
     }
 
@@ -482,13 +502,33 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private void editTaskDeadline(String[] inputs, Task task) {
-        Date newDeadline = convertToDateObject(inputs[DEADLINE]);
-        task.setDeadline(newDeadline);
+        if(task.getDeadline() != null) {
+            Date newDeadline = convertToDateObject(inputs[DEADLINE]);
+            task.setDeadline(newDeadline);
+        }
+        if(task.getDeadline() == null && task.getDateTo() != null) {
+            Date newDateTo = convertToDateObject(inputs[DEADLINE]);
+            task.setDeadline(newDateTo);
+        }
+        if(task.getDeadline() == null && task.getDateTo() == null) {
+            Date newDeadline = convertToDateObject(inputs[DEADLINE]);
+            task.setDeadline(newDeadline);
+        }
     }
 
     private void editTaskDateTo(String[] inputs, Task task) {
-        Date newDateTo = convertToDateObject(inputs[DATE_TO]);
-        task.setDateTo(newDateTo);
+        if(task.getDateTo() != null) {
+            Date newDateTo = convertToDateObject(inputs[DATE_TO]);
+            task.setDateTo(newDateTo);
+        }
+        if(task.getDateTo() == null && task.getDeadline() != null) {
+            Date newDeadline = convertToDateObject(inputs[DATE_TO]);
+            task.setDeadline(newDeadline);
+        }
+        if(task.getDateTo() == null && task.getDeadline() == null) {
+            Date newDateTo = convertToDateObject(inputs[DATE_TO]);
+            task.setDateTo(newDateTo);
+        }
     }
 
     private void editTaskDateFrom(String[] inputs, Task task) {
@@ -497,6 +537,9 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private void editTaskName(String[] inputs, Task task) {
+        if(inputs[TASK_NAME].trim() == "") {
+            throw new IllegalArgumentException(MSG_ERR_EMPTY_TASK_NAME);
+        }
         task.setTaskName(inputs[TASK_NAME]);
     }
 
@@ -511,7 +554,7 @@ public class TaskManager implements TaskManagerInterface {
         case DEADLINE: clearTaskDeadline(task); break;
         case LOCATION: clearTaskLocation(task); break;
         case DETAILS: clearTaskDetails(task); break;
-        case PRIORITY: clearTaskPriority(task); break;
+        case STATUS: clearTaskPriority(task); break;
         default: throw new NoSuchElementException(MSG_ERR_INVALID_CLEAR);
         }
     }
@@ -522,11 +565,27 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private void clearTaskDateTo(Task task) {
-        task.setDateTo(null);
+        if(task.getDateTo() != null) {
+            task.setDateTo(null);
+        }
+        if(task.getDateTo() == null && task.getDeadline() != null) {
+            task.setDeadline(null);
+        }
+        if(task.getDateTo() == null && task.getDeadline() == null) {
+            task.setDateTo(null);
+        }
     }
 
     private void clearTaskDeadline(Task task) {
-        task.setDeadline(null);
+        if(task.getDeadline() != null) {
+            task.setDeadline(null);
+        }
+        if(task.getDeadline() == null && task.getDateTo() != null) {
+            task.setDateTo(null);
+        }
+        if(task.getDeadline() == null && task.getDateTo() == null) {
+            task.setDeadline(null);
+        }
     }
 
     private void clearTaskLocation(Task task) {
@@ -553,17 +612,20 @@ public class TaskManager implements TaskManagerInterface {
 
             if(isFilterOptionDefault(inputs)) {
                 for(Task task: tasks) {
-                    returningTasks.add(task.clone());
+                    if(task.getStatus() != COMPLETE) {
+                        returningTasks.add(task.clone());
+                    }
                 }
             } else {
                 int filterType = getFileterOption(inputs);
                 for(Task task: tasks) {
-                    if(task.getPriority() == filterType)
+                    if(task.getStatus() == filterType)
                         returningTasks.add(task.clone());
                 }
             }
 
             if(isViewOptionDefault(inputs)) {
+                sortTasks(returningTasks, DATE_FROM);
                 return returningTasks;
             } else {
                 int viewType = getViewOption(inputs);
@@ -612,10 +674,10 @@ public class TaskManager implements TaskManagerInterface {
         switch (viewType) {
         case ID_STRING: return TID;
         case TASK_NAME_STRING: return TASK_NAME;
-        case DATE_FROM_STRING: return DATE_FROM;
+        case DATE_STRING: return DATE_FROM;
         case DEADLINE_STRING: return DEADLINE;
         case LOCATION_STRING: return LOCATION;
-        case PRIORITY_STRING: return PRIORITY;
+        case PRIORITY_STRING: return STATUS;
         default: throw new NoSuchElementException(MSG_ERR_NO_SUCH_ARRANGE);
         }
     }
@@ -963,7 +1025,7 @@ public class TaskManager implements TaskManagerInterface {
             strArray[DETAILS] = null;
         }
 
-        strArray[PRIORITY] = convertToStringFromInt(task.getPriority());
+        strArray[STATUS] = convertToStringFromInt(task.getPriority());
     }
 
     private String convertToStringFromDate(Date dateObject) {
@@ -1084,11 +1146,16 @@ public class TaskManager implements TaskManagerInterface {
             ArrayList<Task> returningTasks) {
         for(Task existingTask : tasks) {
             if(isTaskADurationalTask(existingTask) &&
+                    !isTaskComplete(existingTask) &&
                     isNewTaskClashedWithExistingTask(newTask, existingTask) && 
                     newTask.getTID() != existingTask.getTID()) {
                 returningTasks.add(existingTask.clone());
             }
         }
+    }
+
+    private boolean isTaskComplete(Task task) {
+        return task.getStatus() == COMPLETE;
     }
 
     /**
@@ -1100,10 +1167,9 @@ public class TaskManager implements TaskManagerInterface {
         switch(type) {
         case TID: Collections.sort(tasks, new ComparatorID()); break;
         case TASK_NAME: Collections.sort(tasks, new ComparatorTaskName()); break;
-        case DATE_FROM: Collections.sort(tasks, new ComparatorDateFrom()); break;
-        case DEADLINE: Collections.sort(tasks, new ComparatorDeadline()); break;
+        case DATE_FROM: Collections.sort(tasks, new ComparatorDate()); break;
         case LOCATION: Collections.sort(tasks, new ComparatorLocation()); break;
-        case PRIORITY: Collections.sort(tasks, new ComparatorPriority()); break;
+        case STATUS: Collections.sort(tasks, new ComparatorPriority()); break;
         }
     }
 

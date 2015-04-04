@@ -1,7 +1,7 @@
 import java.util.Comparator;
 import java.util.Date;
 
-public class ComparatorDateFrom implements Comparator<Task> {
+public class ComparatorDate implements Comparator<Task> {
 
     public int compare(Task task1, Task task2) {
         Date date1 = null, date2 = null;
