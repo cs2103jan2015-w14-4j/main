@@ -6,6 +6,7 @@ import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -135,48 +136,53 @@ public class FileStorage {
                             inputs[i + 1] = tempStringArray[i];
                         }
                     }*/
-
                     
+                    System.out.println(Arrays.toString(tempStringArray));
+
+                    inputs[COMMAND_TYPE_INDEX] = ADD_TASK_COMMAND;
                     inputs[TASK_ID_INDEX] = tempStringArray[0];
 
                     inputs[TASK_NAME_INDEX] = tempStringArray[1];
 
                     if(isEmptyInput(tempStringArray[2])) {
-                        inputs[TASK_DATE_FROM_INDEX] = tempStringArray[2];
-                    } else {
                         inputs[TASK_DATE_FROM_INDEX] = null;
+                    } else {
+                        inputs[TASK_DATE_FROM_INDEX] = tempStringArray[2];
                     }
 
                     if(isEmptyInput(tempStringArray[3])) {
-                        inputs[TASK_DATE_TO_INDEX] = tempStringArray[3];
-                    } else {
                         inputs[TASK_DATE_TO_INDEX] = null;
+                    } else {
+                        inputs[TASK_DATE_TO_INDEX] = tempStringArray[3];
                     }
 
 
                     if(isEmptyInput(tempStringArray[4])) {
-                        inputs[TASK_DEADLINE_INDEX] = tempStringArray[4];
-                    } else {
                         inputs[TASK_DEADLINE_INDEX] = null;
+                    } else {
+                        inputs[TASK_DEADLINE_INDEX] = tempStringArray[4];
                     }
 
                     if(isEmptyInput(tempStringArray[5])) {
-                        inputs[TASK_LOCATION_INDEX] = tempStringArray[5];
-                    } else {
                         inputs[TASK_LOCATION_INDEX] = null;
+                    } else {
+                        inputs[TASK_LOCATION_INDEX] = tempStringArray[5];
                     }
 
                     if(isEmptyInput(tempStringArray[6])) {
-                        inputs[TASK_DETAILS_INDEX] = tempStringArray[6];
-                    } else {
                         inputs[TASK_DETAILS_INDEX] = null;
+                    } else {
+                        inputs[TASK_DETAILS_INDEX] = tempStringArray[6];
                     }
 
                     if(isEmptyInput(tempStringArray[7])) {
-                        inputs[TASK_PRIORITY_INDEX] = tempStringArray[7];
+                        inputs[TASK_PRIORITY_INDEX] = null;
                     } else {
-                        inputs[TASK_PRIORITY_INDEX] = null; 
+                        inputs[TASK_PRIORITY_INDEX] = tempStringArray[7]; 
                     }
+                    
+                    System.out.println(Arrays.toString(inputs));
+                    
                     tm.processInitialization(inputs);
                 }
                 sc.close();      
@@ -363,39 +369,49 @@ public class FileStorage {
                     inputs[TASK_ID_INDEX] = tempStringArray[0];
                     inputs[TASK_NAME_INDEX] = tempStringArray[1];
                     if(isEmptyInput(tempStringArray[2])) {
-                        inputs[TASK_DATE_FROM_INDEX] = tempStringArray[2];
-                    } else {
                         inputs[TASK_DATE_FROM_INDEX] = null;
+
+                    } else {
+                        inputs[TASK_DATE_FROM_INDEX] = tempStringArray[2];
+
                     }
 
                     if(isEmptyInput(tempStringArray[3])) {
-                        inputs[TASK_DATE_TO_INDEX] = tempStringArray[3];
-                    } else {
                         inputs[TASK_DATE_TO_INDEX] = null;
+                    } else {
+                        inputs[TASK_DATE_TO_INDEX] = tempStringArray[3];
                     }
 
                     if(isEmptyInput(tempStringArray[4])) {
-                        inputs[TASK_DEADLINE_INDEX] = tempStringArray[4];
-                    } else {
                         inputs[TASK_DEADLINE_INDEX] = null;
+
+                    } else {
+                        inputs[TASK_DEADLINE_INDEX] = tempStringArray[4];
+
                     }
 
                     if(isEmptyInput(tempStringArray[5])) {
-                        inputs[TASK_LOCATION_INDEX] = tempStringArray[5];
-                    } else {
                         inputs[TASK_LOCATION_INDEX] = null;
+
+                    } else {
+                        inputs[TASK_LOCATION_INDEX] = tempStringArray[5];
+
                     }
 
                     if(isEmptyInput(tempStringArray[6])) {
-                        inputs[TASK_DETAILS_INDEX] = tempStringArray[6];
-                    } else {
                         inputs[TASK_DETAILS_INDEX] = null;
+
+                    } else {
+                        inputs[TASK_DETAILS_INDEX] = tempStringArray[6];
+
                     }
 
                     if(isEmptyInput(tempStringArray[7])) {
-                        inputs[TASK_PRIORITY_INDEX] = tempStringArray[7];
-                    } else {
                         inputs[TASK_PRIORITY_INDEX] = null;
+
+                    } else {
+                        inputs[TASK_PRIORITY_INDEX] = tempStringArray[7];
+
                     }
 
                     for(int i =0; i < inputs.length; ++i) {
