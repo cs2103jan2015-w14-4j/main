@@ -88,18 +88,18 @@ public class UserInterface extends DefaultTableCellRenderer {
     private static final String[][] HELP = { {MSG_WELCOME +newline+newline },
     										 {"Getting Started:"+newline},
     										 {"  Start adding new tasks by uisng the keyword \"add [task title]\" followed by the task details."},	
-    										 {"      eg. “add Meeting at room 303 on 27/2/2015 from 2pm to 4pm”   OR"},
-    										 {"      eg. “add Meeting from 1400 to 1600 on 27th July at room 303”"},
+    										 {"      eg. \"add Meeting at room 303 on 27/2/2015 from 2pm to 4pm\"   OR"},
+    										 {"      eg. \"add Meeting from 1400 to 1600 on 27th July at room 303\""},
     										 {"  Both inputs are accepted and will create a task with the same details." +newline},
     										 {"  Feel free to leave any fields you don't need blank, only the task title is needed to create a new task."},
-    										 {"  Many variations of inputs are accepted, experiment and find the best fit for you!"},
+    										 {"  Many variations of inputs are accepted, experiment and find the best fit for you!" + newline},
     										 {"  Edit tasks by using \"edit [taskID]\" followed by the information you want to change."},
     										 {"  Delete tasks by typing \"delete [taskID]\""},
     										 {newline},
     										 {"Changing default keywords:"},
     										 {"  You can change any of the default keywords such as \"add\" and \"edit\" to anything you prefer by following the following format:"},
     										 {"  addShortcut [new keyword] onto [existing keyword]"},
-    										 {"      eg. “addKeyword create onto add”"},
+    										 {"      eg. \"addKeyword create onto add\""},
     										 {newline},
     										 {"For the full list of available keywords and functions, type \"help\" or \"viewShortcut\""}
     										};
@@ -527,14 +527,14 @@ public class UserInterface extends DefaultTableCellRenderer {
 			prevInput = input;
 			System.out.println("input = " + input);
 			clearInput();	
-			/*	
+		
 			if (input.length() == 0){
 						mainHandler.rawUserInput("viewTask");
 					}else{
 						mainHandler.rawUserInput(input);
 					}
 				
-			*/	
+			/*	
 				 	if( input.equals("1")){
 						displayMsg("Display List of Shortcuts ",1);
 						addDummyShortcut();
@@ -546,7 +546,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 						displayMsg("adding dummies", 1);
 					}
 					
-				
+					*/	
 			}
 		
 
