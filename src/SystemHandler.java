@@ -13,10 +13,8 @@ import java.text.SimpleDateFormat;
 public class SystemHandler {
 	
 	//dummy string acting like UI prompt
-	private static final String MSG_ERR_NO_SUCH_COMMAND = "System does not recognize this command";
-	private static final String MSG_LOG_USER_COMMAND = "user enters: $1%s";
-	public static final String MSG_ASK_FILENAME = "Please enter the name of your file";
-	public static final String MSG_ASK_INPUT = "Please enter your command";
+	private static final String MSG_ERR_NO_SUCH_COMMAND = "SystemHandler does not recognize this command";
+	private static final String MSG_LOG_USER_COMMAND = "user enters: %s";
 //	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
 //	private static final String CLEAR_INFO_INDICATOR = "";
 	private static final String[] COMMAND_GET_TEMPLATE = {"viewTemplate",null,null,null,null,null,null,null,null};
@@ -31,8 +29,9 @@ public class SystemHandler {
 	private static final int INDEX_COMMAND_SHORTCUT = 1;
 	private static final int INDEX_COMMAND_TEMPLATE = 2;
 	private static final int INDEX_EXECUTION_ERROR = 0;
-	private static final int ERROR_INIT = 1;
 	private static final int INDEX_EXECUTION_SUCCESS = 1;
+	private static final int INDEX_EXECUTION_CLASH = 2;
+	private static final int ERROR_INIT = 1;
 	private static final boolean EXECUTION_SUCCESS = true;
 	
 	
@@ -139,7 +138,7 @@ public class SystemHandler {
 //		return new Task(1000, "NEW",
 //				convertToDateObject("12/09/2015 10:00"),
 //				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0);
-		
+		Task gotten = myTaskList.getTaskFromTID(id);
 		return myTaskList.getTaskFromTID(id);
 		
 	}
@@ -154,7 +153,7 @@ public class SystemHandler {
 	}
 	
 	public boolean writeToFile(ArrayList<Task> taskList) {
-		externalStorage.writeToFile(taskList);
+		externalStorage.writeTaskToFile(taskList);
 		return true;
 	}
 	
@@ -190,6 +189,7 @@ public class SystemHandler {
 	private static int getCommandGroupType(String commandType) {
 		for(COMMAND_TYPE_TASK_MANAGER command : COMMAND_TYPE_TASK_MANAGER.values()) {
 			if(command.name().equals(commandType)) {
+				System.out.println("CHECK "+ command.name() +" with "+ commandType);
 				return INDEX_COMMAND_TASK_MANAGER;
 			}
 		}
@@ -225,7 +225,7 @@ public class SystemHandler {
 		externalStorage = new FileStorage(fileName);
 		system = this;
 		try{
-			externalStorage.readFromFile(myTaskList);
+			externalStorage.readTaskFromFile(myTaskList);
 			externalStorage.readShortcutFromFile(myShortcut);
 			externalStorage.readTemplateFromFile(myTemplates);
 		} catch(ParseException e) {
@@ -317,16 +317,51 @@ public class SystemHandler {
 			throws ParseException {
 		ArrayList<Task> result = myTaskList.processTM(command);
 		ArrayList<Task> fullList = myTaskList.processTM(COMMAND_GET_TASK_LIST);
-		window.displayTaskTable(result, fullList, INDEX_EXECUTION_SUCCESS);
+		
+		displayToUI(command, result, fullList);
 		return result;
 	}
+
+	/**
+	 * @param command
+	 * @param result
+	 * @param fullList
+	 */
+	private void displayToUI(String[] command, ArrayList<Task> result,
+			ArrayList<Task> fullList) {
+		window.displayTaskTable(result, fullList, INDEX_EXECUTION_SUCCESS);
+//		window.displayMsg(constructMsg(), getExecutionStatus(command,result));
+	}
 	
-	
+	private int getTaskManagerExecutionStatus(String[] command, ArrayList<Task> result) {
+		if(command[0] == "viewTask") {
+			if(result != null) {
+				return INDEX_EXECUTION_SUCCESS;
+			} else {
+				return INDEX_EXECUTION_ERROR;
+			}
+		} else if(command[0] == "searchTask") {
+			if(result != null) {
+				return INDEX_EXECUTION_SUCCESS;
+			} else {
+				return INDEX_EXECUTION_ERROR;
+			}
+		} else {
+			if(result == null) {
+				return INDEX_EXECUTION_ERROR;
+			} else if(result.size() == 1) {
+				return INDEX_EXECUTION_SUCCESS;
+			} else {
+				return INDEX_EXECUTION_CLASH;
+			}
+		}
+	}
 	private String[][] executeShortcutManager(String[] command) 
 			throws NoSuchElementException, IllegalArgumentException {
 		
 		String[][] result = myShortcut.processShortcutCommand(command);
 		window.displayShortcuts(result, EXECUTION_SUCCESS);
+		window.displayMsg(command[0] + " has been executed successfully",INDEX_EXECUTION_SUCCESS);
 		return result;
 	}
 	
@@ -334,9 +369,11 @@ public class SystemHandler {
 			throws IllegalArgumentException {
 
 		ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
+//		ArrayList<Task> fullList = myTemplates.processCustomizingCommand(COMMAND_GET_TEMPLATE);
+//		window.displayTaskTable(result, fullList, INDEX_EXECUTION_SUCCESS);
 //		ArrayList<Task> fullList = myTemplates.processCustomizingCommand(CMD_GET_TEMPLATE);
-		//window.displayTaskTable(result, true);
-	
+		window.displayTaskTable(result, result, INDEX_EXECUTION_SUCCESS);
+		window.displayMsg(command[0] + " has been executed successfully",INDEX_EXECUTION_SUCCESS);
 	}
 	
 	

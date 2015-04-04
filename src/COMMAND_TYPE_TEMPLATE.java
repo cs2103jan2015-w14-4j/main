@@ -1,5 +1,5 @@
 
 public enum COMMAND_TYPE_TEMPLATE {
-	addTemplate, viewTemplates, deleteTemplate, editTemplate, 
-	resetTemplates, addTemplateInit, useTemplate
+	addTemplate, viewTemplate, deleteTemplate, editTemplate, 
+	resetTemplate, addTemplateInit, useTemplate
 }
