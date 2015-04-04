@@ -500,9 +500,14 @@ public class FlexiParser {
 								
 								outputArray[indexOfTwo+TO_ADD_INDEX] = EMPTY_STRING;
 							}
+//							if(matchKeyword(inputArray[j], KEYWORDS_ONE_TASK[i]) || 
+//									matchKeyword(inputArray[j], KEYWORDS_TWO_TASK[i])) {
+//								outputArray[i + TO_ADD_INDEX] = EMPTY_STRING;
+//							}
 						
 						}
 					}
+					outputArray[TASK_PRIORITY_INDEX] = null;
 					break;
 				//markTask
 				case 21:
@@ -528,6 +533,9 @@ public class FlexiParser {
     	
     }
     
+    private boolean matchKeyword(String str1,String str2) {
+    	return str1.equalsIgnoreCase(str2);
+    }
     private int indexOfKey(String[] keyWords,String input,String matched) {
     	for(int i = 0; i < keyWords.length; i++) {
     		
@@ -757,7 +765,9 @@ public class FlexiParser {
 				
 			ArrayList<Date> dateList = useNatty(value);
 			//System.out.println("The date is "+ dateList.get(0));
-			
+			if(dateList.size() == 0) {
+				throw new IllegalArgumentException("Error in reading the date, please check if you are using the correct keyword such as 'from','to' and 'before'.\nIf you wish to use those words in other field, double quote the field eg. \"Meet before dinner\"");
+			}
 			outputArr[j] = dateConverter(dateList.get(0)).trim();
 		}
 	}
