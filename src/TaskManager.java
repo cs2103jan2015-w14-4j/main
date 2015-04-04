@@ -502,8 +502,18 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private void editTaskDeadline(String[] inputs, Task task) {
-        Date newDeadline = convertToDateObject(inputs[DEADLINE]);
-        task.setDeadline(newDeadline);
+        if(task.getDeadline() != null) {
+            Date newDeadline = convertToDateObject(inputs[DEADLINE]);
+            task.setDeadline(newDeadline);
+        }
+        if(task.getDeadline() == null && task.getDateTo() != null) {
+            Date newDateTo = convertToDateObject(inputs[DEADLINE]);
+            task.setDeadline(newDateTo);
+        }
+        if(task.getDeadline() == null && task.getDateTo() == null) {
+            Date newDeadline = convertToDateObject(inputs[DEADLINE]);
+            task.setDeadline(newDeadline);
+        }
     }
 
     private void editTaskDateTo(String[] inputs, Task task) {
@@ -514,6 +524,10 @@ public class TaskManager implements TaskManagerInterface {
         if(task.getDateTo() == null && task.getDeadline() != null) {
             Date newDeadline = convertToDateObject(inputs[DATE_TO]);
             task.setDeadline(newDeadline);
+        }
+        if(task.getDateTo() == null && task.getDeadline() == null) {
+            Date newDateTo = convertToDateObject(inputs[DATE_TO]);
+            task.setDateTo(newDateTo);
         }
     }
 
@@ -554,13 +568,24 @@ public class TaskManager implements TaskManagerInterface {
         if(task.getDateTo() != null) {
             task.setDateTo(null);
         }
-        if(task.getDeadline() != null) {
+        if(task.getDateTo() == null && task.getDeadline() != null) {
             task.setDeadline(null);
+        }
+        if(task.getDateTo() == null && task.getDeadline() == null) {
+            task.setDateTo(null);
         }
     }
 
     private void clearTaskDeadline(Task task) {
-        task.setDeadline(null);
+        if(task.getDeadline() != null) {
+            task.setDeadline(null);
+        }
+        if(task.getDeadline() == null && task.getDateTo() != null) {
+            task.setDateTo(null);
+        }
+        if(task.getDeadline() == null && task.getDateTo() == null) {
+            task.setDeadline(null);
+        }
     }
 
     private void clearTaskLocation(Task task) {
