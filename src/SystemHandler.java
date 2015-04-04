@@ -189,7 +189,6 @@ public class SystemHandler {
 	private static int getCommandGroupType(String commandType) {
 		for(COMMAND_TYPE_TASK_MANAGER command : COMMAND_TYPE_TASK_MANAGER.values()) {
 			if(command.name().equals(commandType)) {
-				System.out.println("CHECK "+ command.name() +" with "+ commandType);
 				return INDEX_COMMAND_TASK_MANAGER;
 			}
 		}
@@ -318,7 +317,7 @@ public class SystemHandler {
 		ArrayList<Task> result = myTaskList.processTM(command);
 		ArrayList<Task> fullList = myTaskList.processTM(COMMAND_GET_TASK_LIST);
 		
-		displayToUI(command, result, fullList);
+		displayTMResultToUI(command, result, fullList);
 		return result;
 	}
 
@@ -327,12 +326,67 @@ public class SystemHandler {
 	 * @param result
 	 * @param fullList
 	 */
-	private void displayToUI(String[] command, ArrayList<Task> result,
+	private void displayTMResultToUI(String[] command, ArrayList<Task> result,
 			ArrayList<Task> fullList) {
+		String[] message = constructTMMessage(command,result, fullList);
 		window.displayTaskTable(result, fullList, INDEX_EXECUTION_SUCCESS);
-//		window.displayMsg(constructMsg(), getExecutionStatus(command,result));
+		window.displayMsg(message, getTaskManagerExecutionStatus(command,result));
 	}
 	
+	private String[] constructTMMessage(String[] command, ArrayList<Task> result,
+			ArrayList<Task> fullList) {
+		String[] message = null;
+		switch(command[0]) {
+		case "viewTask":
+			message = new String[1];
+			message[0] = "The tasks list has been retrieved from the Flexi Tracker.";
+			break;
+		case "addTask":
+		case "editTask":
+			message = new String[2];
+			message[0] = "The task:\""+result.get(0).getTaskName()+"\" has been updated from the Flexi Tracker under ID number "+result.get(0).getTID()+".";
+			if(result.size() > 1) {
+				message[1] = "The newly added task has clashed with the following task(s): ";
+				for(int i = 1; i < result.size(); ++i) {
+					message[1] += result.get(i).getTaskName()+"("+result.get(i).getTID()+"), ";
+				}
+				message[1] = message[1].substring(0, message[1].length() - 3) + ".";
+			}
+			break;
+				
+		case "deleteTask":
+			message = new String[1];
+			message[0] = "The task:\""+result.get(0).getTaskName()+"\" has been deleted from the Flexi Tracker.";
+			break;
+			
+		case "searchTask":
+			message = new String[1];
+			message[0] = "There are"+result.size()+" task(s) fulfilling the searching requirement.";
+			break;
+			
+		case "undoTask":
+			message = new String[1];
+			message[0] = "A task operation has been undo.";
+			break;
+			
+		case "redoTask":
+			message = new String[1];
+			message[0] = "A task operation has been redo.";
+			break;
+			
+		case "clearAttr":
+			message = new String[1];
+			message[0] = "The task:\""+result.get(0).getTaskName()+"\" has been updated from the Flexi Tracker under ID number "+result.get(0).getTID()+".";
+			break;
+			
+		case "markTask":
+			message = new String[2];
+			message[0] = "The task:\""+result.get(0).getTaskName() + "\" has been marked as " + result.get(0).getStatusString();
+			break;
+		}
+		return message;
+	}
+
 	private int getTaskManagerExecutionStatus(String[] command, ArrayList<Task> result) {
 		if(command[0] == "viewTask") {
 			if(result != null) {
