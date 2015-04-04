@@ -275,12 +275,12 @@ public class TaskManager implements TaskManagerInterface {
                 isValid = true;
             }
         }
-        
+
         if(!isValid) {
             throw new IllegalArgumentException("Action cannot be carried");
         }
     }
-    
+
     private void changeStatusToIntString(String[] inputs) {
         if(inputs[STATUS] == null) {
             inputs[STATUS] = convertToStringFromInt(NORMAL);
@@ -507,8 +507,14 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private void editTaskDateTo(String[] inputs, Task task) {
-        Date newDateTo = convertToDateObject(inputs[DATE_TO]);
-        task.setDateTo(newDateTo);
+        if(task.getDateTo() != null) {
+            Date newDateTo = convertToDateObject(inputs[DATE_TO]);
+            task.setDateTo(newDateTo);
+        }
+        if(task.getDateTo() == null && task.getDeadline() != null) {
+            Date newDeadline = convertToDateObject(inputs[DATE_TO]);
+            task.setDeadline(newDeadline);
+        }
     }
 
     private void editTaskDateFrom(String[] inputs, Task task) {
@@ -545,7 +551,12 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private void clearTaskDateTo(Task task) {
-        task.setDateTo(null);
+        if(task.getDateTo() != null) {
+            task.setDateTo(null);
+        }
+        if(task.getDeadline() != null) {
+            task.setDeadline(null);
+        }
     }
 
     private void clearTaskDeadline(Task task) {
@@ -1114,7 +1125,7 @@ public class TaskManager implements TaskManagerInterface {
             }
         }
     }
-    
+
     private boolean isTaskComplete(Task task) {
         return task.getStatus() == COMPLETE;
     }
