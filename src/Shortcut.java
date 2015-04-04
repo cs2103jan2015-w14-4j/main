@@ -277,12 +277,17 @@ public class Shortcut {
 	}
 	
 	private String[] constructOutputString(int index, String deleted) {
-		String[] result = {keywords[index], deleted};
+		String[] result = {Integer.toString(index), deleted};
 		return result;
 	}
 	
 	private String[] constructOutputString(int index, String original, String newlyAdded) {
-		String[] result = {keywords[index], original, newlyAdded};
+		ArrayList<String> shortcuts = userShortcuts.get(index);
+		String[] result = new String[shortcuts.size() + 1];
+		result[0] = Integer.toString(index);
+		for(int i = 0 ; i < shortcuts.size(); ++i) {
+			result[i + 1] = shortcuts.get(i);
+		}
 		return result;
 	}
 
@@ -354,9 +359,13 @@ public class Shortcut {
 	private String[][] cloneShortcuts() {
 		String[][] cloneList = new String[keywords.length][];
 		for(int i = 0; i < userShortcuts.size(); ++i) {
-			ArrayList<String> singleShortcut = userShortcuts.get(i);
-			cloneList[i] = singleShortcut.toArray(new String[singleShortcut.size()]);
-
+			ArrayList<String> shortcuts = userShortcuts.get(i);
+			String[] clonedArray = new String[shortcuts.size() + 1];
+			clonedArray[0] = Integer.toString(i);
+			for(int j = 0; j < shortcuts.size(); ++j) {
+				clonedArray[j + 1] = shortcuts.get(j);
+			}
+			cloneList[i] = clonedArray;
 		}
 		
 		return cloneList;
