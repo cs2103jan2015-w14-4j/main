@@ -715,11 +715,11 @@ public class TaskManager implements TaskManagerInterface {
                     returningTasks.add(task);
                 }
             } else if(isForeverTask(task)) {
-                if(compareTwoDateOnly(searchDate, task.getDateFrom()) >= 0) {
+                if(compareTwoDateOnly(searchDate, task.getDateFrom()) == 0) {
                     returningTasks.add(task);
                 }
             } else if(isOnlyDateToTask(task)) {
-                if(compareTwoDateOnly(searchDate, task.getDateTo()) >= 0) {
+                if(compareTwoDateOnly(searchDate, task.getDateTo()) == 0) {
                     returningTasks.add(task);
                 }
             }

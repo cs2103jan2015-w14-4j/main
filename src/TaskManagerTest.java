@@ -862,15 +862,14 @@ public class TaskManagerTest {
 
 
         String[] addTaskForSearch = {"addTask", null, "CS2103T Tutorial", 
-                "13/03/2015 14:00", "20/03/2015 15:00", null, "SOC", null, "normal"};
+                "18/03/2015 14:00", "20/03/2015 15:00", null, "SOC", null, "normal"};
         myTaskManager.processTM(addTaskForSearch);
-        Task expectTask13 = new Task(13, "CS2103T Tutorial", convertToDateObject("13/03/2015 14:00"), 
+        Task expectTask13 = new Task(13, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
                 convertToDateObject("20/03/2015 15:00"), null, "SOC", null, 3);
         expectSearch = new ArrayList<Task>();
         expectSearch.add(expectTask10);
         expectSearch.add(expectTask13);
         assertTaskArrayListEquals(myTaskManager.processTM(search_18032015), expectSearch);
-
     }
     
     @Test
@@ -903,9 +902,9 @@ public class TaskManagerTest {
                 convertToDateObject("18/03/2015 23:59"), null, null, 3);
         ArrayList<Task> expectSearch = new ArrayList<Task>();
 
-        expectSearch.add(expectTask10);
         expectSearch.add(expectTask11);
         expectSearch.add(expectTask12);
+        expectSearch.add(expectTask10);
         expectSearch.add(expectTask13);    
         
         String[] search_18032015 = {"searchTask", null, "18/03/2015 15:00", null, null, null, 
