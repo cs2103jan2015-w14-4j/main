@@ -363,8 +363,6 @@ public class FileStorage {
                         ++index;
                     }
 
-                    System.out.println(Arrays.toString(inputs));
-
                     try {
                         template.processCustomizingCommand(inputs);     
                     } catch(Exception e) {
