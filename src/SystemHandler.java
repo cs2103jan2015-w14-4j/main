@@ -31,8 +31,9 @@ public class SystemHandler {
 	private static final int INDEX_COMMAND_SHORTCUT = 1;
 	private static final int INDEX_COMMAND_TEMPLATE = 2;
 	private static final int INDEX_EXECUTION_ERROR = 0;
-	private static final int ERROR_INIT = 1;
 	private static final int INDEX_EXECUTION_SUCCESS = 1;
+	private static final int INDEX_EXECUTION_CLASH = 2;
+	private static final int ERROR_INIT = 1;
 	private static final boolean EXECUTION_SUCCESS = true;
 	
 	
@@ -317,11 +318,45 @@ public class SystemHandler {
 			throws ParseException {
 		ArrayList<Task> result = myTaskList.processTM(command);
 		ArrayList<Task> fullList = myTaskList.processTM(COMMAND_GET_TASK_LIST);
-		window.displayTaskTable(result, fullList, INDEX_EXECUTION_SUCCESS);
+		
+		displayToUI(command, result, fullList);
 		return result;
 	}
+
+	/**
+	 * @param command
+	 * @param result
+	 * @param fullList
+	 */
+	private void displayToUI(String[] command, ArrayList<Task> result,
+			ArrayList<Task> fullList) {
+		window.displayTaskTable(result, fullList, INDEX_EXECUTION_SUCCESS);
+//		window.displayMsg(constructMsg(), getExecutionStatus(command,result));
+	}
 	
-	
+	private int getTaskManagerExecutionStatus(String[] command, ArrayList<Task> result) {
+		if(command[0] == "viewTask") {
+			if(result != null) {
+				return INDEX_EXECUTION_SUCCESS;
+			} else {
+				return INDEX_EXECUTION_ERROR;
+			}
+		} else if(command[0] == "searchTask") {
+			if(result != null) {
+				return INDEX_EXECUTION_SUCCESS;
+			} else {
+				return INDEX_EXECUTION_ERROR;
+			}
+		} else {
+			if(result == null) {
+				return INDEX_EXECUTION_ERROR;
+			} else if(result.size() == 1) {
+				return INDEX_EXECUTION_SUCCESS;
+			} else {
+				return INDEX_EXECUTION_CLASH;
+			}
+		}
+	}
 	private String[][] executeShortcutManager(String[] command) 
 			throws NoSuchElementException, IllegalArgumentException {
 		
@@ -334,8 +369,8 @@ public class SystemHandler {
 			throws IllegalArgumentException {
 
 		ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
-//		ArrayList<Task> fullList = myTemplates.processCustomizingCommand(CMD_GET_TEMPLATE);
-		window.displayTaskTable(result, true);
+		ArrayList<Task> fullList = myTemplates.processCustomizingCommand(COMMAND_GET_TEMPLATE);
+		window.displayTaskTable(result, fullList, INDEX_EXECUTION_SUCCESS);
 	
 	}
 	
