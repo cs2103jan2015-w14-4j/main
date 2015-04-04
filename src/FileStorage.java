@@ -193,7 +193,7 @@ public class FileStorage {
                 Task tempTask = taskList.get(i);
                 String[] taskArray = taskToStringArray(tempTask, null);
                 for(int j = 0; j < taskArray.length; j++) {
-                    if ( j != taskArray.length-1) {
+                    if ( j != taskArray.length - 1) {
                         taskArray[j] += (",");
                         bw.write(taskArray[j]);
                     } else {
@@ -249,9 +249,9 @@ public class FileStorage {
             shortcutFile.createNewFile();
             BufferedWriter bw = new BufferedWriter(new FileWriter(shortcutFile));
             //shortcut first column all the different shortcut each row is the mapped shortcuts
-            for(int i=0;i<shortcuts.length;i++) {
-                for(int j=0;j<shortcuts[i].length;j++) {
-                    if ( j != shortcuts[i].length-1) {
+            for(int i = 0; i<shortcuts.length; i++) {
+                for(int j = 0; j<shortcuts[i].length; j++) {
+                    if ( j != shortcuts[i].length - 1) {
                         shortcuts[i][j] += (",");
                         bw.write(shortcuts[i][j]);
                     } else {
@@ -330,10 +330,8 @@ public class FileStorage {
         return strArr;
     }
 
-    private String IntegerToString(int id) {
-
-        return Integer.toString(id);
-
+    private String IntegerToString(int integer) {
+        return Integer.toString(integer);
     }
 
     private String dateToString(Date date) {
@@ -342,7 +340,6 @@ public class FileStorage {
         String dateString = formatter.format(date);
 
         return dateString;
-
     }
 
     public void readTemplateFromFile(Template template) throws ParseException {
@@ -444,7 +441,6 @@ public class FileStorage {
             }
         }
     }
-
 
 
     private boolean isEmptyInput(String str) {
