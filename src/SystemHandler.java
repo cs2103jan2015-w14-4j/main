@@ -12,11 +12,26 @@ import java.text.SimpleDateFormat;
 
 public class SystemHandler {
 	
-	//dummy string acting like UI prompt
+	private static final String MSG_TASK_STATUS = "The task:\"%s\" has been marked as %s";
+	private static final String MSG_TASK_REDO = "A task operation has been redo.";
+	private static final String MSG_TASK_SEARCH = "There are %s task(s) fulfilling the searching requirement.";
+	private static final String MSG_TASK_UNDO = "A task operation has been undo.";
+	private static final String MSG_TASK_DELETE = "The task:\"%s\" has been deleted from the Flexi Tracker.";
+	private static final String MSG_TASK_CLASH_TASK = "%s(%s),";
+	private static final String MSG_TASK_CLASH = "The newly added task has clashed with the following task(ID): ";
+	private static final String MSG_TASK_UPDATE = "The task:\"%s\" has been updated from the Flexi Tracker under ID number %s.";
+	private static final String MSG_TASK_VIEW = "The tasks list has been retrieved from the Flexi Tracker.";
+	private static final String MSG_TEMP_DELETE = "The template:\"%s\" has been deleted from the Flexi Tracker.";
+	private static final String MSG_TEMP_UPDATE = "The template:\"%s\" has been updated from the Flexi Tracker ";
+	private static final String MSG_TEMP_VIEW = "The template list has been retrieved from the Flexi Tracker.";
+	private static final String MSG_TEMP_NO_TEMPLATE = "No templates found in Flexi Tracker";
+	private static final String MSG_SHORTCUT_DELETED = "Keyword \"%s\" has been deleted.";
+	private static final String MSG_SHORTCUT_RESET = "All keywords have been reset to the list above";
+	private static final String MSG_SHORTCUT_VIEW = "All keywords have been retrieved";
+	private static final String MSG_SHORTCUT_ADDED_NEW = "New keyword \"%s\" has been added. It will function the same as \"%s\"";
 	private static final String MSG_ERR_NO_SUCH_COMMAND = "SystemHandler does not recognize this command";
 	private static final String MSG_LOG_USER_COMMAND = "user enters: %s";
-//	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
-//	private static final String CLEAR_INFO_INDICATOR = "";
+	
 	private static final String[] COMMAND_GET_TEMPLATE = {"viewTemplate",null,null,null,null,null,null,null,null};
 	private static final String[] COMMAND_GET_TASK_LIST = {"viewTask",null,null,null,null,null,null,null,null};
 	private static final String[] COMMAND_RESET_SHORTCUT = {"resetShortcut", null, null};
@@ -317,8 +332,7 @@ public class SystemHandler {
 			throws ParseException {
 		ArrayList<Task> result = myTaskList.processTM(command);
 		ArrayList<Task> fullList = myTaskList.processTM(COMMAND_GET_TASK_LIST);
-		
-		displayToUI(command, result, fullList);
+		displayTMResultToUI(command, result, new ArrayList<Task>());
 		return result;
 	}
 
@@ -333,6 +347,59 @@ public class SystemHandler {
 //		window.displayMsg(constructMsg(), getExecutionStatus(command,result));
 	}
 	
+	private String[] constructTMMessage(String[] command, ArrayList<Task> result) {
+		String[] message = null;
+		switch(command[0]) {
+		case "viewTask":
+			message = new String[1];
+			message[0] = MSG_TASK_VIEW;
+			break;
+		case "addTask":
+		case "editTask":
+			message = new String[2];
+			message[0] = String.format(MSG_TASK_UPDATE,result.get(0).getTaskName(),result.get(0).getTID());
+			if(result.size() > 1) {
+				message[1] = MSG_TASK_CLASH;
+				for(int i = 1; i < result.size(); ++i) {
+					message[1] += String.format(MSG_TASK_CLASH_TASK, result.get(i).getTaskName(), result.get(i).getTID());
+				}
+				message[1] = message[1].substring(0, message[1].length() - 1) + ".";
+			}
+			break;
+				
+		case "deleteTask":
+			message = new String[1];
+			message[0] = String.format(MSG_TASK_DELETE,result.get(0).getTaskName());
+			break;
+			
+		case "searchTask":
+			message = new String[1];
+			message[0] = String.format(MSG_TASK_SEARCH, result.size());
+			break;
+			
+		case "undoTask":
+			message = new String[1];
+			message[0] = MSG_TASK_UNDO;
+			break;
+			
+		case "redoTask":
+			message = new String[1];
+			message[0] = MSG_TASK_REDO;
+			break;
+			
+		case "clearAttr":
+			message = new String[1];
+			message[0] = String.format(MSG_TASK_UPDATE,result.get(0).getTaskName(),result.get(0).getTID());
+			break;
+			
+		case "markTask":
+			message = new String[2];
+			message[0] = String.format(MSG_TASK_STATUS, result.get(0).getTaskName(), result.get(0).getStatusString());
+			break;
+		}
+		return message;
+	}
+
 	private int getTaskManagerExecutionStatus(String[] command, ArrayList<Task> result) {
 		if(command[0] == "viewTask") {
 			if(result != null) {
@@ -356,6 +423,7 @@ public class SystemHandler {
 			}
 		}
 	}
+	
 	private String[][] executeShortcutManager(String[] command) 
 			throws NoSuchElementException, IllegalArgumentException {
 		

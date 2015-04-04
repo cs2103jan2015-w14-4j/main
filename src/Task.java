@@ -192,7 +192,7 @@ public class Task {
 		return status;
 	}
 	public String getStatusString() {
-		switch(status) {
+		switch(priority) {
 			case INDEX_STATUS_URGENT:
 				return STRING_STATUS_URGENT;
 			case INDEX_STATUS_MAJOR:

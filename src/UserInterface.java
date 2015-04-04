@@ -489,15 +489,13 @@ public class UserInterface extends DefaultTableCellRenderer {
 			prevInput = input;
 			System.out.println("input = " + input);
 			clearInput();	
-			/*	
 					if (input.length() == 0){
 						mainHandler.rawUserInput("viewTask");
 					}else{
 						mainHandler.rawUserInput(input);
-			
 					}
 				
-				*/
+			/*	
 				 	if( input.equals("1")){
 						displayMsg("Display List of Shortcuts ",1);
 						addDummyShortcut();
@@ -508,7 +506,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 						displayTaskTable( dummy2, outputArray, 1);
 						displayMsg("adding dummies", 1);
 					}
-					
+				*/	
 				
 			}
 		
