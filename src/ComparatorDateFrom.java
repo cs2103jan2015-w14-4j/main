@@ -6,7 +6,7 @@ public class ComparatorDateFrom implements Comparator<Task> {
     public int compare(Task task1, Task task2) {
         Date date1 = null, date2 = null;
         
-        //get date2 from task1
+        //get date1 from task1
         if(isDurationalTask(task1) || isForeverTask(task1)) {
             date1 = task1.getDateFrom();
         }
