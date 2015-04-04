@@ -331,7 +331,7 @@ public class SystemHandler {
 	private ArrayList<Task> executeTaskManager(String[] command) 
 			throws ParseException {
 		ArrayList<Task> result = myTaskList.processTM(command);
-		ArrayList<Task> fullList = myTaskList.processTM(COMMAND_GET_TASK_LIST);
+		//ArrayList<Task> fullList = myTaskList.processTM(COMMAND_GET_TASK_LIST);
 		displayTMResultToUI(command, result, new ArrayList<Task>());
 		return result;
 	}
@@ -341,10 +341,11 @@ public class SystemHandler {
 	 * @param result
 	 * @param fullList
 	 */
-	private void displayToUI(String[] command, ArrayList<Task> result,
+	private void displayTMResultToUI(String[] command, ArrayList<Task> result,
 			ArrayList<Task> fullList) {
+		String[] message = constructTMMessage(command, result);
 		window.displayTaskTable(result, fullList, INDEX_EXECUTION_SUCCESS);
-//		window.displayMsg(constructMsg(), getExecutionStatus(command,result));
+		window.displayMsg(message, getTaskManagerExecutionStatus(command,result));
 	}
 	
 	private String[] constructTMMessage(String[] command, ArrayList<Task> result) {
@@ -428,20 +429,83 @@ public class SystemHandler {
 			throws NoSuchElementException, IllegalArgumentException {
 		
 		String[][] result = myShortcut.processShortcutCommand(command);
-		window.displayShortcuts(result, EXECUTION_SUCCESS);
-		window.displayMsg(command[0] + " has been executed successfully",INDEX_EXECUTION_SUCCESS);
+		displayShortcutResultToUI(command, result);
 		return result;
+	}
+
+	/**
+	 * @param command
+	 * @param result
+	 */
+	private void displayShortcutResultToUI(String[] command, String[][] result) {
+		window.displayShortcuts(result, EXECUTION_SUCCESS);
+		String[] message = constructShortcutMessage(command, result);
+		window.displayMsg(message, INDEX_EXECUTION_SUCCESS);
+	}
+	
+	private String[] constructShortcutMessage(String[] command,
+			String[][] result) {
+		String[] message = new String[1];
+		switch(command[0]) {
+			case "addShortcut":
+				message[0] = String.format(MSG_SHORTCUT_ADDED_NEW, command[1], command[2]);
+				break;
+			case "viewShortcut":
+				message[0] = MSG_SHORTCUT_VIEW;
+				break;
+			case "deleteShortcut":
+				message[0] = String.format(MSG_SHORTCUT_DELETED, command[1]);
+				break;
+			case "resetShortcut":
+				message[0] = MSG_SHORTCUT_RESET;
+				break;
+		}
+		return message;
 	}
 	
 	private void executeCustomizer(String[] command) 
 			throws IllegalArgumentException {
 
 		ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
-//		ArrayList<Task> fullList = myTemplates.processCustomizingCommand(COMMAND_GET_TEMPLATE);
-//		window.displayTaskTable(result, fullList, INDEX_EXECUTION_SUCCESS);
-//		ArrayList<Task> fullList = myTemplates.processCustomizingCommand(CMD_GET_TEMPLATE);
-		window.displayTaskTable(result, result, INDEX_EXECUTION_SUCCESS);
-		window.displayMsg(command[0] + " has been executed successfully",INDEX_EXECUTION_SUCCESS);
+		ArrayList<String> tempNames = myTemplates.getTemplateNames(result);		window.displayTaskTable(result, result, INDEX_EXECUTION_SUCCESS);
+		displayTemplateResulttoUI(command, tempNames, result);
+	}
+
+	/**
+	 * @param command
+	 * @param result
+	 */
+	private void displayTemplateResulttoUI(String[] command, ArrayList<String> names, ArrayList<Task> result) {
+		window.displayTemplate(result, names, EXECUTION_SUCCESS);
+		String[] message = constructTempMessage(command, result);
+		window.displayMsg(message,INDEX_EXECUTION_SUCCESS);
+	}
+	
+	private String[] constructTempMessage(String[] command, ArrayList<Task> result) {
+		String[] message = null;
+		switch(command[0]) {
+		case "viewTemplate":
+			message = new String[1];
+			if(result.size() == 0) {
+				message[0] = MSG_TEMP_NO_TEMPLATE;
+			} else {
+				message[0] = MSG_TEMP_VIEW;
+			}
+			break;
+			
+		case "addTemplate":
+		case "editTemplate":
+			message = new String[1];
+			message[0] = String.format(MSG_TEMP_UPDATE, command[2]);
+			break;
+				
+		case "deleteTemplate":
+			message = new String[1];
+			message[0] = String.format(MSG_TEMP_DELETE, command[1]);
+			break;
+			
+		}
+		return message;
 	}
 	
 	
