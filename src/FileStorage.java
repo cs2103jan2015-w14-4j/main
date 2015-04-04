@@ -64,10 +64,12 @@ public class FileStorage {
                 templateFile.createNewFile();
             }
             if(!shortcutFile.exists()) {
+                //SystemHandler system = SystemHandler.getSystemHandler();
+                //system.resetShortcutToDefault();
                 shortcutFile.createNewFile();
             }
         }catch(Exception e) {
-            System.out.println(ERROR_EXCEPTION); 
+            //if file is not found, how?
         }
     } 
 
@@ -103,8 +105,8 @@ public class FileStorage {
     
     /**
      * extracts each line from specified file as String array
-     * and pass it as parameter to logic via processAddForInitialization
-     * method. This is for normal and template.
+     * and pass it as parameter to logic via processInitialization method
+     * This is for normal tasks and template.
      */    
     public void readTaskFromFile(TaskManager tm) throws ParseException {
         //not just textFile
@@ -125,16 +127,16 @@ public class FileStorage {
                     //                      
                     //                  }
 
-                    inputs[COMMAND_TYPE_INDEX] = ADD_TASK_COMMAND;
+                    /*inputs[COMMAND_TYPE_INDEX] = ADD_TASK_COMMAND;
                     for(int i = 0; i < TEMP_STRING_SIZE; ++i) {
                         if(isEmptyInput(tempStringArray[i])) {
                             inputs[i + 1] = null;
                         } else {
                             inputs[i + 1] = tempStringArray[i];
                         }
-                    }
+                    }*/
 
-                    /*
+                    
                     inputs[TASK_ID_INDEX] = tempStringArray[0];
 
                     inputs[TASK_NAME_INDEX] = tempStringArray[1];
@@ -174,7 +176,7 @@ public class FileStorage {
                         inputs[TASK_PRIORITY_INDEX] = tempStringArray[7];
                     } else {
                         inputs[TASK_PRIORITY_INDEX] = null; 
-                    }*/
+                    }
                     tm.processInitialization(inputs);
                 }
                 sc.close();      
