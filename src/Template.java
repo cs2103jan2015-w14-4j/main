@@ -98,7 +98,10 @@ public class Template {
 				
 			case addTemplateInit:
 				Task taskToBeAddedInit = createNewTemplate(command);
-				addTemplate(command[INDEX_NEW_TEMPLATE_NAME], taskToBeAddedInit);
+				//Ma Cong
+				//it should be INDEX_TEMPLATE_NAME = 1
+				//index 1 is how user name it, index 2 is the actual name of the task
+				addTemplate(command[INDEX_TEMPLATE_NAME], taskToBeAddedInit);
 				break;
 				
 			case viewTemplate:
