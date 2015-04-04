@@ -24,6 +24,8 @@ public class FileStorage {
     private static final int TASK_DETAILS_INDEX = 7;
     private static final int TASK_PRIORITY_INDEX = 8;
     private static final String ADD_TASK_COMMAND = "addTask";
+    private static final String ADD_TEMPLATE_INIT_COMMAND = "addTemplateInit";
+
 
     private static final int SHORTCUT_NAME_INDEX = 1;
     private static final int SHORTCUT_ID_INDEX = 2;
@@ -141,7 +143,7 @@ public class FileStorage {
             }
         }   
     }
-    
+
 
     public void writeTaskToFile(ArrayList<Task> taskList) {
         try {
@@ -169,41 +171,36 @@ public class FileStorage {
     //----------task read and write ends----------
 
 
+    //----------shortcut read and write starts----------
+    public void readShortcutFromFile(Shortcut shortcut) {
+        if(shortcutFile.exists()) {
+            try {
+                Scanner sc = new Scanner(shortcutFile);
+                int i = 0;
+                while (sc.hasNextLine()) {
 
-    // update template file
-    //@param given an arraylist of task, update the the template file
-    public void writeTemplateToFile(ArrayList<Task> templateList, ArrayList<String> matchingName) {
-        try {
-            //write template like normal tasks must check what is different is everything null
-            templateFile.delete();
-            templateFile.createNewFile();
-            BufferedWriter bw = new BufferedWriter(new FileWriter(templateFile));
-            for (int i = 0; i < templateList.size(); i++) {
+                    String[] inputs = new String[3];
+                    String[] tempStringArray = new String[8];
+                    inputs[COMMAND_TYPE_INDEX] = "addShortcutInit";
+                    tempStringArray = sc.nextLine().split("\\s*,\\s*");
+                    for(int j = 0; j < tempStringArray.length; ++j) {
+                        System.out.println(tempStringArray[j]);
+                        inputs[SHORTCUT_NAME_INDEX] = tempStringArray[j];
 
-                Task tempTask = templateList.get(i);
-                String templateName = matchingName.get(i);
-                String[] taskArray = taskToStringArray(tempTask, templateName);
-                for(int j = 0; j < taskArray.length; j++) {
+                        inputs[SHORTCUT_ID_INDEX] = Integer.toString(i);
 
-                    if ( j != taskArray.length-1) {
-                        taskArray[j] += (",");
-                        bw.write(taskArray[j]);
-                    } else {
-                        bw.write(taskArray[j]);
+                        shortcut.processShortcutCommand(inputs);    
                     }
+                    ++i;
                 }
-                bw.newLine();
+                sc.close();
+            }catch(FileNotFoundException e) {
+                e.printStackTrace();
             }
-            bw.close();
-        } catch(Exception e) {
-            System.out.println(ERROR_EXCEPTION);
         }
     }
 
 
-    // update shortcut file
-    //@param shortcuts String[][] of size 9 each string[i] keeps a variable length represent certain keyword 
-    //store in order , one row is one id during retrieve
     public void writeShortcutToFile(String[][] shortcuts) {
         try {
             shortcutFile.delete();
@@ -227,6 +224,45 @@ public class FileStorage {
             System.out.println(ERROR_EXCEPTION);
         }
     }
+    //----------shortcut read and write ends----------
+
+
+
+    // update template file
+    //@param given an arraylist of task, update the the template file
+    public void writeTemplateToFile(ArrayList<Task> templateList, ArrayList<String> matchingName) {
+        try {
+            //write template like normal tasks must check what is different is everything null
+            templateFile.delete();
+            templateFile.createNewFile();
+            BufferedWriter bw = new BufferedWriter(new FileWriter(templateFile));
+            for (int i = 0; i < templateList.size(); i++) {
+
+                Task tempTask = templateList.get(i);
+                String templateName = matchingName.get(i);
+                String[] taskArray = taskToStringArray(tempTask, templateName);
+                for(int j = 0; j < taskArray.length; j++) {
+
+                    if (j != taskArray.length - 1) {
+                        taskArray[j] += (DEFAULT_DELIMITER);
+                        bw.write(taskArray[j]);
+                    } else {
+                        bw.write(taskArray[j]);
+                    }
+                }
+                bw.newLine();
+            }
+            bw.close();
+        } catch(Exception e) {
+            System.out.println(ERROR_EXCEPTION);
+        }
+    }
+
+
+    // update shortcut file
+    //@param shortcuts String[][] of size 9 each string[i] keeps a variable length represent certain keyword 
+    //store in order , one row is one id during retrieve
+
 
     //stores each task as a string delimited by ,
 
@@ -311,70 +347,27 @@ public class FileStorage {
             try {
                 Scanner sc = new Scanner(templateFile);
                 while (sc.hasNextLine()) {
-                    String[] inputs = new String[9];
-                    String[] tempStringArray = new String[8];
-                    String test = sc.nextLine();
-                    System.out.println(test);
-                    if(test.length() == 0) return;
-                    //                	tempStringArray = sc.nextLine().split("\\s*,\\s*");
-                    tempStringArray = test.split("\\s*,\\s*");          	
-                    inputs[COMMAND_TYPE_INDEX] = "addTemplateInit";
-                    inputs[TASK_ID_INDEX] = tempStringArray[0];
-                    inputs[TASK_NAME_INDEX] = tempStringArray[1];
-                    if(isEmptyInput(tempStringArray[2])) {
-                        inputs[TASK_DATE_FROM_INDEX] = null;
+                    String[] inputs = new String[DEFAULT_STRING_SIZE];
 
-                    } else {
-                        inputs[TASK_DATE_FROM_INDEX] = tempStringArray[2];
+                    inputs[COMMAND_TYPE_INDEX] = ADD_TEMPLATE_INIT_COMMAND;
+                    int index = 1;
+                    StringTokenizer st = new StringTokenizer(sc.nextLine(), DEFAULT_DELIMITER);
 
+                    while (st.hasMoreElements()) {
+                        String nextStr = st.nextElement().toString();
+                        if(isEmptyInput(nextStr)) {
+                            inputs[index] = null;
+                        } else {
+                            inputs[index] = nextStr;
+                        }
+                        ++index;
                     }
 
-                    if(isEmptyInput(tempStringArray[3])) {
-                        inputs[TASK_DATE_TO_INDEX] = null;
-                    } else {
-                        inputs[TASK_DATE_TO_INDEX] = tempStringArray[3];
-                    }
-
-                    if(isEmptyInput(tempStringArray[4])) {
-                        inputs[TASK_DEADLINE_INDEX] = null;
-
-                    } else {
-                        inputs[TASK_DEADLINE_INDEX] = tempStringArray[4];
-
-                    }
-
-                    if(isEmptyInput(tempStringArray[5])) {
-                        inputs[TASK_LOCATION_INDEX] = null;
-
-                    } else {
-                        inputs[TASK_LOCATION_INDEX] = tempStringArray[5];
-
-                    }
-
-                    if(isEmptyInput(tempStringArray[6])) {
-                        inputs[TASK_DETAILS_INDEX] = null;
-
-                    } else {
-                        inputs[TASK_DETAILS_INDEX] = tempStringArray[6];
-
-                    }
-
-                    if(isEmptyInput(tempStringArray[7])) {
-                        inputs[TASK_PRIORITY_INDEX] = null;
-
-                    } else {
-                        inputs[TASK_PRIORITY_INDEX] = tempStringArray[7];
-
-                    }
-
-                    for(int i =0; i < inputs.length; ++i) {
-                        System.out.print(inputs[i] + ":");
-                    }
+                    System.out.println(Arrays.toString(inputs));
 
                     try {
                         template.processCustomizingCommand(inputs);     
                     } catch(Exception e) {
-
                     }
                 }
                 sc.close();
@@ -385,33 +378,7 @@ public class FileStorage {
 
     }
 
-    public void readShortcutFromFile(Shortcut shortcut) {
-        if(shortcutFile.exists()) {
-            try {
-                Scanner sc = new Scanner(shortcutFile);
-                int i = 0;
-                while (sc.hasNextLine()) {
 
-                    String[] inputs = new String[3];
-                    String[] tempStringArray = new String[8];
-                    inputs[COMMAND_TYPE_INDEX] = "addShortcutInit";
-                    tempStringArray = sc.nextLine().split("\\s*,\\s*");
-                    for(int j = 0; j < tempStringArray.length; ++j) {
-                        System.out.println(tempStringArray[j]);
-                        inputs[SHORTCUT_NAME_INDEX] = tempStringArray[j];
-
-                        inputs[SHORTCUT_ID_INDEX] = Integer.toString(i);
-
-                        shortcut.processShortcutCommand(inputs);    
-                    }
-                    ++i;
-                }
-                sc.close();
-            }catch(FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
 
     private boolean isEmptyInput(String str) {
