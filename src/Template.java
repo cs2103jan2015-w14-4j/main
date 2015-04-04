@@ -9,6 +9,15 @@ import java.util.NoSuchElementException;
 
 public class Template {
 
+	private static final String MSG_ERR_DUPLICATE_NAME = "Template name:\"%s\" has been used by another template.";
+
+
+	private static final String MSG_ERR_TASK_NUMBER_NOT_EXIST = "Task number: %s does not exist.";
+
+
+	private static final int INDEX_NOT_FOUND = -1;
+
+
 	private static final int STARTING_INDEX_CHANGEABLE_FIELD = 2;
 
 
@@ -35,7 +44,8 @@ public class Template {
 	private static final String COMMAND_ADD_TASK = "addTask";
 	private static final String MSG_INVALID_GET_FIELD = "No such field value to get from";
 	private static final String MSG_ERR_NO_SUCH_COMMAND = "No such command in Template Manager: %1$s";
-	private HashMap<String,Task> templates; 
+	private ArrayList<Task> templates;
+	private ArrayList<String> tempNames;
 	private SystemHandler system;
 	
 
@@ -46,13 +56,15 @@ public class Template {
 	}
 	
 	public Template() {
-		templates = new HashMap<String,Task>();
+		templates = new ArrayList<Task>();
+		tempNames = new ArrayList<String>();
 		isTest = false;
 	}
 	
 	
 	public Template(boolean test) {
-		templates = new HashMap<String,Task>();
+		templates = new ArrayList<Task>();
+		tempNames = new ArrayList<String>();
 		isTest = test;
 	}
 	
@@ -76,8 +88,12 @@ public class Template {
 				else {
 					taskToBeAdded = system.requestTask(Integer.parseInt(command[1]));	
 				}
-				result =  addTemplate(command[INDEX_NEW_TEMPLATE_NAME], taskToBeAdded);
-				writeOutToFile();
+				if(taskToBeAdded == null) {
+					throw new NoSuchElementException(String.format(MSG_ERR_TASK_NUMBER_NOT_EXIST,command[1]));
+				} else {
+					result =  addTemplate(command[INDEX_NEW_TEMPLATE_NAME], taskToBeAdded);
+					writeOutToFile();
+				}
 				break;
 				
 			case addTemplateInit:
@@ -116,6 +132,23 @@ public class Template {
 		
 		return result;
 	}
+	
+	public ArrayList<String> getTemplateNames(ArrayList<Task> templates) {
+		ArrayList<String> result = new ArrayList<String>();
+		for(int i = 0; i < templates.size(); ++i) {
+			result.add(getMatchingName(templates.get(i)));
+		}
+		return result;
+	}
+
+	private String getMatchingName(Task task) {
+		for(int i = 0; i < templates.size(); ++i) {
+			if(task.isEqual(templates.get(i))) {
+				return tempNames.get(i);
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * @param command
@@ -131,36 +164,31 @@ public class Template {
 	}
 	
 	private void writeOutToFile() {
-		
-		ArrayList<String> key = new ArrayList<String>();
-		ArrayList<Task> templatesList = new ArrayList<Task>();
-		extractKeyAndTemplate(key, templatesList);
-		
-		//system.writeTemplateToFile(templatesList, match);
+	
+		system.writeTemplateToFile(templates, tempNames);
 		
 	}
 
-	/**
-	 * @param listing
-	 * @param match
-	 * @param templatesList
-	 */
-	private void extractKeyAndTemplate(ArrayList<String> match, 
-			ArrayList<Task> templatesList) {
-		
-		Iterator<String> listing = templates.keySet().iterator();
-		
-		while(listing.hasNext()) {
-			String next = listing.next();
-			match.add(next);
-			templatesList.add(templates.get(next).clone());
-			
+	private int getTemplateIndex(String name) {
+		for(int i = 0; i < tempNames.size(); ++i) {
+			if(tempNames.get(i).equals(name)) {
+				return i;
+			}
+		}
+		return INDEX_NOT_FOUND;
+	}
+	
+	private Task getTemplate(String name) {
+		int index = getTemplateIndex(name);
+		if(index == INDEX_NOT_FOUND) {
+			return null;
+		} else {
+			return templates.get(index);
 		}
 	}
 
-
 	private Task editTemplate(String[] command) {
-		Task task = templates.get(command[1]);
+		Task task = getTemplate(command[1]);
 		if(task == null) {
 			throw new NoSuchElementException(MSG_ERR_NO_SUCH_TEMPLATE);
 		}
@@ -272,27 +300,18 @@ public class Template {
 	 * @return
 	 */
 	private Task removeFromMap(String name) {
-		return templates.remove(name);
+		int index = getTemplateIndex(name);
+		if(index == INDEX_NOT_FOUND) {
+			return null;
+		} else {
+			tempNames.remove(index);
+			return templates.remove(index);
+		}
 	}
 	
 	private ArrayList<Task> viewTemplates() {
-		Iterator<Task> temp = extractTemplatesFromMapping();
-		return copyOverToArrayList(temp);
+		return templates;
 	}
-	
-	private Iterator<Task> extractTemplatesFromMapping() {
-		return templates.values().iterator();
-	}
-	
-	private ArrayList<Task> copyOverToArrayList(Iterator<Task> templates) {
-		ArrayList<Task> templateList = new ArrayList<Task>();
-		while(templates.hasNext()) {
-			templateList.add(templates.next().clone());
-		}
-		return templateList;
-		
-	}
-
 	
 	
 	private ArrayList<Task> addTemplate(String name, Task template) {
@@ -300,15 +319,15 @@ public class Template {
 		if(!sameName) {
 			
 			clearTaskDateField(template);
-			Task returnTemplate = insertTemplateIntoMap(name, template);
-			assert(returnTemplate == null);
+			insertTemplateIntoArray(name, template);
 			
 			ArrayList<Task> result = new ArrayList<Task>();
 			result.add(template.clone());
 			return result;
 		}
 		else {
-			return null;
+			//Wrong type 
+			throw new NoSuchElementException(String.format(MSG_ERR_DUPLICATE_NAME,name));
 		}
 	}
 	
@@ -322,19 +341,22 @@ public class Template {
 		templates.clear();
 	}
 	
-	private Task insertTemplateIntoMap(String name, Task template) {
-		return templates.put(name, template.clone());
+	private void insertTemplateIntoArray(String name, Task template) {
+		templates.add(template);
+		tempNames.add(name);
 	}
 	
 	private boolean hasSameName(String name) {
-		return templates.containsKey(name);
+		return getTemplateIndex(name) != INDEX_NOT_FOUND;
 	}
 	
 	
-	private Task fetchTemplate(String key) throws NoSuchElementException {
-		Task task = templates.get(key);
-		if(task != null) {
-			return task;
+	private Task fetchTemplate(String name) throws NoSuchElementException {
+		int index = getTemplateIndex(name);
+		
+		if(index != INDEX_NOT_FOUND) {
+			Task task = templates.get(index);
+			return task.clone();
 		}
 		else {
 			throw new NoSuchElementException(MSG_ERR_NO_SUCH_TEMPLATE);

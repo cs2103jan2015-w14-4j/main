@@ -13,10 +13,8 @@ import java.text.SimpleDateFormat;
 public class SystemHandler {
 	
 	//dummy string acting like UI prompt
-	private static final String MSG_ERR_NO_SUCH_COMMAND = "System does not recognize this command";
-	private static final String MSG_LOG_USER_COMMAND = "user enters: $1%s";
-	public static final String MSG_ASK_FILENAME = "Please enter the name of your file";
-	public static final String MSG_ASK_INPUT = "Please enter your command";
+	private static final String MSG_ERR_NO_SUCH_COMMAND = "SystemHandler does not recognize this command";
+	private static final String MSG_LOG_USER_COMMAND = "user enters: %s";
 //	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
 //	private static final String CLEAR_INFO_INDICATOR = "";
 	private static final String[] COMMAND_GET_TEMPLATE = {"viewTemplate",null,null,null,null,null,null,null,null};
@@ -140,7 +138,7 @@ public class SystemHandler {
 //		return new Task(1000, "NEW",
 //				convertToDateObject("12/09/2015 10:00"),
 //				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0);
-		
+		Task gotten = myTaskList.getTaskFromTID(id);
 		return myTaskList.getTaskFromTID(id);
 		
 	}
@@ -191,6 +189,7 @@ public class SystemHandler {
 	private static int getCommandGroupType(String commandType) {
 		for(COMMAND_TYPE_TASK_MANAGER command : COMMAND_TYPE_TASK_MANAGER.values()) {
 			if(command.name().equals(commandType)) {
+				System.out.println("CHECK "+ command.name() +" with "+ commandType);
 				return INDEX_COMMAND_TASK_MANAGER;
 			}
 		}
@@ -362,6 +361,7 @@ public class SystemHandler {
 		
 		String[][] result = myShortcut.processShortcutCommand(command);
 		window.displayShortcuts(result, EXECUTION_SUCCESS);
+		window.displayMsg(command[0] + " has been executed successfully",INDEX_EXECUTION_SUCCESS);
 		return result;
 	}
 	
@@ -372,8 +372,8 @@ public class SystemHandler {
 //		ArrayList<Task> fullList = myTemplates.processCustomizingCommand(COMMAND_GET_TEMPLATE);
 //		window.displayTaskTable(result, fullList, INDEX_EXECUTION_SUCCESS);
 //		ArrayList<Task> fullList = myTemplates.processCustomizingCommand(CMD_GET_TEMPLATE);
-		//window.displayTaskTable(result, true);
-	
+		window.displayTaskTable(result, result, INDEX_EXECUTION_SUCCESS);
+		window.displayMsg(command[0] + " has been executed successfully",INDEX_EXECUTION_SUCCESS);
 	}
 	
 	
