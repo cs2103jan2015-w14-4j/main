@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class FileStorage {
 
@@ -30,12 +31,13 @@ public class FileStorage {
     private static final String TYPE_TASK = "task";
     private static final String TYPE_SHORTCUT = "shortcut";
     private static final String TYPE_TEMPLATE = "template";
+    private static final String DEFAULT_DELIMITER = "||";
 
     private static final String ERROR_EXCEPTION = "Exception caught";
 
     private static final boolean INPUT_IS_EMPTY = true;
     private static final boolean INPUT_IS_NOT_EMPTY = false;
-    
+
     private static final int DEFAULT_STRING_SIZE = 9;
     private static final int TEMP_STRING_SIZE = 8;
     private static final String DEFAULT_FILENAME = "default";
@@ -45,9 +47,9 @@ public class FileStorage {
     //include the two secret files;
     private File templateFile = new File("template");
     private File shortcutFile = new File("shortcut");
-    
-    
-    
+
+
+
     //--------------------constructor-----------------
     /**
      * Constructor for FileStorage object, this will store the text file name
@@ -56,7 +58,7 @@ public class FileStorage {
      */
     public FileStorage(String fileName) {
         taskFile = new File(fileName);
-        
+
         try { 
             if(!taskFile.exists()) {           
                 taskFile.createNewFile();           
@@ -101,97 +103,46 @@ public class FileStorage {
         // cmd = {"addShortcutINIT", shortcutname, id} // id the the row, eg addTask = row 0, deleteTask = row 3
         // refer to shortcut keywords for the row
     }
-    
-    
-    
+
+
+    //----------task read and write starts----------
     /**
      * extracts each line from specified file as String array
      * and pass it as parameter to logic via processInitialization method
      * This is for normal tasks and template.
      */    
-    public void readTaskFromFile(TaskManager tm) throws ParseException {
-        //not just textFile
+    public void readTaskFromFile(TaskManager tm) {
         if(taskFile.exists()) {
             try {
                 Scanner sc = new Scanner(taskFile);
+
                 while (sc.hasNextLine()) {
 
                     String[] inputs = new String[DEFAULT_STRING_SIZE];
-                    String[] tempStringArray = new String[TEMP_STRING_SIZE];
-
-                    tempStringArray = sc.nextLine().split("\\s*,\\s*");
-                    //                  System.out.println(tempStringArray.length);
-                    //                  
-                    //                  for(int i=0; i<tempStringArray.length;i++) {
-                    //                      
-                    //                      System.out.println(tempStringArray[i]);
-                    //                      
-                    //                  }
-
-                    /*inputs[COMMAND_TYPE_INDEX] = ADD_TASK_COMMAND;
-                    for(int i = 0; i < TEMP_STRING_SIZE; ++i) {
-                        if(isEmptyInput(tempStringArray[i])) {
-                            inputs[i + 1] = null;
-                        } else {
-                            inputs[i + 1] = tempStringArray[i];
-                        }
-                    }*/
-                    
-                    System.out.println(Arrays.toString(tempStringArray));
-
                     inputs[COMMAND_TYPE_INDEX] = ADD_TASK_COMMAND;
-                    inputs[TASK_ID_INDEX] = tempStringArray[0];
+                    int index = 1;
+                    StringTokenizer st = new StringTokenizer(sc.nextLine(), DEFAULT_DELIMITER);
 
-                    inputs[TASK_NAME_INDEX] = tempStringArray[1];
-
-                    if(isEmptyInput(tempStringArray[2])) {
-                        inputs[TASK_DATE_FROM_INDEX] = null;
-                    } else {
-                        inputs[TASK_DATE_FROM_INDEX] = tempStringArray[2];
+                    while (st.hasMoreElements()) {
+                        String nextStr = st.nextElement().toString();
+                        if(isEmptyInput(nextStr)) {
+                            inputs[index] = null;
+                        } else {
+                            inputs[index] = nextStr;
+                        }
+                        ++index;
                     }
-
-                    if(isEmptyInput(tempStringArray[3])) {
-                        inputs[TASK_DATE_TO_INDEX] = null;
-                    } else {
-                        inputs[TASK_DATE_TO_INDEX] = tempStringArray[3];
-                    }
-
-
-                    if(isEmptyInput(tempStringArray[4])) {
-                        inputs[TASK_DEADLINE_INDEX] = null;
-                    } else {
-                        inputs[TASK_DEADLINE_INDEX] = tempStringArray[4];
-                    }
-
-                    if(isEmptyInput(tempStringArray[5])) {
-                        inputs[TASK_LOCATION_INDEX] = null;
-                    } else {
-                        inputs[TASK_LOCATION_INDEX] = tempStringArray[5];
-                    }
-
-                    if(isEmptyInput(tempStringArray[6])) {
-                        inputs[TASK_DETAILS_INDEX] = null;
-                    } else {
-                        inputs[TASK_DETAILS_INDEX] = tempStringArray[6];
-                    }
-
-                    if(isEmptyInput(tempStringArray[7])) {
-                        inputs[TASK_PRIORITY_INDEX] = null;
-                    } else {
-                        inputs[TASK_PRIORITY_INDEX] = tempStringArray[7]; 
-                    }
-                    
-                    System.out.println(Arrays.toString(inputs));
-                    
                     tm.processInitialization(inputs);
                 }
                 sc.close();      
-            } catch(FileNotFoundException e) {
+
+            } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
         }   
     }
     
+
     public void writeTaskToFile(ArrayList<Task> taskList) {
         try {
             taskFile.delete();
@@ -202,7 +153,7 @@ public class FileStorage {
                 String[] taskArray = taskToStringArray(tempTask, null);
                 for(int j = 0; j < taskArray.length; j++) {
                     if ( j != taskArray.length - 1) {
-                        taskArray[j] += (",");
+                        taskArray[j] += (DEFAULT_DELIMITER);
                         bw.write(taskArray[j]);
                     } else {
                         bw.write(taskArray[j]);
@@ -211,12 +162,14 @@ public class FileStorage {
                 bw.newLine();
             }
             bw.close();
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.out.println(ERROR_EXCEPTION);
         }
     }
-    
-    
+    //----------task read and write ends----------
+
+
+
     // update template file
     //@param given an arraylist of task, update the the template file
     public void writeTemplateToFile(ArrayList<Task> templateList, ArrayList<String> matchingName) {
@@ -276,7 +229,7 @@ public class FileStorage {
     }
 
     //stores each task as a string delimited by ,
-    
+
 
 
     //String array is size 8 as priority is not included yet
