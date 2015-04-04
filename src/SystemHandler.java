@@ -335,7 +335,7 @@ public class SystemHandler {
 
 		ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
 //		ArrayList<Task> fullList = myTemplates.processCustomizingCommand(CMD_GET_TEMPLATE);
-		window.displayTaskTable(result, true);
+		//window.displayTaskTable(result, true);
 	
 	}
 	

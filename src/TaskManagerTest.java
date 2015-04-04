@@ -642,13 +642,13 @@ public class TaskManagerTest {
         String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
                 "18/03/2015 14:00", "18/03/2015 15:00", null, null, null, null};
         String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
-                "18/03/2015 12:00", null, null, null, null, "normal"};
+                "18/03/2015 12:00", null, null, null, null, "3"};
         String[] addTask12 = {"addTask", null, "LAG3203 MidTerm", 
-                null, "18/03/2015 12:00", null, null, null, "normal"};
+                null, "18/03/2015 12:00", null, null, null, "3"};
         String[] addTask13 = {"addTask", null, "CS2211 Reflection", null, 
-                null, "18/03/2015 23:59", null, null, "normal"};
+                null, "18/03/2015 23:59", null, null, "3"};
         String[] addTask14 = {"addTask", null, "CS2211 Reflection", null, 
-                null, null, null, null, "normal"};
+                null, null, null, null, "3"};
 
         myTaskManager = new TaskManager();
         myTaskManager.processTM(addTask10);
