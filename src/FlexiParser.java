@@ -22,9 +22,7 @@ import com.joestelmach.natty.Parser;
 
 public class FlexiParser {
 	
-    private static final String MSG_ERR_INTERNAL_PARSER_IMPLEMENTATION = "\"%s\" is not implemented in parser yet.";
-	private static final String MSG_ERR_UNRECOGNIZED_COMMAND = "\"%s\" is not a command recognized by Flexi Tracker. Type \"viewKeyword\" to see all the keywords.";
-	private static final String COMMAND_ADD = "addTask";
+    private static final String COMMAND_ADD = "addTask";
     private static final String COMMAND_VIEW = "viewTask";
     private static final String COMMAND_DELETE = "deleteTask";
     private static final String COMMAND_EDIT = "editTask";
@@ -72,7 +70,7 @@ public class FlexiParser {
     private static final String KEYWORD_SHORTCUT = "onto";
    
     private static final String[] commandArray = {"addTask","editTask","deleteTask","viewTask","Block","searchTask","undoTask","redoTask","addReminder","deleteReminder","addShortcut","deleteShortcut","viewShortcut","resetShortcut",
-    														"addTemplate","deleteTemplate","viewTemplate","resetTemplate","editTemplate","useTemplate","clearAttr","markTask"};
+    														"addTemplates","deleteTemplate","viewTemplate","resetTemplate","editTemplate","useTemplate","clearAttr","markTask"};
     
     private static String[] inputArray;
 	
@@ -87,8 +85,10 @@ public class FlexiParser {
     	
 	}
 	
-    public String[] parseText(String userInput) throws IllegalArgumentException {
+    public String[] parseText(String userInput) {
     	
+    	try {
+		    
 			inputArray = userInput.split("\\s+");
 			flipDate(inputArray);
 			
@@ -100,9 +100,6 @@ public class FlexiParser {
 			
 			//what does his one return
 			command = shortcut.keywordMatching(command);
-			if(command == null) {
-				throw new IllegalArgumentException(String.format(MSG_ERR_UNRECOGNIZED_COMMAND, inputArray[COMMAND_TYPE_INDEX]));
-			}
 			String[] outputArray;
 			if(!command.contains("Shortcut")) {
 				
@@ -518,12 +515,16 @@ public class FlexiParser {
 			    		
 			    	}
 					break;
-				default:
-					throw new IllegalArgumentException(String.format(MSG_ERR_INTERNAL_PARSER_IMPLEMENTATION, command));
 			}
 			
 			inputArray = outputArray;
 			
+			
+		}catch(IllegalArgumentException ex) { 
+			
+			System.out.println(ERROR_EXCEPTION);
+				
+		}
     	return inputArray;
     	
     }

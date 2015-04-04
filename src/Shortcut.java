@@ -3,20 +3,12 @@ import java.util.NoSuchElementException;
 
 public class Shortcut {
 
-	private static final String MSG_ERR_MINIMUM_LENGTH = "\"%s\"'s length is too short to be used as a keyword.";
-	private static final String MSG_ERR_MAX_CAPACITY = "The keyword that is going to be represented by \"%s\" has reached its maximum capacity.";
-	private static final String MSG_ERR_KEYWORD_EXIST = "\"%s\" is already a keyword recognized by Flexi Tracker.";
-	private static final String MSG_ERR_NO_SUCH_COMMAND = "No such command in Shortcut Manager: %1$s";
-	private static final String MSG_ERR_DEFAULT_KEYWORD_DELETE = "\"%s\" is a system defined keyword. It cannot be added or deleted";
-	private static final String MSG_ERR_MINIMUM_SHORTCUT_NUMBER = "The number of keyword represented by \"%s\" cannot be reduced further.";
-	private static final String MSG_ERR_SHORTCUT_NOT_EXIST = "\"%s\" does not exist in the keyword list";
-
 	public static final String[] keywords = {	"addTask", "editTask","viewTask","deleteTask", 
 										"clearAttr", "searchTask", "undoTask", "redoTask", "markTask",
-										"addShortcut", "viewShortcut", "deleteShortcut",
+										"addShortcut", "viewShortcuts", "deleteShortcut",
 										"resetShortcut", "addTemplate", "editTemplate", 
-										"viewTemplate", "useTemplate", "deleteTemplate", 
-										"resetTemplate", "help"}; 
+										"viewTemplates", "useTemplate", "deleteTemplate", 
+										"resetTemplates", "help"}; 
 	
 	public static final String[][] defaultWordsSet = {{"add","addTask"}, {"edit","editTask"},
 													{"view","viewTask"}, {"delete","deleteTask"},
@@ -54,6 +46,7 @@ public class Shortcut {
 	private static final int INDEX_COMMAND = 0;
 	
 
+	private static final String MSG_ERR_NO_SUCH_COMMAND = "No such command in Shortcut Manager: %1$s";
 
 
 	
@@ -189,15 +182,13 @@ public class Shortcut {
 		
 		int index = getShortcutMatchingIndex(shortcut);
 		if(index == INDEX_NOT_FOUND) {
-			throw new NoSuchElementException(String.format(MSG_ERR_SHORTCUT_NOT_EXIST, shortcut));
+			return null;
 			
 		} else if(isShortcutKeyAtMinimumCapacity(index)){
-			//Wrong type
-			throw new NoSuchElementException(String.format(MSG_ERR_MINIMUM_SHORTCUT_NUMBER, shortcut));
+			return null;
 			
 		} else if(isDefaultShortcut(shortcut)) {
-			//Wrong type
-			throw new NoSuchElementException(String.format(MSG_ERR_DEFAULT_KEYWORD_DELETE, shortcut));
+			return null;
 			
 		} else {
 			removeShortcutfromUserList(index, shortcut);
@@ -250,23 +241,19 @@ public class Shortcut {
 	private String[] insertShortcut(String newShortcut, String originShortcut) {
 		int indexBelongTo = searchMatching(originShortcut);
 		if(!isKeyWords(indexBelongTo)) {
-			throw new NoSuchElementException(String.format(MSG_ERR_SHORTCUT_NOT_EXIST, originShortcut));
+			return null;
 		}
 		else if(isKeyWords(newShortcut)) {
-			//wrong err type
-			throw new NoSuchElementException(String.format(MSG_ERR_KEYWORD_EXIST, newShortcut));
+			return null;
 		}
 		else if (isReservedWord(newShortcut)) {
-			//wrong err type
-			throw new NoSuchElementException(String.format(MSG_ERR_DEFAULT_KEYWORD_DELETE, newShortcut));
+			return null;
 		}
 		else if (isWordLengthInappropriate(newShortcut)) {
-			//wrong err type
-			throw new NoSuchElementException(String.format(MSG_ERR_MINIMUM_LENGTH, newShortcut));
+			return null;
 		}
 		else if(isShortcutAtMaximumCapacity(indexBelongTo)) {
-			//wrong err type
-			throw new NoSuchElementException(String.format(MSG_ERR_MAX_CAPACITY, newShortcut));
+			return null;
 		}
 		else {
 			addShortcut(newShortcut, indexBelongTo);
@@ -300,10 +287,9 @@ public class Shortcut {
 	 * @param newShortcut
 	 * @param belongTo
 	 */
-	private void addShortcut(String newShortcut, int belongTo) throws NoSuchElementException {
+	private void addShortcut(String newShortcut, int belongTo) {
 		ArrayList<String> toBeAddedInto = userShortcuts.get(belongTo);
 		toBeAddedInto.add(newShortcut);
-		
 	}
 	
 	private boolean isKeyWords(int index) {
