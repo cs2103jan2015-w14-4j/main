@@ -28,11 +28,17 @@ import java.awt.Font;
 import java.awt.Color;
 
 import javax.swing.ScrollPaneConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.BevelBorder;
+
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 
 
 @SuppressWarnings("serial")
-public class UserInterface extends DefaultTableCellRenderer {
+public class UserInterface {
 
 	public JFrame frame;
 	public JPanel panel;
@@ -44,7 +50,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 	private TaskTableModel model;
 	private final static String newline = "\n";
 	private JScrollPane scrollPaneMain;
-	private JScrollPane scrollPaneFB;
 	private JScrollPane scrollPaneInput;
 	private ArrayList<Task> outputArray;
 	private ArrayList<String[]> outputArrayString;
@@ -100,11 +105,10 @@ public class UserInterface extends DefaultTableCellRenderer {
 	
 	private boolean hasFilename;
 	private String prevInput;
-	
+	private TableCellRenderer renderer = new MyTableCellRenderer();
 	
 	ArrayList<Task> dummy2;
 	
-	//doesnt work properly, edited task shown first not yet implemented
 	public void  displayTaskTable(ArrayList<Task> affectedTask, ArrayList<Task> fullListTask, int status){
 		viewTaskTable();
 		ArrayList<String[]> outputDataString = new ArrayList<String[]>();
@@ -116,9 +120,9 @@ public class UserInterface extends DefaultTableCellRenderer {
 					outputDataString.add(fullListTask.get(i).toStringArray());
 			}
 		}else{
-			System.out.println("affected Task");
 			for (int j = 0 ; j < affectedTask.size(); j++){
 					outputDataString.add(affectedTask.get(j).toStringArray());
+					
 			}
 			for (int k = 0 ; k < fullListTask.size(); k++){
 				String[] strArray = fullListTask.get(k).toStringArray();
@@ -126,10 +130,16 @@ public class UserInterface extends DefaultTableCellRenderer {
 					outputDataString.add(strArray);
 				}
 			}
+			
 		}
+		
 		model.refreshTable(outputDataString);
+		if(affectedTask.size() != 0){
+			for ( int l = 0; l< affectedTask.size(); l++){
+				taskTable.prepareRenderer(renderer, l, 0);
+			}
+		}
 	}
-
 	private boolean isAlreadyAdded(String[] task, ArrayList<String[]> taskOutput) {
 		for(String[] t: taskOutput){
 			if (Arrays.equals(task, t))
@@ -268,6 +278,11 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 	private void initInputArea() {
 		textField = new JTextField();
+		textField.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent arg0) {
+			}
+		});
 		textField.setBackground(INPUT);
 		textField.setForeground(INPUT_FONT);
 		textField.setFont(new Font("Verdana", Font.PLAIN, 18));
@@ -289,7 +304,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 		sysFeedbackArea.setFont(new Font("Candara", Font.PLAIN, 26));
 		sysFeedbackArea.setForeground(FEEDBACK_FONT);
 		sysFeedbackArea.setBackground(FEEDBACK);
-		sysFeedbackArea.setBorder(null);
+		sysFeedbackArea.setBorder(new EmptyBorder(1, 0, 1, 0));
 		
 	/*	StyledDocument doc = sysFeedbackArea.getStyledDocument();
 		SimpleAttributeSet center = new SimpleAttributeSet();
@@ -489,7 +504,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 			prevInput = input;
 			System.out.println("input = " + input);
 			clearInput();	
-			/*	
+				
 					if (input.length() == 0){
 						mainHandler.rawUserInput("viewTask");
 					}else{
@@ -497,7 +512,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 			
 					}
 				
-				*/
+			/*	
 				 	if( input.equals("1")){
 						displayMsg("Display List of Shortcuts ",1);
 						addDummyShortcut();
@@ -508,7 +523,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 						displayTaskTable( dummy2, outputArray, 1);
 						displayMsg("adding dummies", 1);
 					}
-					
+				*/	
 				
 			}
 		
@@ -542,18 +557,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 					(tablePreferredWidth * (percentages[i] / total)));
 		}
 	}
-	
-	@Override
-	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-	        c.setBackground(row % 2 == 0 ? Color.LIGHT_GRAY : Color.WHITE);
-	       return c;
-
-	}
-
-    
-
-	
+		
 private void addDummyTask() {
 		
 		for (int tid = 1000; tid<1020;  tid++){
@@ -589,6 +593,27 @@ private void addDummyTask() {
 			}				
 			displayShortcuts(keywordArray, true);
 	}
+	
+	   public class MyTableCellRenderer extends DefaultTableCellRenderer implements TableCellRenderer {
+
+	        @Override
+	        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+	      //      setBackground(TASK_BG);
+	            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	      //      setText(String.valueOf(value));
+	            boolean interestingRow = row % 5 == 2;
+	            boolean secondColumn = column == 1;
+	            if (interestingRow && secondColumn) {
+	                setBackground(Color.ORANGE);
+	            } else if (interestingRow) {
+	                setBackground(Color.YELLOW);
+	            } else if (secondColumn) {
+	                setBackground(Color.RED);
+	            }
+	            return this;
+	        }
+
+	    }
 
 
 }
