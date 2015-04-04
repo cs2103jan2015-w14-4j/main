@@ -580,7 +580,6 @@ public class TaskManager implements TaskManagerInterface {
 
     private int getFilterTypeInt(String filterType) {
         filterType = filterType.toLowerCase();
-        int dummy;
         switch(filterType) {
         case URGENT_STRING: return URGENT;
         case MAJOR_STRING: return MAJOR;
