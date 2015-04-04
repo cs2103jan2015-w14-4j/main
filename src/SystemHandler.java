@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 
 public class SystemHandler {
 	
+	private static final String MSG_ERR_ID_UNDEFINED = "Something is wrong with the ID, please check again";
 	private static final String MSG_TASK_STATUS = "The task:\"%s\" has been marked as %s";
 	private static final String MSG_TASK_REDO = "A task operation has been redo.";
 	private static final String MSG_TASK_SEARCH = "There are %s task(s) fulfilling the searching requirement.";
@@ -295,11 +296,15 @@ public class SystemHandler {
 			
 		} catch(ParseException e) {
 			window.displayMsg(e.getMessage(), INDEX_EXECUTION_ERROR);
+		} catch(NumberFormatException e) {
+			window.displayMsg(MSG_ERR_ID_UNDEFINED, INDEX_EXECUTION_ERROR);
 		} catch(IllegalArgumentException e) {
 			window.displayMsg(e.getMessage(), INDEX_EXECUTION_ERROR);
 		} catch(NoSuchElementException e) {
 			window.displayMsg(e.getMessage(), INDEX_EXECUTION_ERROR);
-		}
+		} catch(IllegalStateException e) {
+			window.displayMsg(e.getMessage(), INDEX_EXECUTION_ERROR);
+		} 
 		return null;
 		
 	}
