@@ -76,11 +76,16 @@ public class UserInterface extends DefaultTableCellRenderer {
     private static final double[] PREFERRED_WIDTH_SHORTCUTS = {systemKW, userDefinedKW};
    
     private static final int WINDOW_WIDTH = 1200;
-    private static final String[] SYS_KEYWORDS = {"Create a new task", "Edit an existing task", "View list of tasks", "Delete a task", 
-    											 "undo", "redo", "Add a new keyword", "View available keywords", "Delete a keyword", 
-    											 "Reset keywords", "Create a template", "Edit existing template", "View list of templates",
-    											 "Delete a template", "Clear all templates", "Help"};
-      
+//    private static final String[] SYS_KEYWORDS = {"Create a new task", "Edit an existing task", "View list of tasks", "Delete a task", 
+//    											 "undo", "redo", "Add a new keyword", "View available keywords", "Delete a keyword", 
+//    											 "Reset keywords", "Create a template", "Edit existing template", "View list of templates",
+//    											 "Delete a template", "Clear all templates", "Help"};
+    private static final String[] SYS_KEYWORDS = {	"addTask", "editTask","viewTask","deleteTask", 
+		"clearAttr", "searchTask", "undoTask", "redoTask", "markTask",
+		"addShortcut", "viewShortcut", "deleteShortcut",
+		"resetShortcut", "addTemplate", "editTemplate", 
+		"viewTemplates", "useTemplate", "deleteTemplate", 
+		"resetTemplates", "help"};
 	private static final Color TASK_FONT= new Color(255,240,175); 
 	private static final Color TASK_BG= new Color(18,41,77); 
 	private static final Color TASK_BG2 = new Color(44,71,122); 
@@ -153,7 +158,8 @@ public class UserInterface extends DefaultTableCellRenderer {
 			for(int j = 0; j < strArray.length; j++) {
 				nextLine += "'" + strArray[j] + "'" + " || " ;
 			}
-			keywords[1] = nextLine;
+			
+			keywords[1] = nextLine.substring(0, nextLine.length() - 3);
 			outputDataString.add(keywords);
 		}
 		model.refreshTable(outputDataString);	
@@ -173,7 +179,19 @@ public class UserInterface extends DefaultTableCellRenderer {
 		}
 
 	}
-
+	
+	public void displayMsg(String[] outputData, int success){
+		//fix the area, maybe change to string array in future
+		//write messages to display
+        clearFeedbackArea();     
+        String display = "";
+        for(int i = 0; i < outputData.length; ++i) {
+        	if(outputData[i] != null) {
+            	display += outputData[i] + "\n";
+        	}
+        }
+        sysFeedbackArea.setText(display);
+	}
 
 	public void displayMsg(String outputData, int success){
 		//fix the area, maybe change to string array in future
@@ -489,7 +507,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 			prevInput = input;
 			System.out.println("input = " + input);
 			clearInput();	
-			/*	
+				
 					if (input.length() == 0){
 						mainHandler.rawUserInput("viewTask");
 					}else{
@@ -497,18 +515,18 @@ public class UserInterface extends DefaultTableCellRenderer {
 			
 					}
 				
-				*/
-				 	if( input.equals("1")){
-						displayMsg("Display List of Shortcuts ",1);
-						addDummyShortcut();
-						
-					}else{
-						addDummyTask();
-						addDummy2();
-						displayTaskTable( dummy2, outputArray, 1);
-						displayMsg("adding dummies", 1);
-					}
-					
+				
+//				 	if( input.equals("1")){
+//						displayMsg("Display List of Shortcuts ",1);
+//						addDummyShortcut();
+//						
+//					}else{
+//						addDummyTask();
+//						addDummy2();
+//						displayTaskTable( dummy2, outputArray, 1);
+//						displayMsg("adding dummies", 1);
+//					}
+//					
 				
 			}
 		
