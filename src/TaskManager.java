@@ -335,7 +335,7 @@ public class TaskManager implements TaskManagerInterface {
             addClashingTasksForReturning(newTask, returningTasks);
         }
 
-        sortTasks(tasks, DATE_FROM);
+        defaultSortTaskByCompleteAndDate();
 
         return returningTasks;
     }
@@ -1090,11 +1090,16 @@ public class TaskManager implements TaskManagerInterface {
             ArrayList<Task> returningTasks) {
         for(Task existingTask : tasks) {
             if(isTaskADurationalTask(existingTask) &&
+                    !isTaskComplete(existingTask) &&
                     isNewTaskClashedWithExistingTask(newTask, existingTask) && 
                     newTask.getTID() != existingTask.getTID()) {
                 returningTasks.add(existingTask.clone());
             }
         }
+    }
+    
+    private boolean isTaskComplete(Task task) {
+        return task.getStatus() == COMPLETE;
     }
 
     /**
