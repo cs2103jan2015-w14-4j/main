@@ -80,7 +80,7 @@ public class TaskManager implements TaskManagerInterface {
     private static final String ID_STRING = "id";
     private static final String TASK_NAME_STRING = "name";
     private static final String PRIORITY_STRING = "priority";
-    private static final String DATE_FROM_STRING = "date";
+    private static final String DATE_STRING = "date";
     private static final String DEADLINE_STRING = "deadline";
     private static final String LOCATION_STRING = "location";
     private static final String TASK_TITLE_STRING = "task title";
@@ -612,7 +612,9 @@ public class TaskManager implements TaskManagerInterface {
 
             if(isFilterOptionDefault(inputs)) {
                 for(Task task: tasks) {
-                    returningTasks.add(task.clone());
+                    if(task.getStatus() != COMPLETE) {
+                        returningTasks.add(task.clone());
+                    }
                 }
             } else {
                 int filterType = getFileterOption(inputs);
@@ -623,6 +625,7 @@ public class TaskManager implements TaskManagerInterface {
             }
 
             if(isViewOptionDefault(inputs)) {
+                sortTasks(returningTasks, DATE_FROM);
                 return returningTasks;
             } else {
                 int viewType = getViewOption(inputs);
@@ -671,7 +674,7 @@ public class TaskManager implements TaskManagerInterface {
         switch (viewType) {
         case ID_STRING: return TID;
         case TASK_NAME_STRING: return TASK_NAME;
-        case DATE_FROM_STRING: return DATE_FROM;
+        case DATE_STRING: return DATE_FROM;
         case DEADLINE_STRING: return DEADLINE;
         case LOCATION_STRING: return LOCATION;
         case PRIORITY_STRING: return STATUS;
