@@ -85,20 +85,21 @@ public class UserInterface extends DefaultTableCellRenderer {
 	   											 "View list of templates", "Use a template", "Delete a template",
 	   											 "Clear all templates", "Help"};
     
-    private static final String[][] HELP = { {"Getting started:"},
-    										 {"Start adding new tasks by uisng the keyword \"add [task title]\" followed by the task details."},	
-    										 {"eg. “add Meeting at room 303 on 27/2/2015 from 2pm to 4pm”   OR"},
-    										 {"eg. “add Meeting from 1400 to 1600 on 27th July at room 303”"},
-    										 {"Both inputs are accepted and will create a task with the same details"},
-    										 {"Feel free to leave any fields you don't need blank, only the task title is needed to create a new task."},
-    										 {"Many variations of inputs are accepted, experiment and find the best fit for you!"},
-    										 {"Edit tasks by using \"edit [taskID]\" followed by the information you want to change."},
-    										 {"Delete tasks by typing \"delete [taskID]\""},
+    private static final String[][] HELP = { {MSG_WELCOME +newline+newline },
+    										 {"Getting Started:"+newline},
+    										 {"  Start adding new tasks by uisng the keyword \"add [task title]\" followed by the task details."},	
+    										 {"      eg. “add Meeting at room 303 on 27/2/2015 from 2pm to 4pm”   OR"},
+    										 {"      eg. “add Meeting from 1400 to 1600 on 27th July at room 303”"},
+    										 {"  Both inputs are accepted and will create a task with the same details." +newline},
+    										 {"  Feel free to leave any fields you don't need blank, only the task title is needed to create a new task."},
+    										 {"  Many variations of inputs are accepted, experiment and find the best fit for you!"},
+    										 {"  Edit tasks by using \"edit [taskID]\" followed by the information you want to change."},
+    										 {"  Delete tasks by typing \"delete [taskID]\""},
     										 {newline},
     										 {"Changing default keywords:"},
-    										 {"You can change any of the default keywords such as \"add\" and \"edit\" to anything you prefer by following the following format:"},
-    										 {"addShortcut [new keyword] onto [existing keyword]"},
-    										 {"eg. “addKeyword create onto add”"},
+    										 {"  You can change any of the default keywords such as \"add\" and \"edit\" to anything you prefer by following the following format:"},
+    										 {"  addShortcut [new keyword] onto [existing keyword]"},
+    										 {"      eg. “addKeyword create onto add”"},
     										 {newline},
     										 {"For the full list of available keywords and functions, type \"help\" or \"viewShortcut\""}
     										};
@@ -189,14 +190,14 @@ public class UserInterface extends DefaultTableCellRenderer {
 		model.refreshTable(outputDataString);				
 	}
 	
-	public void displayTextPane(String[][] outputData, boolean success) {
+	public void displayText(String[][] outputData, boolean success) {
 		clearTextPane();
 		viewTextPane();
 		for(int i = 0; i < outputData.length; i++){
 			String[] strArray = outputData[i];
 			String nextLine = "";
 			for(int j = 0; j < strArray.length; ++j) {
-				nextLine += " | " + strArray[j];
+				nextLine += " " + strArray[j];
 			}
 			outputArea.append(nextLine + newline);
 		}
@@ -298,7 +299,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 		initSysFBArea();
 		initInputArea();
 
-		outputArea.append(MSG_WELCOME + newline + newline + HELP);
+		displayText(HELP, true);
 
 	}
 
@@ -341,7 +342,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 	private void initOutputArea() {
 		outputArea = new JTextArea();	
-		outputArea.setBackground(new Color(255, 250, 250));
+		outputArea.setBackground(Color.WHITE);
 		outputArea.setEditable(false);
 		outputArea.setFont(new Font("Verdana", Font.PLAIN, 18));
 		outputArea.setColumns(30);
@@ -352,6 +353,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 		outputArea.setForeground(OUTPUT_FONT);
 		outputArea.setBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 200, 0), Color.ORANGE));
 		scrollPaneMain = new JScrollPane(); 
+		scrollPaneMain.setBackground(Color.WHITE);
 		scrollPaneMain.setViewportBorder(null);
 		scrollPaneMain.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPaneMain.setViewportView(outputArea);
