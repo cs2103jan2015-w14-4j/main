@@ -28,6 +28,8 @@ import java.awt.Font;
 import java.awt.Color;
 
 import javax.swing.ScrollPaneConstants;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.BevelBorder;
 
 
 
@@ -69,47 +71,70 @@ public class UserInterface extends DefaultTableCellRenderer {
 					            dateFrom = 10,
 					            dateTo = 10,
 					            location = 15,
-					            details = 25,
-					            status = 5;
+					            details = 20,
+					            status = 10;
     private static final double[] PREFERRED_WIDTH_TASKTABLE = {taskID, taskName,dateFrom, dateTo, location, details, status};
     private static final double systemKW = 15, userDefinedKW = 85;       
     private static final double[] PREFERRED_WIDTH_SHORTCUTS = {systemKW, userDefinedKW};
    
     private static final int WINDOW_WIDTH = 1200;
-//    private static final String[] SYS_KEYWORDS = {"Create a new task", "Edit an existing task", "View list of tasks", "Delete a task", 
-//    											 "undo", "redo", "Add a new keyword", "View available keywords", "Delete a keyword", 
-//    											 "Reset keywords", "Create a template", "Edit existing template", "View list of templates",
-//    											 "Delete a template", "Clear all templates", "Help"};
-    private static final String[] SYS_KEYWORDS = {	"addTask", "editTask","viewTask","deleteTask", 
-  		"clearAttr", "searchTask", "undoTask", "redoTask", "markTask",
-  		"addShortcut", "viewShortcut", "deleteShortcut",
-  		"resetShortcut", "addTemplate", "editTemplate", 
-  		"viewTemplates", "useTemplate", "deleteTemplate", 
-  		"resetTemplates", "help"};
-	private static final Color TASK_FONT= new Color(255,240,175); 
-	private static final Color TASK_BG= new Color(18,41,77); 
-	private static final Color TASK_BG2 = new Color(44,71,122); 
-	private static final Color TASK_GRID= new Color(82,108,148);
+    private static final String[] SYS_KEYWORDS = {"Create a new task", "Edit an existing task", "View list of tasks", "Delete a task", 
+    											 "Clear a field", "Search","Undo", "Redo", "Update task status",
+    											 "Add a new keyword", "View available keywords", "Delete a keyword", 
+	   											 "Reset keywords", "Create a template", "Edit existing template", 
+	   											 "View list of templates", "Use a template", "Delete a template",
+	   											 "Clear all templates", "Help"};
+    
+    private static final String[][] HELP = { {MSG_WELCOME +newline+newline },
+    										 {"Getting Started:"+newline},
+    										 {"  Start adding new tasks by uisng the keyword \"add [task title]\" followed by the task details."},	
+    										 {"      eg. “add Meeting at room 303 on 27/2/2015 from 2pm to 4pm”   OR"},
+    										 {"      eg. “add Meeting from 1400 to 1600 on 27th July at room 303”"},
+    										 {"  Both inputs are accepted and will create a task with the same details." +newline},
+    										 {"  Feel free to leave any fields you don't need blank, only the task title is needed to create a new task."},
+    										 {"  Many variations of inputs are accepted, experiment and find the best fit for you!"},
+    										 {"  Edit tasks by using \"edit [taskID]\" followed by the information you want to change."},
+    										 {"  Delete tasks by typing \"delete [taskID]\""},
+    										 {newline},
+    										 {"Changing default keywords:"},
+    										 {"  You can change any of the default keywords such as \"add\" and \"edit\" to anything you prefer by following the following format:"},
+    										 {"  addShortcut [new keyword] onto [existing keyword]"},
+    										 {"      eg. “addKeyword create onto add”"},
+    										 {newline},
+    										 {"For the full list of available keywords and functions, type \"help\" or \"viewShortcut\""}
+    										};
+   
+//    private static final String[] SYS_KEYWORDS = {	"addTask", "editTask","viewTask","deleteTask", 
+//  		"clearAttr", "searchTask", "undoTask", "redoTask", "markTask",
+//  		"addShortcut", "viewShortcut", "deleteShortcut",
+//  		"resetShortcut", "addTemplate", "editTemplate", 
+//  		"viewTemplates", "useTemplate", "deleteTemplate", 
+//  		"resetTemplates", "help"};
 	
-	private static final Color SHORTCUT_FONT = new Color(187,197,255); 
-	private static final Color SHORTCUT_BG = new Color( 18,41,77); 
-	private static final Color SHORTCUT_BG2 = new Color(44,71,112);
-	private static final Color SHORTCUT_GRID = new Color(18,41,77);
+    private static final Color TASK_FONT= new Color(46,67,113); 
+	private static final Color TASK_BG= new Color(160, 212, 237); 
+	private static final Color TASK_BG2 = new Color(255,255,255); 
+	private static final Color TASK_GRID= new Color(73, 159, 201);
 	
-	private static final Color INPUT = new Color(18,42,77); 
-	private static final Color INPUT_FONT = new Color(136,157,191); 
-	private static final Color FEEDBACK = new Color(4,18,62); 
-	private static final Color FEEDBACK_FONT = new Color(255,240,175); 
-	private static final Color OUTPUT_FONT = new Color(187,197,255); 
-	private static final Color OUTPUT_BG = new Color( 18,41,77); 
+	private static final Color SHORTCUT_FONT = new  Color(46,67,113); 
+	private static final Color SHORTCUT_BG = new Color(160, 212, 237); 
+	private static final Color SHORTCUT_BG2 = new Color(255,255,255);
+	private static final Color SHORTCUT_GRID = new Color(115, 184, 218);
 	
-	private boolean hasFilename;
+	private static final Color FEEDBACK_FONT = new Color(44,72,111); 
+	private static final Color FEEDBACK =new Color(255, 208, 85);
+	
+	private static final Color INPUT_FONT = new Color(44,72,111); 
+	private static final Color INPUT = new Color(255, 255, 255);
+	
+	private static final Color OUTPUT_FONT = new Color(46,67,113);  
+	private static final Color OUTPUT_BG = new Color(255,255,255); 
+	
 	private String prevInput;
 	
 	
 	ArrayList<Task> dummy2;
 	
-	//doesnt work properly, edited task shown first not yet implemented
 	public void  displayTaskTable(ArrayList<Task> affectedTask, ArrayList<Task> fullListTask, int status){
 		viewTaskTable();
 		ArrayList<String[]> outputDataString = new ArrayList<String[]>();
@@ -162,26 +187,23 @@ public class UserInterface extends DefaultTableCellRenderer {
 			keywords[1] = nextLine.substring(0, nextLine.length() - 3);
 			outputDataString.add(keywords);
 		}
-		model.refreshTable(outputDataString);	
-				
+		model.refreshTable(outputDataString);				
 	}
 	
-	public void displayTextPane(String[][] outputData, boolean success) {
+	public void displayText(String[][] outputData, boolean success) {
 		clearTextPane();
 		viewTextPane();
 		for(int i = 0; i < outputData.length; i++){
 			String[] strArray = outputData[i];
 			String nextLine = "";
 			for(int j = 0; j < strArray.length; ++j) {
-				nextLine += " | " + strArray[j];
+				nextLine += " " + strArray[j];
 			}
 			outputArea.append(nextLine + newline);
 		}
 
 	}
 	public void displayMsg(String[] outputData, int success){
-		//fix the area, maybe change to string array in future
-		//write messages to display
         clearFeedbackArea();     
         String display = "";
         for(int i = 0; i < outputData.length; ++i) {
@@ -277,7 +299,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 		initSysFBArea();
 		initInputArea();
 
-		outputArea.append(MSG_WELCOME + newline + newline + MSG_HELP +newline + newline + MSG_REMINDERS);
+		displayText(HELP, true);
 
 	}
 
@@ -286,7 +308,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 		textField.setBackground(INPUT);
 		textField.setForeground(INPUT_FONT);
 		textField.setFont(new Font("Verdana", Font.PLAIN, 18));
-		textField.setBorder(null);
+		textField.setBorder(new BevelBorder(BevelBorder.RAISED, new Color(255, 200, 0), new Color(255, 200, 0), Color.ORANGE, Color.ORANGE));
 		scrollPaneInput = new JScrollPane(textField);
 		scrollPaneInput.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPaneInput.setViewportBorder(null);
@@ -320,7 +342,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 	private void initOutputArea() {
 		outputArea = new JTextArea();	
-		outputArea.setBackground(new Color(255, 250, 250));
+		outputArea.setBackground(Color.WHITE);
 		outputArea.setEditable(false);
 		outputArea.setFont(new Font("Verdana", Font.PLAIN, 18));
 		outputArea.setColumns(30);
@@ -329,8 +351,9 @@ public class UserInterface extends DefaultTableCellRenderer {
 		outputArea.setLineWrap(true);
 		outputArea.setBackground(OUTPUT_BG);
 		outputArea.setForeground(OUTPUT_FONT);
-		outputArea.setBorder(null);
+		outputArea.setBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 200, 0), Color.ORANGE));
 		scrollPaneMain = new JScrollPane(); 
+		scrollPaneMain.setBackground(Color.WHITE);
 		scrollPaneMain.setViewportBorder(null);
 		scrollPaneMain.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPaneMain.setViewportView(outputArea);
@@ -504,13 +527,14 @@ public class UserInterface extends DefaultTableCellRenderer {
 			prevInput = input;
 			System.out.println("input = " + input);
 			clearInput();	
-					if (input.length() == 0){
+			/*	
+			if (input.length() == 0){
 						mainHandler.rawUserInput("viewTask");
 					}else{
 						mainHandler.rawUserInput(input);
 					}
 				
-			/*	
+			*/	
 				 	if( input.equals("1")){
 						displayMsg("Display List of Shortcuts ",1);
 						addDummyShortcut();
@@ -521,7 +545,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 						displayTaskTable( dummy2, outputArray, 1);
 						displayMsg("adding dummies", 1);
 					}
-				*/	
+					
 				
 			}
 		
