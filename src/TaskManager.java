@@ -137,7 +137,13 @@ public class TaskManager implements TaskManagerInterface {
         addIDToTaskIDs(newTask.getTID());
 
         tasks.add(newTask);
-        sortTasks(tasks, DATE_FROM);
+        defaultSortTaskByCompleteAndDate();
+    }
+
+    //completed task will be put at the back
+    //both categories of tasks will be sorted by date
+    private void defaultSortTaskByCompleteAndDate() {
+        Collections.sort(tasks, new ComparatorDateAndStatus());
     }
 
     private Task processInitializationWithID(String[] inputs) {
@@ -1100,8 +1106,7 @@ public class TaskManager implements TaskManagerInterface {
         switch(type) {
         case TID: Collections.sort(tasks, new ComparatorID()); break;
         case TASK_NAME: Collections.sort(tasks, new ComparatorTaskName()); break;
-        case DATE_FROM: Collections.sort(tasks, new ComparatorDateFrom()); break;
-        case DEADLINE: Collections.sort(tasks, new ComparatorDeadline()); break;
+        case DATE_FROM: Collections.sort(tasks, new ComparatorDate()); break;
         case LOCATION: Collections.sort(tasks, new ComparatorLocation()); break;
         case PRIORITY: Collections.sort(tasks, new ComparatorPriority()); break;
         }
