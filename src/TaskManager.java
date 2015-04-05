@@ -612,14 +612,14 @@ public class TaskManager implements TaskManagerInterface {
 
             if(isFilterOptionDefault(inputs)) {
                 for(Task task: tasks) {
-                    if(task.getStatus() != COMPLETE) {
+                    if(task.getPriority() != COMPLETE) {
                         returningTasks.add(task.clone());
                     }
                 }
             } else {
                 int filterType = getFileterOption(inputs);
                 for(Task task: tasks) {
-                    if(task.getStatus() == filterType)
+                    if(task.getPriority() == filterType)
                         returningTasks.add(task.clone());
                 }
             }
@@ -1168,7 +1168,7 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private boolean isTaskComplete(Task task) {
-        return task.getStatus() == COMPLETE;
+        return task.getPriority() == COMPLETE;
     }
 
     /**
