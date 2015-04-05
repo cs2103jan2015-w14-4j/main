@@ -3,7 +3,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+//@author A0108385B
 public class CentralizedLog {
+	
+	
+	private static final String LOGGER_NAME = "log";
+	private static final String LOG_FILE_NAME = "log.txt";
 	private Logger logfile;
 	private static CentralizedLog centralizedLog;
 	
@@ -30,10 +35,10 @@ public class CentralizedLog {
 	 * @return logfile under file handler called log.txt;
 	 */
 	private static Logger buildLogger() {
-		Logger logfile = Logger.getLogger("log");
+		Logger logfile = Logger.getLogger(LOGGER_NAME);
 		try {
 			
-			FileHandler fh = new FileHandler("log.txt");
+			FileHandler fh = new FileHandler(LOG_FILE_NAME, true);
 			logfile.addHandler(fh);
 			SimpleFormatter formatter = new SimpleFormatter();  
 	        fh.setFormatter(formatter);

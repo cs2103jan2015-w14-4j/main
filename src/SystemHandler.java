@@ -9,44 +9,64 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-
+//@author A0108385B
+/**
+ * @author MA
+ *
+ */
 public class SystemHandler {
 	
-	private static final String MSG_ERR_ID_UNDEFINED = "The task ID does not exist, please check again.";
+
+	private static final String MSG_LOG_PARSER = "Parser understand the command as the following: \"%s\"";
+	private static final String MSG_ERR_INIT_TEMPLATE = "File has been corrupted, some templates from the past might be lost.";
+	private static final String MSG_ERR_INIT_SHORTCUT = "File has been corrupted, some shortcut data from the past might be lost.";
+	private static final String MSG_ERR_INIT_TASK = "File has been corrupted, some tasks from the past might be lost.";
+	private static final String MSG_ERR_ID_UNDEFINED = "Something is wrong with the ID, please check again";
+	private static final String MSG_ERR_NO_SUCH_COMMAND = "SystemHandler does not recognize this command";
+	
 	private static final String MSG_TASK_STATUS = "The task:\"%s\" has been marked as %s";
 	private static final String MSG_TASK_REDO = "The last task operation has been redone.";
 	private static final String MSG_TASK_SEARCH = " %s task(s) have been found.";
 	private static final String MSG_TASK_UNDO = "The last task operation has been undone.";
 	private static final String MSG_TASK_DELETE = "The task:\"%s\" has been deleted.";
 	private static final String MSG_TASK_CLASH_TASK = "%s(%s),";
-	private static final String MSG_TASK_CLASH = "The newly added task clashes with the following task(s): ";
-	private static final String MSG_TASK_UPDATE = "The task:\"%s\" with Task ID %s has been updated.";
-	private static final String MSG_TASK_VIEW = "The tasks list has been retrieved.";
-	private static final String MSG_TEMP_DELETE = "The template:\"%s\" has been deleted.";
-	private static final String MSG_TEMP_UPDATE = "The template:\"%s\" has been updated.";
-	private static final String MSG_TEMP_VIEW = "The template list has been retrieved.";
-	private static final String MSG_TEMP_NO_TEMPLATE = "No templates found in Flexi Tracker.";
+	private static final String MSG_TASK_CLASH = "The newly added task has clashed with the following task(ID): ";
+	private static final String MSG_TASK_UPDATE = "The task:\"%s\" has been updated from the Flexi Tracker under ID number %s.";
+	private static final String MSG_TASK_VIEW = "The tasks list has been retrieved from the Flexi Tracker.";
+	
+	private static final String MSG_TEMP_DELETE = "The template:\"%s\" has been deleted from the Flexi Tracker.";
+	private static final String MSG_TEMP_UPDATE = "The template:\"%s\" has been updated from the Flexi Tracker ";
+	private static final String MSG_TEMP_VIEW = "The template list has been retrieved from the Flexi Tracker.";
+	private static final String MSG_TEMP_NO_TEMPLATE = "No templates found in Flexi Tracker";
+	private static final String MSG_TEMP_RESET = "Templates have been reset, add your templates now.";
+	
+
+
 	private static final String MSG_SHORTCUT_DELETED = "Keyword \"%s\" has been deleted.";
 	private static final String MSG_SHORTCUT_RESET = "All keywords have been reset to the list of defaults above.";
 	private static final String MSG_SHORTCUT_VIEW = "All keywords have been retrieved";
-	private static final String MSG_SHORTCUT_ADDED_NEW = "New keyword \"%s\" has been added for the \"%s\" function.";
-	private static final String MSG_ERR_NO_SUCH_COMMAND = "The command was not recognised.";
+
+	private static final String MSG_SHORTCUT_ADDED_NEW = "New keyword \"%s\" has been added. It will function the same as \"%s\"";
+	
+	
 	private static final String MSG_LOG_USER_COMMAND = "user enters: %s";
 	
 	private static final String[] COMMAND_GET_TEMPLATE = {"viewTemplate",null,null,null,null,null,null,null,null};
 	private static final String[] COMMAND_GET_TASK_LIST = {"viewTask",null,null,null,null,null,null,null,null};
 	private static final String[] COMMAND_RESET_SHORTCUT = {"resetShortcut", null, null};
 
-	//Intended length of command array
 	public static final int LENGTH_COMMAND_TASK_MANAGER = 9;
 	public static final int LENGTH_COMMAND_SHORTCUT = 3;
 	public static final int LENGTH_COMMAND_TEMPLATE = 9;
+	
 	private static final int INDEX_COMMAND_TASK_MANAGER = 0;
 	private static final int INDEX_COMMAND_SHORTCUT = 1;
 	private static final int INDEX_COMMAND_TEMPLATE = 2;
+	
 	private static final int INDEX_EXECUTION_ERROR = 0;
 	private static final int INDEX_EXECUTION_SUCCESS = 1;
 	private static final int INDEX_EXECUTION_CLASH = 2;
+	
 	private static final int ERROR_INIT = 1;
 	private static final boolean EXECUTION_SUCCESS = true;
 	
@@ -70,25 +90,17 @@ public class SystemHandler {
 		return fileName;
 	}
 	
-//	/**
-//	 * This constructor constructs System Handler object with fileName as the save location 
-//	 * @param fileName	File location which the data saved at
-//	 */
-//	public SystemHandler (String fileName) {
-//		this.fileName = fileName;
-//	}
-	
-//	/**
-//	 * 	This constructor constructs System Handler object with default.txt as the save location
-//	 */
-//	private SystemHandler () {
-//		new SystemHandler("default.txt");
-//	}
-	
+	/**
+	 * @return
+	 */
 	public static SystemHandler getSystemHandler() {
 		return getSystemHandler("default.txt");
 	}
 	
+	/**
+	 * @param fileName
+	 * @return
+	 */
 	public static SystemHandler getSystemHandler(String fileName) {
 		if(system == null) {
 			system = new SystemHandler();
@@ -114,8 +126,7 @@ public class SystemHandler {
 	 * It activates user interface window by calling the Runnable user interface 
 	 */
 	private void activateUI() {
-		window = new UserInterface();
-		System.out.println("Activated");
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -128,13 +139,10 @@ public class SystemHandler {
 		});
 	}
 	
-	public void initialize(String name) {
-		fileName = name;
-		
-	}
-	
+	/**
+	 * 
+	 */
 	public void resetShortcutToDefault() {
-		
 		myShortcut.processShortcutCommand(COMMAND_RESET_SHORTCUT);
 	}
 	
@@ -144,149 +152,27 @@ public class SystemHandler {
 	 * @param userInput	
 	 * @return	An ArrayList of tasks related to command executed
 	 */
-	public ArrayList<Task> rawUserInput(String userInput) {
-		System.out.println("Executing '"+ userInput+"'");
-		return processUserInput(userInput);
-	}
-	
-	public Task requestTask(int id) throws NoSuchElementException {
-		//stub
-//		return new Task(1000, "NEW",
-//				convertToDateObject("12/09/2015 10:00"),
-//				convertToDateObject("12/09/2015 12:00"), null, "ABC", null, 0);
-		Task gotten = myTaskList.getTaskFromTID(id);
-		return myTaskList.getTaskFromTID(id);
+	public void rawUserInput(String userInput) {
 		
-	}
-	
-	public void addTaskFromTemplate(String[] fetchedTask) {
-		try {
-			executeTaskManager(fetchedTask);
-		} catch (ParseException e) {
-			window.displayMsg(e.getMessage(), INDEX_EXECUTION_ERROR);
-		}
-		
-	}
-	
-	public boolean writeToFile(ArrayList<Task> taskList) {
-		externalStorage.writeTaskToFile(taskList);
-		return true;
-	}
-	
-	public boolean writeShortcutToFile(String[][] shortcut) {
-		externalStorage.writeShortcutToFile(shortcut);
-		return true;
-	}
-	
-	public boolean writeTemplateToFile(ArrayList<Task> templates,ArrayList<String> matchingName) {
-		externalStorage.writeTemplateToFile(templates, matchingName);
-		return true;
-	}
-	
-
-//	private Date convertToDateObject(String dateString) {
-//		try {
-//			Date date = null;
-//			if (dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
-//				DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
-//				date = format.parse(dateString);
-//			}
-//			return date;
-//		} catch (ParseException e) {
-//			System.out.println(e);
-//			return null;
-//		}
-//	}
-	
-	/**
-	 * @param commandType	Command Type string extracted from first word of strings of user command
-	 * @return	COMMAND_TYPE_GROUP to allocate the command to correct component
-	 */
-	private static int getCommandGroupType(String commandType) {
-		for(COMMAND_TYPE_TASK_MANAGER command : COMMAND_TYPE_TASK_MANAGER.values()) {
-			if(command.name().equals(commandType)) {
-				System.out.println("CHECK "+ command.name() +" with "+ commandType);
-				return INDEX_COMMAND_TASK_MANAGER;
-			}
-		}
-		for(COMMAND_TYPE_SHORTCUT command : COMMAND_TYPE_SHORTCUT.values()) {
-			if(command.name().equals(commandType)) {
-				return INDEX_COMMAND_SHORTCUT;
-			}
-		}
-		for(COMMAND_TYPE_TEMPLATE command : COMMAND_TYPE_TEMPLATE.values()) {
-			if(command.name().equals(commandType)) {
-				return INDEX_COMMAND_TEMPLATE;
-			}
-		}
-		throw new IllegalArgumentException(MSG_ERR_NO_SUCH_COMMAND);
-	}
-	
-	
-	/**
-	 * @param fileName	File location which the data saved at
-	 * @return			True if the system is initialized properly
-	 */
-	private boolean initializeSystem(String fileName) {
-		
-		boolean isInitProperly = false;
-		myShortcut = new Shortcut();
-//		String[] cmd = {"resetShortcut",null,null};
-//		myShortcut.processShortcutCommand(cmd);
-		
-		logfile = CentralizedLog.getLogger();
-		myTemplates = new Template();
-		myTaskList = new TaskManager();
-		parser = new FlexiParser(myShortcut);
-		externalStorage = new FileStorage(fileName);
-		system = this;
-		try{
-			externalStorage.readTaskFromFile(myTaskList);
-			externalStorage.readShortcutFromFile(myShortcut);
-			externalStorage.readTemplateFromFile(myTemplates);
-		} catch(ParseException e) {
-			window.displayMsg(e.getMessage(), ERROR_INIT);
-		}
-		
-		if(isInitProperly) {
-			return true;	
-		}
-		else {
-			return false;
-		}
-	}
-	
-	/**
-	 * This method functions as a communication line between components and 
-	 * calls the correct components according to the command from user and fetch the correct data 
-	 * @param inputFromUser		A command string received from user
-	 * @return					An ArrayList of task objects that are affected by the command
-	 */
-	private ArrayList<Task> processUserInput(String inputFromUser) {
 		try {
 			
-			logfile.log(Level.CONFIG, String.format(MSG_LOG_USER_COMMAND, inputFromUser));
+			logfile.log(Level.CONFIG, String.format(MSG_LOG_USER_COMMAND, userInput));
 			
-			//Parse command
+			String[] parsedCommand = parser.parseText(userInput);
 			
-			String[] parsedCommand = parser.parseText(inputFromUser);
-			
-			//For checking purposes
-			String[] temp = parsedCommand;
-			
-	    	for(int i = 0; i < temp.length; ++i) {
-	    		System.out.print((temp[i] == null)? "NULL":temp[i].toString());
-	    		System.out.print("|");
-	    	}
+			logfile.log(Level.INFO, String.format(MSG_LOG_PARSER , parsedCommandtoString(parsedCommand)));
 			
 			int commandGroupType = SystemHandler.getCommandGroupType(parsedCommand[0]);
+			
 			validateParsedCommandLength(parsedCommand, commandGroupType);
+			
 			switch(commandGroupType) {
 				case INDEX_COMMAND_TASK_MANAGER:
-					return executeTaskManager(parsedCommand);
+					executeTaskManager(parsedCommand);
+					break;
 					
 				case INDEX_COMMAND_SHORTCUT:
-					String[][] displayS = executeShortcutManager(parsedCommand);
+					executeShortcutManager(parsedCommand);
 					break;
 					
 				case INDEX_COMMAND_TEMPLATE:
@@ -305,8 +191,152 @@ public class SystemHandler {
 		} catch(IllegalStateException e) {
 			window.displayMsg(e.getMessage(), INDEX_EXECUTION_ERROR);
 		} 
-		return null;
 		
+	}
+	
+	
+	/**
+	 * @param id
+	 * @return
+	 * @throws NoSuchElementException
+	 */
+	public Task requestTask(int id) throws NoSuchElementException {
+		return myTaskList.getTaskFromTID(id);
+	}
+	
+	/**
+	 * @param fetchedTask
+	 */
+	public void addTaskFromTemplate(String[] fetchedTask) {
+		
+		try {		
+			executeTaskManager(fetchedTask);
+		} catch (ParseException e) {
+			window.displayMsg(e.getMessage(), INDEX_EXECUTION_ERROR);
+		}
+	}
+	
+	/**
+	 * @param taskList
+	 * @return
+	 */
+	public boolean writeToFile(ArrayList<Task> taskList) {
+		externalStorage.writeTaskToFile(taskList);
+		return true;
+	}
+	
+	/**
+	 * @param shortcut
+	 * @return
+	 */
+	public boolean writeShortcutToFile(String[][] shortcut) {
+		externalStorage.writeShortcutToFile(shortcut);
+		return true;
+	}
+	
+	/**
+	 * @param templates
+	 * @param matchingName
+	 * @return
+	 */
+	public boolean writeTemplateToFile(ArrayList<Task> templates,ArrayList<String> matchingName) {
+		externalStorage.writeTemplateToFile(templates, matchingName);
+		return true;
+	}
+	
+	
+	
+	/**
+	 * @param commandType
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
+	private static int getCommandGroupType(String commandType) throws IllegalArgumentException {
+		for(COMMAND_TYPE_TASK_MANAGER command : COMMAND_TYPE_TASK_MANAGER.values()) {
+			if(command.name().equals(commandType)) {
+				return INDEX_COMMAND_TASK_MANAGER;
+			}
+		}
+		
+		for(COMMAND_TYPE_SHORTCUT command : COMMAND_TYPE_SHORTCUT.values()) {
+			if(command.name().equals(commandType)) {
+				return INDEX_COMMAND_SHORTCUT;
+			}
+		}
+		
+		for(COMMAND_TYPE_TEMPLATE command : COMMAND_TYPE_TEMPLATE.values()) {
+			if(command.name().equals(commandType)) {
+				return INDEX_COMMAND_TEMPLATE;
+			}
+		}
+		
+		throw new IllegalArgumentException(MSG_ERR_NO_SUCH_COMMAND);
+	}
+	
+	
+	
+	/**
+	 * @param fileName
+	 */
+	private void initializeSystem(String fileName) {
+		
+		myShortcut = new Shortcut();
+		window = new UserInterface();
+		logfile = CentralizedLog.getLogger();
+		myTemplates = new Template();
+		myTaskList = new TaskManager();
+		parser = new FlexiParser(myShortcut);
+		externalStorage = new FileStorage(fileName);
+		system = this;
+//		String[] cmd = {"resetShortcut",null,null};
+//		myShortcut.processShortcutCommand(cmd);
+		
+		readDataFromFile();
+		
+	}
+
+	/**
+	 * 
+	 */
+	private void readDataFromFile() {
+		try{
+			externalStorage.readTaskFromFile(myTaskList);
+		} catch(Exception e) {
+			window.displayMsg(MSG_ERR_INIT_TASK, ERROR_INIT);
+		}
+		
+		try{
+			externalStorage.readShortcutFromFile(myShortcut);
+		} catch(Exception e) {
+			window.displayMsg(MSG_ERR_INIT_SHORTCUT, ERROR_INIT);
+		}
+		
+		try{
+			externalStorage.readTemplateFromFile(myTemplates);
+		} catch(Exception e) {
+			window.displayMsg(MSG_ERR_INIT_TEMPLATE, ERROR_INIT);
+		}
+	}
+	
+
+	/**
+	 * @param command
+	 * @return
+	 */
+	private String parsedCommandtoString(String[] command) {
+		String str = "";
+		
+    	for(int i = 0; i < command.length; ++i) {
+    		if(command[i] == null) {
+    			str += "null";
+    		} else if(command[i].length() == 0) {
+    			str += "";
+    		} else {
+    			str += command[i];
+    		}
+    		str += "|";
+    	}
+		return str;
 	}
 
 	/**
@@ -337,7 +367,10 @@ public class SystemHandler {
 			throws ParseException {
 		ArrayList<Task> result = myTaskList.processTM(command);
 		//ArrayList<Task> fullList = myTaskList.processTM(COMMAND_GET_TASK_LIST);
-		displayTMResultToUI(command, result, new ArrayList<Task>());
+		if(result != null) {
+			displayTMResultToUI(command, result, new ArrayList<Task>());
+		}
+			
 		return result;
 	}
 
@@ -353,6 +386,11 @@ public class SystemHandler {
 		window.displayMsg(message, getTaskManagerExecutionStatus(command,result));
 	}
 	
+	/**
+	 * @param command
+	 * @param result
+	 * @return
+	 */
 	private String[] constructTMMessage(String[] command, ArrayList<Task> result) {
 		String[] message = null;
 		switch(command[0]) {
@@ -406,6 +444,11 @@ public class SystemHandler {
 		return message;
 	}
 
+	/**
+	 * @param command
+	 * @param result
+	 * @return
+	 */
 	private int getTaskManagerExecutionStatus(String[] command, ArrayList<Task> result) {
 		if(command[0] == "viewTask") {
 			if(result != null) {
@@ -430,11 +473,18 @@ public class SystemHandler {
 		}
 	}
 	
+	/**
+	 * @param command
+	 * @return
+	 * @throws NoSuchElementException
+	 * @throws IllegalArgumentException
+	 */
 	private String[][] executeShortcutManager(String[] command) 
 			throws NoSuchElementException, IllegalArgumentException {
 		
 		String[][] result = myShortcut.processShortcutCommand(command);
 		displayShortcutResultToUI(command, result);
+		
 		return result;
 	}
 
@@ -448,6 +498,11 @@ public class SystemHandler {
 		window.displayMsg(message, INDEX_EXECUTION_SUCCESS);
 	}
 	
+	/**
+	 * @param command
+	 * @param result
+	 * @return
+	 */
 	private String[] constructShortcutMessage(String[] command,
 			String[][] result) {
 		String[] message = new String[1];
@@ -468,12 +523,20 @@ public class SystemHandler {
 		return message;
 	}
 	
+	/**
+	 * @param command
+	 * @throws IllegalArgumentException
+	 */
 	private void executeCustomizer(String[] command) 
 			throws IllegalArgumentException {
 
 		ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
-		ArrayList<String> tempNames = myTemplates.getTemplateNames(result);		window.displayTaskTable(result, result, INDEX_EXECUTION_SUCCESS);
-		displayTemplateResulttoUI(command, tempNames, result);
+		if(result != null) {
+			ArrayList<String> tempNames = myTemplates.getTemplateNames(result);		
+			window.displayTaskTable(result, null, INDEX_EXECUTION_SUCCESS);
+			displayTemplateResulttoUI(command, tempNames, result);
+		}
+			
 	}
 
 	/**
@@ -486,6 +549,11 @@ public class SystemHandler {
 		window.displayMsg(message,INDEX_EXECUTION_SUCCESS);
 	}
 	
+	/**
+	 * @param command
+	 * @param result
+	 * @return
+	 */
 	private String[] constructTempMessage(String[] command, ArrayList<Task> result) {
 		String[] message = null;
 		switch(command[0]) {
@@ -509,6 +577,10 @@ public class SystemHandler {
 			message[0] = String.format(MSG_TEMP_DELETE, command[1]);
 			break;
 			
+		case "resetTemplate":
+			message = new String[1];
+			message[0] = String.format(MSG_TEMP_RESET, command[1]);
+			break;
 		}
 		return message;
 	}

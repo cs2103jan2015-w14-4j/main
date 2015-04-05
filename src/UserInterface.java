@@ -91,6 +91,7 @@ public class UserInterface extends DefaultTableCellRenderer {
     private static final String[][] HELP = { {MSG_WELCOME +newline+newline },
     										 {"Getting Started:"+newline},
     										 {"  Start adding new tasks by uisng the keyword \"add [task title]\" followed by the task details."},	
+
     										 {"      eg. \"add Meeting at room 303 on 27/2/2015 from 2pm to 4pm\"   OR"},
     										 {"      eg. \"add Meeting from 1400 to 1600 on 27th July at room 303\""},
     										 {"  Both inputs are accepted and will create a task with the same details." +newline},
@@ -552,14 +553,13 @@ public class UserInterface extends DefaultTableCellRenderer {
 			prevInput = input;
 			System.out.println("input = " + input);
 			clearInput();	
-		
 			if (input.length() == 0){
-						mainHandler.rawUserInput("viewTask");
-					}else{
-						mainHandler.rawUserInput(input);
-					}
-				
-		/*		
+				mainHandler.rawUserInput("viewTask");
+			}else{
+				mainHandler.rawUserInput(input);
+			}
+			
+			/*		
 			
 			String[] dummyMsg = {"dummymsg", "asdkhaskjdhaksdakhdkajhdkjashdkjashdiheudhaksdi2345678945679345678i123oihdi23y", "adjq981uodu09237e3asdadfadsfr0239idq2dqj"};
 				 	if( input.equals("1")){
@@ -574,9 +574,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 					}
 				*/	
 					
-			}
-		
-
+		}
 	}
 
 

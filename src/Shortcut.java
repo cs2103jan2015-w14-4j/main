@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
+//@author A0108385B
 public class Shortcut {
 
 	private static final String MSG_ERR_MINIMUM_LENGTH = "\"%s\"'s length is too short to be used as a keyword.";
@@ -53,9 +54,6 @@ public class Shortcut {
 	private static final int INDEX_NOT_FOUND = -1;
 	private static final int INDEX_COMMAND = 0;
 	
-
-
-
 	
 	private ArrayList<ArrayList<String>> userShortcuts;
 	private SystemHandler system;
@@ -68,20 +66,28 @@ public class Shortcut {
 	}
 	
 
+	/**
+	 * @param system
+	 */
 	public void setSystemPath(SystemHandler system) {
 		this.system = system;
 	}
 	
 	
+	/**
+	 * @param command
+	 * @return
+	 * @throws NoSuchElementException
+	 * @throws IllegalArgumentException
+	 */
 	public String[][] processShortcutCommand(String[] command) 
 			throws NoSuchElementException, IllegalArgumentException {
-		String[][] results = null;
 		
+		String[][] results = new String[1][];
 
 		switch(matchCommand(command[INDEX_COMMAND])) {
 			case addShortcut:
 				verifyCommand(command, ADD_SHORTCUT_ARRAY_USED_SIZE);
-				results = new String[1][];
 				results[0] = insertShortcut(command[INDEX_NEW_SHORTCUT],
 											command[INDEX_REFERED_SHORTCUT]);
 				writeOutToFile();
@@ -89,7 +95,6 @@ public class Shortcut {
 				
 			case deleteShortcut:
 				verifyCommand(command, DELETE_SHORTCUT_ARRAY_USED_SIZE);
-				results = new String[1][];
 				results[0] = removeShortcut(command[INDEX_DELETING_SHORTCUT]);
 				writeOutToFile();
 				break;
@@ -118,6 +123,10 @@ public class Shortcut {
 		return results; 
 	}
 	
+	
+	/**
+	 * 
+	 */
 	private void writeOutToFile() {
 		String[][] shortcuts = new String[keywords.length][];
 		for(int i = 0; i < keywords.length; ++i) {
@@ -131,6 +140,10 @@ public class Shortcut {
 		
 	}
 	
+	/**
+	 * @param command
+	 * @throws NumberFormatException
+	 */
 	private void addShortcutInit(String[] command) throws NumberFormatException {
 		int row = Integer.parseInt(command[INDEX_INIT_REFERED_ROW]);
 		
@@ -142,6 +155,11 @@ public class Shortcut {
 		toBeAddedInto.add(command[INDEX_NEW_SHORTCUT]);
 	}
 
+	
+	/**
+	 * @param command
+	 * @return
+	 */
 	public String keywordMatching(String command) {
 		int matchingIndex = searchMatching(command);
 		if(matchingIndex > -1) {
@@ -154,6 +172,11 @@ public class Shortcut {
 	
 	
 	
+	/**
+	 * @param command
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
 	private COMMAND_TYPE_SHORTCUT matchCommand(String command) 
 			throws IllegalArgumentException {
         try{
@@ -165,6 +188,9 @@ public class Shortcut {
         
 	}
 	
+	/**
+	 * 
+	 */
 	private void resetShortcut() {
 		userShortcuts = new ArrayList<ArrayList<String>>();
 		for(int i = 0; i < keywords.length; ++i) {
@@ -172,6 +198,10 @@ public class Shortcut {
 		}
 	}
 	
+	/**
+	 * @param index
+	 * @return
+	 */
 	private ArrayList<String> buildDefaultKeyword(int index) {
 		ArrayList<String> customizedWord = new ArrayList<String>();
 		String[] defaultwords = defaultWordsSet[index];
@@ -181,10 +211,17 @@ public class Shortcut {
 		return customizedWord;
 	}
 
+	/**
+	 * @return
+	 */
 	private String[][] viewShortcuts() {
 		return cloneShortcuts();
 	}
 	
+	/**
+	 * @param shortcut
+	 * @return
+	 */
 	private String[] removeShortcut(String shortcut) {
 		
 		int index = getShortcutMatchingIndex(shortcut);
@@ -207,19 +244,6 @@ public class Shortcut {
 		}
 		
 	}
-	
-	private boolean isDefaultShortcut(String shortcut) {
-		for(int i = 0; i < defaultWordsSet.length; ++i) {
-			String[] defaultWords = defaultWordsSet[i];
-			for(int j = 0; j < defaultWords.length; ++j) {
-				if(shortcut.equalsIgnoreCase(defaultWords[j])) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
 
 	private boolean removeShortcutfromUserList(int index, String shortcut) {
 		ArrayList<String> userDefinedShortcut = userShortcuts.get(index);
@@ -232,9 +256,11 @@ public class Shortcut {
 		return false;
 	}
 	
-	private boolean isShortcutKeyAtMinimumCapacity(int index) {
-		return userShortcuts.get(index).size() < MINIMUM_CAPACITY;
-	}
+	
+	/**
+	 * @param shortcut
+	 * @return
+	 */
 	private int getShortcutMatchingIndex(String shortcut) {
 		for(int i = 0; i < userShortcuts.size(); ++i) {
 			ArrayList<String> singleShortcut = userShortcuts.get(i);
@@ -247,40 +273,76 @@ public class Shortcut {
 		return INDEX_NOT_FOUND;
 	}
 	
-	private String[] insertShortcut(String newShortcut, String originShortcut) {
+	/**
+	 * @param newShortcut
+	 * @param originShortcut
+	 * @return
+	 * @throws NoSuchElementException
+	 */
+	private String[] insertShortcut(String newShortcut, String originShortcut) throws NoSuchElementException {
 		int indexBelongTo = searchMatching(originShortcut);
-		if(!isKeyWords(indexBelongTo)) {
-			throw new NoSuchElementException(String.format(MSG_ERR_SHORTCUT_NOT_EXIST, originShortcut));
-		}
-		else if(isKeyWords(newShortcut)) {
-			//wrong err type
-			throw new NoSuchElementException(String.format(MSG_ERR_KEYWORD_EXIST, newShortcut));
-		}
-		else if (isReservedWord(newShortcut)) {
-			//wrong err type
-			throw new NoSuchElementException(String.format(MSG_ERR_DEFAULT_KEYWORD_DELETE, newShortcut));
-		}
-		else if (isWordLengthInappropriate(newShortcut)) {
-			//wrong err type
-			throw new NoSuchElementException(String.format(MSG_ERR_MINIMUM_LENGTH, newShortcut));
-		}
-		else if(isShortcutAtMaximumCapacity(indexBelongTo)) {
-			//wrong err type
-			throw new NoSuchElementException(String.format(MSG_ERR_MAX_CAPACITY, newShortcut));
-		}
-		else {
+		
+		if(isInputApprioriate(newShortcut, originShortcut, indexBelongTo)) {
 			addShortcut(newShortcut, indexBelongTo);
-			String[] result = constructOutputString(indexBelongTo,originShortcut,newShortcut);
+			String[] result = constructOutputString(indexBelongTo, originShortcut, newShortcut);
 			return result;	
 			
+		} else {
+			return null;
 		}
+		
+	}
+
+
+	/**
+	 * @param newShortcut
+	 * @param originShortcut
+	 * @param indexBelongTo
+	 * @throws NoSuchElementException
+	 */
+	private boolean isInputApprioriate(String newShortcut, String originShortcut,
+			int indexBelongTo) throws NoSuchElementException {
+		
+		if(!isKeyWords(indexBelongTo)) {
+			throw new NoSuchElementException(String.format(MSG_ERR_SHORTCUT_NOT_EXIST, originShortcut));
+			
+		} else if(isKeyWords(newShortcut)) {
+			//wrong err type
+			throw new NoSuchElementException(String.format(MSG_ERR_KEYWORD_EXIST, newShortcut));
+			
+		} else if (isReservedWord(newShortcut)) {
+			//wrong err type
+			throw new NoSuchElementException(String.format(MSG_ERR_DEFAULT_KEYWORD_DELETE, newShortcut));
+			
+		} else if (isWordLengthInappropriate(newShortcut)) {
+			//wrong err type
+			throw new NoSuchElementException(String.format(MSG_ERR_MINIMUM_LENGTH, newShortcut));
+			
+		} else if(isShortcutAtMaximumCapacity(indexBelongTo)) {
+			//wrong err type
+			throw new NoSuchElementException(String.format(MSG_ERR_MAX_CAPACITY, newShortcut));
+			
+		}
+		
+		return true;
 	}
 	
+	/**
+	 * @param index
+	 * @param deleted
+	 * @return
+	 */
 	private String[] constructOutputString(int index, String deleted) {
 		String[] result = {Integer.toString(index), deleted};
 		return result;
 	}
 	
+	/**
+	 * @param index
+	 * @param original
+	 * @param newlyAdded
+	 * @return
+	 */
 	private String[] constructOutputString(int index, String original, String newlyAdded) {
 		ArrayList<String> shortcuts = userShortcuts.get(index);
 		String[] result = new String[shortcuts.size() + 1];
@@ -300,6 +362,9 @@ public class Shortcut {
 		return userShortcuts.get(index).size() > MAXIMUM_CAPACITY;
 	}
 
+	private boolean isShortcutKeyAtMinimumCapacity(int index) {
+		return userShortcuts.get(index).size() < MINIMUM_CAPACITY;
+	}
 
 	/**
 	 * @param newShortcut
@@ -311,17 +376,43 @@ public class Shortcut {
 		
 	}
 	
+	/**
+	 * @param index
+	 * @return
+	 */
 	private boolean isKeyWords(int index) {
 		return (index > INDEX_NOT_FOUND);
 	}
 	
+	/**
+	 * @param command
+	 * @return
+	 */
 	private boolean isKeyWords(String command) {
 		int matchingIndex = searchMatching(command);
 		return matchingIndex > INDEX_NOT_FOUND;
 	}
 
+	private boolean isDefaultShortcut(String shortcut) {
+		for(int i = 0; i < defaultWordsSet.length; ++i) {
+			String[] defaultWords = defaultWordsSet[i];
+			
+			for(int j = 0; j < defaultWords.length; ++j) {
+				
+				if(shortcut.equalsIgnoreCase(defaultWords[j])) {
+					return true;
+				}
+				
+			}
+			
+		}
+		return false;
+	}
 	
-	
+	/**
+	 * @param command
+	 * @return
+	 */
 	private int searchMatching (String command) {
 		for(int i = 0; i < userShortcuts.size(); ++i) {
 			ArrayList<String> singleShortcut = userShortcuts.get(i);
@@ -337,16 +428,19 @@ public class Shortcut {
 		return INDEX_NOT_FOUND;
 	}
 	
+	/**
+	 * @param command
+	 * @param matching
+	 * @return
+	 */
 	private boolean isTheMatchingWord(String command, String matching) {
-		
-		if(command.equalsIgnoreCase(matching)) {
-			return true;
-		} else {
-			return false;
-		}
-		
+		return command.equalsIgnoreCase(matching);
 	}
 	
+	/**
+	 * @param word
+	 * @return
+	 */
 	private boolean isReservedWord(String word) {
 		for(int i = 0; i < reservedWords.length; ++i) {
 			if(word.equalsIgnoreCase(reservedWords[i])) {
@@ -356,26 +450,41 @@ public class Shortcut {
 		return false;
 	}
 	
+	/**
+	 * @return
+	 */
 	private String[][] cloneShortcuts() {
 		String[][] cloneList = new String[keywords.length][];
+		
 		for(int i = 0; i < userShortcuts.size(); ++i) {
+			
 			ArrayList<String> shortcuts = userShortcuts.get(i);
+			
 			String[] clonedArray = new String[shortcuts.size() + 1];
 			clonedArray[0] = Integer.toString(i);
+			
 			for(int j = 0; j < shortcuts.size(); ++j) {
 				clonedArray[j + 1] = shortcuts.get(j);
 			}
+			
 			cloneList[i] = clonedArray;
 		}
 		
 		return cloneList;
 	}
 
+	/**
+	 * @param command
+	 * @param lengthToCheck
+	 * @return
+	 */
 	private boolean verifyCommand(String[] command, int lengthToCheck) {
 		assert(command.length == ARRAY_SIZE_SHORTCUT);
+		
 		for(int i = 0; i < lengthToCheck; ++i) {
 			assert(command[i] != null);
 		}
+		
 		return true;
 	}
 	
