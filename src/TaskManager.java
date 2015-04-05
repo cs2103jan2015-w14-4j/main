@@ -79,7 +79,7 @@ public class TaskManager implements TaskManagerInterface {
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
     private static final String ID_STRING = "id";
     private static final String TASK_NAME_STRING = "name";
-    private static final String PRIORITY_STRING = "priority";
+    private static final String PRIORITY_STRING = "status";
     private static final String DATE_STRING = "date";
     private static final String DEADLINE_STRING = "deadline";
     private static final String LOCATION_STRING = "location";
@@ -612,14 +612,14 @@ public class TaskManager implements TaskManagerInterface {
 
             if(isFilterOptionDefault(inputs)) {
                 for(Task task: tasks) {
-                    if(task.getStatus() != COMPLETE) {
+                    if(task.getPriority() != COMPLETE) {
                         returningTasks.add(task.clone());
                     }
                 }
             } else {
                 int filterType = getFileterOption(inputs);
                 for(Task task: tasks) {
-                    if(task.getStatus() == filterType)
+                    if(task.getPriority() == filterType)
                         returningTasks.add(task.clone());
                 }
             }
@@ -1168,7 +1168,7 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private boolean isTaskComplete(Task task) {
-        return task.getStatus() == COMPLETE;
+        return task.getPriority() == COMPLETE;
     }
 
     /**

@@ -43,7 +43,7 @@ public class ComparatorDateAndStatus implements Comparator<Task> {
                 if(date1.compareTo(date2) == 0) {
                     if(task1.getTID() < task2.getTID()) {
                         return -1;
-                    } else if(task1.getTID() > task1.getTID()) {
+                    } else if(task1.getTID() > task2.getTID()) {
                         return 1;
                     } else {
                         return 0;
@@ -58,7 +58,7 @@ public class ComparatorDateAndStatus implements Comparator<Task> {
             } else {
                 if(task1.getTID() < task2.getTID()) {
                     return -1;
-                } else if(task1.getTID() > task1.getTID()) {
+                } else if(task1.getTID() > task2.getTID()) {
                     return 1;
                 } else {
                     return 0;
@@ -102,7 +102,7 @@ public class ComparatorDateAndStatus implements Comparator<Task> {
                 if(date1.compareTo(date2) == 0) {
                     if(task1.getTID() < task2.getTID()) {
                         return -1;
-                    } else if(task1.getTID() > task1.getTID()) {
+                    } else if(task1.getTID() > task2.getTID()) {
                         return 1;
                     } else {
                         return 0;
@@ -117,7 +117,7 @@ public class ComparatorDateAndStatus implements Comparator<Task> {
             } else {
                 if(task1.getTID() < task2.getTID()) {
                     return -1;
-                } else if(task1.getTID() > task1.getTID()) {
+                } else if(task1.getTID() > task2.getTID()) {
                     return 1;
                 } else {
                     return 0;

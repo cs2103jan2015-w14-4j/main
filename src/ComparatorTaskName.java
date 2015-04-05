@@ -10,7 +10,7 @@ public class ComparatorTaskName implements Comparator<Task> {
             if(taskName1.compareTo(taskName2) == 0) {
                 if(task1.getTID() < task2.getTID()) {
                     return -1;
-                } else if(task1.getTID() > task1.getTID()) {
+                } else if(task1.getTID() > task2.getTID()) {
                     return 1;
                 } else {
                     return 0;
@@ -25,7 +25,7 @@ public class ComparatorTaskName implements Comparator<Task> {
         } else {
             if(task1.getTID() < task2.getTID()) {
                 return -1;
-            } else if(task1.getTID() > task1.getTID()) {
+            } else if(task1.getTID() > task2.getTID()) {
                 return 1;
             } else {
                 return 0;

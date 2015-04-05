@@ -220,23 +220,24 @@ public class FlexiParser {
 				//view task
 				case 3:
 					//WARNING: NO CHECKING VALIDITY
-			    	outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
+			    	String viewTitle = NOT_EXIST;
+					outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
 			    	if(inputArray.length <= 1 || inputArray[START_TITLE_INDEX].equals(VIEW_BY) || inputArray.length <= 1) {
 			    		
-			    		title = NOT_EXIST;
+			    		
 			    		
 			    	}
 			    	else if(inputArray[START_TITLE_INDEX].contains("\"")) {
 			    		
-			    		title = extractTextWithQuotes(inputArray,START_TITLE_INDEX);
+			    		viewTitle = extractTextWithQuotes(inputArray,START_TITLE_INDEX);
 			    			
 			    	}
 			    	else {
 			    	
-			    		title = extractText(inputArray,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
+			    		viewTitle = extractText(inputArray,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
 			    	}
 			    	
-			    	outputArray[TASK_PRIORITY_INDEX] = title;
+			    	outputArray[TASK_PRIORITY_INDEX] = viewTitle;
 			    	String value =extractAttribute(inputArray,START_TITLE_INDEX,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
 			    	
 			    	if(value!=(NOT_EXIST)) {
@@ -259,7 +260,21 @@ public class FlexiParser {
 					//WARNING: NO CHECKING VALIDITY
 					
 			    	outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
-			    	outputArray[TASK_NAME_INDEX] = extractTextWithQuotes(inputArray,START_TITLE_INDEX);
+			    	
+			    	String searchTerm = EMPTY_STRING;
+			    	//surround with try catch for when there is no title?
+			    	if(inputArray[START_TITLE_INDEX].contains("\"")) {
+			    		
+			    		searchTerm = extractTextWithQuotes(inputArray,START_TITLE_INDEX);
+			    		
+			    	}
+			    	else {
+			    	
+			    		searchTerm = extractText(inputArray,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
+			    	}
+			    	
+			    	outputArray[TASK_NAME_INDEX] = searchTerm;
+			   
 			    	//maybe change to index_ssd
 			    	for(int i = 3; i < KEYWORDS_ONE_TASK.length; i++) {
 			    		
