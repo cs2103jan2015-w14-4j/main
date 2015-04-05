@@ -11,6 +11,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
@@ -30,6 +31,8 @@ import java.awt.Color;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
 
 
@@ -88,18 +91,19 @@ public class UserInterface extends DefaultTableCellRenderer {
     private static final String[][] HELP = { {MSG_WELCOME +newline+newline },
     										 {"Getting Started:"+newline},
     										 {"  Start adding new tasks by uisng the keyword \"add [task title]\" followed by the task details."},	
-    										 {"      eg. add Meeting at room 303 on 27/2/2015 from 2pm to 4pm   OR"},
-    										 {"      eg. add Meeting from 1400 to 1600 on 27th July at room 303"},
+
+    										 {"      eg. \"add Meeting at room 303 on 27/2/2015 from 2pm to 4pm\"   OR"},
+    										 {"      eg. \"add Meeting from 1400 to 1600 on 27th July at room 303\""},
     										 {"  Both inputs are accepted and will create a task with the same details." +newline},
     										 {"  Feel free to leave any fields you don't need blank, only the task title is needed to create a new task."},
-    										 {"  Many variations of inputs are accepted, experiment and find the best fit for you!"},
+    										 {"  Many variations of inputs are accepted, experiment and find the best fit for you!" + newline},
     										 {"  Edit tasks by using \"edit [taskID]\" followed by the information you want to change."},
     										 {"  Delete tasks by typing \"delete [taskID]\""},
     										 {newline},
     										 {"Changing default keywords:"},
     										 {"  You can change any of the default keywords such as \"add\" and \"edit\" to anything you prefer by following the following format:"},
     										 {"  addShortcut [new keyword] onto [existing keyword]"},
-    										 {"      eg. addKeyword create onto add"},
+    										 {"      eg. \"addKeyword create onto add\""},
     										 {newline},
     										 {"For the full list of available keywords and functions, type \"help\" or \"viewShortcut\""}
     										};
@@ -115,6 +119,9 @@ public class UserInterface extends DefaultTableCellRenderer {
 	private static final Color TASK_BG= new Color(160, 212, 237); 
 	private static final Color TASK_BG2 = new Color(255,255,255); 
 	private static final Color TASK_GRID= new Color(73, 159, 201);
+	private static final Color TASK_EDITED= new Color(255, 220, 128);
+	private static final Color TASK_CLASH= new Color(255, 196, 128);
+	private static final Color TASK_OVERDUE= new Color(255, 180, 94);
 	
 	private static final Color SHORTCUT_FONT = new  Color(46,67,113); 
 	private static final Color SHORTCUT_BG = new Color(160, 212, 237); 
@@ -146,9 +153,9 @@ public class UserInterface extends DefaultTableCellRenderer {
 					outputDataString.add(fullListTask.get(i).toStringArray());
 			}
 		}else{
-			System.out.println("affected Task");
 			for (int j = 0 ; j < affectedTask.size(); j++){
 					outputDataString.add(affectedTask.get(j).toStringArray());
+					
 			}
 			for (int k = 0 ; k < fullListTask.size(); k++){
 				String[] strArray = fullListTask.get(k).toStringArray();
@@ -213,8 +220,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 	}
 
 	public void displayMsg(String outputData, int success){
-		//fix the area, maybe change to string array in future
-		//write messages to display
         clearFeedbackArea();     
         sysFeedbackArea.setText(outputData);
 	}
@@ -352,6 +357,9 @@ public class UserInterface extends DefaultTableCellRenderer {
 		outputArea.setBackground(OUTPUT_BG);
 		outputArea.setForeground(OUTPUT_FONT);
 		outputArea.setBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 200, 0), Color.ORANGE));
+		DefaultCaret caret = (DefaultCaret)outputArea.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+		
 		scrollPaneMain = new JScrollPane(); 
 		scrollPaneMain.setBackground(Color.WHITE);
 		scrollPaneMain.setViewportBorder(null);
@@ -427,7 +435,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 		};
 
 		textField.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-		.put(KeyStroke.getKeyStroke("TAB"), "viewTask");
+		.put(KeyStroke.getKeyStroke("alt D"), "viewTask");
 		textField.getActionMap().put("viewTask", view );
 		
 		//until here this needs to refactored out
@@ -442,7 +450,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 		columnNamesTaskTable.add("Date From");
 		columnNamesTaskTable.add("Date To");
 		columnNamesTaskTable.add("Location");
-		columnNamesTaskTable.add("Details");
+		columnNamesTaskTable.add("Remarks");
 		columnNamesTaskTable.add("Status");
 		
 		model = new TaskTableModel(outputArrayString, columnNamesTaskTable, String[].class );
@@ -452,12 +460,28 @@ public class UserInterface extends DefaultTableCellRenderer {
 			{
 				Component c = super.prepareRenderer(renderer, row, column);
 
-				if (!isRowSelected(row))
+				if (!isRowSelected(row)){
 					c.setBackground(row % 2 == 0 ? getBackground() : TASK_BG);
-
+				}
+				
+				if ((model.getValueAt(row,getColumnCount()-1)).equals("Overdue")){
+					c.setBackground(TASK_OVERDUE);
+				}
 				return c;
 			}
+			
+
+
+
+			public boolean isAffected(int row, int affected) {
+				if (row < affected)
+					return true;
+				return false;
+			}
 		};
+		
+		//taskTable.getModel().addTableModelListener((TableModelListener) this);
+		
         setJTableColumnsWidth(taskTable, WINDOW_WIDTH, PREFERRED_WIDTH_TASKTABLE ) ;
     	taskTable.setRowHeight(25);
     	taskTable.setFont(new Font("Arial", Font.BOLD, 15));
@@ -465,6 +489,8 @@ public class UserInterface extends DefaultTableCellRenderer {
     	taskTable.setForeground(TASK_FONT);
     	taskTable.setBackground(TASK_BG2);
     	taskTable.setBorder(null);
+    	taskTable.setRowSelectionAllowed(true);
+    	taskTable.setColumnSelectionAllowed(false);
         for (int c = 0; c < taskTable.getColumnCount(); c++)
 		{
 		    Class<?> col_class = taskTable.getColumnClass(c);
@@ -527,16 +553,17 @@ public class UserInterface extends DefaultTableCellRenderer {
 			prevInput = input;
 			System.out.println("input = " + input);
 			clearInput();	
-				
 			if (input.length() == 0){
-						mainHandler.rawUserInput("viewTask");
-					}else{
-						mainHandler.rawUserInput(input);
-					}
-				
-			/*
+				mainHandler.rawUserInput("viewTask");
+			}else{
+				mainHandler.rawUserInput(input);
+			}
+			
+			/*		
+			
+			String[] dummyMsg = {"dummymsg", "asdkhaskjdhaksdakhdkajhdkjashdkjashdiheudhaksdi2345678945679345678i123oihdi23y", "adjq981uodu09237e3asdadfadsfr0239idq2dqj"};
 				 	if( input.equals("1")){
-						displayMsg("Display List of Shortcuts ",1);
+						displayMsg(dummyMsg,1);
 						addDummyShortcut();
 						
 					}else{
@@ -545,11 +572,9 @@ public class UserInterface extends DefaultTableCellRenderer {
 						displayTaskTable( dummy2, outputArray, 1);
 						displayMsg("adding dummies", 1);
 					}
+				*/	
 					
-				*/
-			}
-		
-
+		}
 	}
 
 
@@ -587,6 +612,17 @@ public class UserInterface extends DefaultTableCellRenderer {
 	       return c;
 
 	}
+	
+	 public void tableChanged(TableModelEvent e) {
+	        int row = e.getFirstRow();
+	        int column = e.getColumn();
+	        TaskTableModel model = (TaskTableModel)e.getSource();
+	        String columnName = model.getColumnName(column);
+	        Object data = model.getValueAt(row, column);
+	        
+	        System.out.println("table change= " + data);
+	        // Do something with the data...
+	    }
 
     
 
@@ -595,7 +631,7 @@ private void addDummyTask() {
 		
 		for (int tid = 1000; tid<1020;  tid++){
 			Task testTask = new Task( tid  , " (The rest are dummies)", new Date(115,3,8,14,0) , 
-					new Date(115,3,8,17,0), new Date(113,2,8,17,0), "HOME", null, 0);
+					new Date(115,3,8,17,0), new Date(113,2,8,17,0), "HOME",null, 6);
 			
 			outputArray.add(testTask);
 			

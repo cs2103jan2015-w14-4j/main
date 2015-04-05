@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
  */
 public class SystemHandler {
 	
+
 	private static final String MSG_LOG_PARSER = "Parser understand the command as the following: \"%s\"";
 	private static final String MSG_ERR_INIT_TEMPLATE = "File has been corrupted, some templates from the past might be lost.";
 	private static final String MSG_ERR_INIT_SHORTCUT = "File has been corrupted, some shortcut data from the past might be lost.";
@@ -24,10 +25,10 @@ public class SystemHandler {
 	private static final String MSG_ERR_NO_SUCH_COMMAND = "SystemHandler does not recognize this command";
 	
 	private static final String MSG_TASK_STATUS = "The task:\"%s\" has been marked as %s";
-	private static final String MSG_TASK_REDO = "A task operation has been redo.";
-	private static final String MSG_TASK_SEARCH = "There are %s task(s) fulfilling the searching requirement.";
-	private static final String MSG_TASK_UNDO = "A task operation has been undo.";
-	private static final String MSG_TASK_DELETE = "The task:\"%s\" has been deleted from the Flexi Tracker.";
+	private static final String MSG_TASK_REDO = "The last task operation has been redone.";
+	private static final String MSG_TASK_SEARCH = " %s task(s) have been found.";
+	private static final String MSG_TASK_UNDO = "The last task operation has been undone.";
+	private static final String MSG_TASK_DELETE = "The task:\"%s\" has been deleted.";
 	private static final String MSG_TASK_CLASH_TASK = "%s(%s),";
 	private static final String MSG_TASK_CLASH = "The newly added task has clashed with the following task(ID): ";
 	private static final String MSG_TASK_UPDATE = "The task:\"%s\" has been updated from the Flexi Tracker under ID number %s.";
@@ -39,10 +40,14 @@ public class SystemHandler {
 	private static final String MSG_TEMP_NO_TEMPLATE = "No templates found in Flexi Tracker";
 	private static final String MSG_TEMP_RESET = "Templates have been reset, add your templates now.";
 	
+
+
 	private static final String MSG_SHORTCUT_DELETED = "Keyword \"%s\" has been deleted.";
-	private static final String MSG_SHORTCUT_RESET = "All keywords have been reset to the list above";
+	private static final String MSG_SHORTCUT_RESET = "All keywords have been reset to the list of defaults above.";
 	private static final String MSG_SHORTCUT_VIEW = "All keywords have been retrieved";
+
 	private static final String MSG_SHORTCUT_ADDED_NEW = "New keyword \"%s\" has been added. It will function the same as \"%s\"";
+	
 	
 	private static final String MSG_LOG_USER_COMMAND = "user enters: %s";
 	

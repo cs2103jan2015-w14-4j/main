@@ -121,8 +121,9 @@ public class Template {
 	 * @param command
 	 */
 	private void initTemplate(String[] command) {
+
 		Task taskToBeAddedInit = createNewTemplate(command);
-		addTemplateToArray(command[INDEX_NEW_TEMPLATE_NAME], taskToBeAddedInit);
+		addTemplateToArray(command[INDEX_TEMPLATE_NAME], taskToBeAddedInit);
 	}
 
 	/**
