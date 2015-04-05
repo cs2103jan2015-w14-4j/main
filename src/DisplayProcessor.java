@@ -51,7 +51,12 @@ public class DisplayProcessor {
 	public void displayTMResult(String[] command, ArrayList<Task> result,
 			ArrayList<Task> fullList) {
 		String[] message = constructTMMessage(command, result);
-		window.displayTaskTable(result, fullList, INDEX_EXECUTION_SUCCESS);
+		if(command[0].equals("deleteTask")) {
+			window.displayTaskTable(null, fullList, INDEX_EXECUTION_SUCCESS);
+		} else {
+			window.displayTaskTable(result, fullList, INDEX_EXECUTION_SUCCESS);
+		}
+			
 		window.displayMsg(message, getTaskManagerExecutionStatus(command,result));
 	}
 	
@@ -69,14 +74,18 @@ public class DisplayProcessor {
 			break;
 		case "addTask":
 		case "editTask":
-			message = new String[2];
-			message[0] = String.format(MSG_TASK_UPDATE,result.get(0).getTaskName(),result.get(0).getTID());
 			if(result.size() > 1) {
+				message = new String[2];
+				message[0] = String.format(MSG_TASK_UPDATE,result.get(0).getTaskName(),result.get(0).getTID());
 				message[1] = MSG_TASK_CLASH;
 				for(int i = 1; i < result.size(); ++i) {
 					message[1] += String.format(MSG_TASK_CLASH_TASK, result.get(i).getTaskName(), result.get(i).getTID());
 				}
 				message[1] = message[1].substring(0, message[1].length() - 1) + ".";
+			} else {
+				message = new String[1];
+				message[0] = String.format(MSG_TASK_UPDATE,result.get(0).getTaskName(),result.get(0).getTID());
+				
 			}
 			break;
 				

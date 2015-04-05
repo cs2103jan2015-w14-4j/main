@@ -285,12 +285,16 @@ public class SystemHandler {
 		
 	}
 	
+	private static final String[] COMMAND_GET_TEMPLATE = {"viewTemplate",null,null,null,null,null,null,null,null};
+	private static final String[] COMMAND_GET_TASK_LIST = {"viewTask",null,null,null,null,null,null,null,null};
+	
 	private ArrayList<Task> executeTaskManager(String[] command) 
 			throws ParseException {
 		ArrayList<Task> result = myTaskList.processTM(command);
-		//ArrayList<Task> fullList = myTaskList.processTM(COMMAND_GET_TASK_LIST);
+		
+		ArrayList<Task> fullList = myTaskList.processTM(COMMAND_GET_TASK_LIST);
 		if(result != null) {
-			displayProcessor.displayTMResult(command, result, new ArrayList<Task>());
+			displayProcessor.displayTMResult(command, result, fullList);
 		}
 			
 		return result;
