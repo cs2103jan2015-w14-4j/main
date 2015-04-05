@@ -1,13 +1,8 @@
-import java.util.Date;
 import java.util.NoSuchElementException;
-import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.awt.EventQueue;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 //@author A0108385B
 /**
@@ -16,6 +11,8 @@ import java.text.SimpleDateFormat;
  */
 public class SystemHandler {
 	
+
+	private static final String SAVE_LOCATION_DEFAULT = "default.txt";
 
 	private static final String MSG_LOG_USER_COMMAND = "user enters: %s";
 	
@@ -26,9 +23,6 @@ public class SystemHandler {
 	private static final String MSG_ERR_ID_UNDEFINED = "Something is wrong with the ID, please check again";
 	private static final String MSG_ERR_NO_SUCH_COMMAND = "SystemHandler does not recognize this command";
 	
-
-	private static final String[] COMMAND_GET_TEMPLATE = {"viewTemplate",null,null,null,null,null,null,null,null};
-	private static final String[] COMMAND_GET_TASK_LIST = {"viewTask",null,null,null,null,null,null,null,null};
 	private static final String[] COMMAND_RESET_SHORTCUT = {"resetShortcut", null, null};
 
 	public static final int LENGTH_COMMAND_TASK_MANAGER = 9;
@@ -57,26 +51,12 @@ public class SystemHandler {
 	private FlexiParser 	parser;
 	private DisplayProcessor displayProcessor;
 	public static SystemHandler system;
+
 	
-	/**
-	 * Return file location which the data saved at
-	 * @return	File location which the data saved at
-	 */
-	public String getFileName() {
-		return fileName;
-	}
-	
-	/**
-	 * @return
-	 */
 	public static SystemHandler getSystemHandler() {
-		return getSystemHandler("default.txt");
+		return getSystemHandler(SAVE_LOCATION_DEFAULT);
 	}
 	
-	/**
-	 * @param fileName
-	 * @return
-	 */
 	public static SystemHandler getSystemHandler(String fileName) {
 		if(system == null) {
 			system = new SystemHandler();
@@ -86,7 +66,7 @@ public class SystemHandler {
 	}
 	
 	/**
-	 * Booting the system 
+	 * Booting the system and set the path to be called back.
 	 * @param args	Parameter from input - not applicable
 	 */
 	public static void main(String[] args) {
@@ -114,28 +94,26 @@ public class SystemHandler {
 		});
 	}
 	
-	/**
-	 * 
-	 */
 	public void resetShortcutToDefault() {
 		myShortcut.processShortcutCommand(COMMAND_RESET_SHORTCUT);
 	}
 	
+	
 	/**
-	 * It reads in user command and process it.
-	 * After the process, it returns the affected tasks in an ArrayList
-	 * @param userInput	
-	 * @return	An ArrayList of tasks related to command executed
+	 * This method function as the communication line between different components to ensure
+	 * intermediate results directed correctly. 
+	 * The sequence is from UI -> parser -> logic -> displayProcessor 
+	 * @param userInput
 	 */
 	public void rawUserInput(String userInput) {
 		
 		try {
 			
-			logfile.log(Level.CONFIG, String.format(MSG_LOG_USER_COMMAND, userInput));
+			logfile.info(String.format(MSG_LOG_USER_COMMAND, userInput));
 			
 			String[] parsedCommand = parser.parseText(userInput);
 			
-			logfile.log(Level.INFO, String.format(MSG_LOG_PARSER , parsedCommandtoString(parsedCommand)));
+			logfile.info(String.format(MSG_LOG_PARSER , parsedCommandtoString(parsedCommand)));
 			
 			int commandGroupType = SystemHandler.getCommandGroupType(parsedCommand[0]);
 			
@@ -157,75 +135,59 @@ public class SystemHandler {
 			
 		} catch(ParseException e) {
 			displayProcessor.displayErrorToUI(e.getMessage());
+			logfile.warning(String.format(MSG_LOG_PARSER , e.getMessage()));
 		} catch(NumberFormatException e) {
 			displayProcessor.displayErrorToUI(MSG_ERR_ID_UNDEFINED);
+			logfile.warning(String.format(MSG_LOG_PARSER , e.getMessage()));
 		} catch(IllegalArgumentException e) {
 			displayProcessor.displayErrorToUI(e.getMessage());
+			logfile.warning(String.format(MSG_LOG_PARSER , e.getMessage()));
 		} catch(NoSuchElementException e) {
 			displayProcessor.displayErrorToUI(e.getMessage());
+			logfile.warning(String.format(MSG_LOG_PARSER , e.getMessage()));
 		} catch(IllegalStateException e) {
 			displayProcessor.displayErrorToUI(e.getMessage());
-		} 
+			logfile.warning(String.format(MSG_LOG_PARSER , e.getMessage()));
+		} catch(Exception e) {
+			logfile.severe(String.format(MSG_LOG_PARSER , e.getMessage()));
+		}
 		
 	}
 	
 	
-	/**
-	 * @param id
-	 * @return
-	 * @throws NoSuchElementException
-	 */
-	public Task requestTask(int id) throws NoSuchElementException {
+	public Task requestTaskInformationfromTM(int id) throws NoSuchElementException {
 		return myTaskList.getTaskFromTID(id);
 	}
 	
 	/**
-	 * @param fetchedTask
+	 * @param fetchedTask A strings array that follows the format of TM strictly.
+	 * Refer to Task Manager to find out the length and meaning of each string by checking the index constant.
 	 */
 	public void addTaskFromTemplate(String[] fetchedTask) {
 		
 		try {		
 			executeTaskManager(fetchedTask);
-		} catch (ParseException e) {
-			window.displayMsg(e.getMessage(), INDEX_EXECUTION_ERROR);
+		} catch (Exception e) {
+			displayProcessor.displayErrorToUI(e.getMessage());
+			logfile.warning(String.format(MSG_LOG_PARSER , e.getMessage()));
 		}
 	}
 	
-	/**
-	 * @param taskList
-	 * @return
-	 */
 	public boolean writeToFile(ArrayList<Task> taskList) {
 		externalStorage.writeTaskToFile(taskList);
 		return true;
 	}
 	
-	/**
-	 * @param shortcut
-	 * @return
-	 */
 	public boolean writeShortcutToFile(String[][] shortcut) {
 		externalStorage.writeShortcutToFile(shortcut);
 		return true;
 	}
 	
-	/**
-	 * @param templates
-	 * @param matchingName
-	 * @return
-	 */
 	public boolean writeTemplateToFile(ArrayList<Task> templates,ArrayList<String> matchingName) {
 		externalStorage.writeTemplateToFile(templates, matchingName);
 		return true;
 	}
 	
-	
-	
-	/**
-	 * @param commandType
-	 * @return
-	 * @throws IllegalArgumentException
-	 */
 	private static int getCommandGroupType(String commandType) throws IllegalArgumentException {
 		for(COMMAND_TYPE_TASK_MANAGER command : COMMAND_TYPE_TASK_MANAGER.values()) {
 			if(command.name().equals(commandType)) {
@@ -249,9 +211,9 @@ public class SystemHandler {
 	}
 	
 	
-	
 	/**
-	 * @param fileName
+	 * This method construct all the related classes required for the software
+	 * @param fileName File location
 	 */
 	private void initializeSystem(String fileName) {
 		
@@ -264,16 +226,11 @@ public class SystemHandler {
 		externalStorage = new FileStorage(fileName);
 		displayProcessor = new DisplayProcessor(window);
 		system = this;
-//		String[] cmd = {"resetShortcut",null,null};
-//		myShortcut.processShortcutCommand(cmd);
 		
 		readDataFromFile();
 		
 	}
 
-	/**
-	 * 
-	 */
 	private void readDataFromFile() {
 		try{
 			externalStorage.readTaskFromFile(myTaskList);
@@ -294,11 +251,6 @@ public class SystemHandler {
 		}
 	}
 	
-
-	/**
-	 * @param command
-	 * @return
-	 */
 	private String parsedCommandtoString(String[] command) {
 		String str = "";
 		
@@ -315,18 +267,17 @@ public class SystemHandler {
 		return str;
 	}
 
-	/**
-	 * @param parsedCommand		A parsed command received from parser 
-	 * @throws ParseException	The length of parsed command array is not the wanted length
-	 */
+	
 	private void validateParsedCommandLength(String[] parsedCommand, int type) {
 		switch(type) {
 			case INDEX_COMMAND_TASK_MANAGER:
 				assert(parsedCommand.length == LENGTH_COMMAND_TASK_MANAGER);
 				break;
+				
 			case INDEX_COMMAND_SHORTCUT:
 				assert(parsedCommand.length == LENGTH_COMMAND_SHORTCUT);
 				break;
+				
 			case INDEX_COMMAND_TEMPLATE:
 				assert(parsedCommand.length == LENGTH_COMMAND_TEMPLATE);
 				break;
@@ -334,11 +285,6 @@ public class SystemHandler {
 		
 	}
 	
-	/**
-	 * @param command	A parsed command received from parser
-	 * @return			An ArrayList of task objects that are affected by the command
-	 * @throws ParseException	The date format does not match the wanted format
-	 */
 	private ArrayList<Task> executeTaskManager(String[] command) 
 			throws ParseException {
 		ArrayList<Task> result = myTaskList.processTM(command);
@@ -350,14 +296,6 @@ public class SystemHandler {
 		return result;
 	}
 
-	
-	
-	/**
-	 * @param command
-	 * @return
-	 * @throws NoSuchElementException
-	 * @throws IllegalArgumentException
-	 */
 	private String[][] executeShortcutManager(String[] command) 
 			throws NoSuchElementException, IllegalArgumentException {
 		
@@ -367,11 +305,6 @@ public class SystemHandler {
 		return result;
 	}
 
-	
-	/**
-	 * @param command
-	 * @throws IllegalArgumentException
-	 */
 	private void executeCustomizer(String[] command) 
 			throws IllegalArgumentException {
 
@@ -384,7 +317,4 @@ public class SystemHandler {
 			
 	}
 
-	
-	
-	
 }

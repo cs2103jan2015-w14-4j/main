@@ -132,7 +132,7 @@ public class Template {
 	 * @return
 	 */
 	private ArrayList<Task> addTemplate(String[] command, ArrayList<Task> result) {
-		Task taskToBeAdded = system.requestTask(Integer.parseInt(command[1]));	
+		Task taskToBeAdded = system.requestTaskInformationfromTM(Integer.parseInt(command[1]));	
 		
 		if(taskToBeAdded == null) {
 			throw new NoSuchElementException(String.format(MSG_ERR_TASK_NUMBER_NOT_EXIST,command[1]));

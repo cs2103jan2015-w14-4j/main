@@ -1,7 +1,9 @@
 import java.util.ArrayList;
 
-
+//@author A0108385B
 public class DisplayProcessor {
+	private static final String[] COMMAND_GET_TEMPLATE = {"viewTemplate",null,null,null,null,null,null,null,null};
+	private static final String[] COMMAND_GET_TASK_LIST = {"viewTask",null,null,null,null,null,null,null,null};
 	
 	private static final String MSG_TASK_STATUS = "The task:\"%s\" has been marked as %s";
 	private static final String MSG_TASK_REDO = "The last task operation has been redone.";
@@ -19,16 +21,15 @@ public class DisplayProcessor {
 	private static final String MSG_TEMP_NO_TEMPLATE = "No templates found in Flexi Tracker";
 	private static final String MSG_TEMP_RESET = "Templates have been reset, add your templates now.";
 	
-
 	private static final String MSG_SHORTCUT_DELETED = "Keyword \"%s\" has been deleted.";
 	private static final String MSG_SHORTCUT_RESET = "All keywords have been reset to the list of defaults above.";
 	private static final String MSG_SHORTCUT_VIEW = "All keywords have been retrieved";
-
 	private static final String MSG_SHORTCUT_ADDED_NEW = "New keyword \"%s\" has been added. It will function the same as \"%s\"";
 	
 	private static final int INDEX_EXECUTION_ERROR = 0;
 	private static final int INDEX_EXECUTION_SUCCESS = 1;
 	private static final int INDEX_EXECUTION_CLASH = 2;
+	
 	private static final boolean EXECUTION_SUCCESS = true;
 	
 	
