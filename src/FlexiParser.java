@@ -22,9 +22,7 @@ import com.joestelmach.natty.Parser;
 
 public class FlexiParser {
 	
-    private static final String MSG_ERR_INTERNAL_PARSER_IMPLEMENTATION = "\"%s\" is not implemented in parser yet.";
-	private static final String MSG_ERR_UNRECOGNIZED_COMMAND = "\"%s\" is not a command recognized by Flexi Tracker. Type \"viewKeyword\" to see all the keywords.";
-	private static final String COMMAND_ADD = "addTask";
+    private static final String COMMAND_ADD = "addTask";
     private static final String COMMAND_VIEW = "viewTask";
     private static final String COMMAND_DELETE = "deleteTask";
     private static final String COMMAND_EDIT = "editTask";
@@ -64,6 +62,7 @@ public class FlexiParser {
     private static final String TEMPLATE_NAME_INDEX = "as";
     
     private static final String EMPTY_STRING = "";
+    private static final String DATE_FORMAT_STRING = "/";
    
     private static final String[] KEYWORDS_ONE_TASK = {"ID","by","from","to","on","at","det","as"};
     private static final String[] KEYWORDS_TWO_TASK = {"ID","taskname","datefrom","dateto","before","location","details","priority"};
@@ -72,23 +71,24 @@ public class FlexiParser {
     private static final String KEYWORD_SHORTCUT = "onto";
    
     private static final String[] commandArray = {"addTask","editTask","deleteTask","viewTask","Block","searchTask","undoTask","redoTask","addReminder","deleteReminder","addShortcut","deleteShortcut","viewShortcut","resetShortcut",
-    														"addTemplate","deleteTemplate","viewTemplate","resetTemplate","editTemplate","useTemplate","clearAttr","markTask"};
+    														"addTemplates","deleteTemplate","viewTemplate","resetTemplate","editTemplate","useTemplate","clearAttr","markTask"};
     
     private static String[] inputArray;
 	
     public static final int TASK_LENGTH = 9;
     public static final int SHORTCUT_LENGTH = 3;
     
-    private Shortcut shortcut;
     
-    public FlexiParser(Shortcut shortcut) {
+    public FlexiParser() {
 		
-    	this.shortcut = shortcut;
+    	
     	
 	}
 	
-    public String[] parseText(String userInput) throws IllegalArgumentException {
+    public String[] parseText(String userInput) {
     	
+    	try {
+		    
 			inputArray = userInput.split("\\s+");
 			flipDate(inputArray);
 			
@@ -97,12 +97,9 @@ public class FlexiParser {
 			
 			
 			String command = inputArray[COMMAND_TYPE_INDEX];
-			
+			//Shortcut shortcut = Shortcut.getShortcut();
 			//what does his one return
-			command = shortcut.keywordMatching(command);
-			if(command == null) {
-				throw new IllegalArgumentException(String.format(MSG_ERR_UNRECOGNIZED_COMMAND, inputArray[COMMAND_TYPE_INDEX]));
-			}
+			//command = myshortcut.keywordMatching(command);
 			String[] outputArray;
 			if(!command.contains("Shortcut")) {
 				
@@ -258,7 +255,7 @@ public class FlexiParser {
 				//search
 				case 5:
 					//WARNING: NO CHECKING VALIDITY
-					
+					flipDate(inputArray);
 			    	outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
 			    	
 			    	String searchTerm = EMPTY_STRING;
@@ -272,6 +269,20 @@ public class FlexiParser {
 			    	
 			    		searchTerm = extractText(inputArray,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
 			    	}
+			    	
+			    	/*if(searchTerm.contains(DATE_FORMAT_STRING)) {
+		    			
+		    			storeDateTime(outputArray,value,i);
+		    			
+		    		}
+		    		 
+		    		else {
+		    			if(value != null) {
+		    			 outputArray[TASK_NAME_INDEX] = value.trim();
+		    			}
+		    		 
+		    		}*/
+			    	
 			    	
 			    	outputArray[TASK_NAME_INDEX] = searchTerm;
 			   
@@ -515,14 +526,9 @@ public class FlexiParser {
 								
 								outputArray[indexOfTwo+TO_ADD_INDEX] = EMPTY_STRING;
 							}
-//							if(matchKeyword(inputArray[j], KEYWORDS_ONE_TASK[i]) || 
-//									matchKeyword(inputArray[j], KEYWORDS_TWO_TASK[i])) {
-//								outputArray[i + TO_ADD_INDEX] = EMPTY_STRING;
-//							}
 						
 						}
 					}
-					outputArray[TASK_PRIORITY_INDEX] = null;
 					break;
 				//markTask
 				case 21:
@@ -538,19 +544,20 @@ public class FlexiParser {
 			    		
 			    	}
 					break;
-				default:
-					throw new IllegalArgumentException(String.format(MSG_ERR_INTERNAL_PARSER_IMPLEMENTATION, command));
 			}
 			
 			inputArray = outputArray;
 			
+			
+		}catch(IllegalArgumentException ex) { 
+			
+			System.out.println(ERROR_EXCEPTION);
+				
+		}
     	return inputArray;
     	
     }
     
-    private boolean matchKeyword(String str1,String str2) {
-    	return str1.equalsIgnoreCase(str2);
-    }
     private int indexOfKey(String[] keyWords,String input,String matched) {
     	for(int i = 0; i < keyWords.length; i++) {
     		
@@ -705,8 +712,8 @@ public class FlexiParser {
 					//System.out.println(checkWord);
 
 					int index = i+1;
-					
-					if((checkWord.equals("det") || checkWord.equals("at") || checkWord.equals("details") || checkWord.equals("location")) && input[index].contains("\"")) {
+					//change2
+					if((checkWord.equals("by") || checkWord.equals("taskname") || checkWord.equals("det") || checkWord.equals("at") || checkWord.equals("details") || checkWord.equals("location")) && input[index].contains("\"")) {
 						
 						attribute = extractTextWithQuotes(input,index);
 					}
@@ -780,9 +787,7 @@ public class FlexiParser {
 				
 			ArrayList<Date> dateList = useNatty(value);
 			//System.out.println("The date is "+ dateList.get(0));
-			if(dateList.size() == 0) {
-				throw new IllegalArgumentException("Error in reading the date, please check if you are using the correct keyword such as 'from','to' and 'before'.\nIf you wish to use those words in other field, double quote the field eg. \"Meet before dinner\"");
-			}
+			
 			outputArr[j] = dateConverter(dateList.get(0)).trim();
 		}
 	}
@@ -868,10 +873,10 @@ public class FlexiParser {
     
     	
     	
-    	FlexiParser test1 = new FlexiParser(new Shortcut());
+    	FlexiParser test1 = new FlexiParser();
     	
     	
-    	String[] temp = test1.parseText("addTask wakawaks from 11/04/15");
+    	String[] temp = test1.parseText("searchTask 11/04/2014");
     
     	
     	
