@@ -8,7 +8,6 @@ import java.util.NoSuchElementException;
 //@author A0108385B
 public class Template {
 
-	private static final int LENGTH_TEMP_NAME = 0;
 	private static final String MSG_ERR_DUPLICATE_NAME = "Template name:\"%s\" has been used by another template.";
 	private static final String MSG_ERR_TASK_NUMBER_NOT_EXIST = "Task number: %s does not exist.";
 	private static final String MSG_INVALID_GET_FIELD = "No such field value to get from";
@@ -31,6 +30,9 @@ public class Template {
 	private static final int STARTING_INDEX_CHANGEABLE_FIELD = 2;
 	private static final int STRING_POSITION_INVALID_COMMAND = 39;
 
+	private static final int LENGTH_TEMP_NAME_MAXIMUM = 30;
+	private static final int LENGTH_TEMP_NAME_MINIMUM = 0;
+	
 	private static final int DUMMY_TID = 0;
 
 	private static final String COMMAND_ADD_TASK = "addTask";
@@ -148,13 +150,11 @@ public class Template {
 	 * @throws IllegalArgumentException		There exists a template with the same name 
 	 */
 	private ArrayList<Task> addTemplateToArray(String name, Task template) throws IllegalArgumentException {
-		if(noName(name)) {
+		
+		if(hasSameName(name)) {
 			throw new IllegalArgumentException(String.format(MSG_ERR_DUPLICATE_NAME,name));
-		}
-		else if(hasSameName(name)) {
+		} else if(validName(name)) {
 			throw new IllegalArgumentException(String.format(MSG_ERR_DUPLICATE_NAME,name));
-			
-			
 		} else {
 			clearTaskDateField(template);
 			insertTemplateIntoArray(name, template);
@@ -166,8 +166,8 @@ public class Template {
 		}
 	}
 	
-	private boolean noName(String name) {
-		return name.length() == LENGTH_TEMP_NAME;
+	private boolean validName(String name) {
+		return name.length() > LENGTH_TEMP_NAME_MINIMUM && name.length() < LENGTH_TEMP_NAME_MAXIMUM;
 	}
 
 	/**
