@@ -67,6 +67,16 @@ public class UserInterface extends DefaultTableCellRenderer {
 	public static final String MSG_SEPARATOR = "=========================================================";
 	public static final String MSG_EMPTY_TASKLIST = "There are no tasks to display.";
 	
+	private static final String HEADER_SC_1 = "System Action";
+	private static final String HEADER_SC_2 = "User-Defined Keywords";
+	
+	private static final String HEADER_TASK_1 = "Task";
+	private static final String HEADER_TASK_2 = "Task Title";
+	private static final String HEADER_TASK_3 = "Start Date";
+	private static final String HEADER_TASK_4 = "End Date";
+	private static final String HEADER_TASK_5 = "Location";
+	private static final String HEADER_TASK_6 = "Remarks";
+	private static final String HEADER_TASK_7 = "Status";
 	//setting values for column widths in percentage
 	// column widths for task table
     private static final double taskID = 5, 
@@ -111,7 +121,7 @@ public class UserInterface extends DefaultTableCellRenderer {
     
     private static final String EMPTY = "empty";
     private static final String OVERDUE  = "Overdue";
-    private static final String[] EMPTYROW = {EMPTY};
+    private static final String[] EMPTYROW = {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY};
    
 //    private static final String[] SYS_KEYWORDS = {	"addTask", "editTask","viewTask","deleteTask", 
 //  		"clearAttr", "searchTask", "undoTask", "redoTask", "markTask",
@@ -159,12 +169,9 @@ public class UserInterface extends DefaultTableCellRenderer {
 			}
 		}else{
 			for (int j = 0 ; j < affectedTask.size(); j++){
-					outputDataString.add(affectedTask.get(j).toStringArray());
-					outputDataString.add(EMPTYROW);
-					outputDataString.add(EMPTYROW);
-					
-					
+					outputDataString.add(affectedTask.get(j).toStringArray());					
 			}
+			outputDataString.add(EMPTYROW);
 			for (int k = 0 ; k < fullListTask.size(); k++){
 				String[] strArray = fullListTask.get(k).toStringArray();
 				if (!isAlreadyAdded(strArray, outputDataString)){
@@ -451,13 +458,13 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 	private JScrollPane createTaskTable(ArrayList<String[]> outputArrayString) {
 		ArrayList<String> columnNamesTaskTable = new ArrayList<String>();
-		columnNamesTaskTable.add("ID");
-		columnNamesTaskTable.add("Task Name");
-		columnNamesTaskTable.add("Date From");
-		columnNamesTaskTable.add("Date To");
-		columnNamesTaskTable.add("Location");
-		columnNamesTaskTable.add("Remarks");
-		columnNamesTaskTable.add("Status");
+		columnNamesTaskTable.add(HEADER_TASK_1);
+		columnNamesTaskTable.add(HEADER_TASK_2);
+		columnNamesTaskTable.add(HEADER_TASK_3);
+		columnNamesTaskTable.add(HEADER_TASK_4);
+		columnNamesTaskTable.add(HEADER_TASK_5);
+		columnNamesTaskTable.add(HEADER_TASK_6);
+		columnNamesTaskTable.add(HEADER_TASK_7);
 		
 		model = new TaskTableModel(outputArrayString, columnNamesTaskTable, String[].class );
 		taskTable = new JTable (model)
@@ -470,7 +477,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 					c.setBackground(row % 2 == 0 ? getBackground() : TASK_BG);
 				}
 				
-				if ((model.getValueAt(row,getColumnCount()-1)).equals(OVERDUE)){
+				if (model.getRowCount() > 0 &&(model.getValueAt(row,getColumnCount()-1)).equals(OVERDUE)){
 					c.setBackground(TASK_OVERDUE);
 				}
 				
@@ -511,8 +518,8 @@ public class UserInterface extends DefaultTableCellRenderer {
 	
 	private JScrollPane createShortcutTable(ArrayList<String[]> shortcutArrayString){
 		ArrayList<String>columnNamesST = new ArrayList<String>();
-		columnNamesST.add("System Default Keyword");
-		columnNamesST.add("User-Defined Keywords");
+		columnNamesST.add(HEADER_SC_1);
+		columnNamesST.add(HEADER_SC_2);
 		
 		model = new TaskTableModel(shortcutArrayString, columnNamesST, String[].class );
 		shortcutTable = new JTable (model){
