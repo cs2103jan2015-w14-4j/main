@@ -14,7 +14,6 @@ public class TaskTableModel extends AbstractTableModel {
 	/**
 	 * 
 	 */
-	private static ArrayList<Task> taskArray;
 	private static ArrayList<String[]>taskArrayString;
 	protected ArrayList<String> columnNames;
 	protected Class[] columnClasses;
@@ -144,8 +143,6 @@ public class TaskTableModel extends AbstractTableModel {
 	{
 		Boolean isEditable = null;
 
-		//  Check is column editability has been set
-
 		if (column < isColumnEditable.length)
 			isEditable = isColumnEditable[column];
 
@@ -194,13 +191,6 @@ public class TaskTableModel extends AbstractTableModel {
 	public void insertRows(int row, ArrayList<String[]> rowList)
 	{	
 		taskArrayString.addAll(row, rowList);
-	/*	for (int i = 0; i < getRowCount(); i++){
-			int colour  = i%2;
-			System.out.println("colour = " + colour );
-			setRowColour(i, rowColours.get(colour));
-		}
-		*/
-		//setRowColour(row, Color.GRAY);
 		fireTableRowsInserted(row, row + rowList.size() - 1);
 	}
 

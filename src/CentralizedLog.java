@@ -22,11 +22,18 @@ public class CentralizedLog {
 	 * @return	log file that is used among the system
 	 */
 	public static CentralizedLog getLogger() {
-		if(centralizedLog == null) {
+		if(loggerNotCreated()) {
 			centralizedLog = new CentralizedLog();
 		}
 		
 		return centralizedLog;
+	}
+
+	/**
+	 * @return	True if centralized log is not created
+	 */
+	private static boolean loggerNotCreated() {
+		return centralizedLog == null;
 	}
 	
 	
@@ -49,32 +56,62 @@ public class CentralizedLog {
 		return logfile;
 	}
 	
+	/**
+	 * This method changes the level of severity to be logged for debugging purposes.
+	 * @param newLvl	Level to be set to
+	 */
 	public void setLevel(Level newLvl) {
 		logfile.setLevel(newLvl);
 	}
 	
-	public void log(Level level, String msg) {
-		logfile.log(level, msg);
-	}
 	
+	
+	/**
+	 * This method logs the message under the severity level Severe
+	 * @param msg Message to be logged
+	 */
 	public void severe(String msg) {
 		logfile.severe(msg);
 	}
+	/**
+	 * This method logs the message under the severity level Info
+	 * @param msg Message to be logged
+	 */
 	public void info(String msg) {
 		logfile.info(msg);
 	}
+	/**
+	 * This method logs the message under the severity level Warning
+	 * @param msg Message to be logged
+	 */ 
 	public void warning(String msg) {
 		logfile.warning(msg);
 	}
+	/**
+	 * This method logs the message under the severity level Config
+	 * @param msg Message to be logged
+	 */
 	public void config(String msg) {
 		logfile.config(msg);
 	}
+	/**
+	 * This method logs the message under the severity level Fine
+	 * @param msg Message to be logged
+	 */
 	public void fine(String msg) {
 		logfile.fine(msg);
 	}
+	/**
+	 * This method logs the message under the severity level Finer
+	 * @param msg Message to be logged
+	 */
 	public void finer(String msg) {
 		logfile.finer(msg);
 	}
+	/**
+	 * This method logs the message under the severity level Finest
+	 * @param msg Message to be logged
+	 */
 	public void finest(String msg) {
 		logfile.finest(msg);
 	}

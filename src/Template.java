@@ -3,18 +3,18 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 //@author A0108385B
 public class Template {
 
+	private static final String MSG_ERR_INVALID_TEMP_LENGTH = "Invalid length for template's name: \"%s\"";
 	private static final String MSG_ERR_DUPLICATE_NAME = "Template name:\"%s\" has been used by another template.";
 	private static final String MSG_ERR_TASK_NUMBER_NOT_EXIST = "Task number: %s does not exist.";
-	private static final String MSG_INVALID_GET_FIELD = "No such field value to get from";
+	private static final String MSG_INVALID_GET_FIELD = "No such field value to get from.";
 	private static final String MSG_ERR_NO_SUCH_COMMAND = "No such command in Template Manager: %1$s";
-	public static final String MSG_ERR_NO_SUCH_TEMPLATE = "No such template saved in the system";
+	public static final String MSG_ERR_NO_SUCH_TEMPLATE = "No such template exists.";
+	private static final String MSG_ERR_TEMP_EXIST = "You have a template that is exactly the same.";
 
 
 	private static final int INDEX_NOT_FOUND = -1;
@@ -32,6 +32,9 @@ public class Template {
 	private static final int STARTING_INDEX_CHANGEABLE_FIELD = 2;
 	private static final int STRING_POSITION_INVALID_COMMAND = 39;
 
+	private static final int LENGTH_TEMP_NAME_MAXIMUM = 30;
+	private static final int LENGTH_TEMP_NAME_MINIMUM = 0;
+	
 	private static final int DUMMY_TID = 0;
 
 	private static final String COMMAND_ADD_TASK = "addTask";
@@ -49,28 +52,26 @@ public class Template {
 		tempNames = new ArrayList<String>();
 	}
 	
-	
-	public Template(boolean test) {
-		templates = new ArrayList<Task>();
-		tempNames = new ArrayList<String>();
-	}
-	
-
 	/**
-	 * @param system
+	 * It set the system path so that it can call the system Handler that governs it to 
+	 * fetch data from other components when required
+	 * @param system	The system handler that governs this template manager
 	 */
 	public void setSystemPath(SystemHandler system) {
 		this.system = system;
 	}
 	
 	
+	
 	/**
-	 * @param command
-	 * @return
-	 * @throws IllegalArgumentException
+	 * @param command	The string array of command to be executed
+	 * @return			ArrayList of Tasks that are demanded by command
+	 * @throws IllegalArgumentException		Invalid instruction has been demanded or command violates 
+	 * 										the constraints set by template manager
+	 * @throws NoSuchElementException		Demanded template from command does not exist
 	 */
 	public ArrayList<Task> processCustomizingCommand(String[] command) 
-			throws IllegalArgumentException {
+			throws IllegalArgumentException, NoSuchElementException {
 		
 		
 		COMMAND_TYPE_TEMPLATE commandType = getCommandType(command[0]);
@@ -79,7 +80,7 @@ public class Template {
 		assertValidity(command, commandType);
 		switch(commandType) {
 			case addTemplate:
-				result = addTemplate(command, result);
+				result = addTemplate(command);
 				writeOutToFile();
 				break;
 				
@@ -118,7 +119,7 @@ public class Template {
 	}
 
 	/**
-	 * @param command
+	 * @param command	The string array of command to be executed
 	 */
 	private void initTemplate(String[] command) {
 
@@ -127,13 +128,13 @@ public class Template {
 	}
 
 	/**
-	 * @param command
-	 * @param result
+	 * @param command	The string array of command to be executed
+	 * @param result	
 	 * @return
 	 */
-	private ArrayList<Task> addTemplate(String[] command, ArrayList<Task> result) {
+	private ArrayList<Task> addTemplate(String[] command) {
 		Task taskToBeAdded = system.requestTaskInformationfromTM(Integer.parseInt(command[1]));	
-		
+		ArrayList<Task> result = new ArrayList<Task>();
 		if(taskToBeAdded == null) {
 			throw new NoSuchElementException(String.format(MSG_ERR_TASK_NUMBER_NOT_EXIST,command[1]));
 		} else {
@@ -143,32 +144,51 @@ public class Template {
 		return result;
 	}
 	
+	
 	/**
-	 * @param name
-	 * @param template
-	 * @return
+	 * @param name							Name of the template
+	 * @param template						Template to be created
+	 * @return								ArrayList of Task with a newly created template Task
+	 * @throws IllegalArgumentException		There exists a template with the same name 
 	 */
-	private ArrayList<Task> addTemplateToArray(String name, Task template) {
-		boolean sameName = hasSameName(name);
-		if(!sameName) {
-			
+	private ArrayList<Task> addTemplateToArray(String name, Task template) throws IllegalArgumentException {
+		
+		if(hasSameName(name)) {
+			throw new IllegalArgumentException(String.format(MSG_ERR_DUPLICATE_NAME,name));
+		} else if(!validNameLength(name)) {
+			throw new IllegalArgumentException(String.format(MSG_ERR_INVALID_TEMP_LENGTH,name));
+		} else if(hasSameTemplate(template)) {
+			throw new IllegalArgumentException(String.format(MSG_ERR_TEMP_EXIST,name));
+		} else {
 			clearTaskDateField(template);
 			insertTemplateIntoArray(name, template);
 			
 			ArrayList<Task> result = new ArrayList<Task>();
 			result.add(template.clone());
 			return result;
-			
-		} else {
-			//Wrong type 
-			throw new NoSuchElementException(String.format(MSG_ERR_DUPLICATE_NAME,name));
 		
 		}
 	}
 	
+	private boolean hasSameTemplate(Task template) {
+		clearTaskDateField(template);
+		for(int i = 0; i < templates.size(); ++i) {
+			if(templates.get(i).isEqual(template)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean validNameLength(String name) {
+		return name.length() > LENGTH_TEMP_NAME_MINIMUM && name.length() < LENGTH_TEMP_NAME_MAXIMUM;
+	}
+
 	/**
-	 * @param templates
-	 * @return
+	 * This method construct an ArrayList of names that match the templates given
+	 * @param templates		ArrayList of template
+	 * @return				ArrayList of names correspond to the templates
+	 * 
 	 */
 	public ArrayList<String> getTemplateNames(ArrayList<Task> templates) {
 		ArrayList<String> result = new ArrayList<String>();
@@ -181,10 +201,12 @@ public class Template {
 	}
 
 	/**
-	 * @param task
-	 * @return
+	 * This method returns the name of the template
+	 * @param task							A Template object
+	 * @return								String of name that matches the template object
+	 * @throws NoSuchElementException		There is no such template in templates list
 	 */
-	private String getMatchingName(Task task) {
+	private String getMatchingName(Task task) throws NoSuchElementException {
 		for(int i = 0; i < templates.size(); ++i) {
 			
 			if(task.isEqual(templates.get(i))) {
@@ -193,12 +215,12 @@ public class Template {
 			
 		}
 		
-		return null;
+		throw new NoSuchElementException(MSG_ERR_NO_SUCH_TEMPLATE);
 	}
 
 	/**
-	 * @param command
-	 * @return
+	 * @param command	The string array of command to be executed
+	 * @return			Task object created by following the command parameter.
 	 */
 	private Task createNewTemplate(String[] command) {
 		return new Task(DUMMY_TID,command[INDEX_TASK_NAME], 
@@ -209,12 +231,21 @@ public class Template {
 				Integer.parseInt(command[INDEX_PRIORITY]));
 	}
 	
+	
+	/**
+	 * 	This method calls system handler to initiate write out to storage. 
+	 *  It is called when there are changes made to templates' data
+	 */
 	private void writeOutToFile() {
 	
 		system.writeTemplateToFile(templates, tempNames);
 		
 	}
 
+	/**
+	 * @param name		Template name 
+	 * @return			Index of the template stored in ArrayList, -1 if not found.
+	 */
 	private int getTemplateIndex(String name) {
 		for(int i = 0; i < tempNames.size(); ++i) {
 			
@@ -225,6 +256,10 @@ public class Template {
 		return INDEX_NOT_FOUND;
 	}
 	
+	/**
+	 * @param name	Template name 
+	 * @return		Template that matches the name, null if not found.
+	 */
 	private Task getTemplate(String name) {
 		int index = getTemplateIndex(name);
 		
@@ -235,7 +270,13 @@ public class Template {
 		}
 	}
 
-	private ArrayList<Task> editTemplate(String[] command) {
+	
+	/**
+	 * @param command 					The string array of command to be executed
+	 * @return							ArrayList of template with the edited template in the list. 
+	 * @throws NoSuchElementException	The template to be edited does not exist in template manager
+	 */
+	private ArrayList<Task> editTemplate(String[] command) throws NoSuchElementException {
 		Task task = getTemplate(command[1]);
 		ArrayList<Task> result = new ArrayList<Task>();
 		
@@ -254,9 +295,9 @@ public class Template {
 	}
 
 	/**
-	 * @param command
-	 * @param task
-	 * @param index
+	 * @param command		The string array of command to be executed
+	 * @param task			Template to be edited
+	 * @param index			Index of field to be edited in the template
 	 */
 	private void editRequiredField(String command, Task task, int index) {
 		switch(index) {
@@ -294,15 +335,19 @@ public class Template {
 	}
 
 	/**
-	 * @param command
-	 * @param index
-	 * @return
+	 * This method checks if the command demands the field to be edited.
+	 * @param command		The string array of command to be executed
+	 * @param index			Index of field to be checked
+	 * @return				True if there exist an instruction in the field
 	 */
 	private boolean isFieldToBeEdited(String[] command, int index) {
 		return command[index] != null;
 	}
 		
 
+	/**
+	 * MA CONG
+	 */
 	private Date getDate(String date) {
 		try {
 			DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
@@ -315,8 +360,9 @@ public class Template {
 	}
 
 	/**
-	 * @param command
-	 * @param cmdType
+	 * This method assert the correct length of command to be executed.
+	 * @param command		The string array of command to be executed
+	 * @param cmdType		Command Type to be executed by Template.
 	 */
 	private void assertValidity(String[] command, COMMAND_TYPE_TEMPLATE cmdType) {
 		assert(command.length == LENGTH_COMMAND_TEMPLATE);
@@ -341,11 +387,11 @@ public class Template {
 	}
 	
 	/**
-	 * @param command
-	 * @return
-	 * @throws IllegalArgumentException
+	 * @param command	The string array of command to be executed
+	 * @return			The command type to be executed
+	 * @throws IllegalArgumentException The command type is not recognized by Template Manager
 	 */
-	private COMMAND_TYPE_TEMPLATE getCommandType(String command) throws IllegalArgumentException {
+	public static COMMAND_TYPE_TEMPLATE getCommandType(String command) throws IllegalArgumentException {
 		try{
         	return COMMAND_TYPE_TEMPLATE.valueOf(command);
         } catch (IllegalArgumentException e) {
@@ -355,12 +401,12 @@ public class Template {
 	}
 	
 	/**
-	 * @param name
-	 * @return
-	 * @throws NoSuchElementException
+	 * @param tempName					Name of the template to be deleted
+	 * @return							The deleted template in an ArrayList
+	 * @throws NoSuchElementException	The template to be removed is not found in templates list
 	 */
-	private ArrayList<Task> removeTemplate(String name) throws NoSuchElementException {
-		Task deletedTask = removeFromArray(name);
+	private ArrayList<Task> removeTemplate(String tempName) throws NoSuchElementException {
+		Task deletedTask = removeFromArray(tempName);
 		
 		if(deletedTask == null) {
 			throw new NoSuchElementException(MSG_ERR_NO_SUCH_TEMPLATE);
@@ -372,11 +418,11 @@ public class Template {
 	}
 
 	/**
-	 * @param name
-	 * @return
+	 * @param tempName		Name of the template to be deleted
+	 * @return				Deleted template, null if template does not exist
 	 */
-	private Task removeFromArray(String name) {
-		int index = getTemplateIndex(name);
+	private Task removeFromArray(String tempName) {
+		int index = getTemplateIndex(tempName);
 		if(index == INDEX_NOT_FOUND) {
 			return null;
 		} else {
@@ -386,9 +432,11 @@ public class Template {
 	}
 	
 	/**
-	 * @return
+	 * @return		Return the templates list in ArrayList
 	 */
 	private ArrayList<Task> viewTemplates() {
+		System.out.println(templates);
+		System.out.println(tempNames);
 		return templates;
 	}
 	
@@ -396,7 +444,8 @@ public class Template {
 	
 	
 	/**
-	 * @param template
+	 * This method clears all the date related fields in template before saving the template.
+	 * @param template	Template to be added into templates list
 	 */
 	private void clearTaskDateField(Task template) {
 		template.setDateFrom(null);
@@ -405,7 +454,7 @@ public class Template {
 	}
 	
 	/**
-	 * 
+	 * 	This method clear all the templates.
 	 */
 	private void resetTemplates() {
 		templates.clear();
@@ -413,8 +462,9 @@ public class Template {
 	}
 	
 	/**
-	 * @param name
-	 * @param template
+	 * This method adds the template as well as the name corresponds to the template into the list.
+	 * @param name		Name of the template
+	 * @param template	Template to be added
 	 */
 	private void insertTemplateIntoArray(String name, Task template) {
 		templates.add(template);
@@ -422,8 +472,8 @@ public class Template {
 	}
 	
 	/**
-	 * @param name
-	 * @return
+	 * @param name	Name of the template
+	 * @return	True if there is a template with same name
 	 */
 	private boolean hasSameName(String name) {
 		return getTemplateIndex(name) != INDEX_NOT_FOUND;
@@ -431,9 +481,9 @@ public class Template {
 	
 	
 	/**
-	 * @param name
-	 * @return
-	 * @throws NoSuchElementException
+	 * @param name						Name of the template to be fetched	
+	 * @return							The template that corresponds to the name
+	 * @throws NoSuchElementException	There is no templates called by the name given
 	 */
 	private Task fetchTemplate(String name) throws NoSuchElementException {
 		int index = getTemplateIndex(name);
@@ -449,11 +499,11 @@ public class Template {
 	}
 	
 	/**
-	 * @param task
-	 * @param index
-	 * @param change
-	 * @return
-	 * @throws IllegalArgumentException
+	 * @param task							Template with the information to be extracted
+	 * @param index							Index of information to be extracted
+	 * @param change						Changes demanded by user to overwrite the template
+	 * @return								Final updates on the field of task to be created from template
+	 * @throws IllegalArgumentException		Illegal field index
 	 */
 	private String getFieldValue(Task task, int index, String change) throws IllegalArgumentException {
 		if(change == null) {
@@ -480,11 +530,11 @@ public class Template {
 		}
 	}
 	
-	/**
-	 * @param task
-	 * @param changes
-	 * @return
-	 * @throws IllegalArgumentException
+	/**	
+	 * @param task							Task to be added into Tasks List
+	 * @param changes						Changes demanded by user to overwrite the template
+	 * @return								String array that follows task manager command format
+	 * @throws IllegalArgumentException		Invalid changes is demanded by user
 	 */
 	private String[] convertTasktoTaskManagerInput(Task task, String[] changes) 
 			throws IllegalArgumentException {
@@ -501,8 +551,7 @@ public class Template {
 	}
 	
 	/**
-	 * @param dateString
-	 * @return
+	 * MA CONG
 	 */
 	private Date convertToDateObject(String dateString) {
 		try {
