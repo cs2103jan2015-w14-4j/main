@@ -154,21 +154,21 @@ public class SystemHandler {
 			
 		} catch(ParseException e) {
 			displayProcessor.displayErrorToUI(e.getMessage());
-			logfile.warning(String.format(MSG_LOG_PARSER , e.getMessage()));
+			logfile.warning(String.format(e.getMessage()));
 		} catch(NumberFormatException e) {
 			displayProcessor.displayErrorToUI(MSG_ERR_ID_UNDEFINED);
-			logfile.warning(String.format(MSG_LOG_PARSER , e.getMessage()));
+			logfile.warning(MSG_ERR_ID_UNDEFINED);
 		} catch(IllegalArgumentException e) {
 			displayProcessor.displayErrorToUI(e.getMessage());
-			logfile.warning(String.format(MSG_LOG_PARSER , e.getMessage()));
+			logfile.warning(e.getMessage());
 		} catch(NoSuchElementException e) {
 			displayProcessor.displayErrorToUI(e.getMessage());
-			logfile.warning(String.format(MSG_LOG_PARSER , e.getMessage()));
+			logfile.warning(e.getMessage());
 		} catch(IllegalStateException e) {
 			displayProcessor.displayErrorToUI(e.getMessage());
-			logfile.warning(String.format(MSG_LOG_PARSER , e.getMessage()));
+			logfile.warning(e.getMessage());
 		} catch(Exception e) {
-			logfile.severe(String.format(MSG_LOG_PARSER , e.getMessage()));
+			logfile.severe(e.getMessage());
 		}
 		
 	}
@@ -389,7 +389,7 @@ public class SystemHandler {
 		ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
 		if(result != null) {
 			ArrayList<String> tempNames = myTemplates.getTemplateNames(result);		
-			window.displayTaskTable(result, null, INDEX_EXECUTION_SUCCESS);
+			//window.displayTemplateTable(result, null, INDEX_EXECUTION_SUCCESS);
 			displayProcessor.displayTemplateResult(command, tempNames, result);
 		}
 			

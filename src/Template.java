@@ -8,11 +8,13 @@ import java.util.NoSuchElementException;
 //@author A0108385B
 public class Template {
 
+	private static final String MSG_ERR_INVALID_TEMP_LENGTH = "Invalid length for template's name: \"%s\"";
 	private static final String MSG_ERR_DUPLICATE_NAME = "Template name:\"%s\" has been used by another template.";
 	private static final String MSG_ERR_TASK_NUMBER_NOT_EXIST = "Task number: %s does not exist.";
 	private static final String MSG_INVALID_GET_FIELD = "No such field value to get from.";
 	private static final String MSG_ERR_NO_SUCH_COMMAND = "No such command in Template Manager: %1$s";
 	public static final String MSG_ERR_NO_SUCH_TEMPLATE = "No such template exists.";
+	private static final String MSG_ERR_TEMP_EXIST = "You have a template that is exactly the same.";
 
 
 	private static final int INDEX_NOT_FOUND = -1;
@@ -153,8 +155,10 @@ public class Template {
 		
 		if(hasSameName(name)) {
 			throw new IllegalArgumentException(String.format(MSG_ERR_DUPLICATE_NAME,name));
-		} else if(validNameLength(name)) {
-			throw new IllegalArgumentException(String.format(MSG_ERR_DUPLICATE_NAME,name));
+		} else if(!validNameLength(name)) {
+			throw new IllegalArgumentException(String.format(MSG_ERR_INVALID_TEMP_LENGTH,name));
+		} else if(hasSameTemplate(template)) {
+			throw new IllegalArgumentException(String.format(MSG_ERR_TEMP_EXIST,name));
 		} else {
 			clearTaskDateField(template);
 			insertTemplateIntoArray(name, template);
@@ -166,6 +170,16 @@ public class Template {
 		}
 	}
 	
+	private boolean hasSameTemplate(Task template) {
+		clearTaskDateField(template);
+		for(int i = 0; i < templates.size(); ++i) {
+			if(templates.get(i).isEqual(template)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private boolean validNameLength(String name) {
 		return name.length() > LENGTH_TEMP_NAME_MINIMUM && name.length() < LENGTH_TEMP_NAME_MAXIMUM;
 	}
@@ -421,6 +435,8 @@ public class Template {
 	 * @return		Return the templates list in ArrayList
 	 */
 	private ArrayList<Task> viewTemplates() {
+		System.out.println(templates);
+		System.out.println(tempNames);
 		return templates;
 	}
 	
