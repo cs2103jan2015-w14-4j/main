@@ -21,8 +21,10 @@ import com.joestelmach.natty.Parser;
 //add escape if n
 
 public class FlexiParser {
-	
-    private static final String COMMAND_ADD = "addTask";
+	private static final String MSG_ERR_INTERNAL_PARSER_IMPLEMENTATION = "\"%s\" is not implemented in parser yet.";
+	private static final String MSG_ERR_UNRECOGNIZED_COMMAND = "\"%s\" is not a command recognized by Flexi Tracker. Type \"viewKeyword\" to see all the keywords.";
+	private static final String COMMAND_ADD = "addTask";
+    
     private static final String COMMAND_VIEW = "viewTask";
     private static final String COMMAND_DELETE = "deleteTask";
     private static final String COMMAND_EDIT = "editTask";
@@ -71,35 +73,37 @@ public class FlexiParser {
     private static final String KEYWORD_SHORTCUT = "onto";
    
     private static final String[] commandArray = {"addTask","editTask","deleteTask","viewTask","Block","searchTask","undoTask","redoTask","addReminder","deleteReminder","addShortcut","deleteShortcut","viewShortcut","resetShortcut",
-    														"addTemplates","deleteTemplate","viewTemplate","resetTemplate","editTemplate","useTemplate","clearAttr","markTask"};
+    														"addTemplate","deleteTemplate","viewTemplate","resetTemplate","editTemplate","useTemplate","clearAttr","markTask"};
     
     private static String[] inputArray;
 	
     public static final int TASK_LENGTH = 9;
     public static final int SHORTCUT_LENGTH = 3;
     
+    private Shortcut shortcut;
     
-    public FlexiParser() {
+    public FlexiParser(Shortcut shortcut) {
 		
-    	
+    	this.shortcut = shortcut;
     	
 	}
 	
-    public String[] parseText(String userInput) {
+    public String[] parseText(String userInput) throws IllegalArgumentException {
     	
-    	try {
+    	
 		    
 			inputArray = userInput.split("\\s+");
 			flipDate(inputArray);
 			
 			
-			
-			
-			
 			String command = inputArray[COMMAND_TYPE_INDEX];
-			//Shortcut shortcut = Shortcut.getShortcut();
-			//what does his one return
-			//command = myshortcut.keywordMatching(command);
+			System.out.println("|"+command+"|");
+			
+			command = shortcut.keywordMatching(command);
+			System.out.println("|"+command+"|");
+			if(command == null) {
+				throw new IllegalArgumentException(String.format(MSG_ERR_UNRECOGNIZED_COMMAND, inputArray[COMMAND_TYPE_INDEX]));
+			}
 			String[] outputArray;
 			if(!command.contains("Shortcut")) {
 				
@@ -544,16 +548,13 @@ public class FlexiParser {
 			    		
 			    	}
 					break;
+				default:
+					throw new IllegalArgumentException(String.format(MSG_ERR_INTERNAL_PARSER_IMPLEMENTATION, command));
 			}
 			
 			inputArray = outputArray;
 			
-			
-		}catch(IllegalArgumentException ex) { 
-			
-			System.out.println(ERROR_EXCEPTION);
-				
-		}
+		
     	return inputArray;
     	
     }
@@ -872,21 +873,20 @@ public class FlexiParser {
     public static void main(String[] args) {
     
     	
+    	Shortcut sc = new Shortcut();
+    	FlexiParser test1 = new FlexiParser(sc);
     	
-    	FlexiParser test1 = new FlexiParser();
     	
+    String[] temp = test1.parseText("addTask ss");
+    
+    for(int i=0;i<temp.length;i++) {
+		
+		System.out.print(temp[i]+"|");
+		
+	}
     	
-    	String[] temp = test1.parseText("searchTask 11/04/2014");
     
     	
-    	
-    
-    		
-    	for(int i=0;i<temp.length;i++) {
-    		
-    		System.out.print(temp[i]+"|");
-    		
-    	}
     
     }
 }
