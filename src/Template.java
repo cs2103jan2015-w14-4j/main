@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 //@author A0108385B
 public class Template {
 
+	private static final int LENGTH_TEMP_NAME = 0;
 	private static final String MSG_ERR_DUPLICATE_NAME = "Template name:\"%s\" has been used by another template.";
 	private static final String MSG_ERR_TASK_NUMBER_NOT_EXIST = "Task number: %s does not exist.";
 	private static final String MSG_INVALID_GET_FIELD = "No such field value to get from";
@@ -147,22 +148,28 @@ public class Template {
 	 * @throws IllegalArgumentException		There exists a template with the same name 
 	 */
 	private ArrayList<Task> addTemplateToArray(String name, Task template) throws IllegalArgumentException {
-		boolean sameName = hasSameName(name);
-		if(!sameName) {
+		if(noName(name)) {
+			throw new IllegalArgumentException(String.format(MSG_ERR_DUPLICATE_NAME,name));
+		}
+		else if(hasSameName(name)) {
+			throw new IllegalArgumentException(String.format(MSG_ERR_DUPLICATE_NAME,name));
 			
+			
+		} else {
 			clearTaskDateField(template);
 			insertTemplateIntoArray(name, template);
 			
 			ArrayList<Task> result = new ArrayList<Task>();
 			result.add(template.clone());
 			return result;
-			
-		} else {
-			throw new IllegalArgumentException(String.format(MSG_ERR_DUPLICATE_NAME,name));
 		
 		}
 	}
 	
+	private boolean noName(String name) {
+		return name.length() == LENGTH_TEMP_NAME;
+	}
+
 	/**
 	 * This method construct an ArrayList of names that match the templates given
 	 * @param templates		ArrayList of template
