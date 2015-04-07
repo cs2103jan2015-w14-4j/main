@@ -29,19 +29,19 @@ public class TaskManager implements TaskManagerInterface {
     public static final int FILTER_TYPE = 8;
 
 
-    private static final String MSG_ERR_NO_SUCH_ID = "ID does not exist";
-    private static final String MSG_ERR_NO_SUCH_COMMAND = "System does not recognize this command";
-    private static final String MSG_ERR_LENGTH = "%s has maximum length of 30";
-    private static final String MSG_ERR_WRONG_DATE_NUMBER = "Wrong dates entered";
-    private static final String MSG_ERR_WRONG_DATE_DURATION = "Start must be before end";
-    private static final String MSG_ERR_EMPTY_TASK_NAME = "Task name cannot be empty";
-    private static final String MSG_ERR_UNDO = "No operation to undo";
-    private static final String MSG_ERR_REDO = "No operation to redo";
-    private static final String MSG_ERR_SEARCH = "Search cannot be empty";
-    private static final String MSG_ERR_NO_SUCH_STATUS = "System does not recognize this status";
-    private static final String MSG_ERR_INVALID_CLEAR = "System cannot clear this";
-    private static final String MSG_ERR_NO_SUCH_FILTER = "System does not recognize this filter option";
-    private static final String MSG_ERR_NO_SUCH_ARRANGE = "System cannot arrange like this";
+    private static final String MSG_ERR_NO_SUCH_ID = "The Task ID does not exist";
+    private static final String MSG_ERR_NO_SUCH_COMMAND = "Flexi Tracker does not recognize this command.";
+    private static final String MSG_ERR_LENGTH = "%s allows a maximum length of 30.";
+    private static final String MSG_ERR_WRONG_DATE_NUMBER = "The date entered is invalid.";
+    private static final String MSG_ERR_WRONG_DATE_DURATION = "The duration entered is invalid. Start Date must be before End Date";
+    private static final String MSG_ERR_EMPTY_TASK_NAME = "Task name cannot be empty.";
+    private static final String MSG_ERR_UNDO = "There is no operation to undo.";
+    private static final String MSG_ERR_REDO = "There is no operation to redo.";
+    private static final String MSG_ERR_SEARCH = "Search query cannot be empty.";
+    private static final String MSG_ERR_NO_SUCH_STATUS = "Flexi Tracker does not recognize this status.";
+    private static final String MSG_ERR_INVALID_CLEAR = "The clear command was invalid. Nothing has been cleared.";
+    private static final String MSG_ERR_NO_SUCH_FILTER = "Tasks cannot be filtered in the requested manner.";
+    private static final String MSG_ERR_NO_SUCH_ARRANGE = "The tasks cannot be sorted in this order.";
 
 
     private static final int URGENT = 1;

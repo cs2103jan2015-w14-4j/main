@@ -10,21 +10,21 @@ public class DisplayProcessor {
 	private static final String MSG_TASK_SEARCH = " %s task(s) have been found.";
 	private static final String MSG_TASK_UNDO = "The last task operation has been undone.";
 	private static final String MSG_TASK_DELETE = "The task:\"%s\" has been deleted.";
-	private static final String MSG_TASK_CLASH_TASK = "%s(%s),";
-	private static final String MSG_TASK_CLASH = "The newly added task has clashed with the following task(ID): ";
-	private static final String MSG_TASK_UPDATE = "The task:\"%s\" has been updated from the Flexi Tracker under ID number %s.";
-	private static final String MSG_TASK_VIEW = "The tasks list has been retrieved from the Flexi Tracker.";
+	private static final String MSG_TASK_CLASH_TASK = "%s (Task ID: %s),";
+	private static final String MSG_TASK_CLASH = "The newly added task has clashed with the following task(s): ";
+	private static final String MSG_TASK_UPDATE = "The task:\"%s\" (Task ID: %s), has been updated.";
+	private static final String MSG_TASK_VIEW = "The tasks list has been retrieved.";
 	
-	private static final String MSG_TEMP_DELETE = "The template:\"%s\" has been deleted from the Flexi Tracker.";
-	private static final String MSG_TEMP_UPDATE = "The template:\"%s\" has been updated from the Flexi Tracker ";
-	private static final String MSG_TEMP_VIEW = "The template list has been retrieved from the Flexi Tracker.";
-	private static final String MSG_TEMP_NO_TEMPLATE = "No templates found in Flexi Tracker";
-	private static final String MSG_TEMP_RESET = "Templates have been reset, add your templates now.";
+	private static final String MSG_TEMP_DELETE = "The template:\"%s\" has been deleted.";
+	private static final String MSG_TEMP_UPDATE = "The template:\"%s\" has been updated. ";
+	private static final String MSG_TEMP_VIEW = "The template list has been retrieved.";
+	private static final String MSG_TEMP_NO_TEMPLATE = "There are no saved templates.";
+	private static final String MSG_TEMP_RESET = "All Templates have been cleared.";
 	
-	private static final String MSG_SHORTCUT_DELETED = "Keyword \"%s\" has been deleted.";
+	private static final String MSG_SHORTCUT_DELETED = "The keyword \"%s\" has been deleted.";
 	private static final String MSG_SHORTCUT_RESET = "All keywords have been reset to the list of defaults above.";
-	private static final String MSG_SHORTCUT_VIEW = "All keywords have been retrieved";
-	private static final String MSG_SHORTCUT_ADDED_NEW = "New keyword \"%s\" has been added. It will function the same as \"%s\"";
+	private static final String MSG_SHORTCUT_VIEW = "Displaying all Keywords";
+	private static final String MSG_SHORTCUT_ADDED_NEW = "New keyword \"%s\" has been added to the \"%s\" function.";
 	
 	private static final int INDEX_EXECUTION_ERROR = 0;
 	private static final int INDEX_EXECUTION_SUCCESS = 1;

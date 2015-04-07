@@ -22,7 +22,7 @@ import com.joestelmach.natty.Parser;
 
 public class FlexiParser {
 	private static final String MSG_ERR_INTERNAL_PARSER_IMPLEMENTATION = "\"%s\" is not implemented in parser yet.";
-	private static final String MSG_ERR_UNRECOGNIZED_COMMAND = "\"%s\" is not a command recognized by Flexi Tracker. Type \"viewKeyword\" to see all the keywords.";
+	private static final String MSG_ERR_UNRECOGNIZED_COMMAND = "Flexi Tracker does not recognise the command \"%s\". Type \"viewKeyword\" to see all recognised keywords.";
 	private static final String COMMAND_ADD = "addTask";
     
     private static final String COMMAND_VIEW = "viewTask";

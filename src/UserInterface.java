@@ -81,6 +81,7 @@ public class UserInterface extends DefaultTableCellRenderer {
     private static final double[] PREFERRED_WIDTH_SHORTCUTS = {systemKW, userDefinedKW};
    
     private static final int WINDOW_WIDTH = 1200;
+    
     private static final String[] SYS_KEYWORDS = {"Create a new task", "Edit an existing task", "View list of tasks", "Delete a task", 
     											 "Clear a field", "Search","Undo", "Redo", "Update task status",
     											 "Add a new keyword", "View available keywords", "Delete a keyword", 
@@ -107,6 +108,10 @@ public class UserInterface extends DefaultTableCellRenderer {
     										 {newline},
     										 {"For the full list of available keywords and functions, type \"help\" or \"viewShortcut\""}
     										};
+    
+    private static final String EMPTY = "empty";
+    private static final String OVERDUE  = "Overdue";
+    private static final String[] EMPTYROW = {EMPTY};
    
 //    private static final String[] SYS_KEYWORDS = {	"addTask", "editTask","viewTask","deleteTask", 
 //  		"clearAttr", "searchTask", "undoTask", "redoTask", "markTask",
@@ -155,6 +160,9 @@ public class UserInterface extends DefaultTableCellRenderer {
 		}else{
 			for (int j = 0 ; j < affectedTask.size(); j++){
 					outputDataString.add(affectedTask.get(j).toStringArray());
+					outputDataString.add(EMPTYROW);
+					outputDataString.add(EMPTYROW);
+					
 					
 			}
 			for (int k = 0 ; k < fullListTask.size(); k++){
@@ -248,7 +256,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 	/**
 	 * Launch the application.
 	 */
-	
+	/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -263,7 +271,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 			}
 		});
 	}
-
+*/
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -378,8 +386,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 		inputListener listener = new inputListener();
 		textField.addActionListener(listener);
 
-		//	kbShortcuts();
-
 		//keyboard shortcuts needs to be refactored out from here
 
 		//pressing up restores previous input in textField
@@ -464,13 +470,16 @@ public class UserInterface extends DefaultTableCellRenderer {
 					c.setBackground(row % 2 == 0 ? getBackground() : TASK_BG);
 				}
 				
-				if ((model.getValueAt(row,getColumnCount()-1)).equals("Overdue")){
+				if ((model.getValueAt(row,getColumnCount()-1)).equals(OVERDUE)){
 					c.setBackground(TASK_OVERDUE);
+				}
+				
+				if ((model.getValueAt(row, 0).equals(EMPTY))){
+					c.setBackground(TASK_FONT);
 				}
 				return c;
 			}
 			
-
 
 
 			public boolean isAffected(int row, int affected) {
@@ -555,6 +564,8 @@ public class UserInterface extends DefaultTableCellRenderer {
 			clearInput();	
 			if (input.length() == 0){
 				mainHandler.rawUserInput("viewTask");
+			}else if(input.equals("help")){
+				
 			}else{
 				mainHandler.rawUserInput(input);
 			}
