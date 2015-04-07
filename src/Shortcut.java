@@ -4,6 +4,10 @@ import java.util.NoSuchElementException;
 //@author A0108385B
 public class Shortcut {
 
+	
+	private static final String MSG_ERR_CORRUPTED_SAVED_FILE = "Shortcut saved file has been corrupted";
+	private static final int RESULT_FIRST = 0;
+	private static final int RESULT_SIZE_DEFAULT = 1;
 	private static final String MSG_ERR_MINIMUM_LENGTH = "\"%s\"'s length is too short to be used as a keyword.";
 	private static final String MSG_ERR_MAX_CAPACITY = "The keyword that is going to be represented by \"%s\" has reached its maximum capacity.";
 	private static final String MSG_ERR_KEYWORD_EXIST = "\"%s\" is already a keyword recognized by Flexi Tracker.";
@@ -12,25 +16,50 @@ public class Shortcut {
 	private static final String MSG_ERR_MINIMUM_SHORTCUT_NUMBER = "The number of keyword represented by \"%s\" cannot be reduced further.";
 	private static final String MSG_ERR_SHORTCUT_NOT_EXIST = "\"%s\" does not exist in the keyword list";
 
-	public static final String[] keywords = {	"addTask", "editTask","viewTask","deleteTask", 
-										"clearAttr", "searchTask", "undoTask", "redoTask", "markTask",
-										"addShortcut", "viewShortcut", "deleteShortcut",
-										"resetShortcut", "addTemplate", "editTemplate", 
-										"viewTemplate", "useTemplate", "deleteTemplate", 
-										"resetTemplate", "help"}; 
+	//Command that are recognized by system 
+	public static final String[] keywords = {	"addTask", 		"editTask",		"viewTask",
+												"deleteTask", 	"clearAttr", 	"searchTask", 
+												"undoTask", 	"redoTask", 	"markTask",
+												"addShortcut", 	"viewShortcut", "deleteShortcut",
+												"resetShortcut", "addTemplate", "editTemplate", 
+												"viewTemplate", "useTemplate", 	"deleteTemplate", 
+												"resetTemplate", "help"}; 
 	
-	public static final String[][] defaultWordsSet = {{"add","addTask"}, {"edit","editTask"},
-													{"view","viewTask"}, {"delete","deleteTask"},
-													{"clear","clearAttr"}, {"search", "searchTask"}, 
-													{"undo","undoTask"}, {"redo","redoTask"},
-													{"mark","markTask"}, {"addShortcut","addKeyword"}, 
-													{"viewShortcut","viewKeyword"}, {"deleteShortcut","deleteKeyword"}, 
-													{"resetShortcut","resetKeyword"}, {"addTemplate","addTemp"}, 
-													{"editTemplate","editTemp"}, {"viewTemplate","viewTemp"}, 
-													{"useTemplate", "useTemp"}, {"deleteTemplate","deleteTemp"}, 
-													{"resetTemplate", "resetTemp"}, {"help"}
+	//Default commands
+	private static final String[] DEFAULT_HELP = {"help"};
+	private static final String[] DEFAULT_RESET_TEMP = {"resetTemplate", "resetTemp"};
+	private static final String[] DEFAULT_DELETE_TEMP = {"deleteTemplate","deleteTemp"};
+	private static final String[] DEFAULT_USE_TEMP = {"useTemplate", "useTemp"};
+	private static final String[] DEFAULT_VIEW_TEMP = {"viewTemplate","viewTemp"};
+	private static final String[] DEFAULT_EDIT_TEMP = {"editTemplate","editTemp"};
+	private static final String[] DEFAULT_ADD_TEMP = {"addTemplate","addTemp"};
+	private static final String[] DEFAULT_RESET_SHORTCUT = {"resetShortcut","resetKeyword"};
+	private static final String[] DEFAULT_DELETE_SHORTCUT = {"deleteShortcut","deleteKeyword"};
+	private static final String[] DEFAULT_VIEW_SHORTCUT = {"viewShortcut","viewKeyword"};
+	private static final String[] DEFAULT_ADD_SHORTCUT = {"addShortcut","addKeyword"};
+	private static final String[] DEFAULT_MARK_TASK = {"mark","markTask"};
+	private static final String[] DEFAULT_REDO_TASK = {"redo","redoTask"};
+	private static final String[] DEFAULT_UNDO_TASK = {"undo","undoTask"};
+	private static final String[] DEFAULT_SEARCH_TASK = {"search", "searchTask"};
+	private static final String[] DEFAULT_CLEAR_ATTR = {"clear","clearAttr"};
+	private static final String[] DEFAULT_DELETE_TASK = {"delete","deleteTask"};
+	private static final String[] DEFAULT_VIEW_TASK = {"view","viewTask"};
+	private static final String[] DEFAULT_EDIT_TASK = {"edit","editTask"};
+	private static final String[] DEFAULT_ADD_TASK = {"add","addTask"};
+	
+	public static final String[][] defaultWordsSet = {	DEFAULT_ADD_TASK, 		DEFAULT_EDIT_TASK,
+														DEFAULT_VIEW_TASK, 		DEFAULT_DELETE_TASK,
+														DEFAULT_CLEAR_ATTR,		DEFAULT_SEARCH_TASK, 
+														DEFAULT_UNDO_TASK, 		DEFAULT_REDO_TASK,
+														DEFAULT_MARK_TASK, 		DEFAULT_ADD_SHORTCUT, 
+														DEFAULT_VIEW_SHORTCUT, 	DEFAULT_DELETE_SHORTCUT, 
+														DEFAULT_RESET_SHORTCUT, DEFAULT_ADD_TEMP, 
+														DEFAULT_EDIT_TEMP, 		DEFAULT_VIEW_TEMP, 
+														DEFAULT_USE_TEMP, 		DEFAULT_DELETE_TEMP, 
+														DEFAULT_RESET_TEMP, 	DEFAULT_HELP
 													};
 	
+
 	private static final String[] reservedWords = {"at","location","from","datefrom","to","dateto","on",
 													"before","by","detail","priority","name","title"};
 
@@ -67,7 +96,9 @@ public class Shortcut {
 	
 
 	/**
-	 * @param system
+	 * It set the system path so that it can call the system Handler that governs it to 
+	 * fetch data from other components when required
+	 * @param system	The system handler that governs this shortcut manager
 	 */
 	public void setSystemPath(SystemHandler system) {
 		this.system = system;
@@ -75,27 +106,28 @@ public class Shortcut {
 	
 	
 	/**
-	 * @param command
-	 * @return
-	 * @throws NoSuchElementException
-	 * @throws IllegalArgumentException
+	 * @param command	The string array of command to be executed
+	 * @return			Arrays of string arrays that are demanded by command
+	 * @throws IllegalArgumentException		Invalid instruction has been demanded or command violates 
+	 * 										the constraints set by shortcut manager
+	 * @throws NoSuchElementException		Demanded shortcut from command does not exist
 	 */
 	public String[][] processShortcutCommand(String[] command) 
 			throws NoSuchElementException, IllegalArgumentException {
 		
-		String[][] results = new String[1][];
+		String[][] results = new String[RESULT_SIZE_DEFAULT][];
 
-		switch(matchCommand(command[INDEX_COMMAND])) {
+		switch(getCommandType(command[INDEX_COMMAND])) {
 			case addShortcut:
 				verifyCommand(command, ADD_SHORTCUT_ARRAY_USED_SIZE);
-				results[0] = insertShortcut(command[INDEX_NEW_SHORTCUT],
+				results[RESULT_FIRST] = insertShortcut(command[INDEX_NEW_SHORTCUT],
 											command[INDEX_REFERED_SHORTCUT]);
 				writeOutToFile();
 				break;
 				
 			case deleteShortcut:
 				verifyCommand(command, DELETE_SHORTCUT_ARRAY_USED_SIZE);
-				results[0] = removeShortcut(command[INDEX_DELETING_SHORTCUT]);
+				results[RESULT_FIRST] = removeShortcut(command[INDEX_DELETING_SHORTCUT]);
 				writeOutToFile();
 				break;
 				
@@ -116,7 +148,7 @@ public class Shortcut {
 					addShortcutInit(command);
 					break;
 				} catch (NumberFormatException e) {
-					System.out.println(e);
+					throw new IllegalArgumentException(MSG_ERR_CORRUPTED_SAVED_FILE);
 				}
 				
 		}
@@ -125,7 +157,8 @@ public class Shortcut {
 	
 	
 	/**
-	 * 
+	 * 	This method calls system handler to initiate write out to storage. 
+	 *  It is called when there are changes made to shortcuts' data
 	 */
 	private void writeOutToFile() {
 		String[][] shortcuts = new String[keywords.length][];
@@ -134,15 +167,14 @@ public class Shortcut {
 			userShortcuts.get(i).toArray(shortcuts[i]);
 		}
 		
-		system = SystemHandler.getSystemHandler();
-		
 		system.writeShortcutToFile(shortcuts);
 		
 	}
 	
 	/**
-	 * @param command
-	 * @throws NumberFormatException
+	 * This method initialize shortcut by executing commands issued by storage
+	 * @param command					The string array of command to be executed
+	 * @throws NumberFormatException 	The save file is corrupted and the index to be referred is not identified
 	 */
 	private void addShortcutInit(String[] command) throws NumberFormatException {
 		int row = Integer.parseInt(command[INDEX_INIT_REFERED_ROW]);
@@ -157,8 +189,8 @@ public class Shortcut {
 
 	
 	/**
-	 * @param command
-	 * @return
+	 * @param command	Customized Command to be matched with system recognized command
+	 * @return			The command that matches the customized command, null if not exist
 	 */
 	public String keywordMatching(String command) {
 		int matchingIndex = searchMatching(command);
@@ -173,11 +205,11 @@ public class Shortcut {
 	
 	
 	/**
-	 * @param command
-	 * @return
-	 * @throws IllegalArgumentException
+	 * @param command					String of Command type to be executed
+	 * @return							Type of command to be executed by shortcut manager
+	 * @throws IllegalArgumentException	Type of command entered is not recognized by shortcut manager
 	 */
-	private COMMAND_TYPE_SHORTCUT matchCommand(String command) 
+	public static COMMAND_TYPE_SHORTCUT getCommandType(String command) 
 			throws IllegalArgumentException {
         try{
         	return COMMAND_TYPE_SHORTCUT.valueOf(command);
@@ -189,7 +221,7 @@ public class Shortcut {
 	}
 	
 	/**
-	 * 
+	 * 	This method reset shortcut list to default set
 	 */
 	private void resetShortcut() {
 		userShortcuts = new ArrayList<ArrayList<String>>();
@@ -199,8 +231,9 @@ public class Shortcut {
 	}
 	
 	/**
-	 * @param index
-	 * @return
+	 * This method reads shortcuts from default set and build them
+	 * @param index		Index of shortcut default set
+	 * @return			Default Shortcuts that correspond to the index 
 	 */
 	private ArrayList<String> buildDefaultKeyword(int index) {
 		ArrayList<String> customizedWord = new ArrayList<String>();
@@ -212,17 +245,19 @@ public class Shortcut {
 	}
 
 	/**
-	 * @return
+	 * @return	The cloned list of shortcuts
 	 */
 	private String[][] viewShortcuts() {
 		return cloneShortcuts();
 	}
 	
 	/**
-	 * @param shortcut
-	 * @return
+	 * @param shortcut					Shortcut to be removed
+	 * @return							Shortcut that function the same as the removed shortcut
+	 * @throws NoSuchElementException	The shortcut to be deleted is not found	
+	 * @throws IllegalArgumentException	The shortcut to be deleted is a default or the corresponded keyword is at minimum capacity
 	 */
-	private String[] removeShortcut(String shortcut) {
+	private String[] removeShortcut(String shortcut) throws NoSuchElementException, IllegalArgumentException {
 		
 		int index = getShortcutMatchingIndex(shortcut);
 		if(index == INDEX_NOT_FOUND) {
@@ -230,11 +265,11 @@ public class Shortcut {
 			
 		} else if(isShortcutKeyAtMinimumCapacity(index)){
 			//Wrong type
-			throw new NoSuchElementException(String.format(MSG_ERR_MINIMUM_SHORTCUT_NUMBER, shortcut));
+			throw new IllegalArgumentException(String.format(MSG_ERR_MINIMUM_SHORTCUT_NUMBER, shortcut));
 			
 		} else if(isDefaultShortcut(shortcut)) {
 			//Wrong type
-			throw new NoSuchElementException(String.format(MSG_ERR_DEFAULT_KEYWORD_DELETE, shortcut));
+			throw new IllegalArgumentException(String.format(MSG_ERR_DEFAULT_KEYWORD_DELETE, shortcut));
 			
 		} else {
 			removeShortcutfromUserList(index, shortcut);
@@ -245,6 +280,11 @@ public class Shortcut {
 		
 	}
 
+	/**
+	 * @param index		Index of keyword where the shortcut to be removed lies in
+	 * @param shortcut	Shortcut word to be removed
+	 * @return			True if the shortcut has been removed successfully
+	 */
 	private boolean removeShortcutfromUserList(int index, String shortcut) {
 		ArrayList<String> userDefinedShortcut = userShortcuts.get(index);
 		for(int i = 0; i < userDefinedShortcut.size(); ++i) {
@@ -258,8 +298,8 @@ public class Shortcut {
 	
 	
 	/**
-	 * @param shortcut
-	 * @return
+	 * @param shortcut	Shortcut to be matched with keyword
+	 * @return			Index of keyword where the shortcut corresponds to, -1 if not found
 	 */
 	private int getShortcutMatchingIndex(String shortcut) {
 		for(int i = 0; i < userShortcuts.size(); ++i) {
@@ -274,63 +314,58 @@ public class Shortcut {
 	}
 	
 	/**
-	 * @param newShortcut
-	 * @param originShortcut
-	 * @return
-	 * @throws NoSuchElementException
+	 * @param newShortcut				New shortcut to represent the keyword
+	 * @param originShortcut			Original shortcut to let new shortcut matches with the same keyword
+	 * @return							Output result after successfully added, null if fail to add
+	 * @throws NoSuchElementException	The keyword to match with is not found.
+	 * @throws IllegalArgumentException	There are some violations in constraints of shortcuts
 	 */
-	private String[] insertShortcut(String newShortcut, String originShortcut) throws NoSuchElementException {
+	private String[] insertShortcut(String newShortcut, String originShortcut) 
+			throws NoSuchElementException, IllegalArgumentException {
 		int indexBelongTo = searchMatching(originShortcut);
 		
-		if(isInputApprioriate(newShortcut, originShortcut, indexBelongTo)) {
-			addShortcut(newShortcut, indexBelongTo);
-			String[] result = constructOutputString(indexBelongTo, originShortcut, newShortcut);
-			return result;	
-			
-		} else {
-			return null;
-		}
+		verifyInputApprioriateness(newShortcut, originShortcut, indexBelongTo);
+		
+		addShortcut(newShortcut, indexBelongTo);
+		String[] result = constructOutputString(indexBelongTo, originShortcut, newShortcut);
+		return result;	
 		
 	}
 
 
 	/**
-	 * @param newShortcut
-	 * @param originShortcut
-	 * @param indexBelongTo
-	 * @throws NoSuchElementException
+	 * @param newShortcut				New shortcut to represent the keyword
+	 * @param originShortcut			Original shortcut to let new shortcut matches with the same keyword
+	 * @param indexBelongTo				Index of keyword to be matched
+	 * @throws NoSuchElementException	There is no keywords where original Shortcut can match to
+	 * @throws IllegalArgumentException	There are some violations in constraints of shortcuts
 	 */
-	private boolean isInputApprioriate(String newShortcut, String originShortcut,
-			int indexBelongTo) throws NoSuchElementException {
+	private void verifyInputApprioriateness(String newShortcut, String originShortcut,
+			int indexBelongTo) throws NoSuchElementException, IllegalArgumentException {
 		
 		if(!isKeyWords(indexBelongTo)) {
 			throw new NoSuchElementException(String.format(MSG_ERR_SHORTCUT_NOT_EXIST, originShortcut));
 			
 		} else if(isKeyWords(newShortcut)) {
-			//wrong err type
-			throw new NoSuchElementException(String.format(MSG_ERR_KEYWORD_EXIST, newShortcut));
+			throw new IllegalArgumentException(String.format(MSG_ERR_KEYWORD_EXIST, newShortcut));
 			
 		} else if (isReservedWord(newShortcut)) {
-			//wrong err type
-			throw new NoSuchElementException(String.format(MSG_ERR_DEFAULT_KEYWORD_DELETE, newShortcut));
+			throw new IllegalArgumentException(String.format(MSG_ERR_DEFAULT_KEYWORD_DELETE, newShortcut));
 			
 		} else if (isWordLengthInappropriate(newShortcut)) {
-			//wrong err type
-			throw new NoSuchElementException(String.format(MSG_ERR_MINIMUM_LENGTH, newShortcut));
+			throw new IllegalArgumentException(String.format(MSG_ERR_MINIMUM_LENGTH, newShortcut));
 			
 		} else if(isShortcutAtMaximumCapacity(indexBelongTo)) {
-			//wrong err type
-			throw new NoSuchElementException(String.format(MSG_ERR_MAX_CAPACITY, newShortcut));
+			throw new IllegalArgumentException(String.format(MSG_ERR_MAX_CAPACITY, newShortcut));
 			
 		}
 		
-		return true;
 	}
 	
 	/**
-	 * @param index
-	 * @param deleted
-	 * @return
+	 * @param index		Index of keyword to be matched with
+	 * @param deleted	Deleted shortcut
+	 * @return			Array of string that shows the index of deleted and deleted shortcut 
 	 */
 	private String[] constructOutputString(int index, String deleted) {
 		String[] result = {Integer.toString(index), deleted};
@@ -338,10 +373,10 @@ public class Shortcut {
 	}
 	
 	/**
-	 * @param index
-	 * @param original
-	 * @param newlyAdded
-	 * @return
+	 * @param index			Index of keyword to be matched with
+	 * @param original		Shortcut that corresponds to the keyword
+	 * @param newlyAdded	New shortcut that corresponds to the keyword
+	 * @return				Array of string that shows the index of keywords
 	 */
 	private String[] constructOutputString(int index, String original, String newlyAdded) {
 		ArrayList<String> shortcuts = userShortcuts.get(index);
@@ -367,32 +402,36 @@ public class Shortcut {
 	}
 
 	/**
-	 * @param newShortcut
-	 * @param belongTo
+	 * @param newShortcut		Shortcut to be added
+	 * @param belongTo			Index of keyword where new shortcut to be added to.
 	 */
-	private void addShortcut(String newShortcut, int belongTo) throws NoSuchElementException {
+	private void addShortcut(String newShortcut, int belongTo) {
 		ArrayList<String> toBeAddedInto = userShortcuts.get(belongTo);
 		toBeAddedInto.add(newShortcut);
 		
 	}
 	
 	/**
-	 * @param index
-	 * @return
+	 * @param index		Index that matches the keywords
+	 * @return			True if the index matches to a keyword
 	 */
 	private boolean isKeyWords(int index) {
 		return (index > INDEX_NOT_FOUND);
 	}
 	
 	/**
-	 * @param command
-	 * @return
+	 * @param shortcutWord	Shortcut to match the keyword
+	 * @return			True if the shortcut matches a keyword
 	 */
-	private boolean isKeyWords(String command) {
-		int matchingIndex = searchMatching(command);
+	private boolean isKeyWords(String shortcutWord) {
+		int matchingIndex = searchMatching(shortcutWord);
 		return matchingIndex > INDEX_NOT_FOUND;
 	}
 
+	/**
+	 * @param command	Shortcut to match the default shortcut
+	 * @return			True if the shortcut matches a default shortcut
+	 */
 	private boolean isDefaultShortcut(String shortcut) {
 		for(int i = 0; i < defaultWordsSet.length; ++i) {
 			String[] defaultWords = defaultWordsSet[i];
@@ -410,16 +449,16 @@ public class Shortcut {
 	}
 	
 	/**
-	 * @param command
-	 * @return
+	 * @param shortcutWord	Shortcut to be matched with keyword
+	 * @return				Index of keywords where the shortcut matches with
 	 */
-	private int searchMatching (String command) {
-		for(int i = 0; i < userShortcuts.size(); ++i) {
-			ArrayList<String> singleShortcut = userShortcuts.get(i);
+	private int searchMatching (String shortcutWord) {
+		for(int index = 0; index < userShortcuts.size(); ++index) {
+			ArrayList<String> shortcutsList = userShortcuts.get(index);
 			
-			for(int j = 0; j < singleShortcut.size(); ++j) {
-				if(isTheMatchingWord(command, singleShortcut.get(j))) {
-					return i;
+			for(int j = 0; j < shortcutsList.size(); ++j) {
+				if(isTheMatchingWord(shortcutWord, shortcutsList.get(j))) {
+					return index;
 				}
 				
 			}
@@ -429,21 +468,21 @@ public class Shortcut {
 	}
 	
 	/**
-	 * @param command
-	 * @param matching
-	 * @return
+	 * @param shortcutWord		Shortcut to be matched to
+	 * @param matching			Shortcut to be matched with
+	 * @return					True if both are the same shortcut
 	 */
-	private boolean isTheMatchingWord(String command, String matching) {
-		return command.equalsIgnoreCase(matching);
+	private boolean isTheMatchingWord(String shortcutWord, String matching) {
+		return shortcutWord.equalsIgnoreCase(matching);
 	}
 	
 	/**
-	 * @param word
-	 * @return
+	 * @param shortcutWord		Shortcut to be checked
+	 * @return					True if the shortcut is a default shortcut
 	 */
-	private boolean isReservedWord(String word) {
+	private boolean isReservedWord(String shortcutWord) {
 		for(int i = 0; i < reservedWords.length; ++i) {
-			if(word.equalsIgnoreCase(reservedWords[i])) {
+			if(shortcutWord.equalsIgnoreCase(reservedWords[i])) {
 				return true;
 			}
 		}
@@ -451,7 +490,7 @@ public class Shortcut {
 	}
 	
 	/**
-	 * @return
+	 * @return	A clone of shortcuts list
 	 */
 	private String[][] cloneShortcuts() {
 		String[][] cloneList = new String[keywords.length][];
@@ -474,18 +513,17 @@ public class Shortcut {
 	}
 
 	/**
-	 * @param command
-	 * @param lengthToCheck
-	 * @return
+	 * This method verify the command field by check any invalid fields used for particular type of command
+	 * @param command			Shortcut command to be verified
+	 * @param lengthToCheck		Number of field to be checked
 	 */
-	private boolean verifyCommand(String[] command, int lengthToCheck) {
+	private void verifyCommand(String[] command, int lengthToCheck) {
 		assert(command.length == ARRAY_SIZE_SHORTCUT);
 		
 		for(int i = 0; i < lengthToCheck; ++i) {
 			assert(command[i] != null);
 		}
 		
-		return true;
 	}
 	
 }

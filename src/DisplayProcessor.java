@@ -2,8 +2,6 @@ import java.util.ArrayList;
 
 //@author A0108385B
 public class DisplayProcessor {
-	private static final String[] COMMAND_GET_TEMPLATE = {"viewTemplate",null,null,null,null,null,null,null,null};
-	private static final String[] COMMAND_GET_TASK_LIST = {"viewTask",null,null,null,null,null,null,null,null};
 	
 	private static final String MSG_TASK_STATUS = "The task:\"%s\" has been marked as %s";
 	private static final String MSG_TASK_REDO = "The last task operation has been redone.";
@@ -25,12 +23,29 @@ public class DisplayProcessor {
 	private static final String MSG_SHORTCUT_RESET = "All keywords have been reset to the list of defaults above.";
 	private static final String MSG_SHORTCUT_VIEW = "All keywords have been retrieved";
 	private static final String MSG_SHORTCUT_ADDED_NEW = "New keyword \"%s\" has been added. It will function the same as \"%s\"";
+
+	private static final int SIZE_ZERO = 0;
 	
 	private static final int INDEX_EXECUTION_ERROR = 0;
 	private static final int INDEX_EXECUTION_SUCCESS = 1;
 	private static final int INDEX_EXECUTION_CLASH = 2;
 	
+	private static final int INDEX_COMMAND_TYPE = 0;
+	
+	private static final int INDEX_TEMP_NEW_NAME = 2;
+	private static final int INDEX_TEMP_NAME = 1;
+	
+	private static final int NUM_TASK_SINGLE = 1;
+	
+	
+	private static final int INDEX_SHORTCUT_DELETE = 1;
+	private static final int INDEX_SHORTCUT_OLD = 2;
+	private static final int INDEX_SHORTCUT_NEW = 1;
+	
 	private static final boolean EXECUTION_SUCCESS = true;
+
+	private static final int LENGTH_MESSAGE_DEFAULT = 1;
+	private static final int MESSAGE_NUMBER_ONE = 0;
 	
 	
 	private UserInterface window;
@@ -39,31 +54,40 @@ public class DisplayProcessor {
 		this.window = window;
 	}
 	
+	/**
+	 * This method calls UI to display the error message to user
+	 * @param message	Error message to be displayed to user
+	 */
 	public void displayErrorToUI(String message) {
 		window.displayMsg(message, INDEX_EXECUTION_ERROR);
 	}
 	
 	/**
-	 * @param command
-	 * @param result
-	 * @param fullList
+	 * @param command		Command that has been executed
+	 * @param result		Affected tasks by the executed command
+	 * @param fullList		Full list of tasks stored in task manager
 	 */
 	public void displayTMResult(String[] command, ArrayList<Task> result,
 			ArrayList<Task> fullList) {
 		String[] message = constructTMMessage(command, result);
+		
 		if(command[0].equals("deleteTask")) {
 			window.displayTaskTable(null, fullList, INDEX_EXECUTION_SUCCESS);
 		} else {
 			window.displayTaskTable(result, fullList, INDEX_EXECUTION_SUCCESS);
 		}
+		
+		if(hasMessage(message)) {
+			window.displayMsg(message, getTaskManagerExecutionStatus(command,result));
+		}
 			
-		window.displayMsg(message, getTaskManagerExecutionStatus(command,result));
 	}
 	
 	/**
-	 * @param command
-	 * @param result
-	 * @return
+	 * MA CONG: turn your task manager get command function to public static, this method need to use.
+	 * @param command		Command that has been executed
+	 * @param result		Affected tasks by the executed command
+	 * @return				String array of messages to be displayed
 	 */
 	private String[] constructTMMessage(String[] command, ArrayList<Task> result) {
 		String[] message = null;
@@ -123,9 +147,9 @@ public class DisplayProcessor {
 	}
 
 	/**
-	 * @param command
-	 * @param result
-	 * @return
+	 * @param command		Command that has been executed
+	 * @param result		Affected tasks by the executed command
+	 * @return				Index of execution status, success/error/clashed
 	 */
 	private int getTaskManagerExecutionStatus(String[] command, ArrayList<Task> result) {
 		if(command[0] == "viewTask") {
@@ -140,10 +164,10 @@ public class DisplayProcessor {
 			} else {
 				return INDEX_EXECUTION_ERROR;
 			}
-		} else {
+		} else {	//For other task types that are not view or search
 			if(result == null) {
 				return INDEX_EXECUTION_ERROR;
-			} else if(result.size() == 1) {
+			} else if(result.size() == NUM_TASK_SINGLE) {
 				return INDEX_EXECUTION_SUCCESS;
 			} else {
 				return INDEX_EXECUTION_CLASH;
@@ -152,84 +176,117 @@ public class DisplayProcessor {
 	}
 	
 	/**
-	 * @param command
-	 * @param result
+	 * @param command	Command that has been executed
+	 * @param result	Affected shortcuts by the executed command
 	 */
 	public void displayShortcutResult(String[] command, String[][] result) {
 		window.displayShortcuts(result, EXECUTION_SUCCESS);
 		String[] message = constructShortcutMessage(command, result);
-		window.displayMsg(message, INDEX_EXECUTION_SUCCESS);
+		
+		if(hasMessage(message)) {
+			window.displayMsg(message, INDEX_EXECUTION_SUCCESS);
+		}
+			
 	}
 	
 	/**
-	 * @param command
-	 * @param result
-	 * @return
+	 * @param command	Command that has been executed
+	 * @param result	Affected shortcuts by the executed command
+	 * @return			String array of messages to be displayed, null if no messages to be displayed
 	 */
 	private String[] constructShortcutMessage(String[] command,
 			String[][] result) {
-		String[] message = new String[1];
-		switch(command[0]) {
-			case "addShortcut":
-				message[0] = String.format(MSG_SHORTCUT_ADDED_NEW, command[1], command[2]);
+		String[] message = new String[LENGTH_MESSAGE_DEFAULT];
+		switch(Shortcut.getCommandType(command[INDEX_COMMAND_TYPE])) {
+			case addShortcut:
+				message[MESSAGE_NUMBER_ONE] = String.format(MSG_SHORTCUT_ADDED_NEW, command[INDEX_SHORTCUT_NEW], command[INDEX_SHORTCUT_OLD]);
 				break;
-			case "viewShortcut":
-				message[0] = MSG_SHORTCUT_VIEW;
+			case viewShortcut:
+				message[MESSAGE_NUMBER_ONE] = MSG_SHORTCUT_VIEW;
 				break;
-			case "deleteShortcut":
-				message[0] = String.format(MSG_SHORTCUT_DELETED, command[1]);
+			case deleteShortcut:
+				message[MESSAGE_NUMBER_ONE] = String.format(MSG_SHORTCUT_DELETED, command[INDEX_SHORTCUT_DELETE]);
 				break;
-			case "resetShortcut":
-				message[0] = MSG_SHORTCUT_RESET;
+			case resetShortcut:
+				message[MESSAGE_NUMBER_ONE] = MSG_SHORTCUT_RESET;
 				break;
+			case addShortcutInit:
+				message = null;
 		}
 		return message;
 	}
 	
 	/**
-	 * @param command
-	 * @param result
+	 * @param command	Command that has been executed
+	 * @param result	Affected templates by the executed command
 	 */
 	public void displayTemplateResult(String[] command, ArrayList<String> names, ArrayList<Task> result) {
 		
 		window.displayTemplate(result, names, EXECUTION_SUCCESS);
 		String[] message = constructTempMessage(command, result);
-		window.displayMsg(message,INDEX_EXECUTION_SUCCESS);
+		
+		if(hasMessage(message)) {
+			window.displayMsg(message,INDEX_EXECUTION_SUCCESS);
+		}
+		
+	}
+
+	/**
+	 * @param message	Message to be displayed
+	 * @return			True if no message is null
+	 */
+	private boolean hasMessage(String[] message) {
+		return message != null;
 	}
 	
+	
+	
 	/**
-	 * @param command
-	 * @param result
-	 * @return
+	 * @param command	Command that has been executed
+	 * @param result	Affected templates by the executed command
+	 * @return			String array of messages to be displayed, null if no messages to be displayed
 	 */
 	private String[] constructTempMessage(String[] command, ArrayList<Task> result) {
-		String[] message = null;
-		switch(command[0]) {
-		case "viewTemplate":
-			message = new String[1];
-			if(result.size() == 0) {
-				message[0] = MSG_TEMP_NO_TEMPLATE;
-			} else {
-				message[0] = MSG_TEMP_VIEW;
-			}
-			break;
-			
-		case "addTemplate":
-		case "editTemplate":
-			message = new String[1];
-			message[0] = String.format(MSG_TEMP_UPDATE, command[2]);
-			break;
+		String[] message = new String[LENGTH_MESSAGE_DEFAULT];
+		
+		switch(Template.getCommandType(command[INDEX_COMMAND_TYPE])) {
+			case viewTemplate:
+				if(noTemplateToView(result)) {
+					message[MESSAGE_NUMBER_ONE] = MSG_TEMP_NO_TEMPLATE;
+				} else {
+					message[MESSAGE_NUMBER_ONE] = MSG_TEMP_VIEW;
+				}
+				break;
 				
-		case "deleteTemplate":
-			message = new String[1];
-			message[0] = String.format(MSG_TEMP_DELETE, command[1]);
-			break;
-			
-		case "resetTemplate":
-			message = new String[1];
-			message[0] = String.format(MSG_TEMP_RESET, command[1]);
-			break;
+			case addTemplate:
+				message[MESSAGE_NUMBER_ONE] = String.format(MSG_TEMP_UPDATE, command[INDEX_TEMP_NEW_NAME]);
+				break;
+				
+			case editTemplate:
+				message[MESSAGE_NUMBER_ONE] = String.format(MSG_TEMP_UPDATE, command[INDEX_TEMP_NAME]);
+				break;
+					
+			case deleteTemplate:
+				message[MESSAGE_NUMBER_ONE] = String.format(MSG_TEMP_DELETE, command[INDEX_TEMP_NAME]);
+				break;
+				
+			case resetTemplate:
+				message[MESSAGE_NUMBER_ONE] = String.format(MSG_TEMP_RESET);
+				break;
+	
+			case useTemplate:
+			case addTemplateInit: 
+				message = null;
+				
 		}
 		return message;
+	}
+
+	/**
+	 * @param result	ArrayList of templates to be viewed
+	 * @return			True if there are some templates to view
+	 */
+	private boolean noTemplateToView(ArrayList<Task> result) {
+		return result.size() == SIZE_ZERO;
 	}
 }
