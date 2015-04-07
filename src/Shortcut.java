@@ -4,16 +4,16 @@ import java.util.NoSuchElementException;
 //@author A0108385B
 public class Shortcut {
 
-	
 	private static final String MSG_ERR_CORRUPTED_SAVED_FILE = "Shortcut saved file has been corrupted";
 	private static final int RESULT_FIRST = 0;
 	private static final int RESULT_SIZE_DEFAULT = 1;
-	private static final String MSG_ERR_MINIMUM_LENGTH = "\"%s\"'s length is too short to be used as a keyword.";
-	private static final String MSG_ERR_MAX_CAPACITY = "The keyword that is going to be represented by \"%s\" has reached its maximum capacity.";
-	private static final String MSG_ERR_KEYWORD_EXIST = "\"%s\" is already a keyword recognized by Flexi Tracker.";
-	private static final String MSG_ERR_NO_SUCH_COMMAND = "No such command in Shortcut Manager: %1$s";
-	private static final String MSG_ERR_DEFAULT_KEYWORD_DELETE = "\"%s\" is a system defined keyword. It cannot be added or deleted";
-	private static final String MSG_ERR_MINIMUM_SHORTCUT_NUMBER = "The number of keyword represented by \"%s\" cannot be reduced further.";
+	private final String MSG_ERR_MINIMUM_LENGTH = "\"%s\"is too short. Please choose a word that is at least 3 characters long to be used as a keyword.";
+	private static final String MSG_ERR_MAX_CAPACITY = "\"%s\" cannot be added to this function as each function can only have a maximum of 10 keywords. Please delete one of the keywords if you want to add another one.";
+	private static final String MSG_ERR_KEYWORD_EXIST = "\"%s\" is already being used as a keyword by Flexi Tracker.";
+	private static final String MSG_ERR_NO_SUCH_COMMAND = "No such command exists in Shortcut Manager: %1$s";
+	private static final String MSG_ERR_DEFAULT_KEYWORD_DELETE = "\"%s\" is a default system-defined keyword. It cannot be changed or deleted.";
+	private static final String MSG_ERR_MINIMUM_SHORTCUT_NUMBER = "Each function must have at least one keyword. \"%s\" cannot be removed.";
+
 	private static final String MSG_ERR_SHORTCUT_NOT_EXIST = "\"%s\" does not exist in the keyword list";
 
 	//Command that are recognized by system 

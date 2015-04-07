@@ -18,12 +18,12 @@ public class SystemHandler {
 
 	private static final String MSG_LOG_USER_COMMAND = "user enters: %s";
 	
-	private static final String MSG_LOG_PARSER = "Parser understand the command as the following: \"%s\"";
-	private static final String MSG_ERR_INIT_TEMPLATE = "File has been corrupted, some templates from the past might be lost.";
-	private static final String MSG_ERR_INIT_SHORTCUT = "File has been corrupted, some shortcut data from the past might be lost.";
-	private static final String MSG_ERR_INIT_TASK = "File has been corrupted, some tasks from the past might be lost.";
-	private static final String MSG_ERR_ID_UNDEFINED = "Something is wrong with the ID, please check again";
-	private static final String MSG_ERR_NO_SUCH_COMMAND = "SystemHandler does not recognize this command";
+	private static final String MSG_LOG_PARSER = "Parser understood the command as the following: \"%s\"";
+	private static final String MSG_ERR_INIT_TEMPLATE = "File has been corrupted, some templates might be lost.";
+	private static final String MSG_ERR_INIT_SHORTCUT = "File has been corrupted, some shortcut data might be lost.";
+	private static final String MSG_ERR_INIT_TASK = "File has been corrupted, some tasks might be lost.";
+	private static final String MSG_ERR_ID_UNDEFINED = "This ID does not exist, please check again";
+	private static final String MSG_ERR_NO_SUCH_COMMAND = "SystemHandler does not recognize this command.";
 	
 	private static final String[] COMMAND_GET_TASK_LIST = {"viewTask",null,null,null,null,null,null,null,null};
 	private static final String[] COMMAND_RESET_SHORTCUT = {"resetShortcut", null, null};

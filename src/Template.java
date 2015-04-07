@@ -10,9 +10,9 @@ public class Template {
 
 	private static final String MSG_ERR_DUPLICATE_NAME = "Template name:\"%s\" has been used by another template.";
 	private static final String MSG_ERR_TASK_NUMBER_NOT_EXIST = "Task number: %s does not exist.";
-	private static final String MSG_INVALID_GET_FIELD = "No such field value to get from";
+	private static final String MSG_INVALID_GET_FIELD = "No such field value to get from.";
 	private static final String MSG_ERR_NO_SUCH_COMMAND = "No such command in Template Manager: %1$s";
-	public static final String MSG_ERR_NO_SUCH_TEMPLATE = "No such template saved in the system";
+	public static final String MSG_ERR_NO_SUCH_TEMPLATE = "No such template exists.";
 
 
 	private static final int INDEX_NOT_FOUND = -1;
@@ -153,7 +153,7 @@ public class Template {
 		
 		if(hasSameName(name)) {
 			throw new IllegalArgumentException(String.format(MSG_ERR_DUPLICATE_NAME,name));
-		} else if(validName(name)) {
+		} else if(validNameLength(name)) {
 			throw new IllegalArgumentException(String.format(MSG_ERR_DUPLICATE_NAME,name));
 		} else {
 			clearTaskDateField(template);
@@ -166,7 +166,7 @@ public class Template {
 		}
 	}
 	
-	private boolean validName(String name) {
+	private boolean validNameLength(String name) {
 		return name.length() > LENGTH_TEMP_NAME_MINIMUM && name.length() < LENGTH_TEMP_NAME_MAXIMUM;
 	}
 
