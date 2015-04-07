@@ -308,7 +308,7 @@ public class SystemTest {
  
 	@Test
 	public void testCustomizedManager() {
-		Template template = new Template(true);
+		Template template = new Template();
 		try {
 			//TC1 - test adding
 			Task temp = new Task(1000, "NEW",

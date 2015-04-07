@@ -1,6 +1,5 @@
 import java.util.NoSuchElementException;
 import java.util.ArrayList;
-import java.util.logging.Level;
 import java.awt.EventQueue;
 import java.text.ParseException;
 
@@ -9,9 +8,12 @@ import java.text.ParseException;
  * @author MA
  *
  */
+/**
+ * @author MA
+ *
+ */
 public class SystemHandler {
 	
-
 	private static final String SAVE_LOCATION_DEFAULT = "default.txt";
 
 	private static final String MSG_LOG_USER_COMMAND = "user enters: %s";
@@ -23,8 +25,16 @@ public class SystemHandler {
 	private static final String MSG_ERR_ID_UNDEFINED = "This ID does not exist, please check again";
 	private static final String MSG_ERR_NO_SUCH_COMMAND = "SystemHandler does not recognize this command.";
 	
+	private static final String[] COMMAND_GET_TASK_LIST = {"viewTask",null,null,null,null,null,null,null,null};
 	private static final String[] COMMAND_RESET_SHORTCUT = {"resetShortcut", null, null};
 
+	//Symbol used to construct string from parsed command to log message
+	private static final String STRING_INIT_EMPTY = "";
+	private static final String STRING_SEPERATOR = "|";
+	private static final String STRING_EMPTY = "_";
+	private static final String STRING_NULL = "null";
+	
+	
 	public static final int LENGTH_COMMAND_TASK_MANAGER = 9;
 	public static final int LENGTH_COMMAND_SHORTCUT = 3;
 	public static final int LENGTH_COMMAND_TEMPLATE = 9;
@@ -39,7 +49,11 @@ public class SystemHandler {
 	
 	private static final int ERROR_INIT = 1;
 	private static final boolean EXECUTION_SUCCESS = true;
+
+	private static final int SIZE_ZERO = 0;
+
 	
+
 	
 	private CentralizedLog 	logfile;
 	private TaskManager 	myTaskList;
@@ -94,6 +108,10 @@ public class SystemHandler {
 		});
 	}
 	
+	/**
+	 * This method is called by storage to set the shortcut manager to default 
+	 * once it detects no shortcut is being initialized
+	 */
 	public void resetShortcutToDefault() {
 		myShortcut.processShortcutCommand(COMMAND_RESET_SHORTCUT);
 	}
@@ -103,6 +121,7 @@ public class SystemHandler {
 	 * This method function as the communication line between different components to ensure
 	 * intermediate results directed correctly. 
 	 * The sequence is from UI -> parser -> logic -> displayProcessor 
+	 * This is the place where error thrown from different component is responded to the User through user interface
 	 * @param userInput
 	 */
 	public void rawUserInput(String userInput) {
@@ -135,26 +154,32 @@ public class SystemHandler {
 			
 		} catch(ParseException e) {
 			displayProcessor.displayErrorToUI(e.getMessage());
-			logfile.warning(String.format(MSG_LOG_PARSER , e.getMessage()));
+			logfile.warning(String.format(e.getMessage()));
 		} catch(NumberFormatException e) {
 			displayProcessor.displayErrorToUI(MSG_ERR_ID_UNDEFINED);
-			logfile.warning(String.format(MSG_LOG_PARSER , e.getMessage()));
+			logfile.warning(MSG_ERR_ID_UNDEFINED);
 		} catch(IllegalArgumentException e) {
 			displayProcessor.displayErrorToUI(e.getMessage());
-			logfile.warning(String.format(MSG_LOG_PARSER , e.getMessage()));
+			logfile.warning(e.getMessage());
 		} catch(NoSuchElementException e) {
 			displayProcessor.displayErrorToUI(e.getMessage());
-			logfile.warning(String.format(MSG_LOG_PARSER , e.getMessage()));
+			logfile.warning(e.getMessage());
 		} catch(IllegalStateException e) {
 			displayProcessor.displayErrorToUI(e.getMessage());
-			logfile.warning(String.format(MSG_LOG_PARSER , e.getMessage()));
+			logfile.warning(e.getMessage());
 		} catch(Exception e) {
-			logfile.severe(String.format(MSG_LOG_PARSER , e.getMessage()));
+			logfile.severe(e.getMessage());
 		}
 		
 	}
 	
 	
+	/**
+	 * This method is called to get the Task through the Task ID
+	 * @param id		Task ID
+	 * @return			A task object correspond to the ID requested
+	 * @throws NoSuchElementException	Task ID requested is not found in Task Manager
+	 */
 	public Task requestTaskInformationfromTM(int id) throws NoSuchElementException {
 		return myTaskList.getTaskFromTID(id);
 	}
@@ -173,21 +198,36 @@ public class SystemHandler {
 		}
 	}
 	
-	public boolean writeToFile(ArrayList<Task> taskList) {
+	/**
+	 * This method calls storage to write out the data from task manager to storage
+	 * @param taskList		ArrayList of tasks stored by task manager
+	 */
+	public void writeToFile(ArrayList<Task> taskList) {
 		externalStorage.writeTaskToFile(taskList);
-		return true;
 	}
 	
-	public boolean writeShortcutToFile(String[][] shortcut) {
+	/**
+	 * This method calls storage to write out the data from shortcut manager to storage
+	 * @param shortcut		Array of strings arrays that represent the customized keywords 
+	 */
+	public void writeShortcutToFile(String[][] shortcut) {
 		externalStorage.writeShortcutToFile(shortcut);
-		return true;
 	}
 	
-	public boolean writeTemplateToFile(ArrayList<Task> templates,ArrayList<String> matchingName) {
+	/**
+	 * This method calls storage to write out the data from template manager to storage
+	 * @param templates		ArrayList of task templates stored by template manager
+	 * @param matchingName	ArrayList of string that match to the templates.
+	 */
+	public void writeTemplateToFile(ArrayList<Task> templates,ArrayList<String> matchingName) {
 		externalStorage.writeTemplateToFile(templates, matchingName);
-		return true;
 	}
 	
+	/**
+	 * @param commandType	Command type
+	 * @return				Index of the command belongs to. Task(1), Shortcut(2), Template(3)
+	 * @throws IllegalArgumentException		The command is not defined in the system
+	 */
 	private static int getCommandGroupType(String commandType) throws IllegalArgumentException {
 		for(COMMAND_TYPE_TASK_MANAGER command : COMMAND_TYPE_TASK_MANAGER.values()) {
 			if(command.name().equals(commandType)) {
@@ -231,43 +271,62 @@ public class SystemHandler {
 		
 	}
 
+	/**
+	 * It calls File Storage to load data into task manager, shortcut and template.
+	 */
 	private void readDataFromFile() {
 		try{
 			externalStorage.readTaskFromFile(myTaskList);
 		} catch(Exception e) {
 			window.displayMsg(MSG_ERR_INIT_TASK, ERROR_INIT);
+			logfile.warning(MSG_ERR_INIT_TASK);
 		}
 		
 		try{
 			externalStorage.readShortcutFromFile(myShortcut);
 		} catch(Exception e) {
 			window.displayMsg(MSG_ERR_INIT_SHORTCUT, ERROR_INIT);
+			logfile.warning(MSG_ERR_INIT_SHORTCUT);
 		}
 		
 		try{
 			externalStorage.readTemplateFromFile(myTemplates);
 		} catch(Exception e) {
 			window.displayMsg(MSG_ERR_INIT_TEMPLATE, ERROR_INIT);
+			logfile.warning(MSG_ERR_INIT_TEMPLATE);
 		}
 	}
 	
-	private String parsedCommandtoString(String[] command) {
-		String str = "";
+	/**
+	 * @param parsedCommand		Strings array of command parsed by parser
+	 * @return					String converted from a strings array to be logged.
+	 */
+	private String parsedCommandtoString(String[] parsedCommand) {
+		String str = STRING_INIT_EMPTY;
 		
-    	for(int i = 0; i < command.length; ++i) {
-    		if(command[i] == null) {
-    			str += "null";
-    		} else if(command[i].length() == 0) {
-    			str += "";
+    	for(int i = 0; i < parsedCommand.length; ++i) {
+    		
+    		if(parsedCommand[i] == null) {
+    			str += STRING_NULL;
+    			
+    		} else if(parsedCommand[i].length() == SIZE_ZERO) {
+    			str += STRING_EMPTY;
+    			
     		} else {
-    			str += command[i];
+    			str += parsedCommand[i];
+    			
     		}
-    		str += "|";
+    		
+    		str += STRING_SEPERATOR;
     	}
 		return str;
 	}
 
 	
+	/**
+	 * @param parsedCommand		Strings array of command parsed by parser
+	 * @param type				index of type of command - Task(1), Shortcut(2), Template(3)
+	 */
 	private void validateParsedCommandLength(String[] parsedCommand, int type) {
 		switch(type) {
 			case INDEX_COMMAND_TASK_MANAGER:
@@ -285,9 +344,11 @@ public class SystemHandler {
 		
 	}
 	
-	private static final String[] COMMAND_GET_TEMPLATE = {"viewTemplate",null,null,null,null,null,null,null,null};
-	private static final String[] COMMAND_GET_TASK_LIST = {"viewTask",null,null,null,null,null,null,null,null};
-	
+	/**
+	 * @param command	String array in the format where shortcut manager understands. Refer to developer 
+	 * 					manual under Shortcut for more information 
+	 * @throws ParseException		INPUT FROM MA CONG
+	 */
 	private ArrayList<Task> executeTaskManager(String[] command) 
 			throws ParseException {
 		ArrayList<Task> result = myTaskList.processTM(command);
@@ -300,22 +361,35 @@ public class SystemHandler {
 		return result;
 	}
 
-	private String[][] executeShortcutManager(String[] command) 
+	/**
+	 * @param command	String array in the format where shortcut manager understands. Refer to developer 
+	 * 					manual under Shortcut for more information 
+	 * @throws NoSuchElementException		Requested shortcut is not found in shortcut list
+	 * 										or violation of restriction by shortcut manager
+	 * @throws IllegalArgumentException		There are some error in format understood by shortcut manager
+	 */
+	private void executeShortcutManager(String[] command) 
 			throws NoSuchElementException, IllegalArgumentException {
 		
 		String[][] result = myShortcut.processShortcutCommand(command);
 		displayProcessor.displayShortcutResult(command, result);
 		
-		return result;
 	}
 
+	/**
+	 * @param command	String array in the format where template manager understands. Refer to developer 
+	 * 					manual under Template for more information 
+	 * @throws IllegalArgumentException		There are some error in format understood by template manager
+	 * 										or violation of restriction by template manager
+	 * @throws NoSuchElementException		Requested template is not found in template list
+	 */
 	private void executeCustomizer(String[] command) 
-			throws IllegalArgumentException {
+			throws IllegalArgumentException, NoSuchElementException {
 
 		ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
 		if(result != null) {
 			ArrayList<String> tempNames = myTemplates.getTemplateNames(result);		
-			window.displayTaskTable(result, null, INDEX_EXECUTION_SUCCESS);
+			//window.displayTemplateTable(result, null, INDEX_EXECUTION_SUCCESS);
 			displayProcessor.displayTemplateResult(command, tempNames, result);
 		}
 			
