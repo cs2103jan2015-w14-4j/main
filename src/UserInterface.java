@@ -99,27 +99,61 @@ public class UserInterface extends DefaultTableCellRenderer {
 	   											 "View list of templates", "Use a template", "Delete a template",
 	   											 "Clear all templates", "Help"};
     
-    private static final String[][] HELP = { {MSG_WELCOME +newline+newline },
-    										 {"Getting Started:"+newline},
-    										 {"  Start adding new tasks by uisng the keyword \"add [task title]\" followed by the task details."},	
+    private static final String[][] HELP = { 
+    										 {"GETTING STARTED:"+newline},
+    										 {"  Start adding new tasks by using the keyword \"add [task title]\" followed by the task details."},	
 
     										 {"      eg. \"add Meeting at room 303 on 27/2/2015 from 2pm to 4pm\"   OR"},
-    										 {"      eg. \"add Meeting from 1400 to 1600 on 27th July at room 303\""},
-    										 {"  Both inputs are accepted and will create a task with the same details." +newline},
+    										 {"      eg. \"add Meeting from 1400 to 1600 on 27th July at room 302\""},
+    										 {"  Both inputs are accepted and will create a task with the same details."},
+    										 {newline},
+    										 {"Accepted field markers are  (non-case-sensitive):"},
+    										 {"     \"On, By, Before\" for deadlines,"},
+    										 {"     \"From and To \" for durations,"},
+    										 {"     \"At\" for locations, and"},
+    										 {"     \"Remarks\" to add any additional remarks or details."},
+    										 {newline},
     										 {"  Feel free to leave any fields you don't need blank, only the task title is needed to create a new task."},
     										 {"  Many variations of inputs are accepted, experiment and find the best fit for you!" + newline},
-    										 {"  Edit tasks by using \"edit [taskID]\" followed by the information you want to change."},
-    										 {"  Delete tasks by typing \"delete [taskID]\""},
     										 {newline},
-    										 {"Changing default keywords:"},
-    										 {"  You can change any of the default keywords such as \"add\" and \"edit\" to anything you prefer by following the following format:"},
+    										 {"VIEWING THE TASK LIST"},
+    										 {"  If you enter an empty line, the default view mode  will be displayed, where all ongoing tasks will be sorted by date."},
+    										 {"  To view a specific range of tasks, type \"view [status] by [sort order]\"."},
+    										 {"  If the sort order does not matter, you can just type \"view [status]\", or "},
+    										 {"  if you want to sort the list without filtering, type \"view by [sort order]\"."}, 
+    										 {newline},
+    										 {"UPDATING TASKS"},
+    										 {"  New Tasks are set to the \"Normal\" status by default."},
+    										 {"  Mark or change the status of a task by typing \"mark [task ID] as [status]\""},
+    										 {"  Accepted statuses are:"},
+    										 {"        Urgent , Major, Normal, Minor, Casual, Complete."},
+    										 {"  Tasks will be automatically set to \"Overdue\" and highlighted if an incomplete task is past its due date."}, 
+    										 {newline},
+    										 {"  Edit other task information by using \"edit [task ID]\" followed by the information you want to change, such as:"},
+    										 {"      eg. \"edit 12 at room 303\""},
+    										 {"  The above example will change the location field of task 12 to \"room 303\"."},
+    										 {newline},
+    										 {"DELETING TASKS"},
+    										 {"  Delete tasks by typing \"delete [task ID]\"."},
+    										 {"  This will permanently delete the task."},
+    										 {"  If you just want to remove it from the task list while keeping the task, use \"mark [task ID] as complete\" instead."},
+    										 {newline},
+    										 {"CHANGING DEFAULT KEYWORDS"},
+    										 {"  You can change any of the default keywords such as \"add\" and \"edit\" to anything you prefer by using the following format:"},
     										 {"  addShortcut [new keyword] onto [existing keyword]"},
     										 {"      eg. \"addKeyword create onto add\""},
     										 {newline},
-    										 {"For the full list of available keywords and functions, type \"help\" or \"viewShortcut\""}
+    										 {"ADDING TASK TEMPLATES"},
+    										 {"  You can save existing tasks as templates by typing \"addTemplate [task ID] as [template name]\"."},
+    										 {"      eg. \"addTemplate 12 as meeting with boss\"."},
+    										 {"  This will save the task with all the details intact."},
+    										 {"  When you use a template to create a new task, all you need to do is input \"useTemplate [template name] [date]\" to duplicate the task."},
+    										 {newline},
+    										 {"For the full list of available keywords and functions, type \"viewShortcut\"."},
+    										 { "Please consult the User Guide for additional help and functionality."}
     										};
     
-    private static final String EMPTY = "empty";
+    private static final String EMPTY = " ";
     private static final String OVERDUE  = "Overdue";
     private static final String[] EMPTYROW = {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY};
    
@@ -169,7 +203,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 			}
 		}else{
 			for (int j = 0 ; j < affectedTask.size(); j++){
-					outputDataString.add(affectedTask.get(j).toStringArray());					
+					outputDataString.add(affectedTask.get(j).toStringArray());	
 			}
 			outputDataString.add(EMPTYROW);
 			for (int k = 0 ; k < fullListTask.size(); k++){
@@ -215,6 +249,8 @@ public class UserInterface extends DefaultTableCellRenderer {
 	public void displayText(String[][] outputData, boolean success) {
 		clearTextPane();
 		viewTextPane();
+		DefaultCaret caret = (DefaultCaret)outputArea.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 		for(int i = 0; i < outputData.length; i++){
 			String[] strArray = outputData[i];
 			String nextLine = "";
@@ -318,7 +354,8 @@ public class UserInterface extends DefaultTableCellRenderer {
 		initOutputArea();
 		initSysFBArea();
 		initInputArea();
-
+		String[] welcome  = {MSG_WELCOME};
+		displayMsg(welcome, 0);
 		displayText(HELP, true);
 
 	}
@@ -465,7 +502,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 		columnNamesTaskTable.add(HEADER_TASK_5);
 		columnNamesTaskTable.add(HEADER_TASK_6);
 		columnNamesTaskTable.add(HEADER_TASK_7);
-		
+	
 		model = new TaskTableModel(outputArrayString, columnNamesTaskTable, String[].class );
 		taskTable = new JTable (model)
 		{
@@ -482,18 +519,17 @@ public class UserInterface extends DefaultTableCellRenderer {
 				}
 				
 				if ((model.getValueAt(row, 0).equals(EMPTY))){
+				//	int row2 = row -1;
+				//	Component c2 = super.prepareRenderer(renderer, row2 , column);
+				//	c2.setBackground(TASK_EDITED);					
 					c.setBackground(TASK_FONT);
+		
 				}
+				
 				return c;
 			}
 			
 
-
-			public boolean isAffected(int row, int affected) {
-				if (row < affected)
-					return true;
-				return false;
-			}
 		};
 		
 		//taskTable.getModel().addTableModelListener((TableModelListener) this);
@@ -572,7 +608,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 			if (input.length() == 0){
 				mainHandler.rawUserInput("viewTask");
 			}else if(input.equals("help")){
-				
+				viewTextPane();
 			}else{
 				mainHandler.rawUserInput(input);
 			}
