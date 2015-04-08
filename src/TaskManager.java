@@ -14,6 +14,10 @@ import java.util.regex.Pattern;
 import org.joda.time.DateTimeComparator;
 
 
+/**
+ * @author Ma Cong (A0118892U)
+ *
+ */
 public class TaskManager implements TaskManagerInterface {
     public static final int COMMAND_TYPE = 0;
     public static final int TID = 1;

@@ -1,5 +1,9 @@
 import java.util.Comparator;
 
+/**
+ * @author Ma Cong (A0118892U)
+ *
+ */
 public class ComparatorLocation implements Comparator<Task>{
 
     public int compare(Task task1, Task task2) {

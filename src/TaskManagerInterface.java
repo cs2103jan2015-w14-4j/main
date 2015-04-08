@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 
-
+/**
+ * @author Ma Cong (A0118892U)
+ *
+ */
 public interface TaskManagerInterface {
     
     /**

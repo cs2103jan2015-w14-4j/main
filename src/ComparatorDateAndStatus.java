@@ -3,7 +3,10 @@ import java.util.Date;
 
 //incomplete tasks will be put in front, completed tasks will be put at the back
 //each categories of tasks will be sorted by date
-
+/**
+ * @author Ma Cong (A0118892U)
+ *
+ */
 public class ComparatorDateAndStatus implements Comparator<Task> {
     private final int COMPLETE = 6;
     
