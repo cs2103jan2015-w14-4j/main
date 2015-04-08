@@ -82,7 +82,7 @@ public class TaskManager implements TaskManagerInterface {
     private static final int INDEX_ZERO = 0;
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
     private static final String ID_STRING = "id";
-    private static final String TASK_NAME_STRING = "name";
+    private static final String TASK_NAME_STRING = "title";
     private static final String PRIORITY_STRING = "status";
     private static final String DATE_STRING = "date";
     private static final String DEADLINE_STRING = "deadline";
