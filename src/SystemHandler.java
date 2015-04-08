@@ -4,14 +4,6 @@ import java.awt.EventQueue;
 import java.text.ParseException;
 
 //@author A0108385B
-/**
- * @author MA
- *
- */
-/**
- * @author MA
- *
- */
 public class SystemHandler {
 	
 	private static final String SAVE_LOCATION_DEFAULT = "default.txt";

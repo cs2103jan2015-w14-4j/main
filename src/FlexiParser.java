@@ -16,7 +16,7 @@ import com.joestelmach.natty.Parser;
 
 
 
-
+//@author A0116514N
 //add Task behind all the command
 //add escape if n
 
@@ -113,11 +113,7 @@ public class FlexiParser {
     	
 	}
 	
-    /**
-     * 
-     * @author A0116514N
-     * 
-     */
+    //@author A0116514N
     public String[] parseText(String userInput) throws IllegalArgumentException {
     	
     	
@@ -595,11 +591,7 @@ public class FlexiParser {
     	return inputArray;
     	
     }
-    /**
-     * 
-     * @author A0116514N
-     * 
-     */
+    //@author A0116514N
     private int indexOfKey(String[] keyWords,String input,String matched) {
     	for(int i = 0; i < keyWords.length; i++) {
     		
@@ -612,11 +604,7 @@ public class FlexiParser {
     	}
     	return -1;
     }
-    /**
-     * 
-     * @author A0116514N
-     * 
-     */
+    //@author A0116514N
     private boolean isClearAttribute(String value) {
     	
     	if(value != NOT_EXIST) {
@@ -628,11 +616,7 @@ public class FlexiParser {
     	}
     	return false;
     }
-    /**
-     * 
-     * @author A0116514N
-     * 
-     */
+    //@author A0116514N
     private int getCommandIndex(String command) {
     	int index = -1;;
     	for(int i = 0; i < commandArray.length; i++) {
@@ -651,11 +635,7 @@ public class FlexiParser {
     }
     
     
-    /**
-     * 
-     * @author A0116514N
-     * 
-     */
+    //@author A0116514N
     private String processCommand(String command) {
     	
     	String processedCommand = command.toLowerCase();
@@ -664,11 +644,7 @@ public class FlexiParser {
     	
     }
     
-    /**
-     * 
-     * @author A0116514N
-     * 
-     */
+    //@author A0116514N
     private String extractText(String[] inputArr,String[] keyArrOne,String[] keyArrTwo) {
     	StringBuilder strb = new StringBuilder();
     	
@@ -697,11 +673,7 @@ public class FlexiParser {
     	return strb.toString().trim() ;
     	
     }
-    /**
-     * 
-     * @author A0116514N
-     * 
-     */
+    //@author A0116514N
     private String extractTextWithQuotes(String[] input,int index) {
     	String attribute = null;
     	StringBuilder strb = new StringBuilder();
@@ -757,11 +729,7 @@ public class FlexiParser {
     	
     }
 
-    /**
-     * extractor
-     * @author A0116514N
-     * 
-     */
+    //@author A0116514N
 	private String extractAttribute(String[] input, int keywordIndex,String[] keywordsOne,String[] keywordsTwo) {
 			
 			StringBuilder strb = new StringBuilder();
@@ -818,11 +786,7 @@ public class FlexiParser {
 			
 	}
 	
-	 /**
-     * 
-     * @author A0116514N
-     * 
-     */
+    //@author A0116514N
 	private boolean isDateTime(int index, String value) {
 		
 		if((KEYWORDS_ONE_TASK[index].equals(DATE_FROM) || KEYWORDS_ONE_TASK[index].equals(DATE_TO) || KEYWORDS_ONE_TASK[index].equals(DATE_ON)) && value != null && !value.equals(EMPTY_STRING)) {
@@ -840,9 +804,9 @@ public class FlexiParser {
 	
 	 /**
      * method takes in string with quotes
-     * @author A0116514N
      * 
      */
+    //@author A0116514N
 	private String extractFromSingleQuote(String preprocessed) {
 		//is it?
 		int start = 1;
@@ -853,11 +817,8 @@ public class FlexiParser {
 	
 	
 	
-	 /**
-     * 
-     * @author A0116514N
-     * 
-     */
+
+    //@author A0116514N
 	private void storeDateTime(String[] outputArr,String value,int index) {
 		int j = index + 1;
 		value = value.trim();
@@ -874,11 +835,7 @@ public class FlexiParser {
 		}
 	}
 		
-	 /**
-     * 
-     * @author A0116514N
-     * 
-     */
+    //@author A0116514N
 	private String[] flipDate(String[] inputArr) {
 		String[] tempArr;
 		String changedDate;
@@ -910,11 +867,7 @@ public class FlexiParser {
 		return inputArr;
 		
 	}
-	 /**
-     * 
-     * @author A0116514N
-     * 
-     */
+    //@author A0116514N
 	private ArrayList<Date> useNatty(String dateInput) {
 		Parser parser = new Parser();
 		List<DateGroup> groups = parser.parse(dateInput);
@@ -930,11 +883,7 @@ public class FlexiParser {
 		return dateList;
 		
 	}
-	 /**
-     * 
-     * @author A0116514N
-     * 
-     */
+    //@author A0116514N
 	private String dateConverter(Date date) {
 		SimpleDateFormat ft = new SimpleDateFormat ("dd/MM/yyyy HH:mm");
 		
@@ -942,11 +891,7 @@ public class FlexiParser {
 		
 	}
 	
-	 /**
-     * 
-     * @author A0116514N
-     * 
-     */
+    //@author A0116514N
 	private boolean isKeyWord(String str,String[] keywordsOne,String[] keywordsTwo/*,String ignoreWord*/) {
 			
 		for(int i = 0; i < keywordsOne.length; i++) {
