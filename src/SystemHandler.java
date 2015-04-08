@@ -360,6 +360,15 @@ public class SystemHandler {
 			case INDEX_COMMAND_TEMPLATE:
 				assert(parsedCommand.length == LENGTH_COMMAND_TEMPLATE);
 				break;
+				
+			case INDEX_COMMAND_HELP:
+				assert(parsedCommand.length == 1);
+				break;
+				
+			case INDEX_COMMAND_SAVE:
+				assert(parsedCommand.length == 2);
+				break;
+				
 		}
 		
 	}
