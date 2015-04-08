@@ -4,14 +4,6 @@ import java.awt.EventQueue;
 import java.text.ParseException;
 
 //@author A0108385B
-/**
- * @author MA
- *
- */
-/**
- * @author MA
- *
- */
 public class SystemHandler {
 	
 	private static final String SAVE_LOCATION_DEFAULT = "default.txt";
@@ -86,8 +78,6 @@ public class SystemHandler {
 	public static void main(String[] args) {
 
 		system = getSystemHandler();
-		system.myTemplates.setSystemPath(system);
-		system.myShortcut.setSystemPath(system);
 		
 		system.activateUI();
 	}
@@ -265,7 +255,10 @@ public class SystemHandler {
 		parser = new FlexiParser(myShortcut);
 		externalStorage = new FileStorage(fileName);
 		displayProcessor = new DisplayProcessor(window);
+		
 		system = this;
+		myTemplates.setSystemPath(system);
+		myShortcut.setSystemPath(system);
 		
 		readDataFromFile();
 		
