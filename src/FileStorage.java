@@ -69,9 +69,11 @@ public class FileStorage {
                 templateFile.createNewFile();
             }
             if(!shortcutFile.exists()) {
+                shortcutFile.createNewFile();
                 //SystemHandler system = SystemHandler.getSystemHandler();
                 //system.resetShortcutToDefault();
-                shortcutFile.createNewFile();
+                //shortcut file will be created, shortcut will also be reset,
+                //but nothing will be written inside the file >_<
             }
         }catch(Exception e) {
             //if file is not found, how?
@@ -106,6 +108,9 @@ public class FileStorage {
         // refer to shortcut keywords for the row
     }
 
+    private void getFileLoation() {
+
+    }
 
     //----------task read and write starts----------
     /**
@@ -174,34 +179,39 @@ public class FileStorage {
     //----------shortcut read and write starts----------
     public void readShortcutFromFile(Shortcut shortcut) {
         if(shortcutFile.exists()) {
-            try {
-                Scanner sc = new Scanner(shortcutFile);
-                int i = 0;
-                while (sc.hasNextLine()) {
+            if(shortcutFile.length() == 0) {
+                System.out.println("call system handler to reset");
+                SystemHandler system = SystemHandler.getSystemHandler();
+                system.resetShortcutToDefault();
+            } else {
+                try {
+                    Scanner sc = new Scanner(shortcutFile);
+                    int i = 0;
 
-                    String[] inputs = new String[3];
-                    String[] tempStringArray = new String[8];
-                    inputs[COMMAND_TYPE_INDEX] = "addShortcutInit";
-                    tempStringArray = sc.nextLine().split("\\s*,\\s*");
-                    for(int j = 0; j < tempStringArray.length; ++j) {
-                        System.out.println(tempStringArray[j]);
-                        inputs[SHORTCUT_NAME_INDEX] = tempStringArray[j];
-
-                        inputs[SHORTCUT_ID_INDEX] = Integer.toString(i);
-
-                        shortcut.processShortcutCommand(inputs);    
+                    while (sc.hasNextLine()) {
+                        String[] inputs = new String[3];
+                        String[] tempStringArray = new String[8];
+                        inputs[COMMAND_TYPE_INDEX] = "addShortcutInit";
+                        tempStringArray = sc.nextLine().split("\\s*,\\s*");
+                        for(int j = 0; j < tempStringArray.length; ++j) {
+                            System.out.println(tempStringArray[j]);
+                            inputs[SHORTCUT_NAME_INDEX] = tempStringArray[j];
+                            inputs[SHORTCUT_ID_INDEX] = Integer.toString(i);
+                            shortcut.processShortcutCommand(inputs);    
+                        }
+                        ++i;
                     }
-                    ++i;
+                    sc.close();
+                }catch(FileNotFoundException e) {
+                    e.printStackTrace();
                 }
-                sc.close();
-            }catch(FileNotFoundException e) {
-                e.printStackTrace();
             }
         }
     }
 
 
     public void writeShortcutToFile(String[][] shortcuts) {
+        System.out.println("shorcut write is called");
         try {
             shortcutFile.delete();
             shortcutFile.createNewFile();
