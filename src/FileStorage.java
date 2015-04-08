@@ -50,14 +50,15 @@ public class FileStorage {
 
     private static File taskFile;
     //include the two secret files;
+    private final String DEFAULT_TASK_FILE_NAME = "default.txt";
     private final String DEFAULT_TEMPLATE_FILE_NAME = "template";
     private final String DEFAULT_SHORTCUT_FILE_NAME = "shortcut";
     private final String DEFAULT_FILE_LOCATION_FILE_NAME = "fileLocation";
-    private File templateFile = new File(DEFAULT_TEMPLATE_FILE_NAME);
-    private File shortcutFile = new File(DEFAULT_SHORTCUT_FILE_NAME);
+    private File templateFile;// = new File(DEFAULT_TEMPLATE_FILE_NAME);
+    private File shortcutFile;// = new File(DEFAULT_SHORTCUT_FILE_NAME);
     private File fileLocation = new File(DEFAULT_FILE_LOCATION_FILE_NAME);
-
-
+    private String taskFileLocation;
+    private String path;
 
     //--------------------constructor-----------------
     /**
@@ -66,31 +67,53 @@ public class FileStorage {
      * If the file does not exist it will be created.
      */
     public FileStorage(String fileName) {
-        taskFile = new File(fileName);
+        //taskFile = new File(fileName);
 
-        try { 
-            if(!taskFile.exists()) {           
-                taskFile.createNewFile();           
+        //create a fileLocation file with tasks.txt inside
+        if(!fileLocation.exists()){
+            initializeFileStorage();
+        } else {
+            try {
+                Scanner sc = new Scanner(fileLocation);
+                taskFileLocation = sc.nextLine();
+                sc.close();
+            } catch (FileNotFoundException e) {
+
             }
-            if(!templateFile.exists()) {
-                templateFile.createNewFile();
-            }
-            if(!shortcutFile.exists()) {
-                shortcutFile.createNewFile();
-                //if file is corrupted, how?
-            }
-            if(!fileLocation.exists()) {
-                fileLocation.createNewFile();
-                //if file is corrupted, how?
-            }
-        }catch(Exception e) {
-            //if file is not found, how?
+            path = getPath(taskFileLocation);
+            taskFile = new File(taskFileLocation);
+            templateFile = new File(path + DEFAULT_TEMPLATE_FILE_NAME);
+            shortcutFile = new File(path + DEFAULT_SHORTCUT_FILE_NAME);
         }
     } 
 
-    public FileStorage() {
+    //create a fileLocation file with tasks.txt inside
+    private void initializeFileStorage() {
+        fileLocation = new File(DEFAULT_FILE_LOCATION_FILE_NAME);
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(fileLocation));
+            bw.write(DEFAULT_TASK_FILE_NAME);
+            bw.close();
+
+            taskFile = new File(DEFAULT_TASK_FILE_NAME);
+            if(!taskFile.exists()) {
+                taskFile.createNewFile();           
+            }
+            templateFile = new File(DEFAULT_TEMPLATE_FILE_NAME);
+            if(!templateFile.exists()) {
+                templateFile.createNewFile();
+            }
+            shortcutFile = new File(DEFAULT_SHORTCUT_FILE_NAME);
+            if(!shortcutFile.exists()) {
+                shortcutFile.createNewFile();
+            }
+        } catch (IOException e) {
+        }
+    }
+
+    /*public FileStorage() {
         taskFile = new File(DEFAULT_FILENAME);
-    } 
+    } */
 
     //stub
     public FileStorage(String fileName, TaskManager myTaskList, Template myTemplate, Shortcut myShortcut) {
@@ -116,16 +139,16 @@ public class FileStorage {
         // refer to shortcut keywords for the row
     }
 
-    public void moveFileTo(String newLocation) {
+    /*public void moveFileTo(String newLocation) {
         String directory = getDirectory(newLocation);
-        
-        
+
+
         String newTemplateFile = directory + DEFAULT_TEMPLATE_FILE_NAME;
         templateFile.renameTo(new File(newTemplateFile));
         String newShortcutFile = directory + DEFAULT_SHORTCUT_FILE_NAME;
         shortcutFile.renameTo(new File(newShortcutFile));
-    }
-    
+    }*/
+
     private void writeNewFileLocationToFile(String fileName) {
         try {
             fileLocation.delete();
@@ -134,11 +157,11 @@ public class FileStorage {
             bw.write(fileName);
             bw.close();
         } catch (IOException e) {
-            
+
         }
     }
-    
-    private String getFileLocationFromFile() {
+
+    /*private String getPath() {
         String location = "";
         if(fileLocation.exists()) {
             try {
@@ -149,9 +172,9 @@ public class FileStorage {
             }
         }
         return location;
-    }
+    }*/
 
-    private String getDirectory(String fileName) {
+    private String getPath(String fileName) {
         String directory = "";
         if(fileName.indexOf(SLASH) != -1) {
             int indexAfterLastSlash = fileName.lastIndexOf(SLASH) + 1;
