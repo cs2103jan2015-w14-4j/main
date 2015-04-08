@@ -2,6 +2,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,6 +26,8 @@ public class FileStorage {
     private static final int TASK_PRIORITY_INDEX = 8;
     private static final String ADD_TASK_COMMAND = "addTask";
     private static final String ADD_TEMPLATE_INIT_COMMAND = "addTemplateInit";
+    private static final char SLASH = '/';
+    private static final char BACKSLASH = '\\';
 
 
     private static final int SHORTCUT_NAME_INDEX = 1;
@@ -47,8 +50,12 @@ public class FileStorage {
 
     private static File taskFile;
     //include the two secret files;
-    private File templateFile = new File("template");
-    private File shortcutFile = new File("shortcut");
+    private final String DEFAULT_TEMPLATE_FILE_NAME = "template";
+    private final String DEFAULT_SHORTCUT_FILE_NAME = "shortcut";
+    private final String DEFAULT_FILE_LOCATION_FILE_NAME = "fileLocation";
+    private File templateFile = new File(DEFAULT_TEMPLATE_FILE_NAME);
+    private File shortcutFile = new File(DEFAULT_SHORTCUT_FILE_NAME);
+    private File fileLocation = new File(DEFAULT_FILE_LOCATION_FILE_NAME);
 
 
 
@@ -70,10 +77,11 @@ public class FileStorage {
             }
             if(!shortcutFile.exists()) {
                 shortcutFile.createNewFile();
-                //SystemHandler system = SystemHandler.getSystemHandler();
-                //system.resetShortcutToDefault();
-                //shortcut file will be created, shortcut will also be reset,
-                //but nothing will be written inside the file >_<
+                //if file is corrupted, how?
+            }
+            if(!fileLocation.exists()) {
+                fileLocation.createNewFile();
+                //if file is corrupted, how?
             }
         }catch(Exception e) {
             //if file is not found, how?
@@ -108,8 +116,51 @@ public class FileStorage {
         // refer to shortcut keywords for the row
     }
 
-    private void getFileLoation() {
+    public void moveFileTo(String newLocation) {
+        String directory = getDirectory(newLocation);
+        
+        
+        String newTemplateFile = directory + DEFAULT_TEMPLATE_FILE_NAME;
+        templateFile.renameTo(new File(newTemplateFile));
+        String newShortcutFile = directory + DEFAULT_SHORTCUT_FILE_NAME;
+        shortcutFile.renameTo(new File(newShortcutFile));
+    }
+    
+    private void writeNewFileLocationToFile(String fileName) {
+        try {
+            fileLocation.delete();
+            fileLocation.createNewFile();
+            BufferedWriter bw = new BufferedWriter(new FileWriter(fileLocation));
+            bw.write(fileName);
+            bw.close();
+        } catch (IOException e) {
+            
+        }
+    }
+    
+    private String getFileLocationFromFile() {
+        String location = "";
+        if(fileLocation.exists()) {
+            try {
+                Scanner sc = new Scanner(fileLocation);
+                location = sc.nextLine();
+                sc.close();
+            } catch (FileNotFoundException e) {
+            }
+        }
+        return location;
+    }
 
+    private String getDirectory(String fileName) {
+        String directory = "";
+        if(fileName.indexOf(SLASH) != -1) {
+            int indexAfterLastSlash = fileName.lastIndexOf(SLASH) + 1;
+            directory = fileName.substring(0, indexAfterLastSlash);
+        } else if (fileName.indexOf(BACKSLASH) != -1) {
+            int indexAfterLastBackSlash = fileName.lastIndexOf(BACKSLASH) + 1;
+            directory = fileName.substring(0, indexAfterLastBackSlash);
+        }
+        return directory;
     }
 
     //----------task read and write starts----------
@@ -144,7 +195,6 @@ public class FileStorage {
                 sc.close();      
 
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
             }
         }   
     }
@@ -180,7 +230,6 @@ public class FileStorage {
     public void readShortcutFromFile(Shortcut shortcut) {
         if(shortcutFile.exists()) {
             if(shortcutFile.length() == 0) {
-                System.out.println("call system handler to reset");
                 SystemHandler system = SystemHandler.getSystemHandler();
                 system.resetShortcutToDefault();
             } else {
@@ -211,7 +260,6 @@ public class FileStorage {
 
 
     public void writeShortcutToFile(String[][] shortcuts) {
-        System.out.println("shorcut write is called");
         try {
             shortcutFile.delete();
             shortcutFile.createNewFile();
