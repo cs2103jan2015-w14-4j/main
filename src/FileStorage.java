@@ -90,7 +90,13 @@ public class FileStorage {
     
     public void saveToAnotherLocation(String newFileName) {
         writeNewFileLocationToFile(newFileName);
-        
+        path = getPath(taskFileLocation);
+        taskFile.renameTo(new File(taskFileLocation));
+        taskFile = new File(taskFileLocation);
+        templateFile.renameTo(new File(path + DEFAULT_TEMPLATE_FILE_NAME));
+        templateFile = new File(path + DEFAULT_TEMPLATE_FILE_NAME);
+        shortcutFile.renameTo(new File(path + DEFAULT_SHORTCUT_FILE_NAME));
+        shortcutFile = new File(path + DEFAULT_SHORTCUT_FILE_NAME);
     }
     
     private void writeNewFileLocationToFile(String fileName) {
