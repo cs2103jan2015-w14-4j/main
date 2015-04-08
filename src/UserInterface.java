@@ -12,9 +12,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.text.DefaultCaret;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -34,7 +31,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-
+//@author A0101735R
 
 @SuppressWarnings("serial")
 public class UserInterface extends DefaultTableCellRenderer {
@@ -79,12 +76,12 @@ public class UserInterface extends DefaultTableCellRenderer {
 	private static final String HEADER_TASK_7 = "Status";
 	//setting values for column widths in percentage
 	// column widths for task table
-    private static final double taskID = 5, 
+    private static final double taskID = 8, 
 					            taskName = 30,
 					            dateFrom = 10,
 					            dateTo = 10,
 					            location = 15,
-					            details = 20,
+					            details = 17,
 					            status = 10;
     private static final double[] PREFERRED_WIDTH_TASKTABLE = {taskID, taskName,dateFrom, dateTo, location, details, status};
     private static final double systemKW = 15, userDefinedKW = 85;       
@@ -171,6 +168,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 	private static final Color TASK_EDITED= new Color(255, 220, 128);
 	private static final Color TASK_CLASH= new Color(255, 196, 128);
 	private static final Color TASK_OVERDUE= new Color(255, 180, 94);
+	private static final Color TASK_TEMPLATE= new Color(217, 221, 251);
 	
 	private static final Color SHORTCUT_FONT = new  Color(46,67,113); 
 	private static final Color SHORTCUT_BG = new Color(160, 212, 237); 
@@ -430,7 +428,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 		inputListener listener = new inputListener();
 		textField.addActionListener(listener);
 
-		//keyboard shortcuts needs to be refactored out from here
 
 		//pressing up restores previous input in textField
 		Action lastInput = new AbstractAction(){
@@ -488,7 +485,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 		.put(KeyStroke.getKeyStroke("alt D"), "viewTask");
 		textField.getActionMap().put("viewTask", view );
 		
-		//until here this needs to refactored out
 	}
 
 	
@@ -509,8 +505,10 @@ public class UserInterface extends DefaultTableCellRenderer {
 			public Component prepareRenderer(TableCellRenderer renderer, int row, int column)
 			{
 				Component c = super.prepareRenderer(renderer, row, column);
-
-				if (!isRowSelected(row)){
+				System.out.println( model.getValueAt(row, 0));
+				if (!isNumeric((String) model.getValueAt(row, 0))){
+					c.setBackground(row % 2 == 0 ? getBackground() : TASK_TEMPLATE);
+				}else if (!isRowSelected(row)){
 					c.setBackground(row % 2 == 0 ? getBackground() : TASK_BG);
 				}
 				
@@ -525,6 +523,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 					c.setBackground(TASK_FONT);
 		
 				}
+				
 				
 				return c;
 			}
@@ -675,10 +674,19 @@ public class UserInterface extends DefaultTableCellRenderer {
 	        Object data = model.getValueAt(row, column);
 	        
 	        System.out.println("table change= " + data);
-	        // Do something with the data...
+	       
+	        // stub, unimplemented
 	    }
 
-    
+static private boolean isNumeric(String s){
+	 try
+	  { int i = Integer.parseInt(s);
+	  System.out.println("parsed int"+i);	
+	  return true; }
+
+	 catch(NumberFormatException er)
+	  { return false; }
+}
 
 	
 private void addDummyTask() {
@@ -716,7 +724,6 @@ private void addDummyTask() {
 			}				
 			displayShortcuts(keywordArray, true);
 	}
-
 
 }
 
