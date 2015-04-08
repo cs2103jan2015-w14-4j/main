@@ -24,7 +24,7 @@ public class Shortcut {
 												"addShortcut", 	"viewShortcut", "deleteShortcut",
 												"resetShortcut", "addTemplate", "editTemplate", 
 												"viewTemplate", "useTemplate", 	"deleteTemplate", 
-												"resetTemplate", "help"}; 
+												"resetTemplate", "help", "saveTo"}; 
 	
 	
 	//Default commands
@@ -48,7 +48,7 @@ public class Shortcut {
 	private static final String[] DEFAULT_VIEW_TASK = {"view","viewTask"};
 	private static final String[] DEFAULT_EDIT_TASK = {"edit","editTask"};
 	private static final String[] DEFAULT_ADD_TASK = {"add","addTask"};
-	public static final String[] DEFAULT_SET_PATH = {"save to"};
+	public static final String[] DEFAULT_SET_PATH = {"saveTo"};
 	
 	public static final String[][] defaultWordsSet = {	DEFAULT_ADD_TASK, 		DEFAULT_EDIT_TASK,
 														DEFAULT_VIEW_TASK, 		DEFAULT_DELETE_TASK,

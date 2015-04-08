@@ -34,6 +34,8 @@ public class SystemHandler {
 	private static final int INDEX_COMMAND_TASK_MANAGER = 0;
 	private static final int INDEX_COMMAND_SHORTCUT = 1;
 	private static final int INDEX_COMMAND_TEMPLATE = 2;
+	private static final int INDEX_COMMAND_SAVE = 3;
+	private static final int INDEX_COMMAND_HELP = 4;
 	
 	private static final int INDEX_EXECUTION_ERROR = 0;
 	private static final int INDEX_EXECUTION_SUCCESS = 1;
@@ -43,6 +45,7 @@ public class SystemHandler {
 	private static final boolean EXECUTION_SUCCESS = true;
 
 	private static final int SIZE_ZERO = 0;
+
 
 	
 
@@ -140,6 +143,15 @@ public class SystemHandler {
 				case INDEX_COMMAND_TEMPLATE:
 					executeCustomizer(parsedCommand);
 					break;
+					
+				case INDEX_COMMAND_HELP:
+					displayProcessor.displayHelptoUser();
+					break;
+				
+				case INDEX_COMMAND_SAVE:
+					
+					break;
+					
 			}
 			
 		} catch(ParseException e) {
@@ -219,25 +231,34 @@ public class SystemHandler {
 	 * @throws IllegalArgumentException		The command is not defined in the system
 	 */
 	private static int getCommandGroupType(String commandType) throws IllegalArgumentException {
-		for(COMMAND_TYPE_TASK_MANAGER command : COMMAND_TYPE_TASK_MANAGER.values()) {
-			if(command.name().equals(commandType)) {
-				return INDEX_COMMAND_TASK_MANAGER;
+		if(commandType.equals("help")) {
+			return INDEX_COMMAND_HELP;
+		} else if(commandType.equals("saveTo")) {
+			return INDEX_COMMAND_SAVE;
+		} else {
+			for(COMMAND_TYPE_TASK_MANAGER command : COMMAND_TYPE_TASK_MANAGER.values()) {
+				if(command.name().equals(commandType)) {
+					return INDEX_COMMAND_TASK_MANAGER;
+				}
 			}
+			
+			for(COMMAND_TYPE_SHORTCUT command : COMMAND_TYPE_SHORTCUT.values()) {
+				if(command.name().equals(commandType)) {
+					return INDEX_COMMAND_SHORTCUT;
+				}
+			}
+			
+			for(COMMAND_TYPE_TEMPLATE command : COMMAND_TYPE_TEMPLATE.values()) {
+				if(command.name().equals(commandType)) {
+					return INDEX_COMMAND_TEMPLATE;
+				}
+			}
+			
+			
+			throw new IllegalArgumentException(MSG_ERR_NO_SUCH_COMMAND);
 		}
 		
-		for(COMMAND_TYPE_SHORTCUT command : COMMAND_TYPE_SHORTCUT.values()) {
-			if(command.name().equals(commandType)) {
-				return INDEX_COMMAND_SHORTCUT;
-			}
-		}
-		
-		for(COMMAND_TYPE_TEMPLATE command : COMMAND_TYPE_TEMPLATE.values()) {
-			if(command.name().equals(commandType)) {
-				return INDEX_COMMAND_TEMPLATE;
-			}
-		}
-		
-		throw new IllegalArgumentException(MSG_ERR_NO_SUCH_COMMAND);
+			
 	}
 	
 	

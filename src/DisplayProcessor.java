@@ -295,4 +295,9 @@ public class DisplayProcessor {
 	private boolean noTemplateToView(ArrayList<Task> result) {
 		return result.size() == SIZE_ZERO;
 	}
+
+	public void displayHelptoUser() {
+		// TODO Auto-generated method stub
+		
+	}
 }
