@@ -6,6 +6,10 @@ import java.text.ParseException;
 //@author A0108385B
 public class SystemHandler {
 	
+	private static final String COMMAND_SAVE_TO = "saveTo";
+
+	private static final String COMMAND_HELP = "help";
+
 	private static final int INDEX_SAVE_NEW_PATH = 1;
 
 	private static final String SAVE_LOCATION_DEFAULT = "default.txt";
@@ -233,9 +237,9 @@ public class SystemHandler {
 	 * @throws IllegalArgumentException		The command is not defined in the system
 	 */
 	private static int getCommandGroupType(String commandType) throws IllegalArgumentException {
-		if(commandType.equals("help")) {
+		if(commandType.equals(COMMAND_HELP)) {
 			return INDEX_COMMAND_HELP;
-		} else if(commandType.equals("saveTo")) {
+		} else if(commandType.equals(COMMAND_SAVE_TO)) {
 			return INDEX_COMMAND_SAVE;
 		} else {
 			for(COMMAND_TYPE_TASK_MANAGER command : COMMAND_TYPE_TASK_MANAGER.values()) {
