@@ -6,6 +6,8 @@ import java.text.ParseException;
 //@author A0108385B
 public class SystemHandler {
 	
+	private static final int INDEX_SAVE_NEW_PATH = 1;
+
 	private static final String SAVE_LOCATION_DEFAULT = "default.txt";
 
 	private static final String MSG_LOG_USER_COMMAND = "user enters: %s";
@@ -149,7 +151,7 @@ public class SystemHandler {
 					break;
 				
 				case INDEX_COMMAND_SAVE:
-					
+					externalStorage.saveToAnotherLocation(parsedCommand[INDEX_SAVE_NEW_PATH]);
 					break;
 					
 			}
