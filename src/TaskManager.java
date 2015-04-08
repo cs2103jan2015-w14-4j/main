@@ -281,7 +281,7 @@ public class TaskManager implements TaskManagerInterface {
         }
 
         if(!isValid) {
-            throw new IllegalArgumentException("Action cannot be carried");
+            throw new IllegalArgumentException("Failed to edit the task");
         }
     }
 
@@ -609,33 +609,29 @@ public class TaskManager implements TaskManagerInterface {
 
     //----------View method starts----------
     private ArrayList<Task> viewTasks(String[] inputs) {
-        if(tasks.isEmpty()){
-            return null;
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
+
+        if(isFilterOptionDefault(inputs)) {
+            for(Task task: tasks) {
+                if(task.getPriority() != COMPLETE) {
+                    returningTasks.add(task.clone());
+                }
+            }
         } else {
-            ArrayList<Task> returningTasks = new ArrayList<Task>();
-
-            if(isFilterOptionDefault(inputs)) {
-                for(Task task: tasks) {
-                    if(task.getPriority() != COMPLETE) {
-                        returningTasks.add(task.clone());
-                    }
-                }
-            } else {
-                int filterType = getFileterOption(inputs);
-                for(Task task: tasks) {
-                    if(task.getPriority() == filterType)
-                        returningTasks.add(task.clone());
-                }
+            int filterType = getFileterOption(inputs);
+            for(Task task: tasks) {
+                if(task.getPriority() == filterType)
+                    returningTasks.add(task.clone());
             }
+        }
 
-            if(isViewOptionDefault(inputs)) {
-                sortTasks(returningTasks, DATE_FROM);
-                return returningTasks;
-            } else {
-                int viewType = getViewOption(inputs);
-                sortTasks(returningTasks, viewType);
-                return returningTasks;
-            }
+        if(isViewOptionDefault(inputs)) {
+            sortTasks(returningTasks, DATE_FROM);
+            return returningTasks;
+        } else {
+            int viewType = getViewOption(inputs);
+            sortTasks(returningTasks, viewType);
+            return returningTasks;
         }
     }
 
@@ -1072,7 +1068,7 @@ public class TaskManager implements TaskManagerInterface {
         int TID = getTaskTID(inputs);
         return getNonCloneTaskFromTID(TID);
     }
-    
+
     private Task getNonCloneTaskFromTID(int TID) {
         Task taskFound = null;
 
