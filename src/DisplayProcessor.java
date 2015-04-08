@@ -297,7 +297,7 @@ public class DisplayProcessor {
 	}
 
 	public void displayHelptoUser() {
-		// TODO Auto-generated method stub
+		window.displayText(window.HELP, true);
 		
 	}
 }

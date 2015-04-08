@@ -96,7 +96,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 	   											 "View list of templates", "Use a template", "Delete a template",
 	   											 "Clear all templates", "Help"};
     
-    private static final String[][] HELP = { 
+    public static final String[][] HELP = { 
     										 {"GETTING STARTED:"+newline},
     										 {"  Start adding new tasks by using the keyword \"add [task title]\" followed by the task details."},	
 
@@ -317,10 +317,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-
-		initFrame();
-		initDisplay();
-		initTextArea();
 		
 		outputArrayString = new ArrayList<String[]>();
 		outputArray  =  new ArrayList<Task>();
@@ -330,6 +326,12 @@ public class UserInterface extends DefaultTableCellRenderer {
 		createShortcutTable(shortcutArrayString);
 		createTaskTable(outputArrayString);
 
+		initFrame();
+		initDisplay();
+		initTextArea();
+		
+	//	mainHandler.rawUserInput("viewTask");
+		
 	}
 
 	private void initFrame() {
@@ -354,8 +356,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 		initInputArea();
 		String[] welcome  = {MSG_WELCOME};
 		displayMsg(welcome, 0);
-		displayText(HELP, true);
-
 	}
 
 	private void initInputArea() {
@@ -378,16 +378,11 @@ public class UserInterface extends DefaultTableCellRenderer {
 	private void initSysFBArea() {
 		sysFeedbackArea = new JTextPane();
 		sysFeedbackArea.setEditable(false);
-		sysFeedbackArea.setFont(new Font("Candara", Font.PLAIN, 26));
+		sysFeedbackArea.setFont(new Font("Candara", Font.BOLD, 20));
 		sysFeedbackArea.setForeground(FEEDBACK_FONT);
 		sysFeedbackArea.setBackground(FEEDBACK);
 		sysFeedbackArea.setBorder(null);
 		
-	/*	StyledDocument doc = sysFeedbackArea.getStyledDocument();
-		SimpleAttributeSet center = new SimpleAttributeSet();
-		StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
-		doc.setParagraphAttributes(0, doc.getLength(), center, false);
-	*/
 		GridBagConstraints gbc_sysFeedbackArea = new GridBagConstraints();
 		gbc_sysFeedbackArea.fill = GridBagConstraints.BOTH;
 		gbc_sysFeedbackArea.gridx = 0;
@@ -505,7 +500,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 			public Component prepareRenderer(TableCellRenderer renderer, int row, int column)
 			{
 				Component c = super.prepareRenderer(renderer, row, column);
-				System.out.println( model.getValueAt(row, 0));
 				if (!isNumeric((String) model.getValueAt(row, 0))){
 					c.setBackground(row % 2 == 0 ? getBackground() : TASK_TEMPLATE);
 				}else if (!isRowSelected(row)){
@@ -673,7 +667,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 	        String columnName = model.getColumnName(column);
 	        Object data = model.getValueAt(row, column);
 	        
-	        System.out.println("table change= " + data);
 	       
 	        // stub, unimplemented
 	    }
@@ -681,7 +674,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 static private boolean isNumeric(String s){
 	 try
 	  { int i = Integer.parseInt(s);
-	  System.out.println("parsed int"+i);	
 	  return true; }
 
 	 catch(NumberFormatException er)
