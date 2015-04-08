@@ -335,8 +335,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 		initDisplay();
 		initTextArea();
 		
-	//	mainHandler.rawUserInput("viewTask");
-		
+		displayText(HELP,true);
 	}
 
 	private void initFrame() {
@@ -605,8 +604,6 @@ public class UserInterface extends DefaultTableCellRenderer {
 			clearInput();	
 			if (input.length() == 0){
 				mainHandler.rawUserInput("viewTask");
-			}else if(input.equals("help")){
-				viewTextPane();
 			}else{
 				mainHandler.rawUserInput(input);
 			}
