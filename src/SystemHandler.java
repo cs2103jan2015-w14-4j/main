@@ -248,12 +248,12 @@ public class SystemHandler {
 	private void initializeSystem(String fileName) {
 		
 		myShortcut = new Shortcut();
-		window = new UserInterface();
 		logfile = CentralizedLog.getLogger();
 		myTemplates = new Template();
 		myTaskList = new TaskManager();
 		parser = new FlexiParser(myShortcut);
 		externalStorage = new FileStorage(fileName);
+		window = new UserInterface();
 		displayProcessor = new DisplayProcessor(window);
 		
 		system = this;
@@ -262,6 +262,10 @@ public class SystemHandler {
 		
 		readDataFromFile();
 		
+		ArrayList<Task> fullList = myTaskList.processTM(COMMAND_GET_TASK_LIST);
+		if(fullList != null && fullList.size() > 0) {
+			displayProcessor.displayTaskfromLastLogin(fullList);
+		}
 	}
 
 	/**
