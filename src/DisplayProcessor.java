@@ -64,6 +64,10 @@ public class DisplayProcessor {
 		window.displayMsg(message, INDEX_EXECUTION_ERROR);
 	}
 	
+	public void displayTaskfromLastLogin(ArrayList<Task> taskList) {
+		window.displayTaskTable(taskList, taskList, INDEX_EXECUTION_SUCCESS);
+	}
+	
 	/**
 	 * @param command		Command that has been executed
 	 * @param result		Affected tasks by the executed command
@@ -290,5 +294,10 @@ public class DisplayProcessor {
 	 */
 	private boolean noTemplateToView(ArrayList<Task> result) {
 		return result.size() == SIZE_ZERO;
+	}
+
+	public void displayHelptoUser() {
+		// TODO Auto-generated method stub
+		
 	}
 }

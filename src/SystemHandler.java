@@ -6,6 +6,8 @@ import java.text.ParseException;
 //@author A0108385B
 public class SystemHandler {
 	
+
+
 	private static final String SAVE_LOCATION_DEFAULT = "default.txt";
 
 	private static final String MSG_LOG_USER_COMMAND = "user enters: %s";
@@ -16,7 +18,9 @@ public class SystemHandler {
 	private static final String MSG_ERR_INIT_TASK = "File has been corrupted, some tasks might be lost.";
 	private static final String MSG_ERR_ID_UNDEFINED = "This ID does not exist, please check again";
 	private static final String MSG_ERR_NO_SUCH_COMMAND = "SystemHandler does not recognize this command.";
-	
+
+	private static final String COMMAND_SAVE_TO = "saveTo";
+	private static final String COMMAND_HELP = "help";
 	private static final String[] COMMAND_GET_TASK_LIST = {"viewTask",null,null,null,null,null,null,null,null};
 	private static final String[] COMMAND_RESET_SHORTCUT = {"resetShortcut", null, null};
 
@@ -25,15 +29,18 @@ public class SystemHandler {
 	private static final String STRING_SEPERATOR = "|";
 	private static final String STRING_EMPTY = "_";
 	private static final String STRING_NULL = "null";
-	
-	
+
 	public static final int LENGTH_COMMAND_TASK_MANAGER = 9;
 	public static final int LENGTH_COMMAND_SHORTCUT = 3;
 	public static final int LENGTH_COMMAND_TEMPLATE = 9;
+
+	private static final int INDEX_SAVE_NEW_PATH = 1;
 	
 	private static final int INDEX_COMMAND_TASK_MANAGER = 0;
 	private static final int INDEX_COMMAND_SHORTCUT = 1;
 	private static final int INDEX_COMMAND_TEMPLATE = 2;
+	private static final int INDEX_COMMAND_SAVE = 3;
+	private static final int INDEX_COMMAND_HELP = 4;
 	
 	private static final int INDEX_EXECUTION_ERROR = 0;
 	private static final int INDEX_EXECUTION_SUCCESS = 1;
@@ -43,6 +50,7 @@ public class SystemHandler {
 	private static final boolean EXECUTION_SUCCESS = true;
 
 	private static final int SIZE_ZERO = 0;
+
 
 	
 
@@ -140,6 +148,15 @@ public class SystemHandler {
 				case INDEX_COMMAND_TEMPLATE:
 					executeCustomizer(parsedCommand);
 					break;
+					
+				case INDEX_COMMAND_HELP:
+					displayProcessor.displayHelptoUser();
+					break;
+				
+				case INDEX_COMMAND_SAVE:
+					externalStorage.saveToAnotherLocation(parsedCommand[INDEX_SAVE_NEW_PATH]);
+					break;
+					
 			}
 			
 		} catch(ParseException e) {
@@ -219,25 +236,34 @@ public class SystemHandler {
 	 * @throws IllegalArgumentException		The command is not defined in the system
 	 */
 	private static int getCommandGroupType(String commandType) throws IllegalArgumentException {
-		for(COMMAND_TYPE_TASK_MANAGER command : COMMAND_TYPE_TASK_MANAGER.values()) {
-			if(command.name().equals(commandType)) {
-				return INDEX_COMMAND_TASK_MANAGER;
+		if(commandType.equals(COMMAND_HELP)) {
+			return INDEX_COMMAND_HELP;
+		} else if(commandType.equals(COMMAND_SAVE_TO)) {
+			return INDEX_COMMAND_SAVE;
+		} else {
+			for(COMMAND_TYPE_TASK_MANAGER command : COMMAND_TYPE_TASK_MANAGER.values()) {
+				if(command.name().equals(commandType)) {
+					return INDEX_COMMAND_TASK_MANAGER;
+				}
 			}
+			
+			for(COMMAND_TYPE_SHORTCUT command : COMMAND_TYPE_SHORTCUT.values()) {
+				if(command.name().equals(commandType)) {
+					return INDEX_COMMAND_SHORTCUT;
+				}
+			}
+			
+			for(COMMAND_TYPE_TEMPLATE command : COMMAND_TYPE_TEMPLATE.values()) {
+				if(command.name().equals(commandType)) {
+					return INDEX_COMMAND_TEMPLATE;
+				}
+			}
+			
+			
+			throw new IllegalArgumentException(MSG_ERR_NO_SUCH_COMMAND);
 		}
 		
-		for(COMMAND_TYPE_SHORTCUT command : COMMAND_TYPE_SHORTCUT.values()) {
-			if(command.name().equals(commandType)) {
-				return INDEX_COMMAND_SHORTCUT;
-			}
-		}
-		
-		for(COMMAND_TYPE_TEMPLATE command : COMMAND_TYPE_TEMPLATE.values()) {
-			if(command.name().equals(commandType)) {
-				return INDEX_COMMAND_TEMPLATE;
-			}
-		}
-		
-		throw new IllegalArgumentException(MSG_ERR_NO_SUCH_COMMAND);
+			
 	}
 	
 	
@@ -248,12 +274,12 @@ public class SystemHandler {
 	private void initializeSystem(String fileName) {
 		
 		myShortcut = new Shortcut();
-		window = new UserInterface();
 		logfile = CentralizedLog.getLogger();
 		myTemplates = new Template();
 		myTaskList = new TaskManager();
 		parser = new FlexiParser(myShortcut);
 		externalStorage = new FileStorage(fileName);
+		window = new UserInterface();
 		displayProcessor = new DisplayProcessor(window);
 		
 		system = this;
@@ -262,6 +288,10 @@ public class SystemHandler {
 		
 		readDataFromFile();
 		
+		ArrayList<Task> fullList = myTaskList.processTM(COMMAND_GET_TASK_LIST);
+		if(fullList != null && fullList.size() > 0) {
+			displayProcessor.displayTaskfromLastLogin(fullList);
+		}
 	}
 
 	/**
@@ -333,6 +363,15 @@ public class SystemHandler {
 			case INDEX_COMMAND_TEMPLATE:
 				assert(parsedCommand.length == LENGTH_COMMAND_TEMPLATE);
 				break;
+				
+			case INDEX_COMMAND_HELP:
+				assert(parsedCommand.length == 1);
+				break;
+				
+			case INDEX_COMMAND_SAVE:
+				assert(parsedCommand.length == 2);
+				break;
+				
 		}
 		
 	}

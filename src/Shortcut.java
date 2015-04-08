@@ -4,6 +4,7 @@ import java.util.NoSuchElementException;
 //@author A0108385B
 public class Shortcut {
 
+	private static final String MSG_ERR_UNCHANGEABLE_KEYWORD = "This keyword cannot be edited.";
 	private static final String MSG_ERR_CORRUPTED_SAVED_FILE = "Shortcut saved file has been corrupted";
 	private static final int RESULT_FIRST = 0;
 	private static final int RESULT_SIZE_DEFAULT = 1;
@@ -23,7 +24,8 @@ public class Shortcut {
 												"addShortcut", 	"viewShortcut", "deleteShortcut",
 												"resetShortcut", "addTemplate", "editTemplate", 
 												"viewTemplate", "useTemplate", 	"deleteTemplate", 
-												"resetTemplate", "help"}; 
+												"resetTemplate", "help", "saveTo"}; 
+	
 	
 	//Default commands
 	private static final String[] DEFAULT_HELP = {"help"};
@@ -46,6 +48,7 @@ public class Shortcut {
 	private static final String[] DEFAULT_VIEW_TASK = {"view","viewTask"};
 	private static final String[] DEFAULT_EDIT_TASK = {"edit","editTask"};
 	private static final String[] DEFAULT_ADD_TASK = {"add","addTask"};
+	public static final String[] DEFAULT_SET_PATH = {"saveTo"};
 	
 	public static final String[][] defaultWordsSet = {	DEFAULT_ADD_TASK, 		DEFAULT_EDIT_TASK,
 														DEFAULT_VIEW_TASK, 		DEFAULT_DELETE_TASK,
@@ -56,13 +59,22 @@ public class Shortcut {
 														DEFAULT_RESET_SHORTCUT, DEFAULT_ADD_TEMP, 
 														DEFAULT_EDIT_TEMP, 		DEFAULT_VIEW_TEMP, 
 														DEFAULT_USE_TEMP, 		DEFAULT_DELETE_TEMP, 
-														DEFAULT_RESET_TEMP, 	DEFAULT_HELP
+														DEFAULT_RESET_TEMP, 	DEFAULT_HELP,
+														DEFAULT_SET_PATH
 													};
 	
-
+	public static final int INDEX_HELP 				= 19;
+	public static final int INDEX_SET_PATH 			= 20;
+	public static final int INDEX_RESET_SHORTCUT 	= 12;
+	
+	public static final int[] UNCHANGEABLE_KEYWORD = { 	INDEX_HELP, 
+														INDEX_RESET_SHORTCUT, 
+														INDEX_SET_PATH
+													};
+	
 	private static final String[] reservedWords = {"at","location","from","datefrom","to","dateto","on",
 													"before","by","detail","priority","name","title"};
-
+	
 	private static final int ARRAY_SIZE_SHORTCUT = 3;
 	private static final int ADD_SHORTCUT_ARRAY_USED_SIZE = 3;
 	private static final int ADD_SHORTCUT_INIT_ARRAY_USED_SIZE = 3;
@@ -352,6 +364,9 @@ public class Shortcut {
 		} else if (isReservedWord(newShortcut)) {
 			throw new IllegalArgumentException(String.format(MSG_ERR_DEFAULT_KEYWORD_DELETE, newShortcut));
 			
+		} else if(isUnchangeable(indexBelongTo)) {
+			throw new IllegalArgumentException(MSG_ERR_UNCHANGEABLE_KEYWORD);
+			
 		} else if (isWordLengthInappropriate(newShortcut)) {
 			throw new IllegalArgumentException(String.format(MSG_ERR_MINIMUM_LENGTH, newShortcut));
 			
@@ -444,6 +459,19 @@ public class Shortcut {
 				
 			}
 			
+		}
+		return false;
+	}
+	
+	/**
+	 * @param index			Index of keyword to be manipulated 
+	 * @return				True if it is a unchangeable keyword
+	 */
+	private boolean isUnchangeable(int index) {
+		for(int i = 0; i < UNCHANGEABLE_KEYWORD.length; ++i) {
+			if(index == UNCHANGEABLE_KEYWORD[i]) {
+				return true;
+			}
 		}
 		return false;
 	}
