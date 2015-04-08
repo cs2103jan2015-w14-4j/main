@@ -56,7 +56,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 
 	public static final String APP_NAME = "Flexi Tracker";
 	public static final String MSG_WELCOME = "Welcome to Flexi Tracker!";
-	public static final String MSG_HELP = "Type \"help\" into the  text field if you need help.";
+	public static final String MSG_HELP = "If you need any help in adding a new task, type \"help\", or consult the user manual.";
 	public static final String MSG_ASK_FILENAME = "Please enter the name of your file";
 	public static final String MSG_ASK_INPUT = "Please enter your command";
 	public static final String MSG_ECHO_FILENAME = "File location: %1$s";
@@ -153,6 +153,10 @@ public class UserInterface extends DefaultTableCellRenderer {
     private static final String EMPTY = " ";
     private static final String OVERDUE  = "Overdue";
     private static final String[] EMPTYROW = {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY};
+    private static final String[][] NO_TASKS = {{MSG_EMPTY_TASKLIST},
+									    		{newline},
+									    		{newline},
+									    		{MSG_HELP}};
    
 //    private static final String[] SYS_KEYWORDS = {	"addTask", "editTask","viewTask","deleteTask", 
 //  		"clearAttr", "searchTask", "undoTask", "redoTask", "markTask",
@@ -193,8 +197,9 @@ public class UserInterface extends DefaultTableCellRenderer {
 		viewTaskTable();
 		ArrayList<String[]> outputDataString = new ArrayList<String[]>();
 		
-		if(fullListTask == null){
-			displayMsg(MSG_EMPTY_TASKLIST, 1);
+		if(fullListTask.size() == 0){
+			displayText(NO_TASKS, true);
+			
 		}else if(affectedTask == null){
 			for (int i = 0 ; i < fullListTask.size(); i++){
 					outputDataString.add(fullListTask.get(i).toStringArray());
