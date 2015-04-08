@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
+//@author A0118892U
 public class FileStorage {
 
     //The indexes for how a task object is stored in a ArrayList<Task>
@@ -86,6 +87,22 @@ public class FileStorage {
             shortcutFile = new File(path + DEFAULT_SHORTCUT_FILE_NAME);
         }
     } 
+    
+    public void saveToAnotherLocation(String newFileName) {
+        writeNewFileLocationToFile(newFileName);
+        
+    }
+    
+    private void writeNewFileLocationToFile(String fileName) {
+        try {
+            fileLocation.delete();
+            fileLocation.createNewFile();
+            BufferedWriter bw = new BufferedWriter(new FileWriter(fileLocation));
+            bw.write(fileName);
+            bw.close();
+        } catch (IOException e) {
+        }
+    }
 
     //create a fileLocation file with tasks.txt inside
     private void initializeFileStorage() {
@@ -149,17 +166,7 @@ public class FileStorage {
         shortcutFile.renameTo(new File(newShortcutFile));
     }*/
 
-    private void writeNewFileLocationToFile(String fileName) {
-        try {
-            fileLocation.delete();
-            fileLocation.createNewFile();
-            BufferedWriter bw = new BufferedWriter(new FileWriter(fileLocation));
-            bw.write(fileName);
-            bw.close();
-        } catch (IOException e) {
 
-        }
-    }
 
     /*private String getPath() {
         String location = "";
