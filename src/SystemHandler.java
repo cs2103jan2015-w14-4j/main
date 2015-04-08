@@ -6,11 +6,7 @@ import java.text.ParseException;
 //@author A0108385B
 public class SystemHandler {
 	
-	private static final String COMMAND_SAVE_TO = "saveTo";
 
-	private static final String COMMAND_HELP = "help";
-
-	private static final int INDEX_SAVE_NEW_PATH = 1;
 
 	private static final String SAVE_LOCATION_DEFAULT = "default.txt";
 
@@ -22,7 +18,9 @@ public class SystemHandler {
 	private static final String MSG_ERR_INIT_TASK = "File has been corrupted, some tasks might be lost.";
 	private static final String MSG_ERR_ID_UNDEFINED = "This ID does not exist, please check again";
 	private static final String MSG_ERR_NO_SUCH_COMMAND = "SystemHandler does not recognize this command.";
-	
+
+	private static final String COMMAND_SAVE_TO = "saveTo";
+	private static final String COMMAND_HELP = "help";
 	private static final String[] COMMAND_GET_TASK_LIST = {"viewTask",null,null,null,null,null,null,null,null};
 	private static final String[] COMMAND_RESET_SHORTCUT = {"resetShortcut", null, null};
 
@@ -31,11 +29,12 @@ public class SystemHandler {
 	private static final String STRING_SEPERATOR = "|";
 	private static final String STRING_EMPTY = "_";
 	private static final String STRING_NULL = "null";
-	
-	
+
 	public static final int LENGTH_COMMAND_TASK_MANAGER = 9;
 	public static final int LENGTH_COMMAND_SHORTCUT = 3;
 	public static final int LENGTH_COMMAND_TEMPLATE = 9;
+
+	private static final int INDEX_SAVE_NEW_PATH = 1;
 	
 	private static final int INDEX_COMMAND_TASK_MANAGER = 0;
 	private static final int INDEX_COMMAND_SHORTCUT = 1;
