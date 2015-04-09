@@ -88,6 +88,7 @@ public class SystemHandler {
 		system = getSystemHandler();
 		
 		system.activateUI();
+//		system.externalStorage.saveToAnotherLocation("../new/");
 	}
 	
 	/**
@@ -174,9 +175,7 @@ public class SystemHandler {
 		} catch(IllegalStateException e) {
 			displayProcessor.displayErrorToUI(e.getMessage());
 			logfile.warning(e.getMessage());
-		} catch(Exception e) {
-			logfile.severe(e.getMessage());
-		}
+		} 
 		
 	}
 	

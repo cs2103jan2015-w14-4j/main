@@ -104,7 +104,7 @@ public class FlexiParser {
     public static final int HELP_LENGTH = 1;
     private Shortcut shortcut;
     
-    public FlexiParser(/*Shortcut shortcut*/) {
+    public FlexiParser(Shortcut shortcut) {
 		
     	this.shortcut = shortcut;
     	
@@ -916,16 +916,16 @@ public class FlexiParser {
     
     	
     	//Shortcut sc = new Shortcut();
-    	FlexiParser test1 = new FlexiParser();
+//    	FlexiParser test1 = new FlexiParser();
     	
     	
-    String[] temp = test1.parseText("saveTo ./desktop/file.txt");
-    
-    for(int i=0;i<temp.length;i++) {
-		
-		System.out.print(temp[i]+"|");
-		
-	}
+//    String[] temp = test1.parseText("saveTo ./desktop/file.txt");
+//    
+//    for(int i=0;i<temp.length;i++) {
+//		
+//		System.out.print(temp[i]+"|");
+//		
+//	}
     	
     
     	

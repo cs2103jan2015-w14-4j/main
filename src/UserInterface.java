@@ -94,7 +94,7 @@ public class UserInterface extends DefaultTableCellRenderer {
     											 "Add a new keyword", "View available keywords", "Delete a keyword", 
 	   											 "Reset keywords", "Create a template", "Edit existing template", 
 	   											 "View list of templates", "Use a template", "Delete a template",
-	   											 "Clear all templates", "Help"};
+	   											 "Clear all templates", "Help","Change saved file Location"};
     
     public static final String[][] HELP = { 
     										 {"GETTING STARTED:"+newline},
