@@ -67,7 +67,7 @@ public class FileStorage {
      * in a global variable textFile for reference.
      * If the file does not exist it will be created.
      */
-    public FileStorage(String fileName) {
+    public FileStorage() {
         //taskFile = new File(fileName);
 
         //create a fileLocation file with tasks.txt inside
@@ -138,29 +138,7 @@ public class FileStorage {
         taskFile = new File(DEFAULT_FILENAME);
     } */
 
-    //stub
-    public FileStorage(String fileName, TaskManager myTaskList, Template myTemplate, Shortcut myShortcut) {
-        //stub
-        //    	textFile = new File(fileName);
-        try {
-            new FileStorage(fileName);
-            //        	if(!textFile.exists()) {
-            //            
-            //            	textFile.createNewFile();
-            //            
-            //            }
-
-        }catch(Exception e) {
-            System.out.println(ERROR_EXCEPTION); 
-        }
-        // read from file and add respective info to the 3 parts
-        //to call TM, same as before
-        //to call template, use processCustomizingCommand(String[] cmd) 
-        //	cmd = {"addTemplate", , <template name>,<datefrom>......} //same as task manager 
-        //to call shortcut, use processShortcutCommand(String[] command)
-        // cmd = {"addShortcutINIT", shortcutname, id} // id the the row, eg addTask = row 0, deleteTask = row 3
-        // refer to shortcut keywords for the row
-    }
+   
 
     /*public void moveFileTo(String newLocation) {
         String directory = getDirectory(newLocation);
