@@ -267,7 +267,7 @@ public class SystemHandler {
 	private void initializeSystem() {
 		
 		myShortcut = new Shortcut();
-		logfile = CentralizedLog.getLogger();
+		logfile =  new CentralizedLog();
 		myTemplates = new Template();
 		myTaskList = new TaskManager();
 		parser = new FlexiParser(myShortcut);

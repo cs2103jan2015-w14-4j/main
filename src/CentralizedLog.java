@@ -10,32 +10,12 @@ public class CentralizedLog {
 	private static final String LOGGER_NAME = "log";
 	private static final String LOG_FILE_NAME = "log.txt";
 	private Logger logfile;
-	private static CentralizedLog centralizedLog;
 	
-	private CentralizedLog() {
+	public CentralizedLog() {
 		logfile = buildLogger();
 	}
-	
-	/**
-	 * This method initialize centralLog object and 
-	 * gets the logger used for this system
-	 * @return	log file that is used among the system
-	 */
-	public static CentralizedLog getLogger() {
-		if(loggerNotCreated()) {
-			centralizedLog = new CentralizedLog();
-		}
-		
-		return centralizedLog;
-	}
 
-	/**
-	 * @return	True if centralized log is not created
-	 */
-	private static boolean loggerNotCreated() {
-		return centralizedLog == null;
-	}
-	
+
 	
 	/**
 	 * This method build a log file under file name log.txt
