@@ -141,7 +141,7 @@ public class SystemHandler {
 					break;
 					
 				case INDEX_COMMAND_TEMPLATE:
-					executeCustomizer(parsedCommand);
+					executeTemplateManager(parsedCommand);
 					break;
 					
 				case INDEX_COMMAND_HELP:
@@ -374,7 +374,7 @@ public class SystemHandler {
 	 * 					manual under Shortcut for more information 
 	 * @throws ParseException		INPUT FROM MA CONG
 	 */
-	private ArrayList<Task> executeTaskManager(String[] command) 
+	private void executeTaskManager(String[] command) 
 			throws ParseException {
 		ArrayList<Task> result = myTaskList.processTM(command);
 		
@@ -383,7 +383,6 @@ public class SystemHandler {
 			displayProcessor.displayTMResult(command, result, fullList);
 		}
 			
-		return result;
 	}
 
 	/**
@@ -408,7 +407,7 @@ public class SystemHandler {
 	 * 										or violation of restriction by template manager
 	 * @throws NoSuchElementException		Requested template is not found in template list
 	 */
-	private void executeCustomizer(String[] command) 
+	private void executeTemplateManager(String[] command) 
 			throws IllegalArgumentException, NoSuchElementException {
 
 		ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
