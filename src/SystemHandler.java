@@ -271,7 +271,7 @@ public class SystemHandler {
 		myTemplates = new Template();
 		myTaskList = new TaskManager();
 		parser = new FlexiParser(myShortcut);
-		externalStorage = new FileStorage(fileName);
+		externalStorage = new FileStorage();
 		window = new UserInterface();
 		displayProcessor = new DisplayProcessor(window);
 		
