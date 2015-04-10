@@ -59,22 +59,16 @@ public class SystemHandler {
 	private TaskManager 	myTaskList;
 	private Template 		myTemplates;
 	private Shortcut 		myShortcut;
-	private String 			fileName;
 	private FileStorage 	externalStorage;
 	private UserInterface 	window;
 	private FlexiParser 	parser;
 	private DisplayProcessor displayProcessor;
 	public static SystemHandler system;
 
-	
 	public static SystemHandler getSystemHandler() {
-		return getSystemHandler(SAVE_LOCATION_DEFAULT);
-	}
-	
-	public static SystemHandler getSystemHandler(String fileName) {
 		if(system == null) {
 			system = new SystemHandler();
-			system.initializeSystem(fileName);
+			system.initializeSystem();
 		}
 		return system;
 	}
@@ -270,7 +264,7 @@ public class SystemHandler {
 	 * This method construct all the related classes required for the software
 	 * @param fileName File location
 	 */
-	private void initializeSystem(String fileName) {
+	private void initializeSystem() {
 		
 		myShortcut = new Shortcut();
 		logfile = CentralizedLog.getLogger();
