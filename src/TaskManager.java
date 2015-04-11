@@ -341,7 +341,7 @@ public class TaskManager implements TaskManagerInterface {
 
         checkTaskDetails(newTask.clone());
 
-        if(isTaskOverDue(newTask)) {
+        if(isTaskOverdue(newTask)) {
             newTask.setPriority(OVERDUE);
         }
 
@@ -468,6 +468,13 @@ public class TaskManager implements TaskManagerInterface {
                 clearTaskInfo(taskToEdit, i);
             }
         }
+        
+        
+        if(isTaskStatusOverdue(taskToEdit) && !isTaskOverdue(taskToEdit)) {
+            taskToEdit.setPriority(NORMAL);
+        }
+        
+        
         ArrayList<Task> returningTasks = new ArrayList<Task>();
         returningTasks.add(taskToEdit.clone());
 
@@ -614,13 +621,13 @@ public class TaskManager implements TaskManagerInterface {
     //----------View method starts----------
     private void changeIncompleteTaskStatusToOverdue() {
         for(Task task: tasks) {
-            if(isTaskOverDue(task) && !isTaskComplete(task)) {
+            if(isTaskOverdue(task) && !isTaskComplete(task)) {
                 task.setPriority(OVERDUE);
             }
         }
     }
 
-    private boolean isTaskOverDue(Task task) {
+    private boolean isTaskOverdue(Task task) {
         boolean isOverdue = false;
         Date current = new Date();
 
@@ -1198,6 +1205,10 @@ public class TaskManager implements TaskManagerInterface {
                 returningTasks.add(existingTask.clone());
             }
         }
+    }
+    
+    private boolean isTaskStatusOverdue(Task task) {
+        return task.getPriority() == OVERDUE;
     }
 
     private boolean isTaskComplete(Task task) {
