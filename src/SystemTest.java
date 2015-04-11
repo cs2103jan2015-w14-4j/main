@@ -20,6 +20,7 @@ import org.junit.Test;
 
 
 
+
 //Import for natty
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,42 @@ import com.joestelmach.natty.Parser;
 
 //@author A0108385B
 public class SystemTest {
-
+	private static final String[] DEFAULT_HELP = {"help"};
+	private static final String[] DEFAULT_RESET_TEMP = {"resetTemplate", "resetTemp"};
+	private static final String[] DEFAULT_DELETE_TEMP = {"deleteTemplate","deleteTemp"};
+	private static final String[] DEFAULT_USE_TEMP = {"useTemplate", "useTemp"};
+	private static final String[] DEFAULT_VIEW_TEMP = {"viewTemplate","viewTemp"};
+	private static final String[] DEFAULT_EDIT_TEMP = {"editTemplate","editTemp"};
+	private static final String[] DEFAULT_ADD_TEMP = {"addTemplate","addTemp"};
+	private static final String[] DEFAULT_RESET_SHORTCUT = {"resetShortcut","resetKeyword"};
+	private static final String[] DEFAULT_DELETE_SHORTCUT = {"deleteShortcut","deleteKeyword"};
+	private static final String[] DEFAULT_VIEW_SHORTCUT = {"viewShortcut","viewKeyword"};
+	private static final String[] DEFAULT_ADD_SHORTCUT = {"addShortcut","addKeyword"};
+	private static final String[] DEFAULT_MARK_TASK = {"mark","markTask"};
+	private static final String[] DEFAULT_REDO_TASK = {"redo","redoTask"};
+	private static final String[] DEFAULT_UNDO_TASK = {"undo","undoTask"};
+	private static final String[] DEFAULT_SEARCH_TASK = {"search", "searchTask"};
+	private static final String[] DEFAULT_CLEAR_ATTR = {"clear","clearAttr"};
+	private static final String[] DEFAULT_DELETE_TASK = {"delete","deleteTask"};
+	private static final String[] DEFAULT_VIEW_TASK = {"view","viewTask"};
+	private static final String[] DEFAULT_EDIT_TASK = {"edit","editTask"};
+	private static final String[] DEFAULT_ADD_TASK = {"add","addTask"};
+	public static final String[] DEFAULT_SET_PATH = {"saveTo"};
+	
+	private static final String[][] DEFAULT_WORD_SET = {	DEFAULT_ADD_TASK, 		DEFAULT_EDIT_TASK,
+														DEFAULT_VIEW_TASK, 		DEFAULT_DELETE_TASK,
+														DEFAULT_CLEAR_ATTR,		DEFAULT_SEARCH_TASK, 
+														DEFAULT_UNDO_TASK, 		DEFAULT_REDO_TASK,
+														DEFAULT_MARK_TASK, 		DEFAULT_ADD_SHORTCUT, 
+														DEFAULT_VIEW_SHORTCUT, 	DEFAULT_DELETE_SHORTCUT, 
+														DEFAULT_RESET_SHORTCUT, DEFAULT_ADD_TEMP, 
+														DEFAULT_EDIT_TEMP, 		DEFAULT_VIEW_TEMP, 
+														DEFAULT_USE_TEMP, 		DEFAULT_DELETE_TEMP, 
+														DEFAULT_RESET_TEMP, 	DEFAULT_HELP,
+														DEFAULT_SET_PATH
+													};
+	
+	
 	public static SystemHandler mySystem;
 
 	@BeforeClass
@@ -44,7 +80,7 @@ public class SystemTest {
 
 	@Before
 	public void setUp() throws Exception {
-		mySystem = SystemHandler.getSystemHandler("assert.txt");
+		mySystem = SystemHandler.getSystemHandler();
 	}
 
 	@After
@@ -217,7 +253,7 @@ public class SystemTest {
 		//TC1 - test view and initialize shortcut list
 		String[] cmd = {"viewShortcut",null,null};
 		String[][] results = myshortcut.processShortcutCommand(cmd);
-		String[][] expected1 = Shortcut.defaultWordsSet;
+		String[][] expected1 = DEFAULT_WORD_SET;
 		for(int i = 0; i < expected1.length; ++i) {
 			Assert.assertArrayEquals(results[i], expected1[i]);
 		}
@@ -249,7 +285,7 @@ public class SystemTest {
 		//TC5 - view all changes
 		String[] cmd5 = {"viewShortcut", null, null};
 		String[][] results5 = myshortcut.processShortcutCommand(cmd5);
-		String[][] expected5 = Shortcut.defaultWordsSet;
+		String[][] expected5 = DEFAULT_WORD_SET;
 		String[] changes1 = {"add","addTask","addM"};
 		expected5[0] = changes1;
 		String[] changes2= {"editTemplate","editTemp","eTemp","addS"};
@@ -273,7 +309,7 @@ public class SystemTest {
 		//TC7 - reset
 		String[] cmd7 = {"resetShortcut", null, null};
 		String[][] results7 = myshortcut.processShortcutCommand(cmd7);
-		String[][] expected7 = Shortcut.defaultWordsSet;
+		String[][] expected7 = DEFAULT_WORD_SET;
 		for(int i = 0; i < expected7.length; ++i) {
 			Assert.assertArrayEquals(results7[i], expected7[i]);
 		}
