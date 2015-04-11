@@ -54,76 +54,124 @@ public class FileStorage {
     private final String DEFAULT_TASK_FILE_NAME = "default.txt";
     private final String DEFAULT_TEMPLATE_FILE_NAME = "template";
     private final String DEFAULT_SHORTCUT_FILE_NAME = "shortcut";
-    private final String DEFAULT_FILE_LOCATION_FILE_NAME = "fileLocation";
+    private final String DEFAULT_LOCATION_FILE_NAME = "location";
     private File templateFile;// = new File(DEFAULT_TEMPLATE_FILE_NAME);
     private File shortcutFile;// = new File(DEFAULT_SHORTCUT_FILE_NAME);
-    private File fileLocation = new File(DEFAULT_FILE_LOCATION_FILE_NAME);
+    private File location = new File(DEFAULT_LOCATION_FILE_NAME);
     private String taskFileLocation;
     private String path;
 
 
-    //--------------------constructor-----------------
+    //--------------------constructor method starts-----------------
     /**
      * @author A0118892U
-     * Constructor for FileStorage object, it reads the location of tasks, templates 
-     * and shortcuts from a file named fileLocation.
-     * If fileLocation file does not exist, it will be created.
+     * This constructor reads the location of task file from a file named location; 
+     * then it creates File object for tasks, templates and shortcuts.
+     * If location file does not exist, it will be created with default contents.
      */
     public FileStorage() {
 
-        if(!fileLocation.exists()){
-            initializeFileStorage();
+        if(!location.exists()){
+            initializeFileStorageDefault();
         } else {
-            try {
-                Scanner sc = new Scanner(fileLocation);
-                taskFileLocation = sc.nextLine();
-                sc.close();
-            } catch (FileNotFoundException e) {
-                assert(true);
-            }
-            path = getPath(taskFileLocation);
-
-            try {
-                taskFile = new File(taskFileLocation);
-                if(!taskFile.exists()) {
-                    taskFile.createNewFile();           
-                }
-                templateFile = new File(path + DEFAULT_TEMPLATE_FILE_NAME);
-                if(!templateFile.exists()) {
-                    templateFile.createNewFile();
-                }
-                shortcutFile = new File(path + DEFAULT_SHORTCUT_FILE_NAME);
-                if(!shortcutFile.exists()) {
-                    shortcutFile.createNewFile();
-                }
-            } catch (IOException e) {
-                assert(true);
-            }
+            initializeFileStorageFromALocation();
         }
     }
-
-
-    private void initializeFileStorage() {
-        fileLocation = new File(DEFAULT_FILE_LOCATION_FILE_NAME);
+    
+    /**
+     * @author A0118892U
+     * This method initializes File object for tasks, templates and shortcuts 
+     * from their default locations.
+     */
+    private void initializeFileStorageDefault() {
+        location = new File(DEFAULT_LOCATION_FILE_NAME);
         try {
             writeNewFileLocationToFile(DEFAULT_TASK_FILE_NAME);
 
-            taskFile = new File(DEFAULT_TASK_FILE_NAME);
-            if(!taskFile.exists()) {
-                taskFile.createNewFile();           
-            }
-            templateFile = new File(DEFAULT_TEMPLATE_FILE_NAME);
-            if(!templateFile.exists()) {
-                templateFile.createNewFile();
-            }
-            shortcutFile = new File(DEFAULT_SHORTCUT_FILE_NAME);
-            if(!shortcutFile.exists()) {
-                shortcutFile.createNewFile();
-            }
+            createTaskFile(DEFAULT_TASK_FILE_NAME);
+            createTemplateFile(DEFAULT_TEMPLATE_FILE_NAME);
+            createShortcutFile(DEFAULT_SHORTCUT_FILE_NAME);      
         } catch (IOException e) {
             assert(true);
         }
     }
+    
+    /**
+     * @author A0118892U
+     * This method creates a File object for tasks with the given file name.
+     * If the file with that name is not found, it creates a file.
+     * @param taskFileName
+     * @throws IOException
+     */
+    private void createTaskFile(String taskFileName) throws IOException {
+        taskFile = new File(taskFileName);
+        if(!taskFile.exists()) {
+            taskFile.createNewFile();           
+        }
+    }
+    
+    /**
+     * @author A0118892U
+     * This method creates a File object for templates with the given file name.
+     * If the file with that name is not found, it creates a file.
+     * @param templateFileName
+     * @throws IOException
+     */
+    private void createTemplateFile(String templateFileName) throws IOException {
+        templateFile = new File(templateFileName);
+        if(!templateFile.exists()) {
+            templateFile.createNewFile();
+        }
+    }
+    
+    /**
+     * @author A0118892U
+     * This method creates a File object for shortcuts with the given file name.
+     * If the file with that name is not found, it creates a file.
+     * @param shortcutFileName
+     * @throws IOException
+     */
+    private void createShortcutFile(String shortcutFileName) throws IOException {
+        shortcutFile = new File(shortcutFileName);
+        if(!shortcutFile.exists()) {
+            shortcutFile.createNewFile();
+        }
+    }
+    
+    /**
+     * @author A0118892U
+     * This method reads the location where task file is saved from the location file.
+     */
+    private void getTaskFileLocation() {
+        try {
+            Scanner sc = new Scanner(location);
+            taskFileLocation = sc.nextLine();
+            sc.close();
+        } catch (FileNotFoundException e) {
+            assert(true);
+        } 
+    }
+    
+    /**
+     * @author A0118892U
+     * This method initializes File object for tasks, templates and shortcuts 
+     * from location stores in the location file.
+     */
+    private void initializeFileStorageFromALocation() {
+        getTaskFileLocation();
+        path = getPath(taskFileLocation);
+
+        try {
+            createTaskFile(taskFileLocation);
+            createTemplateFile(path + DEFAULT_TEMPLATE_FILE_NAME);
+            createShortcutFile(path + DEFAULT_SHORTCUT_FILE_NAME);
+            taskFile = new File(taskFileLocation);
+        } catch (IOException e) {
+            assert(true);
+        }
+    }
+    //--------------------constructor method ends-----------------
+
 
 
     public void saveToAnotherLocation(String newFileName) /*throws IOException*/ {
@@ -144,9 +192,9 @@ public class FileStorage {
 
     private void writeNewFileLocationToFile(String fileName) {
         try {
-            fileLocation.delete();
-            fileLocation.createNewFile();
-            BufferedWriter bw = new BufferedWriter(new FileWriter(fileLocation));
+            location.delete();
+            location.createNewFile();
+            BufferedWriter bw = new BufferedWriter(new FileWriter(location));
             bw.write(fileName);
             bw.close();
         } catch (IOException e) {
@@ -187,16 +235,20 @@ public class FileStorage {
         return location;
     }*/
 
+    /**
+     * @param fileName the path and name the task file is saved
+     * @return         the path where task file is saved
+     */
     private String getPath(String fileName) {
-        String directory = "";
+        String path = "";
         if(fileName.indexOf(SLASH) != -1) {
             int indexAfterLastSlash = fileName.lastIndexOf(SLASH) + 1;
-            directory = fileName.substring(0, indexAfterLastSlash);
+            path = fileName.substring(0, indexAfterLastSlash);
         } else if (fileName.indexOf(BACKSLASH) != -1) {
             int indexAfterLastBackSlash = fileName.lastIndexOf(BACKSLASH) + 1;
-            directory = fileName.substring(0, indexAfterLastBackSlash);
+            path = fileName.substring(0, indexAfterLastBackSlash);
         }
-        return directory;
+        return path;
     }
 
     //----------task read and write starts----------
