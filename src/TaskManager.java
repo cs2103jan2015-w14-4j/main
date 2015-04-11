@@ -341,6 +341,10 @@ public class TaskManager implements TaskManagerInterface {
 
         checkTaskDetails(newTask.clone());
 
+        if(isTaskOverDue(newTask)) {
+            newTask.setPriority(OVERDUE);
+        }
+
         assert newTask.getTID() >= INITIAL_TID;
         addIDToTaskIDs(newTask.getTID());
 
@@ -608,8 +612,37 @@ public class TaskManager implements TaskManagerInterface {
 
 
     //----------View method starts----------
+    private void changeIncompleteTaskStatusToOverdue() {
+        for(Task task: tasks) {
+            if(isTaskOverDue(task) && !isTaskComplete(task)) {
+                task.setPriority(OVERDUE);
+            }
+        }
+    }
+
+    private boolean isTaskOverDue(Task task) {
+        boolean isOverdue = false;
+        Date current = new Date();
+
+        if(isOnlyDateToTask(task) || isDurationalTask(task)) {
+            if(task.getDateTo().compareTo(current) == -1) {
+                isOverdue = true;
+            }
+        }
+
+        if(isDeadlineTask(task)) {
+            if(task.getDeadline().compareTo(current) == -1) {
+                isOverdue = true;
+            } 
+        }
+
+        return isOverdue;
+    }
+
     private ArrayList<Task> viewTasks(String[] inputs) {
         ArrayList<Task> returningTasks = new ArrayList<Task>();
+
+        changeIncompleteTaskStatusToOverdue();
 
         if(isFilterOptionDefault(inputs)) {
             for(Task task: tasks) {
