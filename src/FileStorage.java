@@ -179,7 +179,7 @@ public class FileStorage {
      * @throw IOException  Unsuccessful move of files
      */
     //@author A0118892U
-    public void saveToAnotherLocation(String newFileName) /*throws IOException*/ {
+    public void saveToAnotherLocation(String newFileName) throws IOException {
         boolean isSaveSuccessful = taskFile.renameTo(new File(newFileName));
 
         if(isSaveSuccessful) {
@@ -193,7 +193,7 @@ public class FileStorage {
             shortcutFile.renameTo(new File(path + DEFAULT_SHORTCUT_FILE_NAME));
             shortcutFile = new File(path + DEFAULT_SHORTCUT_FILE_NAME);
         } else {
-            //throw new IOException(MSG_ERR_MOVE_FILE);
+            throw new IOException(MSG_ERR_MOVE_FILE);
         }
     }
 
