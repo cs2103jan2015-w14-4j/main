@@ -7,12 +7,10 @@ import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
-//@author A0118892U
 public class FileStorage {
 
     //The indexes for how a task object is stored in a ArrayList<Task>
@@ -63,16 +61,16 @@ public class FileStorage {
     private String taskFileLocation;
     private String path;
 
+
     //--------------------constructor-----------------
     /**
-     * Constructor for FileStorage object, this will store the text file name
-     * in a global variable textFile for reference.
-     * If the file does not exist it will be created.
+     * @author A0118892U
+     * Constructor for FileStorage object, it reads the location of tasks, templates 
+     * and shortcuts from a file named fileLocation.
+     * If fileLocation file does not exist, it will be created.
      */
     public FileStorage() {
-        //taskFile = new File(fileName);
 
-        //create a fileLocation file with default.txt inside
         if(!fileLocation.exists()){
             initializeFileStorage();
         } else {
@@ -81,12 +79,39 @@ public class FileStorage {
                 taskFileLocation = sc.nextLine();
                 sc.close();
             } catch (FileNotFoundException e) {
-                //this exception will never be used
+                assert(true);
             }
             path = getPath(taskFileLocation);
-            taskFile = new File(taskFileLocation);
-            templateFile = new File(path + DEFAULT_TEMPLATE_FILE_NAME);
-            shortcutFile = new File(path + DEFAULT_SHORTCUT_FILE_NAME);
+
+            /*taskFile = new File(DEFAULT_TASK_FILE_NAME);
+            if(!taskFile.exists()) {
+                taskFile.createNewFile();           
+            }
+            templateFile = new File(DEFAULT_TEMPLATE_FILE_NAME);
+            if(!templateFile.exists()) {
+                templateFile.createNewFile();
+            }
+            shortcutFile = new File(DEFAULT_SHORTCUT_FILE_NAME);
+            if(!shortcutFile.exists()) {
+                shortcutFile.createNewFile();
+            }*/
+
+            try {
+                taskFile = new File(taskFileLocation);
+                if(!taskFile.exists()) {
+                    taskFile.createNewFile();           
+                }
+                templateFile = new File(path + DEFAULT_TEMPLATE_FILE_NAME);
+                if(!templateFile.exists()) {
+                    templateFile.createNewFile();
+                }
+                shortcutFile = new File(path + DEFAULT_SHORTCUT_FILE_NAME);
+                if(!shortcutFile.exists()) {
+                    shortcutFile.createNewFile();
+                }
+            } catch (IOException e) {
+                assert(true);
+            }
         }
     }
 
@@ -111,11 +136,12 @@ public class FileStorage {
                 shortcutFile.createNewFile();
             }
         } catch (IOException e) {
+            assert(true);
         }
     }
 
 
-    public void saveToAnotherLocation(String newFileName) throws IOException {
+    public void saveToAnotherLocation(String newFileName) /*throws IOException*/ {
         boolean isRenameSuccessful = taskFile.renameTo(new File(newFileName));
 
         if(isRenameSuccessful) {
@@ -127,7 +153,7 @@ public class FileStorage {
             shortcutFile.renameTo(new File(path + DEFAULT_SHORTCUT_FILE_NAME));
             shortcutFile = new File(path + DEFAULT_SHORTCUT_FILE_NAME);
         } else {
-            throw new IOException(MSG_ERR_MOVE_FILE);
+            //throw new IOException(MSG_ERR_MOVE_FILE);
         }
     }
 
