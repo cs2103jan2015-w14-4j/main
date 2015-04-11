@@ -23,6 +23,21 @@ import com.joestelmach.natty.Parser;
 public class FlexiParser {
 	private static final String MSG_ERR_INTERNAL_PARSER_IMPLEMENTATION = "\"%s\" is not implemented in parser yet.";
 	private static final String MSG_ERR_UNRECOGNIZED_COMMAND = "\"%s\" is not a command recognized by Flexi Tracker. Type \"viewKeyword\" to see all the keywords.";
+	private static final String MSG_ERR_NOT_DATE = "The date/time you have entered using the keyword representing date \"%s\" is invalid, please enter a new one.";
+	private static final String MSG_ERR_TITLE_EMPTY = "Task cannot be created due to the lack of a title, please enter the task again.";
+	private static final String MSG_ERR_ID_EDIT = "Task cannot be edited as task ID was not specified, please try again while entering a correct ID.";
+	private static final String MSG_ERR_ID_EDIT_TEMPLATE = "Template cannot be edited as task ID was not specified, please try again while entering a correct ID.";
+	private static final String MSG_ERR_ID_USE_TEMPLATE = "Template cannot be utilized as task ID was not specified, please try again while entering a correct ID.";
+	private static final String MSG_ERR_ID_DELETE_TASK = "Task cannot be deleted as ID was not specified, please try again while entering a correct ID.";
+	private static final String MSG_ERR_ID_DELETE_SHORTCUT = "Shortcut cannot be deleted as ID was not specified, please try again while entering a correct ID.";
+	private static final String MSG_ERR_ID_DELETE_TEMPLATE = "Template cannot be deleted as ID was not specified, please try again while entering a correct ID.";
+	private static final String MSG_ERR_ID_MARK_TASK = "Task cannot be marked as ID is not specified";
+	private static final String MSG_ERR_ID_ADD_SHORTCUT = "To add a shortcut please enter one old and one new shortcut: [new shortcut] onto [old shortcut].";
+	private static final String MSG_ERR_ID_CLEAR_ATTR = "Attributes cannot be cleared as ID not specified.";
+	private static final String MSG_ERR_ID_SEARCH = "Please specify a search term." ;
+	private static final String MSG_ERR_QUOTE = "The misuse of quotation marks is found, please enter your task again.";
+	private static final String MSG_ERR_DATE_ENTERED = "The date that you have specified is not accepted please enter the task again.";
+	private static final String MSG_ERR_ADD_TEMPLATE = "There is insufficient arguments needed to add the task.";
 	
 	private static final String COMMAND_SHORTCUT = "Shortcut";
 	private static final String COMMAND_SAVE = "save";
@@ -30,6 +45,7 @@ public class FlexiParser {
 	
     private static final String TID_NOT_EXIST = null;
     private static final String NOT_EXIST = null;
+    private static final String[] ARRAY_NOT_EXIST = null;
     
     private static final int COMMAND_TYPE_INDEX = 0;
     private static final int TASK_ID_INDEX = 1;
@@ -54,6 +70,16 @@ public class FlexiParser {
     private static final int MONTH_INDEX = 1;
     private static final int YEAR_INDEX = 2;
     
+    private static final int NEW_SHORTCUT_INDEX = 1;
+    private static final int OLD_SHORTCUT_INDEX = 2;
+    private static final int CORRECT_LENGTH_DELETE_SHORTCUT = 2;
+    private static final int CORRECT_LENGTH_DELETE_TEMPLATE = 2;
+    private static final int CORRECT_LENGTH_EDIT_TEMPLATE = 2;
+    private static final int CORRECT_LENGTH_USE_TEMPLATE = 2;
+    private static final int CORRECT_LENGTH_CLEAR_ATTR = 2;
+    private static final int CORRECT_LENGTH_MARK_TASK = 2;
+    private static final int CORRECT_LENGTH_ADD_TEMPLATE = 4;
+
     private static final String DATE_FROM = "from";
     private static final String DATE_TO = "to";
     private static final String DATE_ON = "on";
@@ -115,22 +141,13 @@ public class FlexiParser {
 	
     //@author A0116514N
     public String[] parseText(String userInput) throws IllegalArgumentException {
-    	
-    	
-		    
 			inputArray = userInput.split("\\s+");
-			
 			String command = inputArray[COMMAND_TYPE_INDEX];
-			
 			command = shortcut.keywordMatching(command);
-			
-			if(command == null) {
+			if(command == NOT_EXIST) {
 				throw new IllegalArgumentException(String.format(MSG_ERR_UNRECOGNIZED_COMMAND, inputArray[COMMAND_TYPE_INDEX]));
 			}
-			
 			String[] outputArray;
-			
-			
 			if(command.contains(COMMAND_SAVE)) {
 				outputArray = new String[CHANGE_LOCATION_LENGTH];
 			}
@@ -144,444 +161,399 @@ public class FlexiParser {
 				outputArray = new String[TASK_LENGTH];
 			}
 			outputArray[COMMAND_TYPE_INDEX] = command;
-			
 			int commandIndex = getCommandIndex(command);
 			
 			switch(commandIndex) {
-				//add task need to ignore title also
 			    case ADD_TASK_INDEX:
-			    	
 			    	addTask(outputArray);
 					break;
-				//edit task
 				case EDIT_TASK_INDEX:
-					
-					//WARNING: NO CHECKING VALIDITY
-					outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
-					//error catching 
-					if(inputArray[TASK_ID_INDEX].equals(TID_NOT_EXIST)) {
-		    			//what should i return
-		    		
-						System.out.println("not exist?");
-						
-		    			
-		    		}
-					outputArray[TASK_NAME_INDEX] = null;
-					for(int i = 1; i < KEYWORDS_ONE_TASK.length; i++) {
-			    		int j = i + 1;
-			    		String value = extractAttribute(inputArray, i,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
-			    		
-			    		//null not
-			   
-			    		if(isDateTime(i,value) && !isClearAttribute(value)) {
-			    			value = flipDate(value);
-			    			storeDateTime(outputArray,value,i);
-			    			
-			    		}
-			    		 
-			    		else {
-			    			 	 
-			    			if(value != null) {
-				    			 outputArray[j] = value.trim();
-				    			}
-			    		 
-			    		 }
-			    	
-			    	}
-					
+					editTask(outputArray);
 					break;
-				//delete task
 				case DELETE_TASK_INDEX:
-					
-					//WARNING: NO CHECKING VALIDITY
-					outputArray[TASK_ID_INDEX] = inputArray[1];
-					for(int i = 1; i < KEYWORDS_ONE_TASK.length; i++) {
-			    		int j = i + 1;
-			    		
-			    		outputArray[j] = null;
-			    		
-					}
-					
-					
+					deleteTask(outputArray);
 					break;
-				//view task
 				case VIEW_TASK_INDEX:
-					//WARNING: NO CHECKING VALIDITY
-			    	String viewTitle = NOT_EXIST;
-					outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
-			    	if(inputArray.length <= 1 || inputArray[START_TITLE_INDEX].equals(VIEW_BY) || inputArray.length <= 1) {
-			    		
-			    		
-			    		
-			    	}
-			    	else if(inputArray[START_TITLE_INDEX].contains(DOUBLE_QUOTE_STRING)) {
-			    		
-			    		viewTitle = extractTextWithQuotes(inputArray,START_TITLE_INDEX);
-			    			
-			    	}
-			    	else {
-			    	
-			    		viewTitle = extractText(inputArray,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
-			    	}
-			    	
-			    	outputArray[TASK_PRIORITY_INDEX] = viewTitle;
-			    	String value =extractAttribute(inputArray,START_TITLE_INDEX,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
-			    	
-			    	if(value!=(NOT_EXIST)) {
-			    		outputArray[TASK_NAME_INDEX] = value.trim();
-			    	}
-			    	else {
-			    		
-			    		outputArray[TASK_NAME_INDEX] = value;
-			    		
-			    	}
-			    	//maybe change to index_ssd
-			    	
+					viewTask(outputArray);
 					break;
-				//block
 				case BLOCK_INDEX:
-					//not implemented
+					//not implemented yet
 					break;
-				//search
 				case SEARCH_TASK_INDEX:
-					//WARNING: NO CHECKING VALIDITY
-					
-			    	outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
-			    	
-			    	String searchTerm = EMPTY_STRING;
-			    	//surround with try catch for when there is no title?
-			    	if(inputArray[START_TITLE_INDEX].contains(DOUBLE_QUOTE_STRING)) {
-			    		
-			    		searchTerm = extractTextWithQuotes(inputArray,START_TITLE_INDEX);
-			    		
-			    	}
-			    	else {
-			    	
-			    		searchTerm = extractText(inputArray,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
-			    	}
-			    	searchTerm = flipDate(searchTerm);
-			    	ArrayList<Date> dateList = useNatty(searchTerm);
-			    	
-			    	if(dateList.isEmpty()) {
-			    		outputArray[TASK_NAME_INDEX] = searchTerm; 
-			    	} else {
-			    		Date tempDate = dateList.get(DATE_INDEX);
-			    		searchTerm = dateConverter(tempDate);
-			    		outputArray[TASK_NAME_INDEX] = searchTerm;	
-			    	 }
-			    	
-			    	
-			    	/*if(searchTerm.contains(DATE_FORMAT_STRING)) {
-		    			
-		    			storeDateTime(outputArray,value,i);
-		    			
-		    		}
-		    		 
-		    		else {
-		    			if(value != null) {
-		    			 outputArray[TASK_NAME_INDEX] = value.trim();
-		    			}
-		    		 
-		    		}*/
-			    	
-			    	
-			    	//outputArray[TASK_NAME_INDEX] = searchTerm;
-			   
-			    	//maybe change to index_ssd
-			    	for(int i = 3; i < KEYWORDS_ONE_TASK.length; i++) {
-			    		
-			    		outputArray[i] = null;
-			    		
-			    	}
+					searchTask(outputArray);
 					break;
-				//undo
 				case UNDO_TASK_INDEX:
-					
-			    	for(int i = 1; i < outputArray.length; i++) {
-			    		
-			    		outputArray[i] = null;
-			    		
-			    	}
-				
 					break;
-				//redo
 				case REDO_TASK_INDEX:
-					
-					for(int i = 1; i < outputArray.length; i++) {
-			    		
-			    		outputArray[i] = null;
-			    		
-			    	}
-					
 					break;
-				//addreminder
 				case ADD_REMINDER_INDEX:
-				/*	outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
-					outputArray[TASK_NAME_INDEX] = null;
-					for(int i = 2; i < KEYWORDS_ONE_TASK.length; i++) {
-			    		int j = i + 1;
-			    		String value = extractAttribute(inputArray,i,KEYWORDS_ONE_TASK);
-			    		
-			    		if(isDateTime(i,value)) {
-			    			
-			    			storeDateTime(outputArray,value,i);
-			    			
-			    		}
-			    		 
-			    		else {
-			    			if(value != null) {
-			    			 outputArray[j] = value.trim();
-			    			}
-			    		 
-			    		}
-			    	
-			    	}*/
-					
 					break;
-				//deletereminder
 				case DELETE_REMINDER_INDEX:
-					/*outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
-					
-					for(int i = 3; i < outputArray.length; i++) {
-			    		
-			    		outputArray[i] = null;
-			    		
-			    	}*/
-					
 					break;
-				//addShortcut
 				case ADD_SHORTCUT_INDEX:
-					
-					for(int i = 0; i < inputArray.length;i++) {
-						
-						if(inputArray[i].equals(KEYWORD_SHORTCUT) && inputArray.length>3){
-							outputArray[1] = inputArray[i-1];
-							outputArray[2] = inputArray[i+1];
-						}
-						
-						
-					}
-
+					addShortcut(outputArray);
 					break;
-				//"deleteShortcut"
 				case DELETE_SHORTCUT_INDEX:
-					
-					outputArray[SHORTCUT_KEY] = inputArray[SHORTCUT_KEY];
-					
+					deleteShortcut(outputArray);
 					break;
-				//"viewShortcut"
 				case VIEW_SHORTCUT_INDEX:
-					for(int i = 1; i < outputArray.length;i++) {
-						
-						outputArray[i]= null;
-						
-					}
-					
-					
 					break;
-				//"resetShortcut"
 				case RESET_SHORTCUT_INDEX:
-					for(int i = 1; i < outputArray.length;i++) {
-						
-						outputArray[i]= null;
-						
-					}
 					break;
-				//addTemplate
 				case ADD_TEMPLATE_INDEX:
-					//WARNING: NO CHECKING VALIDITY
-			    	
-					outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
-			    	
-			    	//surround with try catch for when there is no title?
-			    	
-			    	String extractedValue = extractAttribute(inputArray,START_PRIORITY_INDEX,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
-			    			
-			    	if(extractedValue != null) {
-			    		outputArray[TASK_NAME_INDEX] = extractedValue.trim();
-			    			
-			    		 
-			    	}
-			    	
+					addTemplate(outputArray);
 					break;
-				//deleteTemplate
 				case DELETE_TEMPLATE_INDEX:
-					String templateName =  EMPTY_STRING;
-			    	if(inputArray[START_TITLE_INDEX].contains(DOUBLE_QUOTE_STRING)) {
-			    		
-			    		templateName = extractTextWithQuotes(inputArray,START_TITLE_INDEX);
-			    		
-			    	}
-			    	else {
-			    	
-			    		templateName = extractText(inputArray,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
-			    	}
-			    	
-			    	outputArray[TASK_ID_INDEX] = templateName;
-					
+					deleteTemplate(outputArray);
 					break;
-				//viewTemplate
 				case VIEW_TEMPLATE_INDEX:
-					//doesn't need anything
 					break;
-				//resetTemplate
 				case RESET_TEMPLATE_INDEX:
-					//also doesn't need anything
 					break;
-				//editTemplate
 				case EDIT_TEMPLATE_INDEX:
-					
-					//WARNING: NO CHECKING VALIDITY
-					
-					String templateTitle = EMPTY_STRING;
-					if(inputArray[START_TITLE_INDEX].contains(DOUBLE_QUOTE_STRING)) {
-			    		
-						templateTitle = extractTextWithQuotes(inputArray,START_TITLE_INDEX);
-			    		
-			    	}
-			    	else {
-			    	
-			    		templateTitle = extractText(inputArray,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
-			    	}
-			    	
-			    	outputArray[TASK_ID_INDEX] = templateTitle;	
-					outputArray[TASK_NAME_INDEX] = null;
-					//so that it doesn't get to title
-					for(int i = 2; i < KEYWORDS_ONE_TASK.length; i++) {
-			    		int j = i + 1;
-			    		String valueTemplate = extractAttribute(inputArray, i,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
-			    		
-			    		//null not
-			   
-			    		if(isDateTime(i,valueTemplate) && !isClearAttribute(valueTemplate)) {
-			    			valueTemplate = flipDate(valueTemplate);
-			    			storeDateTime(outputArray,valueTemplate,i);
-			    			
-			    		}
-			    		 
-			    		else {
-			    			 	 
-			    			if(valueTemplate != null) {
-				    			 outputArray[j] = valueTemplate.trim();
-				    			}
-			    		 
-			    		 }
-			    	
-			    	}
-					
-					
+					editTemplate(outputArray);
 					break;
-				//useTemplate
 				case USE_TEMPLATE_INDEX:
-					//WARNING: NO CHECKING VALIDITY
-					
-					String tempName = EMPTY_STRING;
-					if(inputArray[START_TITLE_INDEX].contains(DOUBLE_QUOTE_STRING)) {
-			    		
-						tempName = extractTextWithQuotes(inputArray,START_TITLE_INDEX);
-			    		
-			    	}
-			    	else {
-			    	
-			    		tempName = extractText(inputArray,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
-			    	}
-			    	
-			    	outputArray[TASK_ID_INDEX] = tempName;	
-					outputArray[TASK_NAME_INDEX] = null;
-					//so that it doesn't get to title
-					for(int i = 2; i < KEYWORDS_ONE_TASK.length; i++) {
-			    		int j = i + 1;
-			    		String valueTemplate = extractAttribute(inputArray, i,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
-			    		
-			    		//null not
-			   
-			    		if(isDateTime(i,valueTemplate) && !isClearAttribute(valueTemplate)) {
-			    			valueTemplate = flipDate(valueTemplate);
-			    			storeDateTime(outputArray,valueTemplate,i);
-			    			
-			    		}
-			    		 
-			    		else {
-			    			 	 
-			    			if(valueTemplate != null) {
-				    			 outputArray[j] = valueTemplate.trim();
-				    			}
-			    		 
-			    		 }
-			    	
-			    	}
-					
+					useTemplate(outputArray);
 					break;
-				//clearAttr
 				case CLEAR_ATTRIBUTE_INDEX:
-					
-					outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
-					for(int i = 2;i < KEYWORDS_TWO_TASK.length;i++) {
-						for(int j = 0;j < inputArray.length;j++) {
-							int indexOfOne = indexOfKey(KEYWORDS_ONE_TASK,inputArray[j],KEYWORDS_ONE_TASK[i]);
-							int indexOfTwo = indexOfKey(KEYWORDS_TWO_TASK,inputArray[j],KEYWORDS_TWO_TASK[i]);
-							
-							if(indexOfOne != KEY_NOT_PRESENT) {
-								
-								outputArray[indexOfOne+TO_ADD_INDEX] = EMPTY_STRING;
-							}
-							if(indexOfTwo != KEY_NOT_PRESENT) {
-								
-								outputArray[indexOfTwo+TO_ADD_INDEX] = EMPTY_STRING;
-							}
-						
-						}
-					}
+					clearAttribute(outputArray);
 					break;
 				//markTask
 				case MARK_TASK_INDEX:
-					outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
-					String prior =extractAttribute(inputArray,START_PRIORITY_INDEX,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
-			    	
-			    	if(prior!=(NOT_EXIST)) {
-			    		outputArray[TASK_PRIORITY_INDEX] = prior.trim();
-			    	}
-			    	else {
-			    		
-			    		outputArray[TASK_PRIORITY_INDEX] = prior;
-			    		
-			    	}
+					markTask(outputArray);
 					break;
-				case SAVE_FILE_INDEX:
-					
+				case SAVE_FILE_INDEX:	
 					outputArray[STORE_SAVE_INDEX]= inputArray[STORE_SAVE_INDEX];
-					
 					break;
-				
-				
 				case HELP_COMMAND_INDEX:
 					break;
-					
 				default:
 					throw new IllegalArgumentException(String.format(MSG_ERR_INTERNAL_PARSER_IMPLEMENTATION, command));
 			}
-			
 			inputArray = outputArray;
-			
-		
-    	return inputArray;
-    	
+			return inputArray;
     }
+    
+    /**
+     * This function is called to parse user input if the user wishes to change priority
+     * @param outputArray
+     * @throws IllegalArgumentException	throws when not enough arguments are giving through user parsing
+     */
     //@author A0116514N
-	private void addTask(String[] outputArray) {
-		
-		
-		outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
-		String title = EMPTY_STRING;
-		
-		if(inputArray[START_TITLE_INDEX].contains(DOUBLE_QUOTE_STRING)) {
-			
-			title = extractTextWithQuotes(inputArray,START_TITLE_INDEX);
-			
+	private void markTask(String[] outputArray) throws IllegalArgumentException {
+		if(inputArray.length < CORRECT_LENGTH_MARK_TASK) {
+			throw new IllegalArgumentException(MSG_ERR_ID_MARK_TASK);
+		}
+		outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
+		String prior = extractAttribute(inputArray,START_PRIORITY_INDEX,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
+		if(prior!=(NOT_EXIST)) {
+			outputArray[TASK_PRIORITY_INDEX] = prior.trim();
 		}
 		else {
+			outputArray[TASK_PRIORITY_INDEX] = prior;
+		}
+	}
+    
+    /**
+     * Used to parse command for when user wishes to clear only some attributes of a task
+     * @param outputArray
+     * @throws IllegalArgumentException	throws when user doesn't enter ID
+     */
+    //@author A0116514N
+	private void clearAttribute(String[] outputArray) throws IllegalArgumentException {
+		if(inputArray.length < CORRECT_LENGTH_CLEAR_ATTR) {
+			throw new IllegalArgumentException(MSG_ERR_ID_CLEAR_ATTR);
+		}
+		outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
+		for(int i = 2;i < KEYWORDS_TWO_TASK.length;i++) {
+			for(int j = 0;j < inputArray.length;j++) {
+				int indexOfOne = indexOfKey(KEYWORDS_ONE_TASK,inputArray[j],KEYWORDS_ONE_TASK[i]);
+				int indexOfTwo = indexOfKey(KEYWORDS_TWO_TASK,inputArray[j],KEYWORDS_TWO_TASK[i]);
+				
+				if(indexOfOne != KEY_NOT_PRESENT) {
+					
+					outputArray[indexOfOne+TO_ADD_INDEX] = EMPTY_STRING;
+				}
+				if(indexOfTwo != KEY_NOT_PRESENT) {
+					
+					outputArray[indexOfTwo+TO_ADD_INDEX] = EMPTY_STRING;
+				}
+			}
+		}
+	}
+    
+	/**
+	 * This function is called when user wishes to use a template 
+	 * @param outputArray
+	 * @throws IllegalArgumentException	throws when Id not specified
+	 */
+    //@author A0116514N
+	private void useTemplate(String[] outputArray) throws IllegalArgumentException {
+		if(inputArray.length < CORRECT_LENGTH_USE_TEMPLATE) {
+			throw new IllegalArgumentException(MSG_ERR_ID_USE_TEMPLATE);
+		}
+		String tempName = EMPTY_STRING;
+		if(inputArray[START_TITLE_INDEX].contains(DOUBLE_QUOTE_STRING)) {
+			tempName = extractTextWithQuotes(inputArray,START_TITLE_INDEX);
+		}
+		else {
+			tempName = extractText(inputArray,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
+		}
+		outputArray[TASK_ID_INDEX] = tempName;	
+		outputArray[TASK_NAME_INDEX] = NOT_EXIST;
+		//so that it doesn't get to title
+		for(int i = 2; i < KEYWORDS_ONE_TASK.length; i++) {
+			int j = i + 1;
+			String valueTemplate = extractAttribute(inputArray, i,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
+			//null not
+			if(isDateTime(i,valueTemplate) && !isClearAttribute(valueTemplate)) {
+				valueTemplate = flipDate(valueTemplate);
+				storeDateTime(outputArray,valueTemplate,i);
+			}else { 
+				if(valueTemplate != NOT_EXIST) {
+					 outputArray[j] = valueTemplate.trim();
+				}
+			 }
+		}
+	}
+    
+	/**
+	 * Parses user input to allow editing of templates
+	 * @param outputArray
+	 * @throws IllegalArgumentException	throws when no template ID specified
+	 */
+    //@author A0116514N
+	private void editTemplate(String[] outputArray) throws IllegalArgumentException {
+		if(inputArray.length < CORRECT_LENGTH_EDIT_TEMPLATE) {
+			throw new IllegalArgumentException(MSG_ERR_ID_EDIT_TEMPLATE);
+		}
 		
+		String templateTitle = EMPTY_STRING;
+		if(inputArray[START_TITLE_INDEX].contains(DOUBLE_QUOTE_STRING)) {
+			templateTitle = extractTextWithQuotes(inputArray,START_TITLE_INDEX);
+		}else {
+			templateTitle = extractText(inputArray,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
+		 }
+		outputArray[TASK_ID_INDEX] = templateTitle;	
+		outputArray[TASK_NAME_INDEX] = NOT_EXIST;
+		//so that it doesn't get to title
+		for(int i = 2; i < KEYWORDS_ONE_TASK.length; i++) {
+			int j = i + 1;
+			String valueTemplate = extractAttribute(inputArray, i,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
+			if(isDateTime(i,valueTemplate) && !isClearAttribute(valueTemplate)) {
+				valueTemplate = flipDate(valueTemplate);
+				storeDateTime(outputArray,valueTemplate,i);
+			}else { 	 
+				if(valueTemplate != NOT_EXIST) {
+					 outputArray[j] = valueTemplate.trim();
+				}
+			 }
+		}
+	}
+	
+	/**
+	 * Function parses user input for deletion of template.
+	 * @param outputArray
+	 * @throws IllegalArgumentException	throws when no ID given
+	 */
+	//@author A0116514N
+	private void deleteTemplate(String[] outputArray) throws IllegalArgumentException {
+		if(inputArray.length < CORRECT_LENGTH_DELETE_TEMPLATE) {
+			throw new IllegalArgumentException(MSG_ERR_ID_DELETE_TEMPLATE);
+		}
+		String templateName =  EMPTY_STRING;
+		if(inputArray[START_TITLE_INDEX].contains(DOUBLE_QUOTE_STRING)) {
+			templateName = extractTextWithQuotes(inputArray,START_TITLE_INDEX);
+		}else {
+			templateName = extractText(inputArray,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
+		 }
+		outputArray[TASK_ID_INDEX] = templateName;
+	}
+    
+	/**
+	 * Function parses user input for adding of template.
+	 * @param outputArray
+	 * @throws IllegalArgumentException	thrown if name not given
+	 */
+    //@author A0116514N
+	private void addTemplate(String[] outputArray) throws IllegalArgumentException {
+		if(inputArray.length != CORRECT_LENGTH_ADD_TEMPLATE) {
+			throw new IllegalArgumentException(MSG_ERR_ADD_TEMPLATE);
+		}
+		
+		outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
+		String extractedValue = extractAttribute(inputArray,START_PRIORITY_INDEX,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);	
+		if(extractedValue != NOT_EXIST) {
+			outputArray[TASK_NAME_INDEX] = extractedValue.trim();
+		}
+	}
+    
+	/**
+	 * Parses in correct format for deleting of a shortcut
+	 * @param outputArray
+	 * @throws IllegalArgumentException	thrown if no argument to delete
+	 */
+    //@author A0116514N
+	private void deleteShortcut(String[] outputArray) throws IllegalArgumentException {
+		if(inputArray.length < CORRECT_LENGTH_DELETE_SHORTCUT) {
+			throw new IllegalArgumentException(MSG_ERR_ID_DELETE_SHORTCUT);
+		}
+		outputArray[SHORTCUT_KEY] = inputArray[SHORTCUT_KEY];
+	}
+	
+	/**
+	 * This functions takes two string from user that signifies a desired pairing of shortcuts.
+	 * @param outputArray
+	 * @throws IllegalArgumentException	throws when two shortcuts are not given
+	 */
+	//@author A0116514N
+	private void addShortcut(String[] outputArray) throws IllegalArgumentException {
+		for(int i = 0; i < inputArray.length;i++) {
+			if(inputArray[i].equals(KEYWORD_SHORTCUT) && inputArray.length>3){
+				outputArray[NEW_SHORTCUT_INDEX] = inputArray[i-1];
+				outputArray[OLD_SHORTCUT_INDEX] = inputArray[i+1];
+			}
+		}
+		if(outputArray[1] == NOT_EXIST && outputArray[2] == NOT_EXIST ) {
+			throw new IllegalArgumentException(MSG_ERR_ID_ADD_SHORTCUT);
+		}
+	}
+    
+    /**
+     * Function to parse user input requesting to search available tasks, in desired format
+     * @param outputArray
+     */
+    //@author A0116514N
+	private void searchTask(String[] outputArray) throws IllegalArgumentException {
+		outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
+		if(inputArray.length<2) {
+			throw new IllegalArgumentException(MSG_ERR_ID_SEARCH);
+		}
+		String searchTerm = EMPTY_STRING;
+		//surround with try catch for when there is no title?
+		if(inputArray[START_TITLE_INDEX].contains(DOUBLE_QUOTE_STRING)) {
+			searchTerm = extractTextWithQuotes(inputArray,START_TITLE_INDEX);
+		}
+		else {
+			searchTerm = extractText(inputArray,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
+		}
+		searchTerm = flipDate(searchTerm);
+		ArrayList<Date> dateList = useNatty(searchTerm);
+		
+		if(dateList.isEmpty()) {
+			outputArray[TASK_NAME_INDEX] = searchTerm; 
+		} else {
+			Date tempDate = dateList.get(DATE_INDEX);
+			searchTerm = dateConverter(tempDate);
+			outputArray[TASK_NAME_INDEX] = searchTerm;	
+		 }
+		
+		for(int i = 3; i < KEYWORDS_ONE_TASK.length; i++) {
+			outputArray[i] = NOT_EXIST;
+		}
+	}
+    /**
+     * Function to parse user input requesting to view tasks, in desired format
+     * @param outputArray
+     */
+    //@author A0116514N
+	private void viewTask(String[] outputArray) {
+		//WARNING: NO CHECKING VALIDITY
+		String viewTitle = NOT_EXIST;
+		outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
+		if(inputArray.length <= 1 || inputArray[START_TITLE_INDEX].equals(VIEW_BY) || inputArray.length <= 1) {
+			
+		}
+		else if(inputArray[START_TITLE_INDEX].contains(DOUBLE_QUOTE_STRING)) {
+			viewTitle = extractTextWithQuotes(inputArray,START_TITLE_INDEX);
+		}
+		else {
+			viewTitle = extractText(inputArray,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
+		}
+		outputArray[TASK_PRIORITY_INDEX] = viewTitle;
+		String value =extractAttribute(inputArray,START_TITLE_INDEX,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
+		
+		if(value!=(NOT_EXIST)) {
+			outputArray[TASK_NAME_INDEX] = value.trim();
+		}else {
+			outputArray[TASK_NAME_INDEX] = value;
+		}
+	}
+	
+	/**
+	 * Function to parse user input requesting to delete a task, in desired format
+	 * @param outputArray	
+	 * @throws IllegalArgumentException	if no ID is specified
+	 */
+	//@author A0116514N
+	private void deleteTask(String[] outputArray) throws IllegalArgumentException {
+		//WARNING: NO CHECKING VALIDITY
+		if(inputArray.length<2) {
+			throw new IllegalArgumentException(MSG_ERR_ID_DELETE_TASK);
+		}
+		outputArray[TASK_ID_INDEX] = inputArray[1];
+		for(int i = 1; i < KEYWORDS_ONE_TASK.length; i++) {
+			int j = i + 1;
+			outputArray[j] = NOT_EXIST;
+		}
+	}
+	
+	/**
+	 * Function to parse user input requesting to edit a task, in desired format
+	 * @param outputArray
+	 * @throws NumberFormatException	thrown when task ID given if not parsable to Integer
+	 */
+    //@author A0116514N
+	private void editTask(String[] outputArray) throws NumberFormatException {
+		
+		if(!isParsable(inputArray[TASK_ID_INDEX])) {
+			throw new NumberFormatException(MSG_ERR_ID_EDIT);
+		}
+		
+		outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
+		outputArray[TASK_NAME_INDEX] = NOT_EXIST;
+		for(int i = 1; i < KEYWORDS_ONE_TASK.length; i++) {
+			int j = i + 1;
+			String value = extractAttribute(inputArray, i,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
+			
+			//null not
+   
+			if(isDateTime(i,value) && !isClearAttribute(value)) {
+				value = flipDate(value);
+				storeDateTime(outputArray,value,i);
+				
+			}
+			 
+			else {
+				 	 
+				if(value != null) {
+					 outputArray[j] = value.trim();
+					}
+			 
+			 }
+		
+		}
+	}
+	
+	/**
+	 * Function to parse user input requesting to add a task, in desired format
+	 * @param outputArray
+	 * @throws IllegalArgumentException	thrown when a title is not specified by user
+	 */
+    //@author A0116514N
+	private void addTask(String[] outputArray) throws IllegalArgumentException {
+		outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
+		String title = NOT_EXIST;
+		
+		if(inputArray[START_TITLE_INDEX].contains(DOUBLE_QUOTE_STRING)) {
+			title = extractTextWithQuotes(inputArray,START_TITLE_INDEX);
+		}else {
 			title = extractText(inputArray,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
+		  }
+		
+		if(title.equals(EMPTY_STRING)) {
+			throw new IllegalArgumentException(MSG_ERR_TITLE_EMPTY);
 		}
 		
 		outputArray[TASK_NAME_INDEX] = title;
@@ -591,11 +563,12 @@ public class FlexiParser {
 			String value = extractAttribute(inputArray, i,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
 			
 			if(isDateTime(i,value)) {
+				
 				value = flipDate(value);
 				storeDateTime(outputArray,value,i);
 			}
 			else {
-				if(value != null) {
+				if(value != NOT_EXIST) {
 					outputArray[j] = value.trim();
 				}
 			}
@@ -606,26 +579,20 @@ public class FlexiParser {
     //@author A0116514N
     private int indexOfKey(String[] keyWords,String input,String matched) {
     	for(int i = 0; i < keyWords.length; i++) {
-    		
     		if(matched.equals(input.toLowerCase()) && keyWords[i].equals(matched)) {
-    		
     			return i;
-    			
     		}
-    		
     	}
     	return -1;
     }
     
     //@author A0116514N
     private boolean isClearAttribute(String value) {
-    	
     	if(value != NOT_EXIST) {
     		value = value.trim();
     		if(value.equals(EMPTY_STRING)) {
     		return true;
     		}
-    		
     	}
     	return false;
     }
@@ -634,254 +601,247 @@ public class FlexiParser {
     private int getCommandIndex(String command) {
     	int index = -1;;
     	for(int i = 0; i < commandArray.length; i++) {
-    		
     		if(command.equals(commandArray[i])) {
-    			
     			index = i;
     			break;
-    			
     		}
-    		
     	}
-    	
     	return index;
-    	
     }
     
     //@author A0116514N
     private String processCommand(String command) {
-    	
     	String processedCommand = command.toLowerCase();
-    	
     	return processedCommand;
-    	
+    }
+    
+    //@author A0116514N
+    private boolean isParsable(String input){
+        boolean parsable = true;
+        try{
+            Integer.parseInt(input);
+        }catch(NumberFormatException e){
+            parsable = false;
+        }
+        return parsable;
     }
     
     //@author A0116514N
     private String extractText(String[] inputArr,String[] keyArrOne,String[] keyArrTwo) {
     	StringBuilder strb = new StringBuilder();
-    	
-    	
     	for(int i=1;i<inputArr.length;i++) {
-    		
     		if(!isKeyWord(inputArr[i],keyArrOne,keyArrTwo) && i < inputArr.length ) { //tempArr = keyword
-    			
     			strb.append(inputArr[i]);
     			strb.append(" ");
-    			
     			if(i==inputArr.length) {
-				
     				break;
-			
     			}
-		
-    		}
-    		else {
-    			
+    		}else {
     			break;
-    			
-    		}
+    		 }
     	}
-    	
-    	return strb.toString().trim() ;
-    	
+    	return strb.toString().trim() ;   	
     }
    
     //@author A0116514N
     private String extractTextWithQuotes(String[] input,int index) {
-    	String attribute = null;
+    	String attribute = NOT_EXIST;
     	StringBuilder strb = new StringBuilder();
     	int start = -1;
 		int end = -1;
 		int i = index;
 		int j = 0;
-    	try {
     		while(start<0) {
-    			
 				if(input[i].split(DOUBLE_QUOTE_STRING, -1).length > 2) {
 					start = i;
 					end = i;
-					
 				}
 				if(input[i].contains(DOUBLE_QUOTE_STRING)) {
-
     				start = i;
-    				
     			}
 				i++;
     		}
     		j = start+1;
     		while(end<0){
-    			
 				if(input[j].contains(DOUBLE_QUOTE_STRING)) {
 					end = j;
 				}
 				j++;
     		}
-				for(int k = start; k <= end; k++) {
+    		for(int k = start; k <= end; k++) {
 					
-					strb.append(input[k]);
-					strb.append(" ");
+    			strb.append(input[k]);
+    			strb.append(" ");
 					
-				}
-				for(int m = start; m <= end; m++) {
+    		}
+    		for(int m = start; m <= end; m++) {
 					
-					inputArray[m] = "";
+    			inputArray[m] = "";
 					
-				}
+    		}
 				
 				
-				attribute = extractFromSingleQuote(strb.toString());
+    		attribute = extractFromSingleQuote(strb.toString());
 				
-    	}catch(Exception e) {
-			
-			System.out.println("error1");
-			
-		}
-    	
-    	return attribute;	
+    		return attribute;	
     	
     }
-
+    /**
+     * Extracts values that are identified by a keyword before it
+     * @param input	the whole user input in the form of String[]
+     * @param keywordIndex	int representing the current keyword we are looking for
+     * @param keywordsOne	String[] of possible keywords
+     * @param keywordsTwo	String[] of possible keywords
+     * @return	attribute which is a string that will be stored in the output array
+     */
     //@author A0116514N
-	private String extractAttribute(String[] input, int keywordIndex,String[] keywordsOne,String[] keywordsTwo) {
+	private String extractAttribute(String[] input, int keywordIndex,String[] keywordsOne,String[] keywordsTwo) throws IllegalArgumentException {	
+		StringBuilder strb = new StringBuilder();
+		String keyword1 = KEYWORDS_ONE_TASK[keywordIndex];
+		String keyword2 = KEYWORDS_TWO_TASK[keywordIndex];	
+		String attribute = NOT_EXIST;
+		boolean openQuote = false;
+		for(int i = 0; i < input.length; i++) {
+			String checkWord = input[i].toLowerCase(); 
+			if(input[i].contains(DOUBLE_QUOTE_STRING)) {
+				//if quote is already open(true) close it
+				if(openQuote) {
+					openQuote = false;
+				}else {
+					openQuote = true;
+				 }
+			}
+			if(openQuote) {
+				continue;
+			}
 			
-			StringBuilder strb = new StringBuilder();
-			String keyword1 = KEYWORDS_ONE_TASK[keywordIndex];
-			String keyword2 = KEYWORDS_TWO_TASK[keywordIndex];
-			
-			String attribute = null;
-		
-			try {	
+			if(checkWord.equals(keyword1) || checkWord.equals(keyword2) && checkWord!= NOT_EXIST) {
+				int index = i+1;
 				
-				for(int i = 0; i < input.length; i++) {
-				
-				String checkWord = input[i].toLowerCase(); // allow user to type keyword in anyform
-				
-				
-				if(checkWord.equals(keyword1) || checkWord.equals(keyword2) && checkWord!=null) {
-					//System.out.println(checkWord);
-
-					int index = i+1;
-					//change2
-					if((checkWord.equals("by") || checkWord.equals("taskname") || checkWord.equals("det") || checkWord.equals("at") || checkWord.equals("details") || checkWord.equals("location")) && input[index].contains(DOUBLE_QUOTE_STRING)) {
-						
-						attribute = extractTextWithQuotes(input,index);
-					}
-				
+				if((checkWord.equals("by") || checkWord.equals("taskname") || checkWord.equals("det") || checkWord.equals("at") || checkWord.equals("details") || checkWord.equals("location")) && input[index].contains(DOUBLE_QUOTE_STRING)) {
 					
-					else{
-					while(!isKeyWord(input[index],keywordsOne,keywordsTwo) && index < input.length ) { //tempArr = keyword
-						
+					attribute = extractTextWithQuotes(input,index);
+				}else {
+					
+					while(!isKeyWord(input[index],keywordsOne,keywordsTwo) && index < input.length ) { 
 						strb.append(input[index]);
 						strb.append(" ");
 						index++;
 						if(index==input.length) {
-							
 							break;
-						
 						}
-					
 					}
-				
 					attribute = strb.toString();
-					}
-				
-			
 				}
 			}
-		}catch(Exception e) {
-			
-			System.out.println("ERROR");
-			
+		}
+		if(openQuote){
+			throw new IllegalArgumentException(MSG_ERR_QUOTE);
 		}
 		
-		return attribute;
-			
+		
+		return attribute;	
 	}
 	
-	 //@author A0116514N
+	/**
+	 * Checks if value is a possible date value
+	 * @param index	of date related keyword
+	 * @param value	String representing user input that cannot be null
+	 * @return true if the keyword is a keyword related to date
+	 */
+	//@author A0116514N
 	private boolean isDateTime(int index, String value) {
-		
-		if((KEYWORDS_ONE_TASK[index].equals(DATE_FROM) || KEYWORDS_ONE_TASK[index].equals(DATE_TO) || KEYWORDS_ONE_TASK[index].equals(DATE_ON)) && value != null && !value.equals(EMPTY_STRING)) {
-			
-			
+		if((KEYWORDS_ONE_TASK[index].equals(DATE_FROM) || KEYWORDS_ONE_TASK[index].equals(DATE_TO) || KEYWORDS_ONE_TASK[index].equals(DATE_ON)) && value != NOT_EXIST && !value.equals(EMPTY_STRING)) {
 			return true;
-			
 		}
-		
 		return false;
-		
 	}
 	
-	
-	
-	 //@author A0116514N
+	/**
+	 * trims quotation marks
+	 * @param preprocessed	a string that has quotes which needs extracting
+	 * @return preprocessed without quotes
+	 */
+	//@author A0116514N
 	private String extractFromSingleQuote(String preprocessed) {
 		int start = 1;
 		return preprocessed.substring(start,preprocessed.length()-2).trim();
 	}
 	
-	 //@author A0116514N
+	/**
+	 * Stores date values in outputArr since date has to be handled differently by passing to Natty
+	 * @param outputArr	the array that is output form parseText()
+	 * @param value	the string value that is to be converted to date format
+	 * @param index	of keyword in inputArray()
+	 * @throws NullPointerException
+	 */
+	//@author A0116514N
 	private void storeDateTime(String[] outputArr,String value,int index) {
 		int j = index + 1;
-		value = value.trim();
-		if((KEYWORDS_ONE_TASK[index].equals(DATE_FROM) || KEYWORDS_ONE_TASK[index].equals(DATE_TO) || KEYWORDS_ONE_TASK[index].equals(DATE_ON)) && value != null) {
-			DateFormat input;
-			DateFormat output = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH);
-			DateFormat timeFormat;
-			String temp;
-				
+		String keyword = EMPTY_STRING;
+		if((KEYWORDS_ONE_TASK[index].equals(DATE_FROM) || KEYWORDS_ONE_TASK[index].equals(DATE_TO) || KEYWORDS_ONE_TASK[index].equals(DATE_ON)) && value != NOT_EXIST) {
+			keyword = KEYWORDS_ONE_TASK[index];
+			value = value.trim();
 			ArrayList<Date> dateList = useNatty(value);
-			//System.out.println("The date is "+ dateList.get(0));
+			if(dateList.isEmpty()) {
+				throw new  NullPointerException(String.format(MSG_ERR_NOT_DATE,keyword));
+			}
 			
 			outputArr[j] = dateConverter(dateList.get(0)).trim();
-		}
+		} 
 	}
 	
+	/**
+	 * Switches day and month the user enters in a format similar to dd/mm/yyyy 
+	 * since Natty only allows US date format
+	 * @param value	String value representing date
+	 * @return	String changedDate which has values swapped
+	 */
 	//@author A0116514N
 	private String flipDate(String value) {
-		String[] tempArr = null;
-		String changedDate = null;
+		String[] tempArr = ARRAY_NOT_EXIST;
+		String changedDate = NOT_EXIST;
 		if(value.contains(DATE_FORMAT_STRING)) {
 			tempArr = value.split(DATE_FORMAT_STRING);
+			
+			String day = tempArr[DAY_INDEX];
+			String month = tempArr[MONTH_INDEX];
+			String year = tempArr[YEAR_INDEX];
+			
+			changedDate = month.concat(DATE_FORMAT_STRING);
+			changedDate = changedDate.concat(day);
+			changedDate = changedDate.concat(DATE_FORMAT_STRING);
+			changedDate = changedDate.concat(year);
+			return changedDate;
 		}
 		
-		String day = tempArr[DAY_INDEX];
-		String month = tempArr[MONTH_INDEX];
-		String year = tempArr[YEAR_INDEX];
-			
-		changedDate = month.concat(DATE_FORMAT_STRING);
-		changedDate = changedDate.concat(day);
-		changedDate = changedDate.concat(DATE_FORMAT_STRING);
-		changedDate = changedDate.concat(year);
-		/*for(int i =0; i<inputArr.length;i++) {
-			
-			System.out.print(inputArr[i]);
-			
-		}*/
-		
-		return changedDate;
-		
+		//System.out.println(changedDate);
+		return value;
 	}
 	
+	/**
+	 * Takes in natural language and converts it to Date attempts to correct user input
+	 * @param dateInput	String to be converted to Date
+	 * @return	dateList an ArrayList of dates
+	 */
 	//@author A0116514N
-	private ArrayList<Date> useNatty(String dateInput) {
+	private ArrayList<Date> useNatty(String dateInput)/* throw IllegalArgumentException */{
 		Parser parser = new Parser();
 		List<DateGroup> groups = parser.parse(dateInput);
 		ArrayList<Date> dateList = new ArrayList<Date>();
 		
 		for(DateGroup group:groups)  {
-			//this part loops through groups
 			Date dates = group.getDates().get(0);   
-			dateList.add(dates);
-			//System.out.println(dates.toLocaleString());        
-
+			dateList.add(dates);        
 		}
-		return dateList;
-		
+		return dateList;	
 	}
 	
+	/**
+	 * Takes in a Date object and converts it to desired format
+	 * @param date	date object to be checked
+	 * @return	date object in format ft
+	 */
 	//@author A0116514N
 	private String dateConverter(Date date) {
 		SimpleDateFormat ft = new SimpleDateFormat ("dd/MM/yyyy HH:mm");
@@ -890,23 +850,22 @@ public class FlexiParser {
 		
 	}
 	
+	/**
+	 * This method takes in a string and checks if it is a keyword
+	 * @param str	string to be checked
+	 * @param keywordsOne	array of keywords
+	 * @param keywordsTwo	array of keywords
+	 * @return	true if string is a keyword, else false
+	 */
 	//@author A0116514N
-	private boolean isKeyWord(String str,String[] keywordsOne,String[] keywordsTwo/*,String ignoreWord*/) {
-			
+	private boolean isKeyWord(String str,String[] keywordsOne,String[] keywordsTwo) {
 		for(int i = 0; i < keywordsOne.length; i++) {
 			str = str.toLowerCase();
-			
-			
-			if(str.equals(keywordsOne[i]) || str.equals(keywordsTwo[i])/* && !str.equals(ignoreWord)*/) {
-				
+			if(str.equals(keywordsOne[i]) || str.equals(keywordsTwo[i])) {
 				return true;
-				
 			}
-			
 		}
-		
 		return false;
-		
 	}
 	
 	
@@ -918,7 +877,7 @@ public class FlexiParser {
     	FlexiParser test1 = new FlexiParser();
     	
     	
-    String[] temp = test1.parseText("addTask sda at sadlasdl from 15/04/2015 to 11/04/2014");
+    String[] temp = test1.parseText("markTask 780 as important ");
     
     for(int i=0;i<temp.length;i++) {
 		
