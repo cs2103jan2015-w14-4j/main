@@ -18,7 +18,7 @@ public class Shortcut {
 	private static final String MSG_ERR_SHORTCUT_NOT_EXIST = "\"%s\" does not exist in the keyword list";
 
 	//Command that are recognized by system 
-	public static final String[] keywords = {	"addTask", 		"editTask",		"viewTask",
+	private static final String[] KEYWORDS = {	"addTask", 		"editTask",		"viewTask",
 												"deleteTask", 	"clearAttr", 	"searchTask", 
 												"undoTask", 	"redoTask", 	"markTask",
 												"addShortcut", 	"viewShortcut", "deleteShortcut",
@@ -50,7 +50,7 @@ public class Shortcut {
 	private static final String[] DEFAULT_ADD_TASK = {"add","addTask"};
 	public static final String[] DEFAULT_SET_PATH = {"saveTo"};
 	
-	public static final String[][] defaultWordsSet = {	DEFAULT_ADD_TASK, 		DEFAULT_EDIT_TASK,
+	private static final String[][] DEFAULT_WORD_SET = {	DEFAULT_ADD_TASK, 		DEFAULT_EDIT_TASK,
 														DEFAULT_VIEW_TASK, 		DEFAULT_DELETE_TASK,
 														DEFAULT_CLEAR_ATTR,		DEFAULT_SEARCH_TASK, 
 														DEFAULT_UNDO_TASK, 		DEFAULT_REDO_TASK,
@@ -63,16 +63,16 @@ public class Shortcut {
 														DEFAULT_SET_PATH
 													};
 	
-	public static final int INDEX_HELP 				= 19;
-	public static final int INDEX_SET_PATH 			= 20;
-	public static final int INDEX_RESET_SHORTCUT 	= 12;
+	private static final int INDEX_HELP 				= 19;
+	private static final int INDEX_SET_PATH 			= 20;
+	private static final int INDEX_RESET_SHORTCUT 	= 12;
 	
-	public static final int[] UNCHANGEABLE_KEYWORD = { 	INDEX_HELP, 
-														INDEX_RESET_SHORTCUT, 
-														INDEX_SET_PATH
+	private static final int[] UNCHANGEABLE_KEYWORD = { 	INDEX_HELP, 
+															INDEX_RESET_SHORTCUT, 
+															INDEX_SET_PATH
 													};
 	
-	private static final String[] reservedWords = {"at","location","from","datefrom","to","dateto","on",
+	private static final String[] RESERVED_WORDS = {"at","location","from","datefrom","to","dateto","on",
 													"before","by","detail","priority","name","title"};
 	
 	private static final int ARRAY_SIZE_SHORTCUT = 3;
@@ -101,7 +101,7 @@ public class Shortcut {
 	
 	public Shortcut() {
 		userShortcuts = new ArrayList<ArrayList<String>>();
-		for(int i = 0; i < keywords.length; ++i) {
+		for(int i = 0; i < KEYWORDS.length; ++i) {
 			userShortcuts.add(new ArrayList<String>());
 		}
 	}
@@ -173,8 +173,8 @@ public class Shortcut {
 	 *  It is called when there are changes made to shortcuts' data
 	 */
 	private void writeOutToFile() {
-		String[][] shortcuts = new String[keywords.length][];
-		for(int i = 0; i < keywords.length; ++i) {
+		String[][] shortcuts = new String[KEYWORDS.length][];
+		for(int i = 0; i < KEYWORDS.length; ++i) {
 			shortcuts[i] = new String[userShortcuts.get(i).size()];
 			userShortcuts.get(i).toArray(shortcuts[i]);
 		}
@@ -191,7 +191,7 @@ public class Shortcut {
 	private void addShortcutInit(String[] command) throws NumberFormatException {
 		int row = Integer.parseInt(command[INDEX_INIT_REFERED_ROW]);
 		
-		assert(row < keywords.length);
+		assert(row < KEYWORDS.length);
 		assert(row >= 0);
 		
 		ArrayList<String> toBeAddedInto = userShortcuts.get(row);
@@ -207,7 +207,7 @@ public class Shortcut {
 	public String keywordMatching(String command) {
 		int matchingIndex = searchMatching(command);
 		if(matchingIndex > -1) {
-			return keywords[matchingIndex];
+			return KEYWORDS[matchingIndex];
 		}
 		else {
 			return null;
@@ -237,7 +237,7 @@ public class Shortcut {
 	 */
 	private void resetShortcut() {
 		userShortcuts = new ArrayList<ArrayList<String>>();
-		for(int i = 0; i < keywords.length; ++i) {
+		for(int i = 0; i < KEYWORDS.length; ++i) {
 			userShortcuts.add(buildDefaultKeyword(i));
 		}
 	}
@@ -249,7 +249,7 @@ public class Shortcut {
 	 */
 	private ArrayList<String> buildDefaultKeyword(int index) {
 		ArrayList<String> customizedWord = new ArrayList<String>();
-		String[] defaultwords = defaultWordsSet[index];
+		String[] defaultwords = DEFAULT_WORD_SET[index];
 		for(int i = 0; i < defaultwords.length; ++i) {
 			customizedWord.add(defaultwords[i]);
 		}
@@ -448,8 +448,8 @@ public class Shortcut {
 	 * @return			True if the shortcut matches a default shortcut
 	 */
 	private boolean isDefaultShortcut(String shortcut) {
-		for(int i = 0; i < defaultWordsSet.length; ++i) {
-			String[] defaultWords = defaultWordsSet[i];
+		for(int i = 0; i < DEFAULT_WORD_SET.length; ++i) {
+			String[] defaultWords = DEFAULT_WORD_SET[i];
 			
 			for(int j = 0; j < defaultWords.length; ++j) {
 				
@@ -509,8 +509,8 @@ public class Shortcut {
 	 * @return					True if the shortcut is a default shortcut
 	 */
 	private boolean isReservedWord(String shortcutWord) {
-		for(int i = 0; i < reservedWords.length; ++i) {
-			if(shortcutWord.equalsIgnoreCase(reservedWords[i])) {
+		for(int i = 0; i < RESERVED_WORDS.length; ++i) {
+			if(shortcutWord.equalsIgnoreCase(RESERVED_WORDS[i])) {
 				return true;
 			}
 		}
@@ -521,7 +521,7 @@ public class Shortcut {
 	 * @return	A clone of shortcuts list
 	 */
 	private String[][] cloneShortcuts() {
-		String[][] cloneList = new String[keywords.length][];
+		String[][] cloneList = new String[KEYWORDS.length][];
 		
 		for(int i = 0; i < userShortcuts.size(); ++i) {
 			
