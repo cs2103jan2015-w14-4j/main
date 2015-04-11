@@ -29,6 +29,11 @@ public class Template {
 	private static final int INDEX_DETAILS = 7;
     private static final int INDEX_PRIORITY = 8;
     
+    //MA CONG
+    private static final int STATUS_OVERDUE = 7;
+    private static final int STATUS_NORMAL = 3;
+    //MA CONG
+    
 	private static final int STARTING_INDEX_CHANGEABLE_FIELD = 2;
 	private static final int STRING_POSITION_INVALID_COMMAND = 39;
 
@@ -451,6 +456,11 @@ public class Template {
 		template.setDateFrom(null);
 		template.setDateTo(null);
 		template.setDeadline(null);
+		//MA CONG
+		if(template.getPriority() == STATUS_OVERDUE) {
+		    template.setPriority(STATUS_NORMAL);
+		}
+		//MA CONG
 	}
 	
 	/**
