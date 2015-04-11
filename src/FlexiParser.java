@@ -91,7 +91,7 @@ public class FlexiParser {
     private static final String DOUBLE_QUOTE_STRING = "\"";
    
     private static final String[] KEYWORDS_ONE_TASK = {"ID","by","from","to","on","at","det","as"};
-    private static final String[] KEYWORDS_TWO_TASK = {"ID","name","datefrom","dateto","before","location","remarks","priority"};
+    private static final String[] KEYWORDS_TWO_TASK = {"ID","name","datefrom","dateto","before","location","remarks","status"};
     
     
     private static final String KEYWORD_SHORTCUT = "onto";
@@ -867,26 +867,4 @@ public class FlexiParser {
 		}
 		return false;
 	}
-	
-	
-	
-    public static void main(String[] args) {
-    
-    	
-    	//Shortcut sc = new Shortcut();
-    	FlexiParser test1 = new FlexiParser();
-    	
-    	
-    String[] temp = test1.parseText("markTask 780 as important ");
-    
-    for(int i=0;i<temp.length;i++) {
-		
-		System.out.print(temp[i]+"|");
-		
-	}
-    	
-    
-    	
-    
-    }
 }
