@@ -83,19 +83,6 @@ public class FileStorage {
             }
             path = getPath(taskFileLocation);
 
-            /*taskFile = new File(DEFAULT_TASK_FILE_NAME);
-            if(!taskFile.exists()) {
-                taskFile.createNewFile();           
-            }
-            templateFile = new File(DEFAULT_TEMPLATE_FILE_NAME);
-            if(!templateFile.exists()) {
-                templateFile.createNewFile();
-            }
-            shortcutFile = new File(DEFAULT_SHORTCUT_FILE_NAME);
-            if(!shortcutFile.exists()) {
-                shortcutFile.createNewFile();
-            }*/
-
             try {
                 taskFile = new File(taskFileLocation);
                 if(!taskFile.exists()) {
@@ -119,9 +106,7 @@ public class FileStorage {
     private void initializeFileStorage() {
         fileLocation = new File(DEFAULT_FILE_LOCATION_FILE_NAME);
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(fileLocation));
-            bw.write(DEFAULT_TASK_FILE_NAME);
-            bw.close();
+            writeNewFileLocationToFile(DEFAULT_TASK_FILE_NAME);
 
             taskFile = new File(DEFAULT_TASK_FILE_NAME);
             if(!taskFile.exists()) {
