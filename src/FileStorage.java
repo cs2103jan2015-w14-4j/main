@@ -7,6 +7,7 @@ import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
 import java.util.StringTokenizer;
@@ -475,6 +476,7 @@ public class FileStorage {
         } else {
             strArr[7] = null;
         }
+        System.out.println(Arrays.toString(strArr));
 
         return strArr;
     }
