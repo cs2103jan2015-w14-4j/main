@@ -63,7 +63,7 @@ public class Task {
 		this.location = location;
 		this.details = details;
 		this.priority = priority;
-		this.status = INDEX_STATUS_NORMAL;
+		this.status = priority;
 	}
 	
 	
