@@ -70,7 +70,7 @@ public class FileStorage {
     public FileStorage() {
         //taskFile = new File(fileName);
 
-        //create a fileLocation file with tasks.txt inside
+        //create a fileLocation file with default.txt inside
         if(!fileLocation.exists()){
             initializeFileStorage();
         } else {
@@ -79,38 +79,16 @@ public class FileStorage {
                 taskFileLocation = sc.nextLine();
                 sc.close();
             } catch (FileNotFoundException e) {
-
+                //this exception will never be used
             }
             path = getPath(taskFileLocation);
             taskFile = new File(taskFileLocation);
             templateFile = new File(path + DEFAULT_TEMPLATE_FILE_NAME);
             shortcutFile = new File(path + DEFAULT_SHORTCUT_FILE_NAME);
         }
-    } 
-    
-    public void saveToAnotherLocation(String newFileName) {
-        writeNewFileLocationToFile(newFileName);
-        path = getPath(taskFileLocation);
-        taskFile.renameTo(new File(taskFileLocation));
-        taskFile = new File(taskFileLocation);
-        templateFile.renameTo(new File(path + DEFAULT_TEMPLATE_FILE_NAME));
-        templateFile = new File(path + DEFAULT_TEMPLATE_FILE_NAME);
-        shortcutFile.renameTo(new File(path + DEFAULT_SHORTCUT_FILE_NAME));
-        shortcutFile = new File(path + DEFAULT_SHORTCUT_FILE_NAME);
-    }
-    
-    private void writeNewFileLocationToFile(String fileName) {
-        try {
-            fileLocation.delete();
-            fileLocation.createNewFile();
-            BufferedWriter bw = new BufferedWriter(new FileWriter(fileLocation));
-            bw.write(fileName);
-            bw.close();
-        } catch (IOException e) {
-        }
     }
 
-    //create a fileLocation file with tasks.txt inside
+
     private void initializeFileStorage() {
         fileLocation = new File(DEFAULT_FILE_LOCATION_FILE_NAME);
         try {
@@ -134,11 +112,42 @@ public class FileStorage {
         }
     }
 
+
+    public void saveToAnotherLocation(String newFileName) {
+        boolean isRenameSuccessful = taskFile.renameTo(new File(newFileName));
+
+        if(isRenameSuccessful) {
+            writeNewFileLocationToFile(newFileName);
+            taskFile = new File(newFileName);
+            path = getPath(newFileName);
+            templateFile.renameTo(new File(path + DEFAULT_TEMPLATE_FILE_NAME));
+            templateFile = new File(path + DEFAULT_TEMPLATE_FILE_NAME);
+            shortcutFile.renameTo(new File(path + DEFAULT_SHORTCUT_FILE_NAME));
+            shortcutFile = new File(path + DEFAULT_SHORTCUT_FILE_NAME);
+        } else {
+                //throw error
+        }
+    }
+
+    private void writeNewFileLocationToFile(String fileName) {
+        try {
+            fileLocation.delete();
+            fileLocation.createNewFile();
+            BufferedWriter bw = new BufferedWriter(new FileWriter(fileLocation));
+            bw.write(fileName);
+            bw.close();
+        } catch (IOException e) {
+        }
+    }
+
+    //create a fileLocation file with tasks.txt inside
+
+
     /*public FileStorage() {
         taskFile = new File(DEFAULT_FILENAME);
     } */
 
-   
+
 
     /*public void moveFileTo(String newLocation) {
         String directory = getDirectory(newLocation);
