@@ -15,15 +15,18 @@ import java.util.StringTokenizer;
 public class FileStorage {
 
     //The indexes for how a task object is stored in a ArrayList<Task>
+    private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
+
     private static final int COMMAND_TYPE_INDEX = 0;
-    private static final int TASK_ID_INDEX = 1;
-    private static final int TASK_NAME_INDEX = 2;
-    private static final int TASK_DATE_FROM_INDEX = 3;
-    private static final int TASK_DATE_TO_INDEX = 4;
-    private static final int TASK_DEADLINE_INDEX = 5;
-    private static final int TASK_LOCATION_INDEX = 6;
-    private static final int TASK_DETAILS_INDEX = 7;
-    private static final int TASK_PRIORITY_INDEX = 8;
+    private static final int TASK_ID_INDEX = 0;
+    private static final int TEMPLATE_NAME_INDEX = 0;
+    private static final int TASK_NAME_INDEX = 1;
+    private static final int TASK_DATE_FROM_INDEX = 2;
+    private static final int TASK_DATE_TO_INDEX = 3;
+    private static final int TASK_DEADLINE_INDEX = 4;
+    private static final int TASK_LOCATION_INDEX = 5;
+    private static final int TASK_DETAILS_INDEX = 6;
+    private static final int TASK_STATUS_INDEX = 7;
     private static final String ADD_TASK_COMMAND = "addTask";
     private static final String ADD_TEMPLATE_INIT_COMMAND = "addTemplateInit";
     private static final char SLASH = '/';
@@ -41,9 +44,6 @@ public class FileStorage {
     private static final String DEFAULT_DELIMITER = "||";
 
     private static final String ERROR_EXCEPTION = "Exception caught";
-
-    private static final boolean INPUT_IS_EMPTY = true;
-    private static final boolean INPUT_IS_NOT_EMPTY = false;
 
     private static final int DEFAULT_STRING_SIZE = 9;
     private static final int TEMP_STRING_SIZE = 8;
@@ -182,14 +182,16 @@ public class FileStorage {
      */
     //@author A0118892U
     public void saveToAnotherLocation(String newFileName) /*throws IOException*/ {
-        boolean isRenameSuccessful = taskFile.renameTo(new File(newFileName));
+        boolean isSaveSuccessful = taskFile.renameTo(new File(newFileName));
 
-        if(isRenameSuccessful) {
+        if(isSaveSuccessful) {
             writeNewFileLocationToFile(newFileName);
             taskFile = new File(newFileName);
             path = getPath(newFileName);
+
             templateFile.renameTo(new File(path + DEFAULT_TEMPLATE_FILE_NAME));
             templateFile = new File(path + DEFAULT_TEMPLATE_FILE_NAME);
+
             shortcutFile.renameTo(new File(path + DEFAULT_SHORTCUT_FILE_NAME));
             shortcutFile = new File(path + DEFAULT_SHORTCUT_FILE_NAME);
         } else {
@@ -329,7 +331,6 @@ public class FileStorage {
                         inputs[COMMAND_TYPE_INDEX] = "addShortcutInit";
                         tempStringArray = sc.nextLine().split("\\s*,\\s*");
                         for(int j = 0; j < tempStringArray.length; ++j) {
-                            System.out.println(tempStringArray[j]);
                             inputs[SHORTCUT_NAME_INDEX] = tempStringArray[j];
                             inputs[SHORTCUT_ID_INDEX] = Integer.toString(i);
                             shortcut.processShortcutCommand(inputs);    
@@ -379,10 +380,11 @@ public class FileStorage {
 
 
     //UP TO HERE, ALL CHECKED
-    
+
 
     // update template file
     //@param given an arraylist of task, update the the template file
+    //@author A0116514N
     public void writeTemplateToFile(ArrayList<Task> templateList, 
             ArrayList<String> matchingName) {
         try {
@@ -421,79 +423,89 @@ public class FileStorage {
     //stores each task as a string delimited by ,
 
 
-
-    //String array is size 8 as priority is not included yet
+    //@author A0116514N
     private String[] taskToStringArray(Task tempTask, String tempName) {
-        String[] strArr = new String[8];
+        String[] strArr = new String[TEMP_STRING_SIZE];
 
         if(tempName == null) {
-            strArr[0] = Integer.toString(tempTask.getTID());
+            strArr[TASK_ID_INDEX] = Integer.toString(tempTask.getTID());
         } else {
-            strArr[0] = tempName;
+            strArr[TEMPLATE_NAME_INDEX] = tempName;
         }
 
-        strArr[1] =	tempTask.getTaskName();
+        strArr[TASK_NAME_INDEX] =	tempTask.getTaskName();
 
-        Date tempDate = tempTask.getDateFrom();
+        Date tempDateFrom = tempTask.getDateFrom();
 
-        if(tempDate != null) {
-            strArr[2] =	dateToString(tempDate);	
+        if(tempDateFrom != null) {
+            strArr[TASK_DATE_FROM_INDEX] =	convertToStringFromDate(tempDateFrom);	
         } else {
-            strArr[2] = null;
+            strArr[TASK_DATE_FROM_INDEX] = null;
         }
 
-        tempDate = tempTask.getDateTo();
+        Date tempDateTo = tempTask.getDateTo();
 
-        if(tempDate != null) {
-            strArr[3] = dateToString(tempDate);
+        if(tempDateTo != null) {
+            strArr[TASK_DATE_TO_INDEX] = convertToStringFromDate(tempDateTo);
         } else {
-            strArr[3] = null;
+            strArr[TASK_DATE_TO_INDEX] = null;
         }
 
-        tempDate = tempTask.getDeadline();
-        if(tempDate != null) {
-            strArr[4] = dateToString(tempDate);
+        Date tempDeadline = tempTask.getDeadline();
+        if(tempDeadline != null) {
+            strArr[TASK_DEADLINE_INDEX] = convertToStringFromDate(tempDeadline);
         } else {
-            strArr[4] = null;
+            strArr[TASK_DEADLINE_INDEX] = null;
         }
 
         if(tempTask.getLocation() != null) {
-            strArr[5] = tempTask.getLocation();
+            strArr[TASK_LOCATION_INDEX] = tempTask.getLocation();
         } else {
-            strArr[5] = null;
+            strArr[TASK_LOCATION_INDEX] = null;
         }
 
         if(tempTask.getDetails() != null) {
-            strArr[6] = tempTask.getDetails();
+            strArr[TASK_DETAILS_INDEX] = tempTask.getDetails();
         } else {
-            strArr[6] = null;
+            strArr[TASK_DETAILS_INDEX] = null;
         }
 
-        int tempInt = tempTask.getPriority();
+        int tempStatus = tempTask.getStatus();
 
-        if(IntegerToString(tempInt) != null) {
-            strArr[7] = IntegerToString(tempInt);
+        if(convertToStringFromInt(tempStatus) != null) {
+            strArr[TASK_STATUS_INDEX] = convertToStringFromInt(tempStatus);
         } else {
-            strArr[7] = null;
+            strArr[TASK_STATUS_INDEX] = null;
         }
-        System.out.println(Arrays.toString(strArr));
 
         return strArr;
     }
 
-    private String IntegerToString(int integer) {
+    /**
+     * This method converts an int type data to a String type
+     * @param integer int type data to be converted
+     * @return        String type data of the input
+     */
+    //@author A0118892U
+    private String convertToStringFromInt(int integer) {
         return Integer.toString(integer);
     }
 
-    private String dateToString(Date date) {
-
-        Format formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    /**
+     * This method converts an Date type data to a String type with this format 
+     * ("dd/MM/yyyy HH:mm")
+     * @param date date type data to be converted
+     * @return     String type data of the input with this format "dd/MM/yyyy HH:mm"
+     */
+    //@author A0118892U
+    private String convertToStringFromDate(Date date) {
+        Format formatter = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
         String dateString = formatter.format(date);
-
         return dateString;
     }
 
-    public void readTemplateFromFile(Template template) throws ParseException {
+    //@author A0116514N
+    public void readTemplateFromFile(Template template) {
         if(templateFile.exists()) {
 
             try {
@@ -531,9 +543,9 @@ public class FileStorage {
     //@author A0118892U
     private boolean isEmptyInput(String str) {
         if(str.equals(EMPTY_INPUT)) {
-            return INPUT_IS_EMPTY;
+            return true;
         } else {
-            return INPUT_IS_NOT_EMPTY;
+            return false;
         }
     }
 }
