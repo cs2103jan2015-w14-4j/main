@@ -29,6 +29,8 @@ public class FileStorage {
     private static final String ADD_TEMPLATE_INIT_COMMAND = "addTemplateInit";
     private static final char SLASH = '/';
     private static final char BACKSLASH = '\\';
+    private static final String MSG_ERR_MOVE_FILE = "File is not moved successfully, "
+            + "please try again with another location or a different file name.";
 
 
     private static final int SHORTCUT_NAME_INDEX = 1;
@@ -113,7 +115,7 @@ public class FileStorage {
     }
 
 
-    public void saveToAnotherLocation(String newFileName) {
+    public void saveToAnotherLocation(String newFileName) throws IOException {
         boolean isRenameSuccessful = taskFile.renameTo(new File(newFileName));
 
         if(isRenameSuccessful) {
@@ -125,7 +127,7 @@ public class FileStorage {
             shortcutFile.renameTo(new File(path + DEFAULT_SHORTCUT_FILE_NAME));
             shortcutFile = new File(path + DEFAULT_SHORTCUT_FILE_NAME);
         } else {
-                //throw error
+            throw new IOException(MSG_ERR_MOVE_FILE);
         }
     }
 
