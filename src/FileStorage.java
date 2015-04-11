@@ -46,7 +46,6 @@ public class FileStorage {
 
     private static final int DEFAULT_STRING_SIZE = 9;
     private static final int TEMP_STRING_SIZE = 8;
-    private static final String DEFAULT_FILENAME = "default";
     private static final String EMPTY_INPUT = "null";
 
     private static File taskFile;
@@ -64,11 +63,11 @@ public class FileStorage {
 
     //--------------------constructor method starts-----------------
     /**
-     * @author A0118892U
      * This constructor reads the location of task file from a file named location; 
      * then it creates File object for tasks, templates and shortcuts.
      * If location file does not exist, it will be created with default contents.
      */
+    //@author A0118892U
     public FileStorage() {
 
         if(!location.exists()){
@@ -77,12 +76,12 @@ public class FileStorage {
             initializeFileStorageFromALocation();
         }
     }
-    
+
     /**
-     * @author A0118892U
      * This method initializes File object for tasks, templates and shortcuts 
      * from their default locations.
      */
+    //@author A0118892U
     private void initializeFileStorageDefault() {
         location = new File(DEFAULT_LOCATION_FILE_NAME);
         try {
@@ -95,53 +94,53 @@ public class FileStorage {
             assert(true);
         }
     }
-    
+
     /**
-     * @author A0118892U
      * This method creates a File object for tasks with the given file name.
      * If the file with that name is not found, it creates a file.
      * @param taskFileName
      * @throws IOException
      */
+    //@author A0118892U
     private void createTaskFile(String taskFileName) throws IOException {
         taskFile = new File(taskFileName);
         if(!taskFile.exists()) {
             taskFile.createNewFile();           
         }
     }
-    
+
     /**
-     * @author A0118892U
      * This method creates a File object for templates with the given file name.
      * If the file with that name is not found, it creates a file.
      * @param templateFileName
      * @throws IOException
      */
+    //@author A0118892U
     private void createTemplateFile(String templateFileName) throws IOException {
         templateFile = new File(templateFileName);
         if(!templateFile.exists()) {
             templateFile.createNewFile();
         }
     }
-    
+
     /**
-     * @author A0118892U
      * This method creates a File object for shortcuts with the given file name.
      * If the file with that name is not found, it creates a file.
      * @param shortcutFileName
      * @throws IOException
      */
+    //@author A0118892U
     private void createShortcutFile(String shortcutFileName) throws IOException {
         shortcutFile = new File(shortcutFileName);
         if(!shortcutFile.exists()) {
             shortcutFile.createNewFile();
         }
     }
-    
+
     /**
-     * @author A0118892U
      * This method reads the location where task file is saved from the location file.
      */
+    //@author A0118892U
     private void getTaskFileLocation() {
         try {
             Scanner sc = new Scanner(location);
@@ -151,12 +150,12 @@ public class FileStorage {
             assert(true);
         } 
     }
-    
+
     /**
-     * @author A0118892U
      * This method initializes File object for tasks, templates and shortcuts 
      * from location stores in the location file.
      */
+    //@author A0118892U
     private void initializeFileStorageFromALocation() {
         getTaskFileLocation();
         path = getPath(taskFileLocation);
@@ -173,7 +172,14 @@ public class FileStorage {
     //--------------------constructor method ends-----------------
 
 
-
+    //--------------------other methods-----------------
+    /**
+     * This method moves tasks, templates and shortcuts file to the new path
+     * specified in the new file name for tasks
+     * @param newFileName The new file name where user wants to save it
+     * @throw IOException Unsuccessful move of files
+     */
+    //@author A0118892U
     public void saveToAnotherLocation(String newFileName) /*throws IOException*/ {
         boolean isRenameSuccessful = taskFile.renameTo(new File(newFileName));
 
@@ -190,55 +196,12 @@ public class FileStorage {
         }
     }
 
-    private void writeNewFileLocationToFile(String fileName) {
-        try {
-            location.delete();
-            location.createNewFile();
-            BufferedWriter bw = new BufferedWriter(new FileWriter(location));
-            bw.write(fileName);
-            bw.close();
-        } catch (IOException e) {
-        }
-    }
-
-    //create a fileLocation file with tasks.txt inside
-
-
-    /*public FileStorage() {
-        taskFile = new File(DEFAULT_FILENAME);
-    } */
-
-
-
-    /*public void moveFileTo(String newLocation) {
-        String directory = getDirectory(newLocation);
-
-
-        String newTemplateFile = directory + DEFAULT_TEMPLATE_FILE_NAME;
-        templateFile.renameTo(new File(newTemplateFile));
-        String newShortcutFile = directory + DEFAULT_SHORTCUT_FILE_NAME;
-        shortcutFile.renameTo(new File(newShortcutFile));
-    }*/
-
-
-
-    /*private String getPath() {
-        String location = "";
-        if(fileLocation.exists()) {
-            try {
-                Scanner sc = new Scanner(fileLocation);
-                location = sc.nextLine();
-                sc.close();
-            } catch (FileNotFoundException e) {
-            }
-        }
-        return location;
-    }*/
-
     /**
+     * This method extracts the path form the location where tasks file is saved
      * @param fileName the path and name the task file is saved
      * @return         the path where task file is saved
      */
+    //@author A0118892U
     private String getPath(String fileName) {
         String path = "";
         if(fileName.indexOf(SLASH) != -1) {
@@ -251,19 +214,36 @@ public class FileStorage {
         return path;
     }
 
-    //----------task read and write starts----------
     /**
-     * extracts each line from specified file as String array
-     * and pass it as parameter to logic via processInitialization method
-     * This is for normal tasks and template.
+     * This methods writes the new location and file name where tasks file is store 
+     * into the location file
+     * @param fileName the file name where tasks file is stored
+     */
+    //@author A0118892U
+    private void writeNewFileLocationToFile(String fileName) {
+        try {
+            location.delete();
+            location.createNewFile();
+            BufferedWriter bw = new BufferedWriter(new FileWriter(location));
+            bw.write(fileName);
+            bw.close();
+        } catch (IOException e) {
+            assert(true);
+        }
+    }
+
+    //----------tasks read and write methods starts----------
+    /**
+     * This method extracts each line from specified file as String array
+     * and passes it as parameter to processInitialization method.
      */    
+    //@author A0118892U
     public void readTaskFromFile(TaskManager tm) {
         if(taskFile.exists()) {
             try {
                 Scanner sc = new Scanner(taskFile);
 
                 while (sc.hasNextLine()) {
-
                     String[] inputs = new String[DEFAULT_STRING_SIZE];
                     inputs[COMMAND_TYPE_INDEX] = ADD_TASK_COMMAND;
                     int index = 1;
@@ -278,21 +258,29 @@ public class FileStorage {
                         }
                         ++index;
                     }
+
                     tm.processInitialization(inputs);
                 }
-                sc.close();      
 
+                sc.close();      
             } catch (FileNotFoundException e) {
+                assert(true);
             }
         }   
     }
 
 
+    /**
+     * This method writes tasks back to the specified file with specific format
+     * @param taskList
+     */
+    //@author A0118892U
     public void writeTaskToFile(ArrayList<Task> taskList) {
         try {
             taskFile.delete();
             taskFile.createNewFile();
             BufferedWriter bw = new BufferedWriter(new FileWriter(taskFile));
+
             for (int i = 0; i < taskList.size(); i++) {
                 Task tempTask = taskList.get(i);
                 String[] taskArray = taskToStringArray(tempTask, null);
@@ -304,17 +292,26 @@ public class FileStorage {
                         bw.write(taskArray[j]);
                     }
                 }
+
                 bw.newLine();
             }
+
             bw.close();
         } catch (Exception e) {
-            System.out.println(ERROR_EXCEPTION);
+            assert(true);
         }
     }
-    //----------task read and write ends----------
+    //----------task read and write methods ends----------
 
 
-    //----------shortcut read and write starts----------
+    //----------shortcut read and write methods starts----------
+    /**
+     * This method extracts each line from specified file as 2D array
+     * and passes it as parameter to processShortcutCommand method.
+     * If there is nothing in the shortcut file, all shortcut will be reset.
+     * @param shortcut
+     */
+    //@author A0116514N
     public void readShortcutFromFile(Shortcut shortcut) {
         if(shortcutFile.exists()) {
             if(shortcutFile.length() == 0) {
@@ -336,17 +333,23 @@ public class FileStorage {
                             inputs[SHORTCUT_ID_INDEX] = Integer.toString(i);
                             shortcut.processShortcutCommand(inputs);    
                         }
+
                         ++i;
                     }
+
                     sc.close();
                 }catch(FileNotFoundException e) {
-                    e.printStackTrace();
+                    assert(true);
                 }
             }
         }
     }
 
-
+    /**
+     * This method writes shortcuts back to the specified file with specific format
+     * @param shortcuts
+     */
+    //@author A0116514N
     public void writeShortcutToFile(String[][] shortcuts) {
         try {
             shortcutFile.delete();
@@ -365,18 +368,22 @@ public class FileStorage {
 
                 bw.newLine();
             }
+
             bw.close();
         } catch(Exception e) {
-            System.out.println(ERROR_EXCEPTION);
+            assert(true);
         }
     }
-    //----------shortcut read and write ends----------
+    //----------shortcut read and write methods ends----------
 
 
+    //UP TO HERE, ALL CHECKED
+    
 
     // update template file
     //@param given an arraylist of task, update the the template file
-    public void writeTemplateToFile(ArrayList<Task> templateList, ArrayList<String> matchingName) {
+    public void writeTemplateToFile(ArrayList<Task> templateList, 
+            ArrayList<String> matchingName) {
         try {
             //write template like normal tasks must check what is different is everything null
             templateFile.delete();
@@ -418,7 +425,6 @@ public class FileStorage {
     private String[] taskToStringArray(Task tempTask, String tempName) {
         String[] strArr = new String[8];
 
-        //NO ERROR CATCHING FOR NULL ITEM
         if(tempName == null) {
             strArr[0] = Integer.toString(tempTask.getTID());
         } else {
@@ -486,8 +492,6 @@ public class FileStorage {
     }
 
     public void readTemplateFromFile(Template template) throws ParseException {
-        //needs a different one because format may be diff slightly
-        //not just textFile
         if(templateFile.exists()) {
 
             try {
@@ -522,9 +526,7 @@ public class FileStorage {
 
     }
 
-
-
-
+    //@author A0118892U
     private boolean isEmptyInput(String str) {
         if(str.equals(EMPTY_INPUT)) {
             return INPUT_IS_EMPTY;
