@@ -14,10 +14,11 @@ import java.util.StringTokenizer;
 
 public class FileStorage {
 
-    //The indexes for how a task object is stored in a ArrayList<Task>
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
-
+    
     private static final int COMMAND_TYPE_INDEX = 0;
+    private static final int INDEX_TASK_ID_READ_TASK_FROM_FILE = 1;
+    //The indexes for how a task object is stored in an ArrayList<Task>
     private static final int TASK_ID_INDEX = 0;
     private static final int TEMPLATE_NAME_INDEX = 0;
     private static final int TASK_NAME_INDEX = 1;
@@ -27,41 +28,41 @@ public class FileStorage {
     private static final int TASK_LOCATION_INDEX = 5;
     private static final int TASK_DETAILS_INDEX = 6;
     private static final int TASK_STATUS_INDEX = 7;
+    
+    
     private static final String ADD_TASK_COMMAND = "addTask";
     private static final String ADD_TEMPLATE_INIT_COMMAND = "addTemplateInit";
+    
+    //for file location
     private static final char SLASH = '/';
     private static final char BACKSLASH = '\\';
+    
+    //Error message
     private static final String MSG_ERR_MOVE_FILE = "File is not moved successfully, "
             + "please try again with another location or a different file name.";
-
-
+        
     private static final int SHORTCUT_NAME_INDEX = 1;
     private static final int SHORTCUT_ID_INDEX = 2;
-
-    private static final String TYPE_TASK = "task";
-    private static final String TYPE_SHORTCUT = "shortcut";
-    private static final String TYPE_TEMPLATE = "template";
     private static final String DEFAULT_DELIMITER = "||";
-
-    private static final String ERROR_EXCEPTION = "Exception caught";
-
     private static final int DEFAULT_STRING_SIZE = 9;
     private static final int TEMP_STRING_SIZE = 8;
-    private static final String EMPTY_INPUT = "null";
+    
+    private static final String NULL_INPUT = "null";
+    private static final String DEFAULT_TASK_FILE_NAME = "default.txt";
+    private static final String DEFAULT_TEMPLATE_FILE_NAME = "template";
+    private static final String DEFAULT_SHORTCUT_FILE_NAME = "shortcut";
+    private static final String DEFAULT_LOCATION_FILE_NAME = "location";
 
-    private static File taskFile;
-    //include the two secret files;
-    private final String DEFAULT_TASK_FILE_NAME = "default.txt";
-    private final String DEFAULT_TEMPLATE_FILE_NAME = "template";
-    private final String DEFAULT_SHORTCUT_FILE_NAME = "shortcut";
-    private final String DEFAULT_LOCATION_FILE_NAME = "location";
-    private File templateFile;// = new File(DEFAULT_TEMPLATE_FILE_NAME);
-    private File shortcutFile;// = new File(DEFAULT_SHORTCUT_FILE_NAME);
+
+    
+    private File taskFile;
+    private File templateFile;
+    private File shortcutFile;
     private File location = new File(DEFAULT_LOCATION_FILE_NAME);
     private String taskFileLocation;
     private String path;
 
-
+    
     //--------------------constructor method starts-----------------
     /**
      * This constructor reads the location of task file from a file named location; 
@@ -70,7 +71,6 @@ public class FileStorage {
      */
     //@author A0118892U
     public FileStorage() {
-
         if(!location.exists()){
             initializeFileStorageDefault();
         } else {
@@ -99,7 +99,7 @@ public class FileStorage {
     /**
      * This method creates a File object for tasks with the given file name.
      * If the file with that name is not found, it creates a file.
-     * @param taskFileName
+     * @param taskFileName  the file name for the task file
      * @throws IOException
      */
     //@author A0118892U
@@ -113,7 +113,7 @@ public class FileStorage {
     /**
      * This method creates a File object for templates with the given file name.
      * If the file with that name is not found, it creates a file.
-     * @param templateFileName
+     * @param templateFileName  the file name for the template file
      * @throws IOException
      */
     //@author A0118892U
@@ -127,7 +127,7 @@ public class FileStorage {
     /**
      * This method creates a File object for shortcuts with the given file name.
      * If the file with that name is not found, it creates a file.
-     * @param shortcutFileName
+     * @param shortcutFileName  the file name for the shortcut file
      * @throws IOException
      */
     //@author A0118892U
@@ -177,8 +177,8 @@ public class FileStorage {
     /**
      * This method moves tasks, templates and shortcuts file to the new path
      * specified in the new file name for tasks
-     * @param newFileName The new file name where user wants to save it
-     * @throw IOException Unsuccessful move of files
+     * @param newFileName  The new file name where user wants to save it
+     * @throw IOException  Unsuccessful move of files
      */
     //@author A0118892U
     public void saveToAnotherLocation(String newFileName) /*throws IOException*/ {
@@ -201,16 +201,16 @@ public class FileStorage {
 
     /**
      * This method extracts the path form the location where tasks file is saved
-     * @param fileName the path and name the task file is saved
-     * @return         the path where task file is saved
+     * @param fileName  the path and name the task file is saved
+     * @return          the path where task file is saved
      */
     //@author A0118892U
     private String getPath(String fileName) {
         String path = "";
-        if(fileName.indexOf(SLASH) != -1) {
+        if(isSlashInFileName(fileName)) {
             int indexAfterLastSlash = fileName.lastIndexOf(SLASH) + 1;
             path = fileName.substring(0, indexAfterLastSlash);
-        } else if (fileName.indexOf(BACKSLASH) != -1) {
+        } else if (isBackslashInFileName(fileName)) {
             int indexAfterLastBackSlash = fileName.lastIndexOf(BACKSLASH) + 1;
             path = fileName.substring(0, indexAfterLastBackSlash);
         }
@@ -218,9 +218,27 @@ public class FileStorage {
     }
 
     /**
+     * This method checks whether fileName contains slash("/")
+     * @param fileName  file name and its path
+     * @return          true if input contains slash("/")
+     */
+    private boolean isSlashInFileName(String fileName) {
+        return fileName.indexOf(SLASH) != -1;
+    }
+
+    /**
+     * This method checks whether fileName contains backslash("\")
+     * @param fileName  file name and its path
+     * @return          true if input contains backslash("\")
+     */
+    private boolean isBackslashInFileName(String fileName) {
+        return fileName.indexOf(BACKSLASH) != -1;
+    }
+
+    /**
      * This methods writes the new location and file name where tasks file is store 
      * into the location file
-     * @param fileName the file name where tasks file is stored
+     * @param fileName  the file name where tasks file is stored
      */
     //@author A0118892U
     private void writeNewFileLocationToFile(String fileName) {
@@ -235,10 +253,12 @@ public class FileStorage {
         }
     }
 
+
     //----------tasks read and write methods starts----------
     /**
      * This method extracts each line from specified file as String array
-     * and passes it as parameter to processInitialization method.
+     * and passes it as parameter to processInitialization method in TaskManager.
+     * @param tm  TaskManager object to call its processInitialization method
      */    
     //@author A0118892U
     public void readTaskFromFile(TaskManager tm) {
@@ -249,7 +269,7 @@ public class FileStorage {
                 while (sc.hasNextLine()) {
                     String[] inputs = new String[DEFAULT_STRING_SIZE];
                     inputs[COMMAND_TYPE_INDEX] = ADD_TASK_COMMAND;
-                    int index = 1;
+                    int index = INDEX_TASK_ID_READ_TASK_FROM_FILE;
                     StringTokenizer st = new StringTokenizer(sc.nextLine(), DEFAULT_DELIMITER);
 
                     while (st.hasMoreElements()) {
@@ -272,12 +292,25 @@ public class FileStorage {
         }   
     }
 
+    /**
+     * If the string read is "null", this means the data should be set to null
+     * @param str  string from task file or template file
+     * @return     true if string is null, else false
+     */
+    //@author A0118892U
+    private boolean isEmptyInput(String str) {
+        if(str.equals(NULL_INPUT)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * This method writes tasks back to the specified file with specific format
-     * @param taskList
+     * @param taskList  ArrayList of tasks to be written to file
      */
-    //@author A0118892U
+    //@author A0116514N
     public void writeTaskToFile(ArrayList<Task> taskList) {
         try {
             taskFile.delete();
@@ -286,7 +319,7 @@ public class FileStorage {
 
             for (int i = 0; i < taskList.size(); i++) {
                 Task tempTask = taskList.get(i);
-                String[] taskArray = taskToStringArray(tempTask, null);
+                String[] taskArray = convertTaskToStringArray(tempTask, null);
                 for(int j = 0; j < taskArray.length; j++) {
                     if ( j != taskArray.length - 1) {
                         taskArray[j] += (DEFAULT_DELIMITER);
@@ -311,8 +344,8 @@ public class FileStorage {
     /**
      * This method extracts each line from specified file as 2D array
      * and passes it as parameter to processShortcutCommand method.
-     * If there is nothing in the shortcut file, all shortcut will be reset.
-     * @param shortcut
+     * If there is nothing in the shortcut file, all shortcut will be reset by SystemHandler.
+     * @param shortcut  Shortcut object to call its processShortcutCommand method
      */
     //@author A0116514N
     public void readShortcutFromFile(Shortcut shortcut) {
@@ -349,7 +382,8 @@ public class FileStorage {
 
     /**
      * This method writes shortcuts back to the specified file with specific format
-     * @param shortcuts
+     * @param shortcuts  String[][] of size 9 each string[i] keeps a variable length represent certain keyword 
+     *                   store in order, one row is one id during retrieve
      */
     //@author A0116514N
     public void writeShortcutToFile(String[][] shortcuts) {
@@ -379,11 +413,12 @@ public class FileStorage {
     //----------shortcut read and write methods ends----------
 
 
-    //UP TO HERE, ALL CHECKED
-
-
-    // update template file
-    //@param given an arraylist of task, update the the template file
+    //----------template read and write methods starts----------
+    /**
+     * This method updates template file
+     * @param templateList  given an ArrayList of task, update the the template file
+     * @param matchingName  the name of each template
+     */
     //@author A0116514N
     public void writeTemplateToFile(ArrayList<Task> templateList, 
             ArrayList<String> matchingName) {
@@ -396,7 +431,7 @@ public class FileStorage {
 
                 Task tempTask = templateList.get(i);
                 String templateName = matchingName.get(i);
-                String[] taskArray = taskToStringArray(tempTask, templateName);
+                String[] taskArray = convertTaskToStringArray(tempTask, templateName);
                 for(int j = 0; j < taskArray.length; j++) {
 
                     if (j != taskArray.length - 1) {
@@ -410,27 +445,26 @@ public class FileStorage {
             }
             bw.close();
         } catch(Exception e) {
-            System.out.println(ERROR_EXCEPTION);
+            assert(true);
         }
     }
 
-
-    // update shortcut file
-    //@param shortcuts String[][] of size 9 each string[i] keeps a variable length represent certain keyword 
-    //store in order , one row is one id during retrieve
-
-
-    //stores each task as a string delimited by ,
-
-
+    /**
+     * This method converts Task object to a string array of size of size 8.
+     * If the templateName is not null, puts the task ID in the string array;
+     * else puts the templateName in the string array.
+     * @param tempTask      the task to be converted to String array
+     * @param templateName  the template name to be converted to String array
+     * @return
+     */
     //@author A0116514N
-    private String[] taskToStringArray(Task tempTask, String tempName) {
+    private String[] convertTaskToStringArray(Task tempTask, String templateName) {
         String[] strArr = new String[TEMP_STRING_SIZE];
 
-        if(tempName == null) {
+        if(templateName == null) {
             strArr[TASK_ID_INDEX] = Integer.toString(tempTask.getTID());
         } else {
-            strArr[TEMPLATE_NAME_INDEX] = tempName;
+            strArr[TEMPLATE_NAME_INDEX] = templateName;
         }
 
         strArr[TASK_NAME_INDEX] =	tempTask.getTaskName();
@@ -483,8 +517,8 @@ public class FileStorage {
 
     /**
      * This method converts an int type data to a String type
-     * @param integer int type data to be converted
-     * @return        String type data of the input
+     * @param integer  int type data to be converted
+     * @return         String type data of the input
      */
     //@author A0118892U
     private String convertToStringFromInt(int integer) {
@@ -492,10 +526,10 @@ public class FileStorage {
     }
 
     /**
-     * This method converts an Date type data to a String type with this format 
+     * This method converts an Date type data to a String type with this default format 
      * ("dd/MM/yyyy HH:mm")
-     * @param date date type data to be converted
-     * @return     String type data of the input with this format "dd/MM/yyyy HH:mm"
+     * @param date  date type data to be converted
+     * @return      String type data of the input with this format "dd/MM/yyyy HH:mm"
      */
     //@author A0118892U
     private String convertToStringFromDate(Date date) {
@@ -504,6 +538,11 @@ public class FileStorage {
         return dateString;
     }
 
+    /**
+     * This method extracts each line from specified file as String array
+     * and passes it as parameter to processCustomizingCommand method in Template.     
+     * @param template  Template to call its processCustomizingCommand method
+     */
     //@author A0116514N
     public void readTemplateFromFile(Template template) {
         if(templateFile.exists()) {
@@ -539,13 +578,5 @@ public class FileStorage {
         }
 
     }
-
-    //@author A0118892U
-    private boolean isEmptyInput(String str) {
-        if(str.equals(EMPTY_INPUT)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    //----------template read and write methods ends----------
 }
