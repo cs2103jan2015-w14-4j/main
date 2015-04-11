@@ -8,6 +8,12 @@ public class SystemHandler {
 	
 
 
+	private static final int INDEX_TEMP_NAME = 1;
+
+	private static final String CMD_DELETE_TEMPLATE = "deleteTemplate";
+
+	private static final int INDEX_COMMAND_TYPE = 0;
+
 	private static final String SAVE_LOCATION_DEFAULT = "default.txt";
 
 	private static final String MSG_LOG_USER_COMMAND = "user enters: %s";
@@ -412,8 +418,12 @@ public class SystemHandler {
 
 		ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
 		if(result != null) {
-			ArrayList<String> tempNames = myTemplates.getTemplateNames(result);		
-			//window.displayTemplateTable(result, null, INDEX_EXECUTION_SUCCESS);
+			ArrayList<String> tempNames = new ArrayList<String>();
+			if(command[INDEX_COMMAND_TYPE].equals(CMD_DELETE_TEMPLATE)) {
+				tempNames.add(command[INDEX_TEMP_NAME]);		
+			} else {
+				tempNames = myTemplates.getTemplateNames(result);		
+			}
 			displayProcessor.displayTemplateResult(command, tempNames, result);
 		}
 			

@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.NoSuchElementException;
 
@@ -15,6 +16,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 
 
 
@@ -89,50 +91,14 @@ public class SystemTest {
 		myfile.deleteOnExit();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testNatty() {
-
-		Parser parser = new Parser();
-		
-//		List<DateGroup> groups = parser.parse("the day before next thursday");
-//		for(DateGroup group:groups)  {
-//			Date dates = group.getDates().get(0);   //Here to get the date (which we need mostly)
-//			System.out.println(dates.toLocaleString());   
-//		}
-//
-//		groups = parser.parse("\"do homework 03/04/2015 11:00 \" to 6pm from  4pm  on next wednesday before June");
-//		for(DateGroup group:groups)  {
-//			List<Date> dates = group.getDates();   //Here to get the date (which we need mostly)
-//			for(int i = 0; i < dates.size(); ++i) {
-//				System.out.println("count "+i+": "+dates.get(i).toLocaleString()); 
-//			}
-//			int line = group.getLine();			//Not sure what it does
-//			int column = group.getPosition();	//Not sure what
-//			String matchingValue = group.getText(); 	//thursday
-//			String syntaxTree = group.getSyntaxTree().toStringTree(); //Not sure what
-//			Map parseMap = group.getParseLocations();	//Not sure what
-//			boolean isRecurreing = group.isRecurring();	//True
-//			Date recursUntil = group.getRecursUntil();	//Mon Jun 01 21:25:06 SGT 2015
-//			System.out.println(recursUntil);	
-//			System.out.println(line);
-//
-//		}
-		
-//		groups = parser.parse("assignment from tuesday to wednesday");
-//		for(DateGroup group:groups)  {
-//			List<Date> dates = group.getDates();   //for range date
-//			for(Date date:dates)
-//				System.out.println(date);
-//		}
-	}
 	
 	
-//	@Test
+	//@Test
+	// Full System is not testable at production phase due to switching of return statement to void
+	// To test, changes on return statement needs to be done
 	public void testFullSystem() {
 		// TC 1 - simple multiple add
 		ArrayList<Task> expect1 = new ArrayList<Task>();
-		//"ID","Title","From","To","On","At","Det","Pri"
 		expect1.add(new Task(10, "NEW",
 				convertToDateObject("10/04/2015 19:00"),
 				convertToDateObject("10/05/2015 19:00"), null, "ABC", null, 0));
@@ -141,7 +107,6 @@ public class SystemTest {
 		//assertTaskArrayListEquals(mySystem.rawUserInput(test1), expect1);
 
 		// TC2 - continue -- multiple add same inputs then view
-
 		expect1.add(new Task(11, "NEW",
 						convertToDateObject("10/04/2015 19:00"),
 						convertToDateObject("10/05/2015 19:00"), null, "ABC", null, 0));
@@ -175,7 +140,7 @@ public class SystemTest {
 		
 	}
 
-//	@Test
+	@Test
 	public void testTaskManager() {
 		// TC1 - test add normal result
 		ArrayList<Task> test1 = new ArrayList<Task>();
@@ -204,23 +169,6 @@ public class SystemTest {
 				convertToDateObject("15/09/2015 12:00"), null, null, null, 1));
 		assertTaskArrayListEquals(test3, expect3);
 
-		// TC4 dummy
-		ArrayList<Task> test4 = new ArrayList<Task>();
-		ArrayList<Task> expect4 = new ArrayList<Task>();
-		assertTaskArrayListEquals(test4, expect4);
-
-		// TC5 dummy
-		ArrayList<Task> test5 = new ArrayList<Task>();
-		ArrayList<Task> expect5 = new ArrayList<Task>();
-		assertTaskArrayListEquals(test5, expect5);
-
-		// TC6 dummy
-		ArrayList<Task> test6 = new ArrayList<Task>();
-		ArrayList<Task> expect6 = new ArrayList<Task>();
-		assertTaskArrayListEquals(test6, expect6);
-		
-
-		
 	}
 	
 	@Test
@@ -255,31 +203,31 @@ public class SystemTest {
 		String[][] results = myshortcut.processShortcutCommand(cmd);
 		String[][] expected1 = DEFAULT_WORD_SET;
 		for(int i = 0; i < expected1.length; ++i) {
-			Assert.assertArrayEquals(results[i], expected1[i]);
+			Assert.assertArrayEquals(Arrays.copyOfRange(results[i], 1, results[i].length), expected1[i]);
 		}
 		
 		//TC2 - add a shortcut
 		String[] cmd2 = {"addShortcut","addM","add"};
 		String[][] results2 = myshortcut.processShortcutCommand(cmd2);
-		String[][] expected2 = {{"addTask","add","addM"}};
+		String[][] expected2 = {{"add","addTask","addM"}};
 		for(int i = 0; i < results2.length; ++i) {
-			Assert.assertArrayEquals(results2[i], expected2[i]);
+			Assert.assertArrayEquals(Arrays.copyOfRange(results2[i], 1, results2[i].length), expected2[i]);
 		}
 		
 		//TC3 - add another shortcut
 		String[] cmd3 = {"addShortcut","eTemp","editTemplate"};
 		String[][] results3 = myshortcut.processShortcutCommand(cmd3);
-		String[][] expected3 = {{"editTemplate","editTemplate","eTemp"}};
+		String[][] expected3 = {{"editTemplate","editTemp","eTemp"}};
 		for(int i = 0; i < expected3.length; ++i) {
-			Assert.assertArrayEquals(results3[i], expected3[i]);
+			Assert.assertArrayEquals(Arrays.copyOfRange(results3[i], 1, results3[i].length), expected3[i]);
 		}
 		
 		//TC4 - use added shortcut to do something
 		String[] cmd4 = {"addShortcut","addS","eTemp"};
 		String[][] results4 = myshortcut.processShortcutCommand(cmd4);
-		String[][] expected4 = {{"editTemplate","eTemp","addS"}};
+		String[][] expected4 = {{"editTemplate","editTemp","eTemp","addS"}};
 		for(int i = 0; i < expected4.length; ++i) {
-			Assert.assertArrayEquals(results4[i], expected4[i]);
+			Assert.assertArrayEquals(Arrays.copyOfRange(results4[i], 1, results4[i].length), expected4[i]);
 		}
 		
 		//TC5 - view all changes
@@ -291,7 +239,7 @@ public class SystemTest {
 		String[] changes2= {"editTemplate","editTemp","eTemp","addS"};
 		expected5[14] = changes2;
 		for(int i = 0; i < expected5.length; ++i) { 
-			Assert.assertArrayEquals(results5[i], expected5[i]);
+			Assert.assertArrayEquals(Arrays.copyOfRange(results5[i], 1, results5[i].length), expected5[i]);
 		}
 		String[] revert1 = {"add","addTask"};
 		expected5[0] = revert1;
@@ -301,9 +249,9 @@ public class SystemTest {
 		//TC6 - delete shortcut
 		String[] cmd6 = {"deleteShortcut", "eTemp", null};
 		String[][] results6 = myshortcut.processShortcutCommand(cmd6);
-		String[][] expected6 = {{"editTemplate","eTemp"}};
+		String[][] expected6 = {{"eTemp"}};
 		for(int i = 0; i < expected6.length; ++i) {
-			Assert.assertArrayEquals(results6[i], expected6[i]);
+			Assert.assertArrayEquals(Arrays.copyOfRange(results6[i], 1, results6[i].length), expected6[i]);
 		}
 		
 		//TC7 - reset
@@ -311,35 +259,13 @@ public class SystemTest {
 		String[][] results7 = myshortcut.processShortcutCommand(cmd7);
 		String[][] expected7 = DEFAULT_WORD_SET;
 		for(int i = 0; i < expected7.length; ++i) {
-			Assert.assertArrayEquals(results7[i], expected7[i]);
+			Assert.assertArrayEquals(Arrays.copyOfRange(results7[i], 1, results7[i].length), expected7[i]);
 		}
 	}
 
 	@Test
 	public void testFileStorage() {
 		System.out.println("File Storage Test Not yet implemented");
-	}
-
-	@Test
-	public void testParser() {
-
-//		FlexiParser test1 = new FlexiParser();
-//		String[] expect1  = {"add",null,"homework",
-//								"20/04/2015 20:00","20/04/2015 22:00",null,
-//								null,null,null};
-//		String[] abc = test1.parseText("add,homework,on,20/04/2015,from,20:00,to,22:00");
-//		for(int i=0;i<expect1.length;++i) {
-//			
-//			if(abc[i] == expect1[i] ||
-//				(abc[i] != null && abc[i].equals(expect1[i]))) {
-//				continue;
-//			}
-//			else {
-//				System.out.println(i+" "+abc[i]+" "+expect1[i]);	
-//			}
-//			
-//		}
-//		Assert.assertArrayEquals(abc, expect1);
 	}
  
 	@Test
@@ -377,18 +303,17 @@ public class SystemTest {
 		//TC4 - try delete invalid template
 		String[] cmd4 = {"deleteTemplate", "task0", null, null, null, null, null, null, null};
 		try {
-			System.out.println("HERE");
 			template.processCustomizingCommand(cmd4);
 			
 		} catch(NoSuchElementException e) {
-			Assert.assertEquals(e.getMessage(), "No such template saved in the system");
+			Assert.assertEquals(e.getMessage(), "No such template exists.");
 		} catch(IllegalArgumentException e) {
 			
 		} catch (Exception e) {
 			
-			e.printStackTrace();
 		}
-		
+
+		//TC5 - try reset
 		try {
 			String[] cmd5 = {"resetTemplates", null, null, null, null, null, null, null, null};
 			ArrayList<Task> result5 = template.processCustomizingCommand(cmd5);
@@ -403,7 +328,6 @@ public class SystemTest {
 			e.printStackTrace();
 		}
 		
-		//TC5 - try reset
 		
 	}
 
@@ -411,55 +335,17 @@ public class SystemTest {
 			ArrayList<Task> expect) {
 		Assert.assertEquals(test.size(), expect.size());
 		for (int i = 0; i < test.size(); ++i) {
-//			if(!assertTaskEqual(test.get(i), expect.get(i))) {
-//				showNotMatch(test.get(i), expect.get(i));
-//				showTask(test.get(i));
-//				showTask(expect.get(i));	
-//			}
 			Assert.assertTrue(assertTaskEqual(test.get(i), expect.get(i)));
 		}
 
 		return true;
 	}
 
-	public void showNotMatch(Task a, Task b) {
-		if(!a.getTaskName().equals(b.getTaskName()))
-			System.out.println("#NAME = " + a.getTaskName());
-		if(a.getTID() != b.getTID())
-			System.out.println("#TID  = " + a.getTID());
-		if(!a.getDateFrom().equals(b.getDateFrom()))
-			System.out.println("#DFro = " + a.getDateFrom());
-		if(!a.getDateTo().equals(b.getDateTo()))
-			System.out.println("#DTo  = " + a.getDateTo());
-		if(!a.getDeadline().equals(b.getDeadline()))
-			System.out.println("#dead = " + a.getDeadline());
-		if(!a.getLocation().equals(b.getLocation()))
-			System.out.println("#loca = " + a.getLocation());
-		if(!a.getDetails().equals(b.getDetails()))
-			System.out.println("#Deta = " + a.getDetails());
-		if(a.getStatus() != b.getStatus())
-			System.out.println("#State= " + a.getStatus());
-		if(a.getPriority() != b.getPriority())
-			System.out.println("#prio = " + a.getPriority());
-
-	}
 	
 	public boolean assertTaskEqual(Task taskA, Task taskB) {
 		return taskA.isEqual(taskB);
 	}
 
-	
-	private void showTask(Task t) {
-		System.out.println("NAME = " + t.getTaskName());
-		System.out.println("TID  = " + t.getTID());
-		System.out.println("DFro = " + t.getDateFrom());
-		System.out.println("DTo  = " + t.getDateTo());
-		System.out.println("dead = " + t.getDeadline());
-		System.out.println("loca = " + t.getLocation());
-		System.out.println("Deta = " + t.getDetails());
-		System.out.println("State= " + t.getStatus());
-		System.out.println("prio = " + t.getPriority());
-	}
 	private Date convertToDateObject(String dateString) {
 		try {
 			Date date = null;

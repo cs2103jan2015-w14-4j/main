@@ -166,6 +166,10 @@ public class Template {
 			throw new IllegalArgumentException(String.format(MSG_ERR_TEMP_EXIST,name));
 		} else {
 			clearTaskDateField(template);
+			if(template.getStatus() == Task.INDEX_STATUS_OVERDUE) {
+				template.setNormal();
+			}
+				
 			insertTemplateIntoArray(name, template);
 			
 			ArrayList<Task> result = new ArrayList<Task>();
@@ -213,7 +217,7 @@ public class Template {
 	 */
 	private String getMatchingName(Task task) throws NoSuchElementException {
 		for(int i = 0; i < templates.size(); ++i) {
-			
+			Task abd = templates.get(i);
 			if(task.isEqual(templates.get(i))) {
 				return tempNames.get(i);
 			}
