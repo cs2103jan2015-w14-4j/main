@@ -1,9 +1,6 @@
 import java.util.ArrayList;
 
-/**
- * @author Ma Cong (A0118892U)
- *
- */
+//@author A0118892U
 public interface TaskManagerInterface {
     
     /**
@@ -16,6 +13,8 @@ public interface TaskManagerInterface {
     
     
     /**
+     * This method process parsed command received from SystemHandler, it also calls
+     * SystemHandler to save changes to the task file.
      * @param inputs  a parsed command received from SystemHandler
      * @return        affected tasks in an ArrayList
      */
