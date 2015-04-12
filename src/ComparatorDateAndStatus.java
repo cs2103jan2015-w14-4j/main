@@ -1,15 +1,18 @@
 import java.util.Comparator;
 import java.util.Date;
 
-//incomplete tasks will be put in front, completed tasks will be put at the back
-//each categories of tasks will be sorted by date
+/**
+ * Incomplete tasks will be put in front, while completed tasks will be put at the back
+ * Both categories of tasks will be compared by date again.
+ *
+ */
 //@author A0118892U
 public class ComparatorDateAndStatus implements Comparator<Task> {
-    private final int COMPLETE = 6;
+    private final int STATUS_COMPLETE = 6;
     
     @Override
     public int compare(Task task1, Task task2) {
-        if(task1.getStatus() == COMPLETE && task2.getStatus() == COMPLETE) {
+        if(task1.getStatus() == STATUS_COMPLETE && task2.getStatus() == STATUS_COMPLETE) {
             Date date1 = null, date2 = null;
             
             //get date1 from task1
@@ -64,9 +67,9 @@ public class ComparatorDateAndStatus implements Comparator<Task> {
                     return 0;
                 }
             }
-        } else if(task1.getStatus() != COMPLETE && task2.getStatus() == COMPLETE) {
+        } else if(task1.getStatus() != STATUS_COMPLETE && task2.getStatus() == STATUS_COMPLETE) {
             return -1;
-        } else if(task1.getStatus() == COMPLETE && task2.getStatus() != COMPLETE) {
+        } else if(task1.getStatus() == STATUS_COMPLETE && task2.getStatus() != STATUS_COMPLETE) {
             return 1;
         } else {
             Date date1 = null, date2 = null;
