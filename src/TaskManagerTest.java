@@ -29,7 +29,7 @@ public class TaskManagerTest {
     private static final String[] REDO_OPERATION = {"redoTask", null, null, null, null, null, 
         null, null, null};
     private static final String[] EDIT_TASK_11 = {"editTask", "11", null, null, 
-        "20/03/2015 15:30", null, "LT108", null, null};
+        "20/07/2015 15:30", null, "LT108", null, null};
     private static final String[] EDIT_TASK_9999 = {"editTask", "9999", null, null, 
         "20/03/2015 15:30", null, null, null, null};
 
@@ -229,6 +229,21 @@ public class TaskManagerTest {
     }
 
     @Test
+    public void testAddOverdueTasks() {
+        String[] addOverdueTask10 = {"addTask", null, "CS2103T Tutorial", 
+                null, null, "18/03/2015 15:00", null, null, null};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addOverdueTask10);
+
+        Task expectOverdueTask10 = new Task(10, "CS2103T Tutorial", null, null, 
+                convertToDateObject("18/03/2015 15:00"), null, null, 7); 
+        ArrayList<Task> overdueTasks = new ArrayList<Task>();
+        overdueTasks.add(expectOverdueTask10);
+
+        assertTaskArrayListEquals(myTaskManager.getTasks(), overdueTasks);
+    }
+
+    @Test
     public void testEmptyTaskNameEmptyInput() {
         String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
                 "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
@@ -251,7 +266,7 @@ public class TaskManagerTest {
                 "20/03/2015 12:00", "20/03/2015 13:30", null, "LT27", null, "normal"};
         myTaskManager = new TaskManager();
         myTaskManager.processTM(addTask10);
-        
+
         try{
             myTaskManager.processTM(addTask11);
         } catch (IllegalArgumentException e) {
@@ -299,7 +314,7 @@ public class TaskManagerTest {
             myTaskManager.processTM(addTask10);
         } catch (IllegalArgumentException e) {
             Assert.assertEquals(e.getMessage(), "The duration entered is invalid. "
-                    + "Start Date must be before End Date");
+                    + "Start Date must be before End Date.");
         }
     }
 
@@ -336,23 +351,23 @@ public class TaskManagerTest {
     @Test
     public void testEditCommand() {
         String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
-                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, null};
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
         String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
-                "20/03/2015 12:00", "20/03/2015 13:30", null, "LT27", null, "normal"};
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "normal"};
         String[] addTask12 = {"addTask", null, "CS2211 Reflection", null, 
-                null, "21/03/2015 23:59", null, "name the file properly", "normal"};
+                null, "21/07/2015 23:59", null, "name the file properly", "normal"};
         myTaskManager = new TaskManager();
         myTaskManager.processTM(addTask10);
         myTaskManager.processTM(addTask11);
         myTaskManager.processTM(addTask12);
 
         ArrayList<Task> expectTasks = new ArrayList<Task>();
-        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 3);
-        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
-                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 3);
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/07/2015 12:00"), 
+                convertToDateObject("20/07/2015 13:30"), null, "LT27", null, 3);
         Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
-                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 3);
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 3);
         expectTasks.add(expectTask10);
         expectTasks.add(expectTask11);
         expectTasks.add(expectTask12);
@@ -362,7 +377,7 @@ public class TaskManagerTest {
 
 
         ArrayList<Task> expectEdit = new ArrayList<Task>();
-        Date newDateTo = convertToDateObject("20/03/2015 15:30");
+        Date newDateTo = convertToDateObject("20/07/2015 15:30");
         expectTasks.get(TASK11).setDateTo(newDateTo);
         expectTasks.get(TASK11).setLocation("LT108");;
         expectEdit.add(expectTasks.get(TASK11));
@@ -377,7 +392,7 @@ public class TaskManagerTest {
     @Test
     public void testEditWithEmptyTaskName() {
         String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
-                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, null};
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
         myTaskManager = new TaskManager();
         myTaskManager.processTM(addTask10);
 
@@ -386,8 +401,8 @@ public class TaskManagerTest {
 
         try {
             myTaskManager.processTM(editTask10);
-        } catch (IllegalStateException e) {
-            Assert.assertEquals(e.getMessage(), "Task name cannot be empty");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "Task name cannot be empty.");
         }
     }
 
@@ -404,8 +419,8 @@ public class TaskManagerTest {
 
         try {
             myTaskManager.processTM(editTask10);
-        } catch (StringIndexOutOfBoundsException e) {
-            Assert.assertEquals(e.getMessage(), "task title has maximum length of 30");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "task title allows a maximum length of 30.");
         }
     }
 
@@ -421,8 +436,9 @@ public class TaskManagerTest {
 
         try {
             myTaskManager.processTM(editTask10);
-        } catch (IllegalStateException e) {
-            Assert.assertEquals(e.getMessage(), "Start must be before end");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "The duration entered is invalid. "
+                    + "Start Date must be before End Date.");
         }
     }
 
@@ -438,31 +454,31 @@ public class TaskManagerTest {
 
         try {
             myTaskManager.processTM(editTask10);
-        } catch (IllegalStateException e) {
-            Assert.assertEquals(e.getMessage(), "Wrong dates entered");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "The date entered is invalid.");
         }
     }
 
     @Test
-    public void testEditWithEmptyingContent() {
+    public void testClearAttribute() {
         String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
-                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, null};
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
         String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
-                "20/03/2015 12:00", "20/03/2015 13:30", null, "LT27", null, "normal"};
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "normal"};
         String[] addTask12 = {"addTask", null, "CS2211 Reflection", null, 
-                null, "21/03/2015 23:59", null, "name the file properly", "normal"};
+                null, "21/07/2015 23:59", null, "name the file properly", "normal"};
         myTaskManager = new TaskManager();
         myTaskManager.processTM(addTask10);
         myTaskManager.processTM(addTask11);
         myTaskManager.processTM(addTask12);
 
         ArrayList<Task> expectTasks = new ArrayList<Task>();
-        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 3);
-        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
-                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 3);
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/07/2015 12:00"), 
+                convertToDateObject("20/07/2015 13:30"), null, "LT27", null, 3);
         Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
-                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 3);
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 3);
         expectTasks.add(expectTask10);
         expectTasks.add(expectTask11);
         expectTasks.add(expectTask12);
@@ -486,32 +502,32 @@ public class TaskManagerTest {
     @Test
     public void testEditWithTimeclash() {
         String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
-                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, null};
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
         String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
-                "20/03/2015 12:00", "20/03/2015 13:30", null, "LT27", null, "normal"};
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "normal"};
         myTaskManager = new TaskManager();
         myTaskManager.processTM(addTask10);
         myTaskManager.processTM(addTask11);
 
         ArrayList<Task> expectTasks = new ArrayList<Task>();
-        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 3);
-        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
-                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 3);
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/07/2015 12:00"), 
+                convertToDateObject("20/07/2015 13:30"), null, "LT27", null, 3);
         expectTasks.add(expectTask10);
         expectTasks.add(expectTask11);
 
         //test the ArrayList before edit
         assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
 
-        Date newDateTo = convertToDateObject("27/03/2015 15:30");
+        Date newDateTo = convertToDateObject("27/07/2015 15:30");
         expectTasks.get(TASK10).setDateTo(newDateTo);
         ArrayList<Task> expectEdit = new ArrayList<Task>();
         expectEdit.add(expectTasks.get(TASK10));
         expectEdit.add(expectTask11);
 
         String[] EDIT_TASK10_CLASH = {"editTask", "10", null, null, 
-                "27/03/2015 15:30", null, null, null, null};
+                "27/07/2015 15:30", null, null, null, null};
 
         //test the ArrayList after edit
         assertTaskArrayListEquals(myTaskManager.processTM(EDIT_TASK10_CLASH), expectEdit); 
@@ -715,23 +731,23 @@ public class TaskManagerTest {
     @Test
     public void testDeleteCommand() {
         String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
-                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, null};
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
         String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
-                "20/03/2015 12:00", "20/03/2015 13:30", null, "LT27", null, "normal"};
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "normal"};
         String[] addTask12 = {"addTask", null, "CS2211 Reflection", null, 
-                null, "21/03/2015 23:59", null, "name the file properly", "normal"};
+                null, "21/07/2015 23:59", null, "name the file properly", "normal"};
         myTaskManager = new TaskManager();
         myTaskManager.processTM(addTask10);
         myTaskManager.processTM(addTask11);
         myTaskManager.processTM(addTask12);
 
         ArrayList<Task> expectTasks = new ArrayList<Task>();
-        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 3);
-        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
-                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 3);
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/07/2015 12:00"), 
+                convertToDateObject("20/07/2015 13:30"), null, "LT27", null, 3);
         Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
-                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 3);
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 3);
         expectTasks.add(expectTask10);
         expectTasks.add(expectTask11);
         expectTasks.add(expectTask12);
@@ -762,7 +778,7 @@ public class TaskManagerTest {
         try {
             myTaskManager.processTM(DELETE_TASK_9999);
         } catch (NoSuchElementException e) {
-            Assert.assertEquals(e.getMessage(), "ID does not exist");
+            Assert.assertEquals(e.getMessage(), "The Task ID does not exist.");
         }
     }
     //--------------------testing delete command ends--------------------
@@ -773,7 +789,7 @@ public class TaskManagerTest {
     @Test
     public void testSearchEmptyString() {
         String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
-                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, null};
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
         myTaskManager = new TaskManager();
         myTaskManager.processTM(addTask10);
 
@@ -782,8 +798,8 @@ public class TaskManagerTest {
 
         try{
             myTaskManager.processTM(searchEmptyString);
-        } catch (IllegalStateException e) {
-            Assert.assertEquals(e.getMessage(), "Search cannot be empty");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "Search query cannot be empty.");
         }
 
     }
@@ -791,22 +807,22 @@ public class TaskManagerTest {
     @Test
     public void testSearchTaskNonDateObject() {
         String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
-                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, null};
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
         String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
-                "20/03/2015 12:00", "20/03/2015 13:30", null, "LT27", null, "normal"};
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "normal"};
         String[] addTask12 = {"addTask", null, "CS2211 Reflection", null, 
-                null, "21/03/2015 23:59", null, "name the file properly", null};
+                null, "21/07/2015 23:59", null, "name the file properly", null};
         myTaskManager = new TaskManager();
         myTaskManager.processTM(addTask10);
         myTaskManager.processTM(addTask11);
         myTaskManager.processTM(addTask12);
 
-        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
         /*Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
                 convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 1);*/
         Task expectTask12 = new Task(12, "CS2211 Reflection", null, null,
-                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 3);
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 3);
 
         ArrayList<Task> expectSearch = new ArrayList<Task>();
         String[] search_CS2 = {"searchTask", null, "CS2", null, null, null, 
@@ -821,73 +837,74 @@ public class TaskManagerTest {
         expectSearch.add(expectTask10);
         assertTaskArrayListEquals(myTaskManager.processTM(search_tutorial), expectSearch);
 
+        expectSearch = new ArrayList<Task>();
         String[] searchNotFound = {"searchTask", null, "cannot find", null, null, null, 
                 null, null, null};
-        assertTaskArrayListEquals(myTaskManager.processTM(searchNotFound), null);
+        assertTaskArrayListEquals(myTaskManager.processTM(searchNotFound), expectSearch);
     }
 
     @Test
     public void testSearchTaskDateObject() {
         String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
-                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, null};
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
         String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
-                "20/03/2015 12:00", "20/03/2015 13:30", null, "LT27", null, "normal"};
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "normal"};
         String[] addTask12 = {"addTask", null, "CS2211 Reflection", null, 
-                null, "21/03/2015 23:59", null, "name the file properly", "normal"};
+                null, "21/07/2015 23:59", null, "name the file properly", "normal"};
 
         myTaskManager = new TaskManager();
         myTaskManager.processTM(addTask10);
         myTaskManager.processTM(addTask11);
         myTaskManager.processTM(addTask12);
 
-        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
         /*Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
                 convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 3);*/
         Task expectTask12 = new Task(12, "CS2211 Reflection", null, null,
-                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 3);
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 3);
 
         ArrayList<Task> expectSearch = new ArrayList<Task>();
-        String[] search_18032015 = {"searchTask", null, "18/03/2015 15:00", null, null, null, 
+        String[] search_18072015 = {"searchTask", null, "18/07/2015 15:00", null, null, null, 
                 null, null, null};
         expectSearch.add(expectTask10);
-        assertTaskArrayListEquals(myTaskManager.processTM(search_18032015), expectSearch);
+        assertTaskArrayListEquals(myTaskManager.processTM(search_18072015), expectSearch);
 
 
         expectSearch = new ArrayList<Task>();
-        String[] search_21032015 = {"searchTask", null, "21/03/2015 15:00", null, null, null, 
+        String[] search_21072015 = {"searchTask", null, "21/07/2015 15:00", null, null, null, 
                 null, null, null};
         expectSearch.add(expectTask12);
-        assertTaskArrayListEquals(myTaskManager.processTM(search_21032015), expectSearch);
+        assertTaskArrayListEquals(myTaskManager.processTM(search_21072015), expectSearch);
 
 
-
-        String[] search_27032015 = {"searchTask", null, "27/03/2015 15:00", null, null, null, 
+        expectSearch = new ArrayList<Task>();
+        String[] search_27072015 = {"searchTask", null, "27/07/2015 15:00", null, null, null, 
                 null, null, null};
-        assertTaskArrayListEquals(myTaskManager.processTM(search_27032015), null);
+        assertTaskArrayListEquals(myTaskManager.processTM(search_27072015), expectSearch);
 
 
         String[] addTaskForSearch = {"addTask", null, "CS2103T Tutorial", 
-                "18/03/2015 14:00", "20/03/2015 15:00", null, "SOC", null, "normal"};
+                "18/07/2015 14:00", "20/07/2015 15:00", null, "SOC", null, "normal"};
         myTaskManager.processTM(addTaskForSearch);
-        Task expectTask13 = new Task(13, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("20/03/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask13 = new Task(13, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("20/07/2015 15:00"), null, "SOC", null, 3);
         expectSearch = new ArrayList<Task>();
         expectSearch.add(expectTask10);
         expectSearch.add(expectTask13);
-        assertTaskArrayListEquals(myTaskManager.processTM(search_18032015), expectSearch);
+        assertTaskArrayListEquals(myTaskManager.processTM(search_18072015), expectSearch);
     }
 
     @Test
     public void testSearchTaskDateObjectAgain() {
         String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
-                "18/03/2015 14:00", "18/03/2015 15:00", null, null, null, null};
+                "18/07/2015 14:00", "18/07/2015 15:00", null, null, null, null};
         String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
-                "18/03/2015 12:00", null, null, null, null, "normal"};
+                "18/07/2015 12:00", null, null, null, null, "normal"};
         String[] addTask12 = {"addTask", null, "LAG3203 MidTerm", 
-                null, "18/03/2015 12:00", null, null, null, "normal"};
+                null, "18/07/2015 12:00", null, null, null, "normal"};
         String[] addTask13 = {"addTask", null, "CS2211 Reflection", null, 
-                null, "18/03/2015 23:59", null, null, "normal"};
+                null, "18/07/2015 23:59", null, null, "normal"};
         String[] addTask14 = {"addTask", null, "CS2211 Reflection", null, 
                 null, null, null, null, "normal"};
 
@@ -898,14 +915,14 @@ public class TaskManagerTest {
         myTaskManager.processTM(addTask13);
         myTaskManager.processTM(addTask14);
 
-        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, null, null, 3);
-        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("18/03/2015 12:00"), 
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, null, null, 3);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("18/07/2015 12:00"), 
                 null, null, null, null, 3);
         Task expectTask12 = new Task(12, "LAG3203 MidTerm", null, 
-                convertToDateObject("18/03/2015 12:00"), null, null, null, 3);
+                convertToDateObject("18/07/2015 12:00"), null, null, null, 3);
         Task expectTask13 = new Task(13, "CS2211 Reflection", null, null, 
-                convertToDateObject("18/03/2015 23:59"), null, null, 3);
+                convertToDateObject("18/07/2015 23:59"), null, null, 3);
         ArrayList<Task> expectSearch = new ArrayList<Task>();
 
         expectSearch.add(expectTask11);
@@ -913,9 +930,9 @@ public class TaskManagerTest {
         expectSearch.add(expectTask10);
         expectSearch.add(expectTask13);    
 
-        String[] search_18032015 = {"searchTask", null, "18/03/2015 15:00", null, null, null, 
+        String[] search_18072015 = {"searchTask", null, "18/07/2015 15:00", null, null, null, 
                 null, null, null};
-        assertTaskArrayListEquals(myTaskManager.processTM(search_18032015), expectSearch);
+        assertTaskArrayListEquals(myTaskManager.processTM(search_18072015), expectSearch);
     }
     //--------------------testing search command ends--------------------
 
@@ -925,11 +942,11 @@ public class TaskManagerTest {
     @Test
     public void testUndoAndRedoForAdd() {
         String[] addTask10 = {"addTask", "10", "CS2103T Tutorial", 
-                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "3"};
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, "3"};
         String[] addTask11 = {"addTask", "11", "LAG3203 MidTerm", 
-                "20/03/2015 12:00", "20/03/2015 13:30", null, "LT27", null, "3"};
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "3"};
         String[] addTask12 = {"addTask", "12", "CS2211 Reflection", null, 
-                null, "21/03/2015 23:59", null, "name the file properly", "normal"};
+                null, "21/07/2015 23:59", null, "name the file properly", "normal"};
 
         myTaskManager = new TaskManager();
         myTaskManager.processInitialization(addTask10);
@@ -937,12 +954,12 @@ public class TaskManagerTest {
         myTaskManager.processTM(addTask12);
 
         ArrayList<Task> expectTasks = new ArrayList<Task>();
-        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 3);
-        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
-                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 3);
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/07/2015 12:00"), 
+                convertToDateObject("20/07/2015 13:30"), null, "LT27", null, 3);
         Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
-                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 3);
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 3);
         expectTasks.add(expectTask10);
         expectTasks.add(expectTask11);
         expectTasks.add(expectTask12);
@@ -981,23 +998,23 @@ public class TaskManagerTest {
     @Test
     public void testUndoRedoForDelete() {
         String[] addTask10 = {"addTask", "10", "CS2103T Tutorial", 
-                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "3"};
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, "3"};
         String[] addTask11 = {"addTask", "11", "LAG3203 MidTerm", 
-                "20/03/2015 12:00", "20/03/2015 13:30", null, "LT27", null, "3"};
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "3"};
         String[] addTask12 = {"addTask", "12", "CS2211 Reflection", null, 
-                null, "21/03/2015 23:59", null, "name the file properly", "3"};
+                null, "21/07/2015 23:59", null, "name the file properly", "3"};
         myTaskManager = new TaskManager();
         myTaskManager.processInitialization(addTask10);
         myTaskManager.processInitialization(addTask11);
         myTaskManager.processInitialization(addTask12);
 
         ArrayList<Task> expectTasks = new ArrayList<Task>();
-        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 3);
-        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
-                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 3);
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/07/2015 12:00"), 
+                convertToDateObject("20/07/2015 13:30"), null, "LT27", null, 3);
         Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
-                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 3);
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 3);
         expectTasks.add(expectTask10);
         expectTasks.add(expectTask11);
         expectTasks.add(expectTask12);
@@ -1041,23 +1058,23 @@ public class TaskManagerTest {
     @Test
     public void testUndoRedoForEdit() {
         String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
-                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "3"};
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, "3"};
         String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
-                "20/03/2015 12:00", "20/03/2015 13:30", null, "LT27", null, "3"};
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "3"};
         String[] addTask12 = {"addTask", null, "CS2211 Reflection", null, 
-                null, "21/03/2015 23:59", null, "name the file properly", "3"};
+                null, "21/07/2015 23:59", null, "name the file properly", "3"};
         myTaskManager = new TaskManager();
         myTaskManager.processInitialization(addTask10);
         myTaskManager.processInitialization(addTask11);
         myTaskManager.processInitialization(addTask12);
 
         ArrayList<Task> expectTasks = new ArrayList<Task>();
-        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 3);
-        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
-                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 3);
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/07/2015 12:00"), 
+                convertToDateObject("20/07/2015 13:30"), null, "LT27", null, 3);
         Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
-                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 3);
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 3);
         expectTasks.add(expectTask10);
         expectTasks.add(expectTask11);
         expectTasks.add(expectTask12);
@@ -1082,7 +1099,7 @@ public class TaskManagerTest {
 
 
         ArrayList<Task> expectRedo = new ArrayList<Task>();
-        Date newDateTo = convertToDateObject("20/03/2015 15:30");
+        Date newDateTo = convertToDateObject("20/07/2015 15:30");
         expectTasks.get(TASK11).setDateTo(newDateTo);
         expectTasks.get(TASK11).setLocation("LT108");;
         expectRedo.add(expectTasks.get(TASK11));        
@@ -1148,7 +1165,7 @@ public class TaskManagerTest {
         try{
             myTaskManager.processTM(UNDO_OPERATION);
         } catch (NoSuchElementException e) {
-            Assert.assertEquals(e.getMessage(), "No operation to undo");
+            Assert.assertEquals(e.getMessage(), "There is no operation to undo.");
         }
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
@@ -1166,7 +1183,7 @@ public class TaskManagerTest {
         try{
             myTaskManager.processTM(REDO_OPERATION);
         } catch (NoSuchElementException e) {
-            Assert.assertEquals(e.getMessage(), "No operation to redo");
+            Assert.assertEquals(e.getMessage(), "There is no operation to redo.");
         }
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
@@ -1175,7 +1192,7 @@ public class TaskManagerTest {
     @Test
     public void testUndoWithNoMoreUndoForAdd() {
         String[] addTask10 = {"addTask", "10", "CS2103T Tutorial", 
-                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "urgent"};
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, "urgent"};
         myTaskManager = new TaskManager();
         myTaskManager.processTM(addTask10);
         Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], 
@@ -1184,8 +1201,8 @@ public class TaskManagerTest {
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
 
         ArrayList<Task> expectTasks = new ArrayList<Task>();
-        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 1);
         expectTasks.add(expectTask10);
 
         myTaskManager.processTM(UNDO_OPERATION);
@@ -1195,7 +1212,7 @@ public class TaskManagerTest {
         try{
             myTaskManager.processTM(UNDO_OPERATION);
         } catch (NoSuchElementException e) {
-            Assert.assertEquals(e.getMessage(), "No operation to undo");
+            Assert.assertEquals(e.getMessage(), "There is no operation to undo.");
         }
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 1);
@@ -1208,7 +1225,7 @@ public class TaskManagerTest {
         try{
             myTaskManager.processTM(REDO_OPERATION);
         } catch (NoSuchElementException e) {
-            Assert.assertEquals(e.getMessage(), "No operation to redo");
+            Assert.assertEquals(e.getMessage(), "There is no operation to redo.");
         }        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
     }
@@ -1216,7 +1233,7 @@ public class TaskManagerTest {
     @Test
     public void testUndoWithNoMoreUndoForDelete() {
         String[] addTask10 = {"addTask", "10", "CS2103T Tutorial", 
-                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "urgent"};
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, "urgent"};
         myTaskManager = new TaskManager();
         myTaskManager.processTM(addTask10);
         Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], 
@@ -1250,7 +1267,7 @@ public class TaskManagerTest {
         try{
             myTaskManager.processTM(REDO_OPERATION);
         } catch (NoSuchElementException e) {
-            Assert.assertEquals(e.getMessage(), "No operation to redo");
+            Assert.assertEquals(e.getMessage(), "There is no operation to redo.");
         }
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 2);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
@@ -1291,7 +1308,7 @@ public class TaskManagerTest {
         try{
             myTaskManager.processTM(REDO_OPERATION);
         } catch (NoSuchElementException e) {
-            Assert.assertEquals(e.getMessage(), "No operation to redo");
+            Assert.assertEquals(e.getMessage(), "There is no operation to redo.");
         }
         Assert.assertEquals(myTaskManager.getUndoStack().size(), 2);
         Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
@@ -1300,7 +1317,7 @@ public class TaskManagerTest {
 
 
     //--------------------testing others starts---------------------------------
-    /*@Test
+    @Test
     public void testIsDateValid() {
         myTaskManager = new TaskManager();
         String date1 = "22/03/2015 23:59";
@@ -1336,33 +1353,23 @@ public class TaskManagerTest {
         Assert.assertEquals(myTaskManager.isDateValid(invalidDate8), false);
     }
 
-    /*
+
     @Test
     public void testIsDateFromSmallerThanDateTo() {
         myTaskManager = new TaskManager();
 
-        Date dateFrom1 = convertToDateObject("18/02/2015 14:00");
-        Date dateTo1 = convertToDateObject("18/03/2016 15:00");
-        Assert.assertTrue(myTaskManager.isDateFromSmallerThanDateTo(dateFrom1, dateTo1));
+        Task test1 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/02/2015 14:00"), 
+                convertToDateObject("18/03/2016 15:00"), null, "SOC", null, 3);
+        Assert.assertTrue(myTaskManager.isDateFromBeforeDateTo(test1));
 
-        Date dateFrom2 = convertToDateObject("18/02/2015 14:00");
-        Date dateTo2 = convertToDateObject("18/02/2015 14:00");
-        Assert.assertFalse(myTaskManager.isDateFromSmallerThanDateTo(dateFrom2, dateTo2));
+        Task test2 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/02/2015 14:00"), 
+                convertToDateObject("18/02/2015 14:00"), null, "SOC", null, 3);
+        Assert.assertFalse(myTaskManager.isDateFromBeforeDateTo(test2));
 
-        Date dateFrom3 = convertToDateObject("18/02/2015 14:00");
-        Date dateTo3 = convertToDateObject("18/02/2010 14:00");
-        Assert.assertFalse(myTaskManager.isDateFromSmallerThanDateTo(dateFrom3, dateTo3));
-    }*/
-
-    /*@Test
-    public void testIsDeadlineAfterCurrentTime() {
-        myTaskManager = new TaskManager();
-        Date deadline1 = convertToDateObject("18/02/2010 14:00");
-        Assert.assertFalse(myTaskManager.isDeadlineAfterCurrentTime(deadline1));
-
-        Date deadline2 = convertToDateObject("18/02/2050 14:00");
-        Assert.assertTrue(myTaskManager.isDeadlineAfterCurrentTime(deadline2));
-    }*/
+        Task test3 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/02/2015 14:00"), 
+                convertToDateObject("18/02/2010 14:00"), null, "SOC", null, 3);
+        Assert.assertFalse(myTaskManager.isDateFromBeforeDateTo(test3));
+    }
 
     @Test
     public void testClone() {
