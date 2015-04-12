@@ -31,14 +31,12 @@ public class TaskTableModel extends AbstractTableModel {
 	 *						of the new columns
 	 *  @param rowClass     the class of row data to be added to the model
 	 */
-	public TaskTableModel(ArrayList<String[]> modelData, ArrayList<String> columnNames, Class rowClass)
-	{
+	public TaskTableModel(ArrayList<String[]> modelData, ArrayList<String> columnNames, Class rowClass) {
 		setDataAndColumnNames(modelData, columnNames);
 		setRowClass( rowClass );
 	}
 
-	protected void setDataAndColumnNames(ArrayList<String[]> modelData, ArrayList<String> columnNames)
-	{
+	protected void setDataAndColumnNames(ArrayList<String[]> modelData, ArrayList<String> columnNames) {
 		taskArrayString = modelData;
 		this.columnNames = columnNames;
 		columnClasses = new Class[getColumnCount()];
@@ -46,13 +44,11 @@ public class TaskTableModel extends AbstractTableModel {
 		fireTableStructureChanged();
 	}
 
-	protected void setRowClass(Class rowClass)
-	{
+	protected void setRowClass(Class rowClass) {
 		this.rowClass = rowClass;
 	}
 
-	public Class getColumnClass(int column)
-	{
+	public Class getColumnClass(int column) {
 		Class columnClass = null;
 
 		//  Get the class, if set, for the specified column
@@ -72,8 +68,7 @@ public class TaskTableModel extends AbstractTableModel {
 	}
 
 	@Override
-	public int getColumnCount()
-	{
+	public int getColumnCount() {
 		return columnNames.size();
 	}
 
@@ -85,12 +80,10 @@ public class TaskTableModel extends AbstractTableModel {
 	 * <code>columnNames</code> does not have an entry for this index
 	 * then the default name provided by the superclass is returned
 	 */
-	public String getColumnName(int column)
-	{
+	public String getColumnName(int column) {
 		Object columnName = null;
 
-		if (column < columnNames.size())
-		{
+		if (column < columnNames.size()) {
 			columnName = columnNames.get( column );
 		}
 
@@ -105,12 +98,12 @@ public class TaskTableModel extends AbstractTableModel {
 	 * @param   column		the column whose value is to be queried
 	 * @return				  true
 	 */
-	public boolean isCellEditable(int row, int column)
-	{
+	public boolean isCellEditable(int row, int column) {
 		Boolean isEditable = null;
 
-		if (column < isColumnEditable.length)
+		if (column < isColumnEditable.length) {
 			isEditable = isColumnEditable[column];
+		}
 
 		return (isEditable == null) ? isModelEditable : isEditable.booleanValue();
 	}
@@ -124,6 +117,7 @@ public class TaskTableModel extends AbstractTableModel {
 		String[] task = taskArrayString.get(rowIndex);
 		String value = null;
 		value = task[columnIndex];
+		
 		return value;
 	}  
 
@@ -133,8 +127,7 @@ public class TaskTableModel extends AbstractTableModel {
 	 *
 	 * @param   rowData		 data of the row being added
 	 */
-	public void addRow(String[] rowData)
-	{
+	public void addRow(String[] rowData) {
 		insertRow(getRowCount(), rowData);
 	}
 	
@@ -144,14 +137,12 @@ public class TaskTableModel extends AbstractTableModel {
 	 *
 	 * @param   rowData		 data of the row being added
 	 */
-	public void insertRow(int row, String[] rowData)
-	{
+	public void insertRow(int row, String[] rowData) {
 		taskArrayString.add(row, rowData);
 		fireTableRowsInserted(row, row);
 	}
 
-	public String[] getRow(int row)
-	{
+	public String[] getRow(int row) {
 		return taskArrayString.get( row );
 	}
 
@@ -162,8 +153,7 @@ public class TaskTableModel extends AbstractTableModel {
 	 * @param   row	  row in the model where the data will be inserted
 	 * @param   rowList  each item in the list is a separate row of data
 	 */
-	public void insertRows(int row, ArrayList<String[]> rowList)
-	{	
+	public void insertRows(int row, ArrayList<String[]> rowList) {	
 		taskArrayString.addAll(row, rowList);
 		fireTableRowsInserted(row, row + rowList.size() - 1);
 	}
@@ -174,8 +164,7 @@ public class TaskTableModel extends AbstractTableModel {
 	 * @param start
 	 * @param end
 	 */
-	public void removeRowRange(int start, int end)
-	{
+	public void removeRowRange(int start, int end) {
 		taskArrayString.subList(start, end ).clear();
 		fireTableDataChanged();
 	}
@@ -186,11 +175,10 @@ public class TaskTableModel extends AbstractTableModel {
 	 * 
 	 * @param rows
 	 */
-	public void removeRows(int... rows)
-	{
-		for (int i = rows.length - 1; i >= 0; i--)
-		{
+	public void removeRows(int... rows) {
+		for (int i = rows.length - 1; i >= 0; i--) {
 			int row = rows[i];
+			
 			taskArrayString.remove(row);
 			fireTableRowsDeleted(row, row);
 		}
@@ -207,10 +195,7 @@ public class TaskTableModel extends AbstractTableModel {
 		insertRows(0, newData);
 	}
 	
-	public void clearTable()
-	{
+	public void clearTable() {
 		removeRowRange(0 ,getRowCount());
 	}
-
 }     
-

@@ -89,7 +89,7 @@ public class SystemHandler {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					window.frame.setVisible(true);
+					window.frame_.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

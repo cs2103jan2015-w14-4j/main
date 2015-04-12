@@ -1408,7 +1408,7 @@ public class TaskManagerTest {
     //--------------------testing others ends-----------------------------------
 
 
-
+    //@author A0108385B-reused
     public boolean assertTaskArrayListEquals(ArrayList<Task> test, 
             ArrayList<Task> expected) {
         if(test != null) {
@@ -1423,6 +1423,7 @@ public class TaskManagerTest {
         return true;
     }
 
+    //@author A0108385B-reused
     public boolean assertTaskEqual(Task taskA, Task taskB) {
         return taskA.isEqual(taskB);
     }

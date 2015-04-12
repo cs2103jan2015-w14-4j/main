@@ -7,13 +7,11 @@ import java.awt.event.ActionEvent;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Color;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.InputMap;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -22,7 +20,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -34,7 +31,6 @@ import javax.swing.border.BevelBorder;
 //@author A0101735R
 /**
  * This class creates the User Interface which handles all user interactions.
- * @author Qiu Yunhan A0101745R
  *
  */
 
@@ -97,12 +93,7 @@ public class UserInterface {
 	private static final String APP_NAME = "Flexi Tracker";
 	private static final String MSG_WELCOME = "Welcome to Flexi Tracker!";
 	private static final String MSG_HELP = "If you need any help in adding a new task, type \"help\", or consult the user manual.";
-	private static final String MSG_ASK_FILENAME = "Please enter the name of your file";
-	private static final String MSG_ASK_INPUT = "Please enter your command";
-	private static final String MSG_ECHO_FILENAME = "File location: %1$s";
-	private static final String MSG_REMINDERS = "The following task(s) are due today: " + newline + newline;
 	private static final String MSG_EMPTY_TASKLIST = "There are no tasks to display.";
-	private static final String MSG_SEPARATOR = "=========================================================";
 	private static final String EMPTY = " ";
 	private static final String OVERDUE  = "Overdue";
 	private static final String[] EMPTYROW = {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY};
@@ -257,6 +248,7 @@ public class UserInterface {
 				}
 			}
 		}
+		
 		model_.refreshTable(outputDataString);
 	}
 	
@@ -284,6 +276,7 @@ public class UserInterface {
 				return true;
 			}
 		}
+		
 		return false;
 	}
 
@@ -293,20 +286,23 @@ public class UserInterface {
 	 * @param outputData.
 	 * @param success.
 	 */
-	public void displayShortcuts(String[][] outputData, boolean success) {
+	public void displayKeywords(String[][] outputData, boolean success) {
 		viewShortcutTable();
 		String[] keywords;
 
 		ArrayList<String[]> outputDataString = new ArrayList<String[]>();
+		
 		for (int i = 0; i < outputData.length; i++) {
 			keywords= new String[2];
 
 			String[] strArray = outputData[i];
 			keywords[0] = SYS_KEYWORDS[Integer.parseInt(strArray[0])];
 			String nextLine = "";
+			
 			for (int j = 1; j < strArray.length; j++) {
 				nextLine += "'" + strArray[j] + "'" + " || " ;
 			}
+			
 			keywords[1] = nextLine.substring(0, nextLine.length() - 3);
 			outputDataString.add(keywords);
 		}
@@ -386,6 +382,7 @@ public class UserInterface {
 	 * *Only used when testing UI*
 	 */
 	/*
+	 * //@author A0101735R-unused
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -526,7 +523,6 @@ public class UserInterface {
 		inputListener listener = new inputListener();
 		textField_.addActionListener(listener);
 		
-		
 		//pressing up restores previous input in textField
 		Action lastInput = new AbstractAction() {
 
@@ -594,12 +590,14 @@ public class UserInterface {
 			prevInput_ = input;
 			System.out.println("input = " + input);
 			clearInput();	
+			
 			if (input.length() == 0){
 				mainHandler.rawUserInput("viewTask");
-			}else{
+			} else {
 				mainHandler.rawUserInput(input);
 			}
 
+			//@author A0101735R-unused
 			//Tests code for making sure UI displays correctly
 			/*		
 			String[] dummyMsg = {"dummymsg",
@@ -641,9 +639,9 @@ public class UserInterface {
 		taskTable_ = new JTable (model_) {
 			public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
 				Component c = super.prepareRenderer(renderer, row, column);
-				if (!isNumeric((String) model_.getValueAt(row, 0))){
+				if (!isNumeric((String) model_.getValueAt(row, 0))) {
 					c.setBackground(row % 2 == 0 ? getBackground() : TASK_TEMPLATE);
-				}else if (!isRowSelected(row)){
+				} else if (!isRowSelected(row)) {
 					c.setBackground(row % 2 == 0 ? getBackground() : TASK_BG);
 				}
 
@@ -806,7 +804,7 @@ public class UserInterface {
 	
 	private static boolean isNumeric(String s) {
 		try{ 
-			int i = Integer.parseInt(s);
+			Integer.parseInt(s);
 			return true; 
 		} catch (NumberFormatException er) { 
 			return false; 
@@ -840,6 +838,7 @@ public class UserInterface {
 	private ArrayList<Task> dummyArray;
 	private ArrayList<Task> dummy2;
 	
+    //@author A0101735R-unused
 	private void addDummyTask() {
 		dummyArray  =  new ArrayList<Task>();
 		for (int tid = 1000; tid<1020;  tid++){
@@ -848,7 +847,8 @@ public class UserInterface {
 			dummyArray.add(testTask);
 		}
 	}
-
+	
+    //@author A0101735R-unused
 	private void addDummy2() {
 		dummy2 = new ArrayList<Task>();
 		for (int tid = 1005; tid<1010;  tid++) {
@@ -858,6 +858,7 @@ public class UserInterface {
 		}
 	}
 
+    //@author A0101735R-unused
 	private void addDummyShortcut() {
 		String[][] keywordArray = new String[SYS_KEYWORDS.length][5];
 
@@ -866,9 +867,8 @@ public class UserInterface {
 				keywordArray[i][j] = i + "shortcut" + j ;
 			}
 		}				
-		displayShortcuts(keywordArray, true);
+		displayKeywords(keywordArray, true);
 	}
-
 }
 
 

@@ -69,10 +69,6 @@ public class TaskManager implements TaskManagerInterface {
     private static final int MINUTE_INDEX = 4;
     private static final int SEARCH_INDEX = 2;
     private static final String CLEAR_INFO_INDICATOR = "";
-    private static final boolean DATE_IS_VALID = true;
-    private static final boolean DATE_IS_INVALID = false;
-    private static final boolean SEARCH_IS_FOUND = true;
-    private static final boolean SEARCH_IS_NOT_FOUND = false;
     private static final int INDEX_AFFECTED_TASK = 0;
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
     private static final String ID_STRING = "id";
@@ -82,6 +78,7 @@ public class TaskManager implements TaskManagerInterface {
     private static final String DEADLINE_STRING = "deadline";
     private static final String LOCATION_STRING = "location";
     private static final String TASK_TITLE_STRING = "task title";
+    private static final int MAXIMUM_LENGTH_TASKNAME_LOCATION = 30;
 
 
     private ArrayList<Task> tasks;
@@ -123,7 +120,7 @@ public class TaskManager implements TaskManagerInterface {
     public void processInitialization(String[] inputs) {
         Task newTask;
 
-        if(isInputsHavingTID(inputs)){
+        if (isInputsHavingTID(inputs)){
             newTask = processInitializationWithID(inputs);
         } else {  
             newTask = processInitializationWithoutID(inputs);
@@ -224,11 +221,11 @@ public class TaskManager implements TaskManagerInterface {
     private ArrayList<Task> addATask(String[] inputs) {
         Task newTask;
 
-        if(!isStatusAnInt(inputs[STATUS])) {
+        if (!isStatusAnInt(inputs[STATUS])) {
             changeStatusToIntString(inputs);
         }
 
-        if(isInputsHavingTID(inputs)){
+        if (isInputsHavingTID(inputs)){
             newTask = processAddWithID(inputs);       
         } else {
             newTask = processAddWithoutID(inputs);
@@ -236,17 +233,20 @@ public class TaskManager implements TaskManagerInterface {
 
         checkTaskDetails(newTask.clone());
 
-        if(isTaskOverdue(newTask)) {
+        if (isTaskOverdue(newTask)) {
             newTask.setStatus(OVERDUE);
         }
+        
         assertDurationalTaskIsValid(newTask);
         assertTaskDateNumberIsvalid(newTask);
 
 
         updateTaskIDs(newTask.getTID());
         tasks.add(newTask);
+        
         ArrayList<Task> returningTasks = new ArrayList<Task>();
         returningTasks.add(newTask.clone());
+        
         addClashingDurationalTask(newTask, returningTasks);
         defaultSortTaskByCompleteAndDate();
 
@@ -254,9 +254,9 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private boolean isStatusAnInt(String status) {
-        if(status != null) {
-            for(char c: status.toCharArray()) {
-                if(!Character.isDigit(c)) {
+        if (status != null) {
+            for (char c: status.toCharArray()) {
+                if (!Character.isDigit(c)) {
                     return false;
                 }
             }
@@ -278,11 +278,11 @@ public class TaskManager implements TaskManagerInterface {
      * @return        the newly added task
      */
     private Task processAddWithID(String[] inputs) {
-        if(isIDClashing(inputs[TID])) {
+        if (isIDClashing(inputs[TID])) {
             inputs[TID] = convertToStringFromInt(getNewTID());
         }
 
-        if(isIDLessThanTen(inputs[TID])) {
+        if (isIDLessThanTen(inputs[TID])) {
             inputs[TID] = convertToStringFromInt(getNewTID());
         }
 
@@ -302,7 +302,7 @@ public class TaskManager implements TaskManagerInterface {
      * @param currentID
      */
     private void updateIDCounter(String currentID) {
-        if(IDCounter < convertToIntType(currentID)){
+        if (IDCounter < convertToIntType(currentID)){
             IDCounter = convertToIntType(currentID);
         }
     }
@@ -323,13 +323,13 @@ public class TaskManager implements TaskManagerInterface {
                 convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
                 convertToIntType(inputs[STATUS]));
 
-        if(inputs[DATE_FROM] != null) {
+        if (inputs[DATE_FROM] != null) {
             assertDateObjectIsValid(newTask.getDateFrom());
         }
-        if(inputs[DATE_TO] != null) {
+        if (inputs[DATE_TO] != null) {
             assertDateObjectIsValid(newTask.getDateTo());
         }
-        if(inputs[DEADLINE] != null) {
+        if (inputs[DEADLINE] != null) {
             assertDateObjectIsValid(newTask.getDeadline());
         }
 
@@ -350,7 +350,7 @@ public class TaskManager implements TaskManagerInterface {
      */
     private int getNewTID() {
         int newTID;
-        if(tasks.isEmpty()) {
+        if (tasks.isEmpty()) {
             newTID = INITIAL_TID;
         } else {
             ++IDCounter;
@@ -369,7 +369,7 @@ public class TaskManager implements TaskManagerInterface {
      * @return        affected tasks in an ArrayList with clashing tasks
      */
     private ArrayList<Task> processEditCommand(String[] inputs) {
-        if(!isAbleToEdit(inputs[TID])) {
+        if (!isAbleToEdit(inputs[TID])) {
             throw new NoSuchElementException(MSG_ERR_NO_SUCH_ID);
         }
 
@@ -401,13 +401,13 @@ public class TaskManager implements TaskManagerInterface {
      */
     private void checkEditIsValid(String[] inputs) {
         boolean isValid = false;
-        for(int i = TASK_NAME; i < inputs.length; ++i) {
-            if(inputs[i] != null) {
+        for (int i = TASK_NAME; i < inputs.length; ++i) {
+            if (inputs[i] != null) {
                 isValid = true;
             }
         }
 
-        if(!isValid) {
+        if (!isValid) {
             throw new IllegalArgumentException(MSG_ERR_FAIL_TO_EDIT);
         }
     }
@@ -418,7 +418,7 @@ public class TaskManager implements TaskManagerInterface {
      */
     private void processInformationBeforeEdit(String[] inputs) {
         inputs[COMMAND_TYPE] = changeCommandToEditTask();
-        if(inputs[STATUS] != null) {
+        if (inputs[STATUS] != null) {
             changeStatusToIntString(inputs);
         }
     }
@@ -444,28 +444,28 @@ public class TaskManager implements TaskManagerInterface {
      * @return            affected task with clashing duration task
      */
     private ArrayList<Task> editATask(Task taskToEdit, String[] inputs) {
-        for(int i = TASK_NAME; i < inputs.length; ++i) {
-            if(isTaskInfoChanged(inputs, i)) {
+        for (int i = TASK_NAME; i < inputs.length; ++i) {
+            if (isTaskInfoChanged(inputs, i)) {
                 editTaskInfo(inputs, taskToEdit, i);
             }
 
-            if(isTaskInfoToClear(inputs, i)) {
+            if (isTaskInfoToClear(inputs, i)) {
                 clearTaskInfo(taskToEdit, i);
             }
         }
 
         //sets previously overdue tasks back to normal status
-        if(isTaskStatusOverdue(taskToEdit) && !isTaskOverdue(taskToEdit)) {
+        if (isTaskStatusOverdue(taskToEdit) && !isTaskOverdue(taskToEdit)) {
             taskToEdit.setStatus(NORMAL);
         }
 
-        if(inputs[DATE_FROM] != null && inputs[DATE_FROM] != CLEAR_INFO_INDICATOR) {
+        if (inputs[DATE_FROM] != null && inputs[DATE_FROM] != CLEAR_INFO_INDICATOR) {
             assertDateObjectIsValid(taskToEdit.getDateFrom());
         }
-        if(inputs[DATE_TO] != null && inputs[DATE_TO] != CLEAR_INFO_INDICATOR) {
+        if (inputs[DATE_TO] != null && inputs[DATE_TO] != CLEAR_INFO_INDICATOR) {
             assertDateObjectIsValid(taskToEdit.getDateTo());
         }
-        if(inputs[DEADLINE] != null && inputs[DEADLINE] != CLEAR_INFO_INDICATOR) {
+        if (inputs[DEADLINE] != null && inputs[DEADLINE] != CLEAR_INFO_INDICATOR) {
             assertDateObjectIsValid(taskToEdit.getDeadline());
         }
 
@@ -519,15 +519,15 @@ public class TaskManager implements TaskManagerInterface {
      * @param task
      */
     private void editTaskDeadline(String[] inputs, Task task) {
-        if(task.getDeadline() != null) {
+        if (task.getDeadline() != null) {
             Date newDeadline = convertToDateObject(inputs[DEADLINE]);
             task.setDeadline(newDeadline);
         }
-        if(task.getDeadline() == null && task.getDateTo() != null) {
+        if (task.getDeadline() == null && task.getDateTo() != null) {
             Date newDateTo = convertToDateObject(inputs[DEADLINE]);
             task.setDeadline(newDateTo);
         }
-        if(task.getDeadline() == null && task.getDateTo() == null) {
+        if (task.getDeadline() == null && task.getDateTo() == null) {
             Date newDeadline = convertToDateObject(inputs[DEADLINE]);
             task.setDeadline(newDeadline);
         }
@@ -540,15 +540,15 @@ public class TaskManager implements TaskManagerInterface {
      * @param task
      */
     private void editTaskDateTo(String[] inputs, Task task) {
-        if(task.getDateTo() != null) {
+        if (task.getDateTo() != null) {
             Date newDateTo = convertToDateObject(inputs[DATE_TO]);
             task.setDateTo(newDateTo);
         }
-        if(task.getDateTo() == null && task.getDeadline() != null) {
+        if (task.getDateTo() == null && task.getDeadline() != null) {
             Date newDeadline = convertToDateObject(inputs[DATE_TO]);
             task.setDeadline(newDeadline);
         }
-        if(task.getDateTo() == null && task.getDeadline() == null) {
+        if (task.getDateTo() == null && task.getDeadline() == null) {
             Date newDateTo = convertToDateObject(inputs[DATE_TO]);
             task.setDateTo(newDateTo);
         }
@@ -560,7 +560,7 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private void editTaskName(String[] inputs, Task task) {
-        if(inputs[TASK_NAME].trim() == "") {
+        if (inputs[TASK_NAME].trim() == "") {
             throw new IllegalArgumentException(MSG_ERR_EMPTY_TASK_NAME);
         }
         task.setTaskName(inputs[TASK_NAME]);
@@ -597,13 +597,13 @@ public class TaskManager implements TaskManagerInterface {
      * @param task
      */
     private void clearTaskDateTo(Task task) {
-        if(task.getDateTo() != null) {
+        if (task.getDateTo() != null) {
             task.setDateTo(null);
         }
-        if(task.getDateTo() == null && task.getDeadline() != null) {
+        if (task.getDateTo() == null && task.getDeadline() != null) {
             task.setDeadline(null);
         }
-        if(task.getDateTo() == null && task.getDeadline() == null) {
+        if (task.getDateTo() == null && task.getDeadline() == null) {
             task.setDateTo(null);
         }
     }
@@ -614,13 +614,13 @@ public class TaskManager implements TaskManagerInterface {
      * @param task
      */
     private void clearTaskDeadline(Task task) {
-        if(task.getDeadline() != null) {
+        if (task.getDeadline() != null) {
             task.setDeadline(null);
         }
-        if(task.getDeadline() == null && task.getDateTo() != null) {
+        if (task.getDeadline() == null && task.getDateTo() != null) {
             task.setDateTo(null);
         }
-        if(task.getDeadline() == null && task.getDateTo() == null) {
+        if (task.getDeadline() == null && task.getDateTo() == null) {
             task.setDeadline(null);
         }
     }
@@ -663,8 +663,8 @@ public class TaskManager implements TaskManagerInterface {
      * This method compares incomplete tasks with current time and change their status
      */
     private void changeIncompleteTaskStatusToOverdue() {
-        for(Task task: tasks) {
-            if(isTaskOverdue(task) && !isTaskComplete(task)) {
+        for (Task task: tasks) {
+            if (isTaskOverdue(task) && !isTaskComplete(task)) {
                 task.setStatus(OVERDUE);
             }
         }
@@ -678,16 +678,16 @@ public class TaskManager implements TaskManagerInterface {
      */
     public void performFilterOnTasks(String[] inputs,
             ArrayList<Task> returningTasks) {
-        if(isFilterOptionDefault(inputs)) {
-            for(Task task: tasks) {
-                if(!isTaskComplete(task.clone())) {
+        if (isFilterOptionDefault(inputs)) {
+            for (Task task: tasks) {
+                if (!isTaskComplete(task.clone())) {
                     returningTasks.add(task.clone());
                 }
             }
         } else {
             int filterType = getFileterOption(inputs);
-            for(Task task: tasks) {
-                if(task.getStatus() == filterType)
+            for (Task task: tasks) {
+                if (task.getStatus() == filterType)
                     returningTasks.add(task.clone());
             }
         }
@@ -705,15 +705,30 @@ public class TaskManager implements TaskManagerInterface {
      */
     private int getFilterTypeInt(String filterType) {
         filterType = filterType.toLowerCase();
-        switch(filterType) {
-        case URGENT_STRING: return URGENT;
-        case MAJOR_STRING: return MAJOR;
-        case NORMAL_STRING: return NORMAL;
-        case MINOR_STRING: return MINOR;
-        case CASUAL_STRING: return CASUAL;
-        case COMPLETE_STRING: return COMPLETE;
-        case OVERDUE_STRING: return OVERDUE;
-        default: throw new NoSuchElementException(MSG_ERR_NO_SUCH_FILTER);
+        switch (filterType) {
+        case URGENT_STRING: 
+            return URGENT;
+            
+        case MAJOR_STRING: 
+            return MAJOR;
+        
+        case NORMAL_STRING: 
+            return NORMAL;
+        
+        case MINOR_STRING: 
+            return MINOR;
+        
+        case CASUAL_STRING: 
+            return CASUAL;
+        
+        case COMPLETE_STRING: 
+            return COMPLETE;
+        
+        case OVERDUE_STRING: 
+            return OVERDUE;
+        
+        default: 
+            throw new NoSuchElementException(MSG_ERR_NO_SUCH_FILTER);
         }
     }
 
@@ -730,7 +745,7 @@ public class TaskManager implements TaskManagerInterface {
      */
     public ArrayList<Task> performViewOptionOnTasks(String[] inputs,
             ArrayList<Task> returningTasks) {
-        if(isViewOptionDefault(inputs)) {
+        if (isViewOptionDefault(inputs)) {
             sortTasks(returningTasks, DATE_FROM);
             return returningTasks;
         } else {
@@ -757,12 +772,24 @@ public class TaskManager implements TaskManagerInterface {
     private int getViewTypeInt(String viewType) {
         viewType = viewType.toLowerCase();
         switch (viewType) {
-        case ID_STRING: return TID;
-        case TASK_NAME_STRING: return TASK_NAME;
-        case DATE_STRING: return DATE_FROM;
-        case DEADLINE_STRING: return DEADLINE;
-        case LOCATION_STRING: return LOCATION;
-        case STATUS_STRING: return STATUS;
+        case ID_STRING: 
+            return TID;
+            
+        case TASK_NAME_STRING: 
+            return TASK_NAME;
+            
+        case DATE_STRING: 
+            return DATE_FROM;
+            
+        case DEADLINE_STRING: 
+            return DEADLINE;
+            
+        case LOCATION_STRING: 
+            return LOCATION;
+            
+        case STATUS_STRING: 
+            return STATUS;
+            
         default: throw new NoSuchElementException(MSG_ERR_NO_SUCH_ARRANGE);
         }
     }
@@ -777,7 +804,7 @@ public class TaskManager implements TaskManagerInterface {
      * @return
      */
     private ArrayList<Task> processDeleteCommand(String[] inputs) {
-        if(!isAbleToDelete(inputs[TID])) {
+        if (!isAbleToDelete(inputs[TID])) {
             throw new NoSuchElementException(MSG_ERR_NO_SUCH_ID);
         }
 
@@ -802,7 +829,7 @@ public class TaskManager implements TaskManagerInterface {
 
         while (iterator.hasNext()) {
             Task nextTask = (Task) iterator.next();
-            if(TID == nextTask.getTID()) {
+            if (TID == nextTask.getTID()) {
                 returningTasks.add(nextTask.clone());
                 iterator.remove();
             }
@@ -826,11 +853,11 @@ public class TaskManager implements TaskManagerInterface {
      * @return
      */
     private ArrayList<Task> processSearchCommand(String[] inputs) {
-        if(isStringEmpty(inputs[SEARCH_INDEX])) {
+        if (isStringEmpty(inputs[SEARCH_INDEX])) {
             throw new IllegalArgumentException(MSG_ERR_SEARCH);
         }
 
-        if(isSearchADateObject(inputs[SEARCH_INDEX])) {
+        if (isSearchADateObject(inputs[SEARCH_INDEX])) {
             Date searchDate = convertToDateWithoutPrintException(inputs[SEARCH_INDEX]);
             return searchTaskDateObject(searchDate);
         } else {
@@ -839,7 +866,7 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private boolean isSearchADateObject(String search) {
-        if(convertToDateWithoutPrintException(search) == null) {
+        if (convertToDateWithoutPrintException(search) == null) {
             return false;
         } else {
             return true;
@@ -855,7 +882,7 @@ public class TaskManager implements TaskManagerInterface {
         Date date = null;
 
         try {
-            if(str != null && !str.equals(CLEAR_INFO_INDICATOR)) {
+            if (str != null && !str.equals(CLEAR_INFO_INDICATOR)) {
                 DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
                 date = format.parse(str);
             }
@@ -875,22 +902,22 @@ public class TaskManager implements TaskManagerInterface {
     private ArrayList<Task> searchTaskDateObject(Date searchDate) {
         ArrayList<Task> returningTasks = new ArrayList<Task>();
 
-        for(Task task: tasks) {
-            if(isDurationalTask(task)) {
-                if(compareTwoDateOnly(searchDate, task.getDateFrom()) >= 0 && 
+        for (Task task: tasks) {
+            if (isDurationalTask(task)) {
+                if (compareTwoDateOnly(searchDate, task.getDateFrom()) >= 0 && 
                         compareTwoDateOnly(searchDate, task.getDateTo()) <= 0) {
                     returningTasks.add(task.clone());
                 }
-            } else if(isDeadlineTask(task)) {
-                if(compareTwoDateOnly(searchDate, task.getDeadline()) == 0) {
+            } else if (isDeadlineTask(task)) {
+                if (compareTwoDateOnly(searchDate, task.getDeadline()) == 0) {
                     returningTasks.add(task.clone());
                 }
-            } else if(isForeverTask(task)) {
-                if(compareTwoDateOnly(searchDate, task.getDateFrom()) == 0) {
+            } else if (isForeverTask(task)) {
+                if (compareTwoDateOnly(searchDate, task.getDateFrom()) == 0) {
                     returningTasks.add(task.clone());
                 }
-            } else if(isOnlyDateToTask(task)) {
-                if(compareTwoDateOnly(searchDate, task.getDateTo()) == 0) {
+            } else if (isOnlyDateToTask(task)) {
+                if (compareTwoDateOnly(searchDate, task.getDateTo()) == 0) {
                     returningTasks.add(task.clone());
                 }
             }
@@ -939,8 +966,8 @@ public class TaskManager implements TaskManagerInterface {
     private ArrayList<Task> searchTaskNonDateObject(String search) {
         ArrayList<Task> returningTasks = new ArrayList<Task>();
 
-        for(Task task: tasks) {
-            if(isSearchFound(task, search)) {
+        for (Task task: tasks) {
+            if (isSearchFound(task, search)) {
                 returningTasks.add(task.clone());
             }
         }
@@ -949,15 +976,15 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private boolean isSearchFound(Task task, String search) {
-        boolean isSearchFound = SEARCH_IS_NOT_FOUND;
+        boolean isSearchFound = false;
         String[] strForSearch = new String[DEFAULT_STRING_SIZE];
         strForSearch[COMMAND_TYPE] = null;
 
         getStringArrayFromTask(task, strForSearch);
 
-        for(String str: strForSearch) {
-            if(str != null && str.toLowerCase().contains(search.toLowerCase())) {
-                isSearchFound = SEARCH_IS_FOUND;
+        for (String str: strForSearch) {
+            if (str != null && str.toLowerCase().contains(search.toLowerCase())) {
+                isSearchFound = true;
                 break;
             }
         }
@@ -974,17 +1001,17 @@ public class TaskManager implements TaskManagerInterface {
      * @return  affected tasks
      */
     private ArrayList<Task> undoAnOperation() {
-        if(isStackEmpty(undoStack)) {
+        if (isStackEmpty(undoStack)) {
             throw new NoSuchElementException(MSG_ERR_UNDO);
         }
 
         ArrayList<Task> returningTasks = new ArrayList<Task>();
 
-        if(!undoStack.isEmpty()) {
+        if (!undoStack.isEmpty()) {
             String[] undoOperation = undoStack.peek();
             COMMAND_TYPE_TASK_MANAGER commandUndo = getCommand(undoOperation[COMMAND_TYPE]);
 
-            switch(commandUndo) {
+            switch (commandUndo) {
             case addTask: 
                 int TIDToDelete = getTaskTID(undoOperation);
                 returningTasks = deleteATask(TIDToDelete);
@@ -1035,13 +1062,13 @@ public class TaskManager implements TaskManagerInterface {
      * @return  affected tasks
      */
     private ArrayList<Task> redoAnOperation() {
-        if(isStackEmpty(redoStack)) {
+        if (isStackEmpty(redoStack)) {
             throw new NoSuchElementException(MSG_ERR_REDO);
         }
 
         ArrayList<Task> returningTasks = new ArrayList<Task>();
 
-        if(!redoStack.isEmpty()) {
+        if (!redoStack.isEmpty()) {
             String[] redoOperation = redoStack.peek();
             COMMAND_TYPE_TASK_MANAGER commandUndo = getCommand(redoOperation[COMMAND_TYPE]);
 
@@ -1105,8 +1132,8 @@ public class TaskManager implements TaskManagerInterface {
         strForStack[COMMAND_TYPE] = inputs[COMMAND_TYPE];
         getStringArrayFromTask(taskToEdit, strForStack);
 
-        for(int i = TASK_NAME; i < DEFAULT_STRING_SIZE; ++i) {
-            if(strForStack[i] == null && inputs[i] != null) {
+        for (int i = TASK_NAME; i < DEFAULT_STRING_SIZE; ++i) {
+            if (strForStack[i] == null && inputs[i] != null) {
                 strForStack[i] = CLEAR_INFO_INDICATOR;
             }
         }
@@ -1137,31 +1164,31 @@ public class TaskManager implements TaskManagerInterface {
         strArray[TID] = convertToStringFromInt(task.getTID());
         strArray[TASK_NAME] = task.getTaskName();
 
-        if(task.getDateFrom() != null) {
+        if (task.getDateFrom() != null) {
             strArray[DATE_FROM] = convertToStringFromDate(task.getDateFrom());
         } else {
             strArray[DATE_FROM] = null;
         }
 
-        if(task.getDateTo() != null) {
+        if (task.getDateTo() != null) {
             strArray[DATE_TO] = convertToStringFromDate(task.getDateTo());
         } else {
             strArray[DATE_TO] = null;
         }
 
-        if(task.getDeadline() != null) {
+        if (task.getDeadline() != null) {
             strArray[DEADLINE] = convertToStringFromDate(task.getDeadline());
         } else {
             strArray[DEADLINE] = null;
         }
 
-        if(task.getLocation() != null) {
+        if (task.getLocation() != null) {
             strArray[LOCATION] = task.getLocation();
         } else {
             strArray[LOCATION] = null;
         }
 
-        if(task.getDetails() != null) {
+        if (task.getDetails() != null) {
             strArray[DETAILS] = task.getDetails();
         } else {
             strArray[DETAILS] = null;
@@ -1222,8 +1249,8 @@ public class TaskManager implements TaskManagerInterface {
     private Task getNonCloneTaskFromTID(int TID) {
         Task taskFound = null;
 
-        for(Task task : tasks) {
-            if(task.getTID() == TID) {
+        for (Task task : tasks) {
+            if (task.getTID() == TID) {
                 taskFound = task;
                 break;
             }
@@ -1235,8 +1262,8 @@ public class TaskManager implements TaskManagerInterface {
     public Task getTaskFromTID(int TID) {
         Task taskFound = null;
 
-        for(Task task : tasks) {
-            if(task.getTID() == TID) {
+        for (Task task : tasks) {
+            if (task.getTID() == TID) {
                 taskFound = task.clone();
                 break;
             }
@@ -1254,7 +1281,7 @@ public class TaskManager implements TaskManagerInterface {
         Date date = null;
 
         try {
-            if(dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
+            if (dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
                 DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
                 date = format.parse(dateString);
             }
@@ -1268,7 +1295,7 @@ public class TaskManager implements TaskManagerInterface {
     private int convertToIntType(String intString) {
         int intType = 0;
 
-        if(intString != null) {
+        if (intString != null) {
             intType = Integer.parseInt(intString);
         }
 
@@ -1286,15 +1313,15 @@ public class TaskManager implements TaskManagerInterface {
 
     private void addClashingDurationalTask(Task newTask,
             ArrayList<Task> returningTasks) {
-        if(isDurationalTask(newTask)) {
+        if (isDurationalTask(newTask)) {
             addClashingTasksForReturning(newTask, returningTasks);
         }
     }
 
     private void addClashingTasksForReturning(Task newTask, 
             ArrayList<Task> returningTasks) {
-        for(Task existingTask : tasks) {
-            if(isDurationalTask(existingTask) &&
+        for (Task existingTask : tasks) {
+            if (isDurationalTask(existingTask) &&
                     !isTaskComplete(existingTask) &&
                     isNewTaskClashedWithExistingTask(newTask, existingTask) && 
                     newTask.getTID() != existingTask.getTID()) {
@@ -1304,7 +1331,7 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private boolean isNewTaskClashedWithExistingTask(Task newTask, Task existing) {
-        if(existing.getDateTo().compareTo(newTask.getDateFrom()) <= 0 || 
+        if (existing.getDateTo().compareTo(newTask.getDateFrom()) <= 0 || 
                 existing.getDateFrom().compareTo(newTask.getDateTo()) >= 0) {
             return false;
         }
@@ -1345,31 +1372,31 @@ public class TaskManager implements TaskManagerInterface {
      * @param task  task to be checked
      */
     private void checkTaskDetails(Task task) {
-        if(!isStringLengthLessThanThirty(task.getTaskName())) {
+        if (!isStringLengthLessThanThirty(task.getTaskName())) {
             throw new IllegalArgumentException(String.format(MSG_ERR_LENGTH, 
                     TASK_TITLE_STRING));
         }
 
-        if(!isStringLengthLessThanThirty(task.getLocation())) {
+        if (!isStringLengthLessThanThirty(task.getLocation())) {
             throw new IllegalArgumentException(String.format(MSG_ERR_LENGTH, 
                     LOCATION_STRING));
         }
 
-        if(!isTaskDateNumberValid(task)) {
+        if (!isTaskDateNumberValid(task)) {
             throw new IllegalArgumentException(MSG_ERR_WRONG_DATE_NUMBER);
         }
 
-        if(!isDateFromBeforeDateTo(task)) {
+        if (!isDateFromBeforeDateTo(task)) {
             throw new IllegalArgumentException(MSG_ERR_WRONG_DATE_DURATION);
         }
 
-        if(isStringEmpty(task.getTaskName())) {
+        if (isStringEmpty(task.getTaskName())) {
             throw new IllegalArgumentException(MSG_ERR_EMPTY_TASK_NAME);
         }
     }
 
     private boolean isStringEmpty(String str) {
-        if(str == null) {
+        if (str == null) {
             return true;
         }
         str = str.trim();
@@ -1377,8 +1404,8 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private boolean isStringLengthLessThanThirty(String str) {
-        if(str != null) {
-            return str.length() <= 30;
+        if (str != null) {
+            return str.length() <= MAXIMUM_LENGTH_TASKNAME_LOCATION;
         } else {
             return true;
         }
@@ -1396,14 +1423,14 @@ public class TaskManager implements TaskManagerInterface {
         boolean isOverdue = false;
         Date current = new Date();
 
-        if(isOnlyDateToTask(task) || isDurationalTask(task)) {
-            if(task.getDateTo().compareTo(current) == -1) {
+        if (isOnlyDateToTask(task) || isDurationalTask(task)) {
+            if (task.getDateTo().compareTo(current) == -1) {
                 isOverdue = true;
             }
         }
 
-        if(isDeadlineTask(task)) {
-            if(task.getDeadline().compareTo(current) == -1) {
+        if (isDeadlineTask(task)) {
+            if (task.getDeadline().compareTo(current) == -1) {
                 isOverdue = true;
             } 
         }
@@ -1416,7 +1443,7 @@ public class TaskManager implements TaskManagerInterface {
      * @param inputs  parsed command containing status to be changed
      */
     private void changeStatusToIntString(String[] inputs) {
-        if(inputs[STATUS] == null) {
+        if (inputs[STATUS] == null) {
             inputs[STATUS] = convertToStringFromInt(NORMAL);
         } else {
             String temp = inputs[STATUS].toLowerCase();
@@ -1451,7 +1478,7 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     protected boolean isDateValid(String date) {
-        boolean isDateValid = DATE_IS_VALID;
+        boolean isDateValid = true;
 
         Matcher m = Pattern.compile("\\d+").matcher(date);
         int[] numbers = new int[NUM_ATTRIBUTE_FOR_DATE_OBJECT];
@@ -1460,44 +1487,44 @@ public class TaskManager implements TaskManagerInterface {
         //assume date objects always have five attributes
         while(m.find()) {
             numbers[i] = Integer.parseInt(m.group());
-            if(numbers[i] < 0)
-                isDateValid = DATE_IS_INVALID;
+            if (numbers[i] < 0)
+                isDateValid = false;
             ++i;
         }
 
-        if(isDateValid && numbers[HOUR_INDEX] > 23) {
-            isDateValid = DATE_IS_INVALID;
+        if (isDateValid && numbers[HOUR_INDEX] > 23) {
+            isDateValid = false;
         }
 
-        if(isDateValid && numbers[MINUTE_INDEX] > 59) {
-            isDateValid = DATE_IS_INVALID;
+        if (isDateValid && numbers[MINUTE_INDEX] > 59) {
+            isDateValid = false;
         }
 
-        if(isDateValid) {
+        if (isDateValid) {
             switch(numbers[MONTH_INDEX]) {
             case 1: case 3: case 5: case 7: case 8: case 10: case 12:
-                if(numbers[DAY_INDEX] == 0 || numbers[DAY_INDEX] > 31) {
-                    isDateValid = DATE_IS_INVALID;
+                if (numbers[DAY_INDEX] == 0 || numbers[DAY_INDEX] > 31) {
+                    isDateValid = false;
                 }
                 break;
             case 4: case 6: case 9: case 11:
-                if(numbers[DAY_INDEX] == 0 || numbers[DAY_INDEX] > 30) {
-                    isDateValid = DATE_IS_INVALID;
+                if (numbers[DAY_INDEX] == 0 || numbers[DAY_INDEX] > 30) {
+                    isDateValid = false;
                 }
                 break;
             case 2:
-                if(isLeapYear(numbers[YEAR_INDEX])) {
-                    if(numbers[DAY_INDEX] == 0 || numbers[DAY_INDEX] > 29) {
-                        isDateValid = DATE_IS_INVALID;
+                if (isLeapYear(numbers[YEAR_INDEX])) {
+                    if (numbers[DAY_INDEX] == 0 || numbers[DAY_INDEX] > 29) {
+                        isDateValid = false;
                     }
                 } else {
-                    if(numbers[DAY_INDEX] == 0 || numbers[DAY_INDEX] > 28) {
-                        isDateValid = DATE_IS_INVALID;
+                    if (numbers[DAY_INDEX] == 0 || numbers[DAY_INDEX] > 28) {
+                        isDateValid = false;
                     }
                 }
                 break;
             default:
-                isDateValid = DATE_IS_INVALID;
+                isDateValid = false;
                 break;
             }
         }
@@ -1507,12 +1534,12 @@ public class TaskManager implements TaskManagerInterface {
 
     private boolean isLeapYear(int year) {
         boolean isLeapYear = true;
-        if(year % 100 == 0) {
-            if(year % 400 != 0) {
+        if (year % 100 == 0) {
+            if (year % 400 != 0) {
                 isLeapYear = false;
             }
         } else {
-            if(year % 4 != 0) {
+            if (year % 4 != 0) {
                 isLeapYear = false;
             }
         }
@@ -1528,11 +1555,11 @@ public class TaskManager implements TaskManagerInterface {
         Date dateFrom = task.getDateFrom();
         Date dateTo = task.getDateTo();
 
-        if(dateFrom == null || dateTo == null) {
+        if (dateFrom == null || dateTo == null) {
             return true;
         }
 
-        if(dateFrom.compareTo(dateTo) < 0) {
+        if (dateFrom.compareTo(dateTo) < 0) {
             return true;
         } else {
             return false;
@@ -1545,31 +1572,31 @@ public class TaskManager implements TaskManagerInterface {
 
     protected boolean isTaskDateNumberValid(Task task) {
         //durational task
-        if(task.getDateFrom() != null && task.getDateTo() != null && 
+        if (task.getDateFrom() != null && task.getDateTo() != null && 
                 task.getDeadline() == null) {
             return true;
         }
 
         //forever task
-        if(task.getDateFrom() != null && task.getDateTo() == null && 
+        if (task.getDateFrom() != null && task.getDateTo() == null && 
                 task.getDeadline() == null) {
             return true;
         }
 
         //deadline task
-        if(task.getDateFrom() == null && task.getDateTo() == null && 
+        if (task.getDateFrom() == null && task.getDateTo() == null && 
                 task.getDeadline() != null) {
             return true;
         }
 
         //another form of deadline task
-        if(task.getDateFrom() == null && task.getDateTo() != null && 
+        if (task.getDateFrom() == null && task.getDateTo() != null && 
                 task.getDeadline() == null) {
             return true;
         }
 
         //floating task
-        if(task.getDateFrom() == null && task.getDateTo() == null && 
+        if (task.getDateFrom() == null && task.getDateTo() == null && 
                 task.getDeadline() == null) {
             return true;
         }
