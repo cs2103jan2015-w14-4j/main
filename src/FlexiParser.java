@@ -24,17 +24,17 @@ public class FlexiParser {
 	private static final String MSG_ERR_ID_EDIT_TEMPLATE = "Template cannot be edited as task ID was not specified, please try again while entering a correct ID.";
 	private static final String MSG_ERR_ID_USE_TEMPLATE = "Template cannot be utilized as task ID was not specified, please try again while entering a correct ID.";
 	private static final String MSG_ERR_ID_DELETE_TASK = "Task cannot be deleted as ID was not specified, please try again while entering a correct ID.";
-	private static final String MSG_ERR_ID_DELETE_SHORTCUT = "Shortcut cannot be deleted as ID was not specified, please try again while entering a correct ID.";
+	private static final String MSG_ERR_ID_DELETE_KEYWORD = "Keyword cannot be deleted as ID was not specified, please try again while entering a correct ID.";
 	private static final String MSG_ERR_ID_DELETE_TEMPLATE = "Template cannot be deleted as ID was not specified, please try again while entering a correct ID.";
 	private static final String MSG_ERR_ID_MARK_TASK = "Task cannot be marked as ID is not specified";
-	private static final String MSG_ERR_ID_ADD_SHORTCUT = "To add a shortcut please enter one old and one new shortcut: [new shortcut] onto [old shortcut].";
+	private static final String MSG_ERR_ID_ADD_KEYWORD = "To add a keyword please enter one old and one new keyword: [new keyword] onto [old keyword].";
 	private static final String MSG_ERR_ID_CLEAR_ATTR = "Attributes cannot be cleared as ID not specified.";
 	private static final String MSG_ERR_ID_SEARCH = "Please specify a search term." ;
 	private static final String MSG_ERR_QUOTE = "The misuse of quotation marks is found, please enter your task again.";
 	private static final String MSG_ERR_DATE_ENTERED = "The date that you have specified is not accepted please enter the task again.";
 	private static final String MSG_ERR_ADD_TEMPLATE = "There is insufficient arguments needed to add the task.";
 	
-	private static final String COMMAND_SHORTCUT = "Shortcut";
+	private static final String COMMAND_KEYWORD = "Keyword";
 	private static final String COMMAND_SAVE = "save";
 	private static final String COMMAND_HELP = "help";
 	
@@ -56,7 +56,7 @@ public class FlexiParser {
     private static final int START_PRIORITY_INDEX = 7;
     private static final int TO_ADD_INDEX = 1;
     private static final int DATE_INDEX = 0;
-    private static final int SHORTCUT_KEY = 1;
+    private static final int KEYWORD_KEY = 1;
     private static final int STORE_SAVE_INDEX = 1;
     
     private static final int KEY_NOT_PRESENT = -1;
@@ -65,9 +65,9 @@ public class FlexiParser {
     private static final int MONTH_INDEX = 1;
     private static final int YEAR_INDEX = 2;
     
-    private static final int NEW_SHORTCUT_INDEX = 1;
-    private static final int OLD_SHORTCUT_INDEX = 2;
-    private static final int CORRECT_LENGTH_DELETE_SHORTCUT = 2;
+    private static final int NEW_KEYWORD_INDEX = 1;
+    private static final int OLD_KEYWORD_INDEX = 2;
+    private static final int CORRECT_LENGTH_DELETE_KEYWORD = 2;
     private static final int CORRECT_LENGTH_DELETE_TEMPLATE = 2;
     private static final int CORRECT_LENGTH_EDIT_TEMPLATE = 2;
     private static final int CORRECT_LENGTH_USE_TEMPLATE = 2;
@@ -89,9 +89,9 @@ public class FlexiParser {
     private static final String[] KEYWORDS_TWO_TASK = {"ID","name","datefrom","dateto","before","location","remarks","status"};
     
     
-    private static final String KEYWORD_SHORTCUT = "onto";
+    private static final String KEYWORD_KEYWORD = "onto";
    
-    private static final String[] commandArray = {"addTask","editTask","deleteTask","viewTask","Block","searchTask","undoTask","redoTask","addReminder","deleteReminder","addShortcut","deleteShortcut","viewShortcut","resetShortcut",
+    private static final String[] commandArray = {"addTask","editTask","deleteTask","viewTask","Block","searchTask","undoTask","redoTask","addReminder","deleteReminder","addKeyword","deleteKeyword","viewKeyword","resetKeyword",
     														"addTemplate","deleteTemplate","viewTemplate","resetTemplate","editTemplate","useTemplate","clearAttr","markTask","saveTo","help"};
     
     //Index of keywords for switch statements
@@ -105,10 +105,10 @@ public class FlexiParser {
     private static final int  REDO_TASK_INDEX = 7;
     private static final int  ADD_REMINDER_INDEX = 8;
     private static final int  DELETE_REMINDER_INDEX = 9;
-    private static final int  ADD_SHORTCUT_INDEX = 10;
-    private static final int  DELETE_SHORTCUT_INDEX = 11;
-    private static final int  VIEW_SHORTCUT_INDEX = 12;
-    private static final int  RESET_SHORTCUT_INDEX = 13;
+    private static final int  ADD_KEYWORD_INDEX = 10;
+    private static final int  DELETE_KEYWORD_INDEX = 11;
+    private static final int  VIEW_KEYWORD_INDEX = 12;
+    private static final int  RESET_KEYWORD_INDEX = 13;
     private static final int  ADD_TEMPLATE_INDEX = 14;
     private static final int  DELETE_TEMPLATE_INDEX = 15;
     private static final int  VIEW_TEMPLATE_INDEX = 16;
@@ -123,14 +123,14 @@ public class FlexiParser {
     private static String[] inputArray;
 	
     public static final int TASK_LENGTH = 9;
-    public static final int SHORTCUT_LENGTH = 3;
+    public static final int KEYWORD_LENGTH = 3;
     public static final int CHANGE_LOCATION_LENGTH = 2;
     public static final int HELP_LENGTH = 1;
-    private Shortcut shortcut;
+    private KeywordManager keywords;
     
-    public FlexiParser(Shortcut shortcut) {
+    public FlexiParser(KeywordManager keywords) {
 		
-    	this.shortcut = shortcut;
+    	this.keywords = keywords;
     	
 	}
 	
@@ -138,7 +138,7 @@ public class FlexiParser {
     public String[] parseText(String userInput) throws IllegalArgumentException {
 			inputArray = userInput.split("\\s+");
 			String command = inputArray[COMMAND_TYPE_INDEX];
-			command = shortcut.keywordMatching(command);
+			command = keywords.keywordMatching(command);
 			if(command == NOT_EXIST) {
 				throw new IllegalArgumentException(String.format(MSG_ERR_UNRECOGNIZED_COMMAND, inputArray[COMMAND_TYPE_INDEX]));
 			}
@@ -149,8 +149,8 @@ public class FlexiParser {
 			else if(command.contains(COMMAND_HELP)) {
 				outputArray = new String[HELP_LENGTH];
 			}
-			else if(command.contains(COMMAND_SHORTCUT)) {
-				outputArray = new String[SHORTCUT_LENGTH];
+			else if(command.contains(COMMAND_KEYWORD)) {
+				outputArray = new String[KEYWORD_LENGTH];
 			}
 			else {		
 				outputArray = new String[TASK_LENGTH];
@@ -185,15 +185,15 @@ public class FlexiParser {
 					break;
 				case DELETE_REMINDER_INDEX:
 					break;
-				case ADD_SHORTCUT_INDEX:
-					addShortcut(outputArray);
+				case ADD_KEYWORD_INDEX:
+					addKeyword(outputArray);
 					break;
-				case DELETE_SHORTCUT_INDEX:
-					deleteShortcut(outputArray);
+				case DELETE_KEYWORD_INDEX:
+					deleteKeyword(outputArray);
 					break;
-				case VIEW_SHORTCUT_INDEX:
+				case VIEW_KEYWORD_INDEX:
 					break;
-				case RESET_SHORTCUT_INDEX:
+				case RESET_KEYWORD_INDEX:
 					break;
 				case ADD_TEMPLATE_INDEX:
 					addTemplate(outputArray);
@@ -385,33 +385,33 @@ public class FlexiParser {
 	}
     
 	/**
-	 * Parses in correct format for deleting of a shortcut
+	 * Parses in correct format for deleting of a keyword
 	 * @param outputArray
 	 * @throws IllegalArgumentException	thrown if no argument to delete
 	 */
     //@author A0116514N
-	private void deleteShortcut(String[] outputArray) throws IllegalArgumentException {
-		if(inputArray.length < CORRECT_LENGTH_DELETE_SHORTCUT) {
-			throw new IllegalArgumentException(MSG_ERR_ID_DELETE_SHORTCUT);
+	private void deleteKeyword(String[] outputArray) throws IllegalArgumentException {
+		if(inputArray.length < CORRECT_LENGTH_DELETE_KEYWORD) {
+			throw new IllegalArgumentException(MSG_ERR_ID_DELETE_KEYWORD);
 		}
-		outputArray[SHORTCUT_KEY] = inputArray[SHORTCUT_KEY];
+		outputArray[KEYWORD_KEY] = inputArray[KEYWORD_KEY];
 	}
 	
 	/**
-	 * This functions takes two string from user that signifies a desired pairing of shortcuts.
+	 * This functions takes two string from user that signifies a desired pairing of keywords.
 	 * @param outputArray
-	 * @throws IllegalArgumentException	throws when two shortcuts are not given
+	 * @throws IllegalArgumentException	throws when two keywords are not given
 	 */
 	//@author A0116514N
-	private void addShortcut(String[] outputArray) throws IllegalArgumentException {
+	private void addKeyword(String[] outputArray) throws IllegalArgumentException {
 		for(int i = 0; i < inputArray.length;i++) {
-			if(inputArray[i].equals(KEYWORD_SHORTCUT) && inputArray.length>3){
-				outputArray[NEW_SHORTCUT_INDEX] = inputArray[i-1];
-				outputArray[OLD_SHORTCUT_INDEX] = inputArray[i+1];
+			if(inputArray[i].equals(KEYWORD_KEYWORD) && inputArray.length>3){
+				outputArray[NEW_KEYWORD_INDEX] = inputArray[i-1];
+				outputArray[OLD_KEYWORD_INDEX] = inputArray[i+1];
 			}
 		}
 		if(outputArray[1] == NOT_EXIST && outputArray[2] == NOT_EXIST ) {
-			throw new IllegalArgumentException(MSG_ERR_ID_ADD_SHORTCUT);
+			throw new IllegalArgumentException(MSG_ERR_ID_ADD_KEYWORD);
 		}
 	}
     

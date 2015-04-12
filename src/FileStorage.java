@@ -346,11 +346,11 @@ public class FileStorage {
      * @param shortcut  Shortcut object to call its processShortcutCommand method
      */
     //@author A0116514N
-    public void readShortcutFromFile(Shortcut shortcut) {
+    public void readKeywordFromFile(KeywordManager shortcut) {
         if(shortcutFile.exists()) {
             if(shortcutFile.length() == 0) {
                 SystemHandler system = SystemHandler.getSystemHandler();
-                system.resetShortcutToDefault();
+                system.resetKeywordToDefault();
             } else {
                 try {
                     Scanner sc = new Scanner(shortcutFile);
@@ -359,12 +359,12 @@ public class FileStorage {
                     while (sc.hasNextLine()) {
                         String[] inputs = new String[3];
                         String[] tempStringArray = new String[8];
-                        inputs[COMMAND_TYPE_INDEX] = "addShortcutInit";
+                        inputs[COMMAND_TYPE_INDEX] = "addKeywordInit";
                         tempStringArray = sc.nextLine().split("\\s*,\\s*");
                         for(int j = 0; j < tempStringArray.length; ++j) {
                             inputs[SHORTCUT_NAME_INDEX] = tempStringArray[j];
                             inputs[SHORTCUT_ID_INDEX] = Integer.toString(i);
-                            shortcut.processShortcutCommand(inputs);    
+                            shortcut.processKeywordCommand(inputs);    
                         }
 
                         ++i;
@@ -384,7 +384,7 @@ public class FileStorage {
      *                   store in order, one row is one id during retrieve
      */
     //@author A0116514N
-    public void writeShortcutToFile(String[][] shortcuts) {
+    public void writeKeywordToFile(String[][] shortcuts) {
         try {
             shortcutFile.delete();
             shortcutFile.createNewFile();

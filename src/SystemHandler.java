@@ -11,7 +11,7 @@ public class SystemHandler {
 	
 	private static final String MSG_LOG_PARSER = "Parser understood the command as the following: \"%s\"";
 	private static final String MSG_ERR_INIT_TEMPLATE = "File has been corrupted, some templates might be lost.";
-	private static final String MSG_ERR_INIT_SHORTCUT = "File has been corrupted, some shortcut data might be lost.";
+	private static final String MSG_ERR_INIT_KEYWORD = "File has been corrupted, some keyword data might be lost.";
 	private static final String MSG_ERR_INIT_TASK = "File has been corrupted, some tasks might be lost.";
 	private static final String MSG_ERR_ID_UNDEFINED = "This ID does not exist, please check again";
 	private static final String MSG_ERR_NO_SUCH_COMMAND = "SystemHandler does not recognize this command.";
@@ -20,7 +20,7 @@ public class SystemHandler {
 	private static final String COMMAND_SAVE_TO = "saveTo";
 	private static final String COMMAND_HELP = "help";
 	private static final String[] COMMAND_GET_TASK_LIST = {"viewTask",null,null,null,null,null,null,null,null};
-	private static final String[] COMMAND_RESET_SHORTCUT = {"resetShortcut", null, null};
+	private static final String[] COMMAND_RESET_KEYWORD = {"resetKeyword", null, null};
 
 	//Symbol used to construct string from parsed command to log message
 	private static final String STRING_INIT_EMPTY = "";
@@ -29,7 +29,7 @@ public class SystemHandler {
 	private static final String STRING_NULL = "null";
 
 	public static final int LENGTH_COMMAND_TASK_MANAGER = 9;
-	public static final int LENGTH_COMMAND_SHORTCUT = 3;
+	public static final int LENGTH_COMMAND_KEYWORD = 3;
 	public static final int LENGTH_COMMAND_TEMPLATE = 9;
 
 	private static final int INDEX_COMMAND_TYPE = 0;
@@ -37,7 +37,7 @@ public class SystemHandler {
 	private static final int INDEX_SAVE_NEW_PATH = 1;
 	
 	private static final int INDEX_COMMAND_TASK_MANAGER = 0;
-	private static final int INDEX_COMMAND_SHORTCUT = 1;
+	private static final int INDEX_COMMAND_KEYWORD = 1;
 	private static final int INDEX_COMMAND_TEMPLATE = 2;
 	private static final int INDEX_COMMAND_SAVE = 3;
 	private static final int INDEX_COMMAND_HELP = 4;
@@ -49,7 +49,7 @@ public class SystemHandler {
 	private CentralizedLog 	logfile;
 	private TaskManager 	myTaskList;
 	private Template 		myTemplates;
-	private Shortcut 		myShortcut;
+	private KeywordManager 		myKeyword;
 	private FileStorage 	externalStorage;
 	private UserInterface 	window;
 	private FlexiParser 	parser;
@@ -93,11 +93,11 @@ public class SystemHandler {
 	}
 	
 	/**
-	 * This method is called by storage to set the shortcut manager to default 
-	 * once it detects no shortcut is being initialized
+	 * This method is called by storage to set the keyword manager to default 
+	 * once it detects no keyword is being initialized
 	 */
-	public void resetShortcutToDefault() {
-		myShortcut.processShortcutCommand(COMMAND_RESET_SHORTCUT);
+	public void resetKeywordToDefault() {
+		myKeyword.processKeywordCommand(COMMAND_RESET_KEYWORD);
 	}
 	
 	
@@ -127,8 +127,8 @@ public class SystemHandler {
 					executeTaskManager(parsedCommand);
 					break;
 					
-				case INDEX_COMMAND_SHORTCUT:
-					executeShortcutManager(parsedCommand);
+				case INDEX_COMMAND_KEYWORD:
+					executeKeywordManager(parsedCommand);
 					break;
 					
 				case INDEX_COMMAND_TEMPLATE:
@@ -205,11 +205,11 @@ public class SystemHandler {
 	}
 	
 	/**
-	 * This method calls storage to write out the data from shortcut manager to storage
-	 * @param shortcut		Array of strings arrays that represent the customized keywords 
+	 * This method calls storage to write out the data from keyword manager to storage
+	 * @param keywords		Array of strings arrays that represent the customized keywords 
 	 */
-	public void writeShortcutToFile(String[][] shortcut) {
-		externalStorage.writeShortcutToFile(shortcut);
+	public void writeKeywordToFile(String[][] keywords) {
+		externalStorage.writeKeywordToFile(keywords);
 	}
 	
 	/**
@@ -223,7 +223,7 @@ public class SystemHandler {
 	
 	/**
 	 * @param commandType	Command type
-	 * @return				Index of the command belongs to. Task(1), Shortcut(2), Template(3)
+	 * @return				Index of the command belongs to. Task(1), Keyword(2), Template(3)
 	 * @throws IllegalArgumentException		The command is not defined in the system
 	 */
 	private static int getCommandGroupType(String commandType) throws IllegalArgumentException {
@@ -238,9 +238,9 @@ public class SystemHandler {
 				}
 			}
 			
-			for(COMMAND_TYPE_SHORTCUT command : COMMAND_TYPE_SHORTCUT.values()) {
+			for(COMMAND_TYPE_KEYWORD command : COMMAND_TYPE_KEYWORD.values()) {
 				if(command.name().equals(commandType)) {
-					return INDEX_COMMAND_SHORTCUT;
+					return INDEX_COMMAND_KEYWORD;
 				}
 			}
 			
@@ -264,18 +264,18 @@ public class SystemHandler {
 	 */
 	private void initializeSystem() {
 		
-		myShortcut = new Shortcut();
+		myKeyword = new KeywordManager();
 		logfile =  new CentralizedLog();
 		myTemplates = new Template();
 		myTaskList = new TaskManager();
-		parser = new FlexiParser(myShortcut);
+		parser = new FlexiParser(myKeyword);
 		externalStorage = new FileStorage();
 		window = new UserInterface();
 		displayProcessor = new DisplayProcessor(window);
 		
 		system = this;
 		myTemplates.setSystemPath(system);
-		myShortcut.setSystemPath(system);
+		myKeyword.setSystemPath(system);
 		
 		readDataFromFile();
 		
@@ -286,7 +286,7 @@ public class SystemHandler {
 	}
 
 	/**
-	 * It calls File Storage to load data into task manager, shortcut and template.
+	 * It calls File Storage to load data into task manager, keyword and template.
 	 */
 	private void readDataFromFile() {
 		try{
@@ -297,10 +297,10 @@ public class SystemHandler {
 		}
 		
 		try{
-			externalStorage.readShortcutFromFile(myShortcut);
+			externalStorage.readKeywordFromFile(myKeyword);
 		} catch(Exception e) {
-			window.displayMsg(MSG_ERR_INIT_SHORTCUT, ERROR_INIT);
-			logfile.warning(MSG_ERR_INIT_SHORTCUT);
+			window.displayMsg(MSG_ERR_INIT_KEYWORD, ERROR_INIT);
+			logfile.warning(MSG_ERR_INIT_KEYWORD);
 		}
 		
 		try{
@@ -339,7 +339,7 @@ public class SystemHandler {
 	
 	/**
 	 * @param parsedCommand		Strings array of command parsed by parser
-	 * @param type				index of type of command - Task(1), Shortcut(2), Template(3)
+	 * @param type				index of type of command - Task(1), Keyword(2), Template(3)
 	 */
 	private void validateParsedCommandLength(String[] parsedCommand, int type) {
 		switch(type) {
@@ -347,8 +347,8 @@ public class SystemHandler {
 				assert(parsedCommand.length == LENGTH_COMMAND_TASK_MANAGER);
 				break;
 				
-			case INDEX_COMMAND_SHORTCUT:
-				assert(parsedCommand.length == LENGTH_COMMAND_SHORTCUT);
+			case INDEX_COMMAND_KEYWORD:
+				assert(parsedCommand.length == LENGTH_COMMAND_KEYWORD);
 				break;
 				
 			case INDEX_COMMAND_TEMPLATE:
@@ -368,8 +368,8 @@ public class SystemHandler {
 	}
 	
 	/**
-	 * @param command	String array in the format where shortcut manager understands. Refer to developer 
-	 * 					manual under Shortcut for more information 
+	 * @param command	String array in the format where keyword manager understands. Refer to developer 
+	 * 					manual under Keyword for more information 
 	 * @throws ParseException		INPUT FROM MA CONG
 	 */
 	private void executeTaskManager(String[] command) 
@@ -384,17 +384,17 @@ public class SystemHandler {
 	}
 
 	/**
-	 * @param command	String array in the format where shortcut manager understands. Refer to developer 
-	 * 					manual under Shortcut for more information 
-	 * @throws NoSuchElementException		Requested shortcut is not found in shortcut list
-	 * 										or violation of restriction by shortcut manager
-	 * @throws IllegalArgumentException		There are some error in format understood by shortcut manager
+	 * @param command	String array in the format where keyword manager understands. Refer to developer 
+	 * 					manual under Keyword for more information 
+	 * @throws NoSuchElementException		Requested keyword is not found in keyword list
+	 * 										or violation of restriction by keyword manager
+	 * @throws IllegalArgumentException		There are some error in format understood by keyword manager
 	 */
-	private void executeShortcutManager(String[] command) 
+	private void executeKeywordManager(String[] command) 
 			throws NoSuchElementException, IllegalArgumentException {
 		
-		String[][] result = myShortcut.processShortcutCommand(command);
-		displayProcessor.displayShortcutResult(command, result);
+		String[][] result = myKeyword.processKeywordCommand(command);
+		displayProcessor.displayKeywordResult(command, result);
 		
 	}
 

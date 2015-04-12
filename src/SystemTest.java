@@ -173,9 +173,9 @@ public class SystemTest {
 	
 	@Test
 	public void testMatchingShortcut() {
-		Shortcut myshortcut = new Shortcut();
+		KeywordManager myshortcut = new KeywordManager();
 		String[] cmd0 = {"resetShortcut",null,null};
-		myshortcut.processShortcutCommand(cmd0);
+		myshortcut.processKeywordCommand(cmd0);
 		
 		//TC0 - test keyword matching working
 		String result = myshortcut.keywordMatching("add");
@@ -184,7 +184,7 @@ public class SystemTest {
 		Assert.assertEquals(result, "deleteShortcut");
 		
 		String[] cmd2 = {"addShortcut","addM","add"};
-		myshortcut.processShortcutCommand(cmd2);
+		myshortcut.processKeywordCommand(cmd2);
 		
 		result = myshortcut.keywordMatching("addM");
 		Assert.assertEquals(result, "addTask");
@@ -193,14 +193,14 @@ public class SystemTest {
 
 	@Test
 	public void testShortcutManager() {
-		Shortcut myshortcut = new Shortcut();
+		KeywordManager myshortcut = new KeywordManager();
 		String[] cmd0 = {"resetShortcut",null,null};
-		myshortcut.processShortcutCommand(cmd0);
+		myshortcut.processKeywordCommand(cmd0);
 		
 		
 		//TC1 - test view and initialize shortcut list
 		String[] cmd = {"viewShortcut",null,null};
-		String[][] results = myshortcut.processShortcutCommand(cmd);
+		String[][] results = myshortcut.processKeywordCommand(cmd);
 		String[][] expected1 = DEFAULT_WORD_SET;
 		for(int i = 0; i < expected1.length; ++i) {
 			Assert.assertArrayEquals(Arrays.copyOfRange(results[i], 1, results[i].length), expected1[i]);
@@ -208,7 +208,7 @@ public class SystemTest {
 		
 		//TC2 - add a shortcut
 		String[] cmd2 = {"addShortcut","addM","add"};
-		String[][] results2 = myshortcut.processShortcutCommand(cmd2);
+		String[][] results2 = myshortcut.processKeywordCommand(cmd2);
 		String[][] expected2 = {{"add","addTask","addM"}};
 		for(int i = 0; i < results2.length; ++i) {
 			Assert.assertArrayEquals(Arrays.copyOfRange(results2[i], 1, results2[i].length), expected2[i]);
@@ -216,7 +216,7 @@ public class SystemTest {
 		
 		//TC3 - add another shortcut
 		String[] cmd3 = {"addShortcut","eTemp","editTemplate"};
-		String[][] results3 = myshortcut.processShortcutCommand(cmd3);
+		String[][] results3 = myshortcut.processKeywordCommand(cmd3);
 		String[][] expected3 = {{"editTemplate","editTemp","eTemp"}};
 		for(int i = 0; i < expected3.length; ++i) {
 			Assert.assertArrayEquals(Arrays.copyOfRange(results3[i], 1, results3[i].length), expected3[i]);
@@ -224,7 +224,7 @@ public class SystemTest {
 		
 		//TC4 - use added shortcut to do something
 		String[] cmd4 = {"addShortcut","addS","eTemp"};
-		String[][] results4 = myshortcut.processShortcutCommand(cmd4);
+		String[][] results4 = myshortcut.processKeywordCommand(cmd4);
 		String[][] expected4 = {{"editTemplate","editTemp","eTemp","addS"}};
 		for(int i = 0; i < expected4.length; ++i) {
 			Assert.assertArrayEquals(Arrays.copyOfRange(results4[i], 1, results4[i].length), expected4[i]);
@@ -232,7 +232,7 @@ public class SystemTest {
 		
 		//TC5 - view all changes
 		String[] cmd5 = {"viewShortcut", null, null};
-		String[][] results5 = myshortcut.processShortcutCommand(cmd5);
+		String[][] results5 = myshortcut.processKeywordCommand(cmd5);
 		String[][] expected5 = DEFAULT_WORD_SET;
 		String[] changes1 = {"add","addTask","addM"};
 		expected5[0] = changes1;
@@ -248,7 +248,7 @@ public class SystemTest {
 		
 		//TC6 - delete shortcut
 		String[] cmd6 = {"deleteShortcut", "eTemp", null};
-		String[][] results6 = myshortcut.processShortcutCommand(cmd6);
+		String[][] results6 = myshortcut.processKeywordCommand(cmd6);
 		String[][] expected6 = {{"eTemp"}};
 		for(int i = 0; i < expected6.length; ++i) {
 			Assert.assertArrayEquals(Arrays.copyOfRange(results6[i], 1, results6[i].length), expected6[i]);
@@ -256,7 +256,7 @@ public class SystemTest {
 		
 		//TC7 - reset
 		String[] cmd7 = {"resetShortcut", null, null};
-		String[][] results7 = myshortcut.processShortcutCommand(cmd7);
+		String[][] results7 = myshortcut.processKeywordCommand(cmd7);
 		String[][] expected7 = DEFAULT_WORD_SET;
 		for(int i = 0; i < expected7.length; ++i) {
 			Assert.assertArrayEquals(Arrays.copyOfRange(results7[i], 1, results7[i].length), expected7[i]);

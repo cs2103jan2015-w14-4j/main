@@ -20,11 +20,11 @@ public class DisplayProcessor {
 	private static final String MSG_TEMP_NO_TEMPLATE = "There are no saved templates.";
 	private static final String MSG_TEMP_RESET = "All Templates have been cleared.";
 	
-	private static final String MSG_SHORTCUT_DELETED = "The keyword \"%s\" has been deleted.";
-	private static final String MSG_SHORTCUT_RESET = "All keywords have been reset to the list of defaults above.";
+	private static final String MSG_KEYWORD_DELETED = "The keyword \"%s\" has been deleted.";
+	private static final String MSG_KEYWORD_RESET = "All keywords have been reset to the list of defaults above.";
 
-	private static final String MSG_SHORTCUT_VIEW = "Displaying all Keywords";
-	private static final String MSG_SHORTCUT_ADDED_NEW = "New keyword \"%s\" has been added to the \"%s\" function.";
+	private static final String MSG_KEYWORD_VIEW = "Displaying all Keywords";
+	private static final String MSG_KEYWORD_ADDED_NEW = "New keyword \"%s\" has been added to the \"%s\" function.";
 
 	private static final int SIZE_ZERO = 0;
 	
@@ -41,9 +41,9 @@ public class DisplayProcessor {
 	private static final int NUM_TASK_SINGLE = 1;
 	
 	
-	private static final int INDEX_SHORTCUT_DELETE = 1;
-	private static final int INDEX_SHORTCUT_OLD = 2;
-	private static final int INDEX_SHORTCUT_NEW = 1;
+	private static final int INDEX_KEYWORD_DELETE = 1;
+	private static final int INDEX_KEYWORD_OLD = 2;
+	private static final int INDEX_KEYWORD_NEW = 1;
 	
 	private static final boolean EXECUTION_SUCCESS = true;
 
@@ -195,11 +195,11 @@ public class DisplayProcessor {
 	
 	/**
 	 * @param command	Command that has been executed
-	 * @param result	Affected shortcuts by the executed command
+	 * @param result	Affected keywords by the executed command
 	 */
-	public void displayShortcutResult(String[] command, String[][] result) {
-		window.displayShortcuts(result, EXECUTION_SUCCESS);
-		String[] message = constructShortcutMessage(command, result);
+	public void displayKeywordResult(String[] command, String[][] result) {
+		window.displayKeywords(result, EXECUTION_SUCCESS);
+		String[] message = constructKeywordMessage(command, result);
 		
 		if(hasMessage(message)) {
 			window.displayMsg(message, INDEX_EXECUTION_SUCCESS);
@@ -209,26 +209,26 @@ public class DisplayProcessor {
 	
 	/**
 	 * @param command	Command that has been executed
-	 * @param result	Affected shortcuts by the executed command
+	 * @param result	Affected keywords by the executed command
 	 * @return			String array of messages to be displayed, null if no messages to be displayed
 	 */
-	private String[] constructShortcutMessage(String[] command,
+	private String[] constructKeywordMessage(String[] command,
 			String[][] result) {
 		String[] message = new String[LENGTH_MESSAGE_DEFAULT];
-		switch(Shortcut.getCommandType(command[INDEX_COMMAND_TYPE])) {
-			case addShortcut:
-				message[MESSAGE_NUMBER_ONE] = String.format(MSG_SHORTCUT_ADDED_NEW, command[INDEX_SHORTCUT_NEW], command[INDEX_SHORTCUT_OLD]);
+		switch(KeywordManager.getCommandType(command[INDEX_COMMAND_TYPE])) {
+			case addKeyword:
+				message[MESSAGE_NUMBER_ONE] = String.format(MSG_KEYWORD_ADDED_NEW, command[INDEX_KEYWORD_NEW], command[INDEX_KEYWORD_OLD]);
 				break;
-			case viewShortcut:
-				message[MESSAGE_NUMBER_ONE] = MSG_SHORTCUT_VIEW;
+			case viewKeyword:
+				message[MESSAGE_NUMBER_ONE] = MSG_KEYWORD_VIEW;
 				break;
-			case deleteShortcut:
-				message[MESSAGE_NUMBER_ONE] = String.format(MSG_SHORTCUT_DELETED, command[INDEX_SHORTCUT_DELETE]);
+			case deleteKeyword:
+				message[MESSAGE_NUMBER_ONE] = String.format(MSG_KEYWORD_DELETED, command[INDEX_KEYWORD_DELETE]);
 				break;
-			case resetShortcut:
-				message[MESSAGE_NUMBER_ONE] = MSG_SHORTCUT_RESET;
+			case resetKeyword:
+				message[MESSAGE_NUMBER_ONE] = MSG_KEYWORD_RESET;
 				break;
-			case addShortcutInit:
+			case addKeywordInit:
 				message = null;
 		}
 		return message;

@@ -146,7 +146,7 @@ public class UserInterface extends DefaultTableCellRenderer {
     										 {"  This will save the task with all the details intact."},
     										 {"  When you use a template to create a new task, all you need to do is input \"useTemplate [template name] [date]\" to duplicate the task."},
     										 {newline},
-    										 {"For the full list of available keywords and functions, type \"viewShortcut\"."},
+    										 {"For the full list of available keywords and functions, type \"viewKeyword\"."},
     										 { "Please consult the User Guide for additional help and functionality."}
     										};
     
@@ -228,7 +228,7 @@ public class UserInterface extends DefaultTableCellRenderer {
 	}
 
 	//displays a table of shortcuts with 2 columns
-	public void displayShortcuts(String[][] outputData, boolean success) {
+	public void displayKeywords(String[][] outputData, boolean success) {
 		viewShortcutTable();
 		String[] keywords;
 		
@@ -716,7 +716,7 @@ private void addDummyTask() {
 					keywordArray[i][j] = i + "shortcut" + j ;
 				}
 			}				
-			displayShortcuts(keywordArray, true);
+			displayKeywords(keywordArray, true);
 	}
 
 }
