@@ -52,13 +52,13 @@ public class TemplateManager {
 	private ArrayList<String> tempNames;
 	private SystemHandler system;
 
-	//@author A0108385B
+	
 	public TemplateManager() {
 		templates = new ArrayList<Task>();
 		tempNames = new ArrayList<String>();
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * It set the system path so that it can call the system Handler that governs it to 
 	 * fetch data from other components when required
@@ -68,7 +68,7 @@ public class TemplateManager {
 		this.system = system;
 	}
 	
-	//@author A0108385B
+	
 	/**
 	 * @param command	The string array of command to be executed
 	 * @return			ArrayList of Tasks that are demanded by command
@@ -124,7 +124,7 @@ public class TemplateManager {
 		return result;
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param command	The string array of command to be executed
 	 */
@@ -134,7 +134,7 @@ public class TemplateManager {
 		addTemplateToArray(command[INDEX_TEMPLATE_NAME], taskToBeAddedInit);
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param command	The string array of command to be executed
 	 * @return	ArrayList of task with the added template in it
@@ -152,7 +152,7 @@ public class TemplateManager {
 	}
 	
 
-	//@author A0108385B
+	
 	/**
 	 * @param name							Name of the template
 	 * @param template						Template to be created
@@ -182,7 +182,7 @@ public class TemplateManager {
 		}
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param template 	template to be added
 	 * @return			True if such template already exist, otherwise false
@@ -197,7 +197,7 @@ public class TemplateManager {
 		return false;
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param name		name to be used for a template
 	 * @return			True if the length of name is acceptable, otherwise false
@@ -206,7 +206,7 @@ public class TemplateManager {
 		return name.length() > LENGTH_TEMP_NAME_MINIMUM && name.length() < LENGTH_TEMP_NAME_MAXIMUM;
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * This method construct an ArrayList of names that match the templates given
 	 * @param templates		ArrayList of template
@@ -223,7 +223,7 @@ public class TemplateManager {
 		return result;
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * This method returns the name of the template
 	 * @param task							A Template object
@@ -241,7 +241,7 @@ public class TemplateManager {
 		throw new NoSuchElementException(MSG_ERR_NO_SUCH_TEMPLATE);
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param command	The string array of command to be executed
 	 * @return			Task object created by following the command parameter.
@@ -256,7 +256,7 @@ public class TemplateManager {
 	}
 	
 
-	//@author A0108385B
+	
 	/**
 	 * 	This method calls system handler to initiate write out to storage. 
 	 *  It is called when there are changes made to templates' data
@@ -267,7 +267,7 @@ public class TemplateManager {
 		
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param name		Template name 
 	 * @return			Index of the template stored in ArrayList, -1 if not found.
@@ -282,7 +282,7 @@ public class TemplateManager {
 		return INDEX_NOT_FOUND;
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param name	Template name 
 	 * @return		Template that matches the name, null if not found.
@@ -298,7 +298,7 @@ public class TemplateManager {
 	}
 
 
-	//@author A0108385B
+	
 	/**
 	 * @param command 					The string array of command to be executed
 	 * @return							ArrayList of template with the edited template in the list. 
@@ -322,7 +322,7 @@ public class TemplateManager {
 		return result;
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param command		The string array of command to be executed
 	 * @param task			Template to be edited
@@ -363,7 +363,7 @@ public class TemplateManager {
 		}
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * This method checks if the command demands the field to be edited.
 	 * @param command		The string array of command to be executed
@@ -377,7 +377,7 @@ public class TemplateManager {
 
 	
 
-	//@author A0108385B
+	
 	/**
 	 * This method assert the correct length of command to be executed.
 	 * @param command		The string array of command to be executed
@@ -405,7 +405,7 @@ public class TemplateManager {
 		}
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param command	The string array of command to be executed
 	 * @return			The command type to be executed
@@ -420,7 +420,7 @@ public class TemplateManager {
         }
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param tempName					Name of the template to be deleted
 	 * @return							The deleted template in an ArrayList
@@ -438,7 +438,7 @@ public class TemplateManager {
 		}
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param tempName		Name of the template to be deleted
 	 * @return				Deleted template, null if template does not exist
@@ -453,7 +453,7 @@ public class TemplateManager {
 		}
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @return		Return the templates list in ArrayList
 	 */
@@ -463,7 +463,7 @@ public class TemplateManager {
 		return templates;
 	}
 	
-	//@author A0108385B
+	
 	/**
 	 * This method clears all the date related fields in template before saving the template.
 	 * @param template	Template to be added into templates list
@@ -479,7 +479,7 @@ public class TemplateManager {
 		//MA CONG
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * 	This method clear all the templates.
 	 */
@@ -488,7 +488,7 @@ public class TemplateManager {
 		tempNames.clear();
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * This method adds the template as well as the name corresponds to the template into the list.
 	 * @param name		Name of the template
@@ -499,7 +499,7 @@ public class TemplateManager {
 		tempNames.add(name);
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param name	Name of the template
 	 * @return	True if there is a template with same name
@@ -508,7 +508,7 @@ public class TemplateManager {
 		return getTemplateIndex(name) != INDEX_NOT_FOUND;
 	}
 	
-	//@author A0108385B
+	
 	/**
 	 * @param name						Name of the template to be fetched	
 	 * @return							The template that corresponds to the name
@@ -527,7 +527,7 @@ public class TemplateManager {
 		
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * This method extract the correct data based on the existing data and user input
 	 * @param task							Template with the information to be extracted
@@ -561,7 +561,7 @@ public class TemplateManager {
 		}
 	}
 
-	//@author A0108385B
+	
 	/**	
 	 * This method convert to be used template into task manager command sturcture
 	 * @param task							Task to be added into Tasks List
