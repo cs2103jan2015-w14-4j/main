@@ -21,7 +21,7 @@ public class CentralizedLog {
 
 	//@author A0108385B
 	/**
-	 * This method build a log file under file name log.txt
+	 * This method builds a log file under file name log.txt
 	 * @return logfile under file handler called log.txt;
 	 */
 	private static Logger buildLogger() {
