@@ -16,7 +16,7 @@ public class FileStorage {
     
     private static final int COMMAND_TYPE_INDEX = 0;
     private static final int INDEX_TASK_ID_READ_TASK_FROM_FILE = 1;
-    //The indexes for how a task object is stored in an ArrayList<Task>
+    //The indexes for how a task object is stored in String array of size 8
     private static final int TASK_ID_INDEX = 0;
     private static final int TEMPLATE_NAME_INDEX = 0;
     private static final int TASK_NAME_INDEX = 1;
@@ -90,7 +90,7 @@ public class FileStorage {
             createTemplateFile(DEFAULT_TEMPLATE_FILE_NAME);
             createShortcutFile(DEFAULT_SHORTCUT_FILE_NAME);      
         } catch (IOException e) {
-            assert(true);
+
         }
     }
 
@@ -165,7 +165,7 @@ public class FileStorage {
             createShortcutFile(path + DEFAULT_SHORTCUT_FILE_NAME);
             taskFile = new File(taskFileLocation);
         } catch (IOException e) {
-            assert(true);
+
         }
     }
     //--------------------constructor method ends-----------------
@@ -247,7 +247,7 @@ public class FileStorage {
             bw.write(fileName);
             bw.close();
         } catch (IOException e) {
-            assert(true);
+
         }
     }
 
@@ -332,7 +332,7 @@ public class FileStorage {
 
             bw.close();
         } catch (Exception e) {
-            assert(true);
+
         }
     }
     //----------task read and write methods ends----------
@@ -405,7 +405,7 @@ public class FileStorage {
 
             bw.close();
         } catch(Exception e) {
-            assert(true);
+
         }
     }
     //----------shortcut read and write methods ends----------
@@ -421,7 +421,6 @@ public class FileStorage {
     public void writeTemplateToFile(ArrayList<Task> templateList, 
             ArrayList<String> matchingName) {
         try {
-            //write template like normal tasks must check what is different is everything null
             templateFile.delete();
             templateFile.createNewFile();
             BufferedWriter bw = new BufferedWriter(new FileWriter(templateFile));
@@ -443,7 +442,7 @@ public class FileStorage {
             }
             bw.close();
         } catch(Exception e) {
-            assert(true);
+
         }
     }
 
@@ -544,7 +543,6 @@ public class FileStorage {
     //@author A0116514N
     public void readTemplateFromFile(TemplateManager template) {
         if(templateFile.exists()) {
-
             try {
                 Scanner sc = new Scanner(templateFile);
                 while (sc.hasNextLine()) {
@@ -567,11 +565,12 @@ public class FileStorage {
                     try {
                         template.processTemplateCommand(inputs);     
                     } catch(Exception e) {
+                        
                     }
                 }
                 sc.close();
             }catch(FileNotFoundException e) {
-                e.printStackTrace();
+                assert(true);
             }
         }
 
