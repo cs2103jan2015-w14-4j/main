@@ -2,28 +2,28 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 //@author A0108385B
 public class Task {
-	
-	public static final int MINIMUM_LENGTH_TASK_NAME = 1;
-	public static final int MAXIMUM_LENGTH_TASK_NAME = 30;
-	public static final int MAXIMUM_LENGTH_LOCATION = 30;
 
-	public static final String STRING_STATUS_URGENT = "Urgent";
-	public static final String STRING_STATUS_MAJOR = "Major";
-	public static final String STRING_STATUS_NORMAL = "Normal";
-	public static final String STRING_STATUS_MINOR = "Minor";
-	public static final String STRING_STATUS_CASUAL = "Casual";
-	public static final String STRING_STATUS_COMPLETE 	= "Complete";
-	public static final String STRING_STATUS_OVERDUE 	= "Overdue";
-	
-	public static final int INDEX_STATUS_URGENT = 1;
-	public static final int INDEX_STATUS_MAJOR = 2;
-	public static final int INDEX_STATUS_NORMAL = 3;
-	public static final int INDEX_STATUS_MINOR = 4;
-	public static final int INDEX_STATUS_CASUAL = 5;
-	public static final int INDEX_STATUS_COMPLETE 	= 6;
-	public static final int INDEX_STATUS_OVERDUE 	= 7;
+    public static final int MINIMUM_LENGTH_TASK_NAME = 1;
+    public static final int MAXIMUM_LENGTH_TASK_NAME = 30;
+    public static final int MAXIMUM_LENGTH_LOCATION = 30;
 
-	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
+    public static final String STRING_STATUS_URGENT = "Urgent";
+    public static final String STRING_STATUS_MAJOR = "Major";
+    public static final String STRING_STATUS_NORMAL = "Normal";
+    public static final String STRING_STATUS_MINOR = "Minor";
+    public static final String STRING_STATUS_CASUAL = "Casual";
+    public static final String STRING_STATUS_COMPLETE 	= "Complete";
+    public static final String STRING_STATUS_OVERDUE 	= "Overdue";
+
+    public static final int INDEX_STATUS_URGENT = 1;
+    public static final int INDEX_STATUS_MAJOR = 2;
+    public static final int INDEX_STATUS_NORMAL = 3;
+    public static final int INDEX_STATUS_MINOR = 4;
+    public static final int INDEX_STATUS_CASUAL = 5;
+    public static final int INDEX_STATUS_COMPLETE 	= 6;
+    public static final int INDEX_STATUS_OVERDUE 	= 7;
+
+    private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
     public static final int INDEX_TASK_ID = 0;
     public static final int INDEX_TASK_NAME = 1;
     public static final int INDEX_DATE_FROM = 2;
@@ -34,8 +34,7 @@ public class Task {
     public static final int INDEX_STATUS = 6;
     public static final int DEFAULT_STRING_SIZE = 7;
     private static final String ZERO_TIME = " 00:00";
-    
-    //TO BE CHANGED
+
 	private static final int COMPLETE_TASK = 1;
 	private static final int INCOMPLETE_TASK = 2;
 	private static final int DISCARDED_TASK = 3;
@@ -353,20 +352,20 @@ public class Task {
 	//@author A0118892U
     public String[] toStringArray() {
         String[] taskStringArray = new String[DEFAULT_STRING_SIZE];
-        
-	    taskStringArray[INDEX_TASK_ID] = Integer.toString(TID);
-	    
+
+        taskStringArray[INDEX_TASK_ID] = Integer.toString(TID);
+
         if(taskName != null) {
             taskStringArray[INDEX_TASK_NAME] = taskName;
         } else {
             taskStringArray[INDEX_TASK_NAME] = null;
         }
-        
+
         if(isDurationalTask()) {
             taskStringArray[INDEX_DATE_FROM] = removeTimePartFromDate(convertToStringFromDate(dateFrom));
             taskStringArray[INDEX_DATE_TO] = removeTimePartFromDate(convertToStringFromDate(dateTo));
         }
-        
+
         if(isDeadlineTask()) {
             taskStringArray[INDEX_DATE_FROM] = null;
             if(dateTo != null) {
@@ -376,12 +375,12 @@ public class Task {
                 taskStringArray[INDEX_DATE_TO] = removeTimePartFromDate(convertToStringFromDate(deadline));
             }
         }
-        
+
         if(isFloatingTask()) {
             taskStringArray[INDEX_DATE_FROM] = null;
             taskStringArray[INDEX_DATE_TO] = null;
         }
-        
+
         if(isForeverTask()) {
             taskStringArray[INDEX_DATE_FROM] = removeTimePartFromDate(convertToStringFromDate(dateFrom));
             taskStringArray[INDEX_DATE_TO] = null;
@@ -400,23 +399,23 @@ public class Task {
         }
 
         taskStringArray[INDEX_STATUS] = getStatusString();
-        
-	    return taskStringArray;
-	}
 
-	//@author A0118892U
+        return taskStringArray;
+    }
+
+    //@author A0118892U
     private boolean isDurationalTask() {
         return getDateFrom() != null && getDateTo() != null &&
                 getDeadline() == null;
     }
 
-	//@author A0118892U
+    //@author A0118892U
     private boolean isFloatingTask() {
         return getDateFrom() == null && getDateTo() == null &&
                 getDeadline() == null;
     }
 
-	//@author A0118892U
+    //@author A0118892U
     private boolean isDeadlineTask() {
         return (getDateFrom() == null && getDateTo() == null &&
                 getDeadline() != null) || 
@@ -424,19 +423,19 @@ public class Task {
                 getDeadline() == null); 
     }
 
-	//@author A0118892U
+    //@author A0118892U
     //Same as floating task
     private boolean isForeverTask() {
         return getDateFrom() != null && getDateTo() == null &&
                 getDeadline() == null;
     }
 
-	//@author A0118892U
+    //@author A0118892U
     private String removeTimePartFromDate(String dateString) {
         return dateString.replace(ZERO_TIME, "");
     }
 
-	//@author A0118892U
+    //@author A0118892U
     private String convertToStringFromDate(Date dateObject) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
         String dateString = dateFormat.format(dateObject);

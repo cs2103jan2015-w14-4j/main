@@ -2,10 +2,6 @@ import java.util.Comparator;
 import java.util.Date;
 
 //@author A0118892U
-/**
- * @author Ma Cong (A0118892U)
- *
- */
 public class ComparatorDate implements Comparator<Task> {
 
     public int compare(Task task1, Task task2) {
