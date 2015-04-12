@@ -42,7 +42,7 @@ public class TaskManager implements TaskManagerInterface {
     private static final String MSG_ERR_NO_SUCH_FILTER = "Tasks cannot be filtered in the requested manner.";
     private static final String MSG_ERR_NO_SUCH_ARRANGE = "The tasks cannot be sorted in this order.";
     private static final String MSG_ERR_FAIL_TO_EDIT = "Failed to edit the task.";
-    
+
     private static final int URGENT = 1;
     private static final int MAJOR = 2;
     private static final int NORMAL = 3;
@@ -131,7 +131,7 @@ public class TaskManager implements TaskManagerInterface {
         assertTaskIDIsBiggerThanTen(newTask);
         assertDurationalTaskIsValid(newTask);
         assertTaskDateNumberIsvalid(newTask);
-        
+
         updateTaskIDs(newTask.getTID());
         tasks.add(newTask);
         defaultSortTaskByCompleteAndDate();
@@ -225,7 +225,9 @@ public class TaskManager implements TaskManagerInterface {
     private ArrayList<Task> addATask(String[] inputs) {
         Task newTask;
 
-        changeStatusToIntString(inputs);
+        if(!isStatusAnInt(inputs[STATUS])) {
+            changeStatusToIntString(inputs);
+        }
 
         if(isInputsHavingTID(inputs)){
             newTask = processAddWithID(inputs);       
@@ -236,12 +238,12 @@ public class TaskManager implements TaskManagerInterface {
         checkTaskDetails(newTask.clone());
 
         if(isTaskOverdue(newTask)) {
-            newTask.setPriority(OVERDUE);
+            newTask.setStatus(OVERDUE);
         }
         assertDurationalTaskIsValid(newTask);
         assertTaskDateNumberIsvalid(newTask);
 
-        
+
         updateTaskIDs(newTask.getTID());
         tasks.add(newTask);
         ArrayList<Task> returningTasks = new ArrayList<Task>();
@@ -250,6 +252,19 @@ public class TaskManager implements TaskManagerInterface {
         defaultSortTaskByCompleteAndDate();
 
         return returningTasks;
+    }
+
+    private boolean isStatusAnInt(String status) {
+        if(status != null) {
+            for(char c: status.toCharArray()) {
+                if(!Character.isDigit(c)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private boolean isInputsHavingTID(String[] inputs) {
@@ -278,7 +293,7 @@ public class TaskManager implements TaskManagerInterface {
                 convertToIntType(inputs[STATUS]));
 
         updateIDCounter(inputs[TID]);
-        
+
         return newTask;
     }
 
@@ -318,7 +333,7 @@ public class TaskManager implements TaskManagerInterface {
         if(inputs[DEADLINE] != null) {
             assertDateObjectIsValid(newTask.getDeadline());
         }
-        
+
         return newTask;
     }
 
@@ -444,14 +459,14 @@ public class TaskManager implements TaskManagerInterface {
         if(isTaskStatusOverdue(taskToEdit) && !isTaskOverdue(taskToEdit)) {
             taskToEdit.setPriority(NORMAL);
         }
-        
-        if(inputs[DATE_FROM] != null) {
+
+        if(inputs[DATE_FROM] != null && inputs[DATE_FROM] != CLEAR_INFO_INDICATOR) {
             assertDateObjectIsValid(taskToEdit.getDateFrom());
         }
-        if(inputs[DATE_TO] != null) {
+        if(inputs[DATE_TO] != null && inputs[DATE_TO] != CLEAR_INFO_INDICATOR) {
             assertDateObjectIsValid(taskToEdit.getDateTo());
         }
-        if(inputs[DEADLINE] != null) {
+        if(inputs[DEADLINE] != null && inputs[DEADLINE] != CLEAR_INFO_INDICATOR) {
             assertDateObjectIsValid(taskToEdit.getDeadline());
         }
 
@@ -1076,7 +1091,7 @@ public class TaskManager implements TaskManagerInterface {
 
 
 
-  //--------------------Methods used more than once start----------------------
+    //--------------------Methods used more than once start----------------------
     /**
      * This method updates undo or redo stack before performing edit operation
      * This method is used by updateStackForEditUnderUndoRedo() and processEditCommand()
@@ -1217,7 +1232,7 @@ public class TaskManager implements TaskManagerInterface {
 
         return taskFound;
     }
-    
+
     public Task getTaskFromTID(int TID) {
         Task taskFound = null;
 
@@ -1276,7 +1291,7 @@ public class TaskManager implements TaskManagerInterface {
             addClashingTasksForReturning(newTask, returningTasks);
         }
     }
-    
+
     private void addClashingTasksForReturning(Task newTask, 
             ArrayList<Task> returningTasks) {
         for(Task existingTask : tasks) {
@@ -1317,7 +1332,7 @@ public class TaskManager implements TaskManagerInterface {
         case STATUS: Collections.sort(tasks, new ComparatorPriority()); break;
         }
     }
-    
+
     /**
      * This method calls SystemHandler to save tasks to the file
      */
@@ -1325,7 +1340,7 @@ public class TaskManager implements TaskManagerInterface {
         SystemHandler handler = SystemHandler.getSystemHandler();
         handler.writeToFile(tasks);
     }
-    
+
     /**
      * This method checks whether the task is a valid task
      * @param task  task to be checked
@@ -1396,7 +1411,7 @@ public class TaskManager implements TaskManagerInterface {
 
         return isOverdue;
     }
-    
+
     /**
      * This method changes the status to be represented by number
      * @param inputs  parsed command containing status to be changed
@@ -1424,18 +1439,18 @@ public class TaskManager implements TaskManagerInterface {
     }
     //--------------------Methods used more than once end----------------------
 
-    
+
 
     //--------------------Assertion methods start----------------------
     private void assertTaskIDIsBiggerThanTen(Task task) {
         assert task.getTID() >= INITIAL_TID;
     }
-    
+
     private void assertDateObjectIsValid(Date dateObject) {
         String dateString = convertToStringFromDate(dateObject);
         assert isDateValid(dateString);
     }
-    
+
     protected boolean isDateValid(String date) {
         boolean isDateValid = DATE_IS_VALID;
 
@@ -1509,7 +1524,7 @@ public class TaskManager implements TaskManagerInterface {
     private void assertDurationalTaskIsValid(Task task) {
         assert isDateFromBeforeDateTo(task);
     }
-    
+
     protected boolean isDateFromBeforeDateTo(Task task) {
         Date dateFrom = task.getDateFrom();
         Date dateTo = task.getDateTo();
@@ -1528,7 +1543,7 @@ public class TaskManager implements TaskManagerInterface {
     private void assertTaskDateNumberIsvalid(Task task) {
         assert isTaskDateNumberValid(task);
     }
-    
+
     protected boolean isTaskDateNumberValid(Task task) {
         //durational task
         if(task.getDateFrom() != null && task.getDateTo() != null && 
