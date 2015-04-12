@@ -29,7 +29,6 @@ public class TaskManager implements TaskManagerInterface {
     public static final int FILTER_TYPE = 8;
 
     private static final String MSG_ERR_NO_SUCH_ID = "The Task ID does not exist.";
-    private static final String MSG_ERR_NO_SUCH_COMMAND = "Flexi Tracker does not recognize this command.";
     private static final String MSG_ERR_LENGTH = "%s allows a maximum length of 30.";
     private static final String MSG_ERR_WRONG_DATE_NUMBER = "The date entered is invalid.";
     private static final String MSG_ERR_WRONG_DATE_DURATION = "The duration entered is invalid. Start Date must be before End Date.";
@@ -42,7 +41,9 @@ public class TaskManager implements TaskManagerInterface {
     private static final String MSG_ERR_NO_SUCH_FILTER = "Tasks cannot be filtered in the requested manner.";
     private static final String MSG_ERR_NO_SUCH_ARRANGE = "The tasks cannot be sorted in this order.";
     private static final String MSG_ERR_FAIL_TO_EDIT = "Failed to edit the task.";
+    private static final String MSG_ERR_NO_SUCH_COMMAND = "No such command exists in Task Manager.";
 
+    
     private static final int URGENT = 1;
     private static final int MAJOR = 2;
     private static final int NORMAL = 3;
@@ -150,7 +151,7 @@ public class TaskManager implements TaskManagerInterface {
 
     public ArrayList<Task> processTM(String[] inputs) 
             throws NoSuchElementException, IllegalArgumentException {
-        COMMAND_TYPE_TASK_MANAGER commandObtained = obtainCommand(inputs[COMMAND_TYPE]);
+        COMMAND_TYPE_TASK_MANAGER commandObtained = getCommand(inputs[COMMAND_TYPE]);
         ArrayList<Task> returningTasks = new ArrayList<Task>();
 
         switch(commandObtained) {
@@ -189,8 +190,6 @@ public class TaskManager implements TaskManagerInterface {
             saveTasksToFile();
             break;
 
-        case invalidTask:
-            throw new NoSuchElementException(MSG_ERR_NO_SUCH_COMMAND);
         }
 
         return returningTasks;
@@ -202,12 +201,12 @@ public class TaskManager implements TaskManagerInterface {
      * @param command  a String received from FlexiParser
      * @return         a COMMAND_TYPE_TASK_MANAGER type of the String command
      */
-    private COMMAND_TYPE_TASK_MANAGER obtainCommand (String command) {
+    public static COMMAND_TYPE_TASK_MANAGER getCommand (String command) {
         COMMAND_TYPE_TASK_MANAGER commandObtained;
         try {
             commandObtained = COMMAND_TYPE_TASK_MANAGER.valueOf(command);
         } catch (IllegalArgumentException e) {
-            commandObtained = COMMAND_TYPE_TASK_MANAGER.invalidTask;
+            throw new IllegalArgumentException(MSG_ERR_NO_SUCH_COMMAND);
         }
 
         return commandObtained;
@@ -983,7 +982,7 @@ public class TaskManager implements TaskManagerInterface {
 
         if(!undoStack.isEmpty()) {
             String[] undoOperation = undoStack.peek();
-            COMMAND_TYPE_TASK_MANAGER commandUndo = obtainCommand(undoOperation[COMMAND_TYPE]);
+            COMMAND_TYPE_TASK_MANAGER commandUndo = getCommand(undoOperation[COMMAND_TYPE]);
 
             switch(commandUndo) {
             case addTask: 
@@ -1044,7 +1043,7 @@ public class TaskManager implements TaskManagerInterface {
 
         if(!redoStack.isEmpty()) {
             String[] redoOperation = redoStack.peek();
-            COMMAND_TYPE_TASK_MANAGER commandUndo = obtainCommand(redoOperation[COMMAND_TYPE]);
+            COMMAND_TYPE_TASK_MANAGER commandUndo = getCommand(redoOperation[COMMAND_TYPE]);
 
             switch(commandUndo) {
             case addTask:
