@@ -52,11 +52,13 @@ public class DisplayProcessor {
 	
 	
 	private UserInterface window;
-	
+
+	//@author A0108385B
 	public DisplayProcessor(UserInterface window) {
 		this.window = window;
 	}
 	
+	//@author A0108385B
 	/**
 	 * This method calls UI to display the error message to user
 	 * @param message	Error message to be displayed to user
@@ -64,7 +66,8 @@ public class DisplayProcessor {
 	public void displayErrorToUI(String message) {
 		window.displayMsg(message, INDEX_EXECUTION_ERROR);
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * This method calls UI to display tasks list saved from last login
 	 * @param taskList Tasks list to be shown to user 
@@ -72,14 +75,16 @@ public class DisplayProcessor {
 	public void displayTaskfromLastLogin(ArrayList<Task> taskList) {
 		window.displayTaskTable(taskList, taskList, INDEX_EXECUTION_SUCCESS);
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * This method calls UI to display the result of changing save location
 	 */
 	public void displayMoveFileResultToUI(String savePath) {
 		window.displayMsg(String.format(MSG_SAVE_SUCCESS, savePath), INDEX_EXECUTION_SUCCESS);
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * @param command		Command that has been executed
 	 * @param result		Affected tasks by the executed command
@@ -101,8 +106,10 @@ public class DisplayProcessor {
 			
 	}
 	
+	//MA CONG: turn your task manager get command function to public static, this method need to use.
+	//@author A0108385B
 	/**
-	 * MA CONG: turn your task manager get command function to public static, this method need to use.
+	 * 
 	 * @param command		Command that has been executed
 	 * @param result		Affected tasks by the executed command
 	 * @return				String array of messages to be displayed
@@ -164,6 +171,7 @@ public class DisplayProcessor {
 		return message;
 	}
 
+	//@author A0108385B
 	/**
 	 * @param command		Command that has been executed
 	 * @param result		Affected tasks by the executed command
@@ -192,7 +200,8 @@ public class DisplayProcessor {
 			}
 		}
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * @param command	Command that has been executed
 	 * @param result	Affected keywords by the executed command
@@ -206,7 +215,8 @@ public class DisplayProcessor {
 		}
 			
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * @param command	Command that has been executed
 	 * @param result	Affected keywords by the executed command
@@ -233,7 +243,8 @@ public class DisplayProcessor {
 		}
 		return message;
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * @param command	Command that has been executed
 	 * @param result	Affected templates by the executed command
@@ -249,6 +260,7 @@ public class DisplayProcessor {
 		
 	}
 
+	//@author A0108385B
 	/**
 	 * @param message	Message to be displayed
 	 * @return			True if no message is null
@@ -257,8 +269,7 @@ public class DisplayProcessor {
 		return message != null;
 	}
 	
-	
-	
+	//@author A0108385B
 	/**
 	 * @param command	Command that has been executed
 	 * @param result	Affected templates by the executed command
@@ -300,6 +311,7 @@ public class DisplayProcessor {
 		return message;
 	}
 
+	//@author A0108385B
 	/**
 	 * @param result	ArrayList of templates to be viewed
 	 * @return			True if there are some templates to view
@@ -308,6 +320,10 @@ public class DisplayProcessor {
 		return result.size() == SIZE_ZERO;
 	}
 
+	//@author A0108385B
+	/**
+	 * This method calls UI to display help list to user
+	 */
 	public void displayHelptoUser() {
 		window.displayText(window.HELP, true);
 		
