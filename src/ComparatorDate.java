@@ -1,6 +1,14 @@
 import java.util.Comparator;
 import java.util.Date;
 
+/**
+ * This comparator compares dates between tasks. 
+ * If the task has only one date object, it takes that only date object for comparison; 
+ * if the task has two date objects, it takes the starting date object for comparison. 
+ * For tasks without a date object, they will be put after those with a date object.
+ * When there is a tie, tasks will be compared by their IDs.
+ *
+ */
 //@author A0118892U
 public class ComparatorDate implements Comparator<Task> {
 
