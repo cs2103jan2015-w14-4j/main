@@ -6,9 +6,6 @@ import java.text.ParseException;
 
 //@author A0108385B
 public class SystemHandler {
-	
-
-	
 	private static final String MSG_LOG_USER_COMMAND = "user enters: %s";
 	
 	private static final String MSG_LOG_PARSER = "Parser understood the command as the following: \"%s\"";
@@ -59,7 +56,6 @@ public class SystemHandler {
 	private UserInterface 	window;
 	private FlexiParser 	parser;
 	private DisplayProcessor displayProcessor;
-
 	 
 	//Singleton Pattern on Systemhandler
 	public static SystemHandler system;
@@ -70,6 +66,7 @@ public class SystemHandler {
 			system = new SystemHandler();
 			system.initializeSystem();
 		}
+		
 		return system;
 	}
 
@@ -79,7 +76,6 @@ public class SystemHandler {
 	 * @param args	Parameter from input - not applicable
 	 */
 	public static void main(String[] args) {
-
 		system = getSystemHandler();
 		
 		system.activateUI();
@@ -90,7 +86,6 @@ public class SystemHandler {
 	 * It activates user interface window by calling the Runnable user interface 
 	 */
 	private void activateUI() {
-		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -121,9 +116,7 @@ public class SystemHandler {
 	 * @param userInput
 	 */
 	public void rawUserInput(String userInput) {
-		
 		try {
-			
 			logfile.info(String.format(MSG_LOG_USER_COMMAND, userInput));
 			
 			String[] parsedCommand = parser.parseText(userInput);
@@ -154,10 +147,8 @@ public class SystemHandler {
 				case INDEX_COMMAND_SAVE:
 					externalStorage.saveToAnotherLocation(parsedCommand[INDEX_SAVE_NEW_PATH]);
 					displayProcessor.displayMoveFileResultToUI(parsedCommand[INDEX_SAVE_NEW_PATH]);
-					break;
-					
+					break;		
 			}
-			
 		} catch(ParseException e) {
 			displayProcessor.displayErrorToUI(e.getMessage());
 			logfile.warning(String.format(e.getMessage()));
@@ -180,7 +171,6 @@ public class SystemHandler {
 			displayProcessor.displayErrorToUI(MSG_ERR_UNKNOWN);
 			logfile.severe(e.getMessage());
 		}
-		
 	}
 	
 	 
@@ -200,7 +190,6 @@ public class SystemHandler {
 	 * Refer to Task Manager to find out the length and meaning of each string by checking the index constant.
 	 */
 	public void addTaskFromTemplate(String[] fetchedTask) {
-		
 		try {		
 			executeTaskManager(fetchedTask);
 		} catch (Exception e) {
@@ -267,11 +256,8 @@ public class SystemHandler {
 				}
 			}
 			
-			
 			throw new IllegalArgumentException(MSG_ERR_NO_SUCH_COMMAND);
-		}
-		
-			
+		}	
 	}
 	
 
@@ -281,7 +267,6 @@ public class SystemHandler {
 	 * @param fileName File location
 	 */
 	private void initializeSystem() {
-		
 		myKeyword = new KeywordManager();
 		logfile =  new CentralizedLog();
 		myTemplates = new TemplateManager();
@@ -342,17 +327,14 @@ public class SystemHandler {
     		
     		if(parsedCommand[i] == null) {
     			str += STRING_NULL;
-    			
     		} else if(parsedCommand[i].length() == SIZE_ZERO) {
     			str += STRING_EMPTY;
-    			
     		} else {
-    			str += parsedCommand[i];
-    			
+    			str += parsedCommand[i];	
     		}
-    		
     		str += STRING_SEPERATOR;
     	}
+    	
 		return str;
 	}
 
@@ -382,10 +364,8 @@ public class SystemHandler {
 				
 			case INDEX_COMMAND_SAVE:
 				assert(parsedCommand.length == LENGTH_COMMAND_SAVE);
-				break;
-				
+				break;		
 		}
-		
 	}
 
 	 
@@ -401,8 +381,7 @@ public class SystemHandler {
 		ArrayList<Task> fullList = myTaskList.processTM(COMMAND_GET_TASK_LIST);
 		if(result != null) {
 			displayProcessor.displayTMResult(command, result, fullList);
-		}
-			
+		}	
 	}
 
 	 
@@ -415,10 +394,9 @@ public class SystemHandler {
 	 */
 	private void executeKeywordManager(String[] command) 
 			throws NoSuchElementException, IllegalArgumentException {
-		
 		String[][] result = myKeyword.processKeywordCommand(command);
-		displayProcessor.displayKeywordResult(command, result);
 		
+		displayProcessor.displayKeywordResult(command, result);
 	}
 
 	 
@@ -431,8 +409,8 @@ public class SystemHandler {
 	 */
 	private void executeTemplateManager(String[] command) 
 			throws IllegalArgumentException, NoSuchElementException {
-
 		ArrayList<Task> result = myTemplates.processTemplateCommand(command);
+		
 		if(result != null) {
 			ArrayList<String> tempNames = new ArrayList<String>();
 			if(command[INDEX_COMMAND_TYPE].equals(COMMAND_DELETE_TEMPLATE)) {
@@ -441,8 +419,6 @@ public class SystemHandler {
 				tempNames = myTemplates.getTemplateNames(result);		
 			}
 			displayProcessor.displayTemplateResult(command, tempNames, result);
-		}
-			
+		}	
 	}
-
 }
