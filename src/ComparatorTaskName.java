@@ -1,5 +1,10 @@
 import java.util.Comparator;
 
+/**
+ * This comparator compares task by their names in alphabetical order.
+ * When there is a tie, their task IDs will be compared.
+ *
+ */
 //@author A0118892U
 public class ComparatorTaskName implements Comparator<Task> {
     
