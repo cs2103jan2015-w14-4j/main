@@ -1329,7 +1329,7 @@ public class TaskManager implements TaskManagerInterface {
         case TASK_NAME: Collections.sort(tasks, new ComparatorTaskName()); break;
         case DATE_FROM: Collections.sort(tasks, new ComparatorDate()); break;
         case LOCATION: Collections.sort(tasks, new ComparatorLocation()); break;
-        case STATUS: Collections.sort(tasks, new ComparatorPriority()); break;
+        case STATUS: Collections.sort(tasks, new ComparatorStatus()); break;
         }
     }
 

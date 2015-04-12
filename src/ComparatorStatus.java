@@ -1,7 +1,7 @@
 import java.util.Comparator;
 
 //@author A0118892U
-public class ComparatorPriority implements Comparator<Task> {
+public class ComparatorStatus implements Comparator<Task> {
 
     public int compare(Task task1, Task task2) {
         if(task1.getStatus() < task2.getStatus()) {
