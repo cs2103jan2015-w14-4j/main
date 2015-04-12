@@ -1,31 +1,18 @@
-import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
 
+//@author A0101735R 
+
+//based on RowTableModel
 
 public class TaskTableModel extends AbstractTableModel {
 
-	/**
-	 * 
-	 */
 	private static ArrayList<String[]>taskArrayString;
 	protected ArrayList<String> columnNames;
 	protected Class[] columnClasses;
 	protected Boolean[] isColumnEditable;
 	private Class rowClass = Object.class;
 	private boolean isModelEditable = true;
-
-	private List<Color> rowColours = Arrays.asList(
-			Color.GREEN,
-			Color.CYAN
-			);
-
 
 	private static final long serialVersionUID = 1L;
 
@@ -44,7 +31,6 @@ public class TaskTableModel extends AbstractTableModel {
 	 *						of the new columns
 	 *  @param rowClass     the class of row data to be added to the model
 	 */
-
 	public TaskTableModel(ArrayList<String[]> modelData, ArrayList<String> columnNames, Class rowClass)
 	{
 		setDataAndColumnNames(modelData, columnNames);
@@ -65,39 +51,19 @@ public class TaskTableModel extends AbstractTableModel {
 		this.rowClass = rowClass;
 	}
 
-	/*
-	public void setColumnClass(int column, Class columnClass)
-	{
-		columnClasses[column] = columnClass;
-		fireTableRowsUpdated(0, getRowCount() - 1);
-	}
-	*/
-
 	public Class getColumnClass(int column)
 	{
 		Class columnClass = null;
 
 		//  Get the class, if set, for the specified column
-
 		if (column < columnClasses.length)
 			columnClass = columnClasses[column];
 
 		//  Get the default class
-
 		if (columnClass == null)
 			columnClass = super.getColumnClass(column);
 
 		return columnClass;
-	}
-
-
-	public void setRowColour(int row, Color c) {
-		System.out.println("rowCOlours?" + rowColours);
-		rowColours.set(row, c);
-		fireTableRowsUpdated(row, row);
-	}
-	public Color getRowColour(int row) {
-		return rowColours.get(row);
 	}
 
 	@Override
@@ -150,9 +116,11 @@ public class TaskTableModel extends AbstractTableModel {
 	}
 
 
-
+	/**
+	 * Returns value of cell at stated location
+	 */
 	@Override
-	public Object getValueAt(int rowIndex, int columnIndex) {
+	public String getValueAt(int rowIndex, int columnIndex) {
 		String[] task = taskArrayString.get(rowIndex);
 		String value = null;
 		value = task[columnIndex];
@@ -169,7 +137,13 @@ public class TaskTableModel extends AbstractTableModel {
 	{
 		insertRow(getRowCount(), rowData);
 	}
-
+	
+	/**
+	 *  Inserts a row of data at the row specified.
+	 *  Notification of the row being added will be generated.
+	 *
+	 * @param   rowData		 data of the row being added
+	 */
 	public void insertRow(int row, String[] rowData)
 	{
 		taskArrayString.add(row, rowData);
@@ -182,7 +156,7 @@ public class TaskTableModel extends AbstractTableModel {
 	}
 
 	/**
-	 *  Insert multiple rows of data at the <code>row</code> location in the model.
+	 *  Insert multiple rows of data at the row specified.
 	 *  Notification of the row being added will be generated.
 	 *
 	 * @param   row	  row in the model where the data will be inserted
@@ -193,16 +167,27 @@ public class TaskTableModel extends AbstractTableModel {
 		taskArrayString.addAll(row, rowList);
 		fireTableRowsInserted(row, row + rowList.size() - 1);
 	}
-
+	
+	/**
+	 * Removes rows between start and end.
+	 * 
+	 * @param start
+	 * @param end
+	 */
 	public void removeRowRange(int start, int end)
 	{
 		taskArrayString.subList(start, end ).clear();
 		fireTableDataChanged();
 	}
-
+	
+	/**
+	 * Removes rows specified
+	 * *Unused*
+	 * 
+	 * @param rows
+	 */
 	public void removeRows(int... rows)
 	{
-
 		for (int i = rows.length - 1; i >= 0; i--)
 		{
 			int row = rows[i];
@@ -210,31 +195,22 @@ public class TaskTableModel extends AbstractTableModel {
 			fireTableRowsDeleted(row, row);
 		}
 	}
-
+	
+	/**
+	 * Refreshes whole table with new input data.
+	 * 
+	 * @param tableData
+	 */
+	public void refreshTable(ArrayList<String[]> tableData){
+		ArrayList<String[]> newData = new ArrayList<String[]>(tableData);
+		clearTable();
+		insertRows(0, newData);
+	}
+	
 	public void clearTable()
 	{
 		removeRowRange(0 ,getRowCount());
 	}
-
-
-
-	public void refreshTable(ArrayList<String[]> tableData){
-
-		ArrayList<String[]> newData = new ArrayList<String[]>(tableData);
-		clearTable();
-		insertRows(0, newData);
-
-
-	}
-
-
-	/*
-      public void setValueAt(Object aValue, int rowIndex, int columnIndex){
-
-    	  taskArray.get(rowIndex).get(columnIndex) = aValue;
-    	 fireTableCellUpdated(rowIndex, columnIndex); 
-      }
-	 */
 
 }     
 
