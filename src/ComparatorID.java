@@ -1,5 +1,9 @@
 import java.util.Comparator;
 
+/**
+ * This comparator compares task by their ID
+ *
+ */
 //@author A0118892U
 public class ComparatorID implements Comparator<Task> {
 
