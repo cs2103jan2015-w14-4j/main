@@ -103,11 +103,14 @@ public class Task {
 	}
 
 	//Should be removed use setter below instead
-	 
+	
 	public void setPriority(int priority) {
 		this.priority = priority;
 	}
 
+	public void setStatue(int status) {
+		this.status = status;
+	}
 	
 	//Update Status ************************
 	 
