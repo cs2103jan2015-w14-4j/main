@@ -44,19 +44,24 @@ public class FlexiParser {
     private static final int TASK_DETAILS_INDEX = 7;
     private static final int TASK_STATUS_INDEX = 8;
 
+    private static final int KEYWORD_NAME_INDEX = 1;
+    private static final int KEYWORD_DATE_FROM_INDEX = 2;
+    private static final int KEYWORD_DATE_TO_INDEX = 3;
+    private static final int KEYWORD_KEY = 1;
+    
     private static final int START_TITLE_INDEX = 1;
     private static final int START_STATUS_INDEX = 7;
     private static final int TO_ADD_INDEX = 1;
     private static final int DATE_INDEX = 0;
-    private static final int KEYWORD_KEY = 1;
+    
     private static final int STORE_SAVE_INDEX = 1;
-
     private static final int KEY_NOT_PRESENT = -1;
 
     private static final int DAY_INDEX = 0;
     private static final int MONTH_INDEX = 1;
     private static final int YEAR_INDEX = 2;
-
+    
+    private static final int INDEX_NOT_EXIST = -1;
     private static final int NEW_KEYWORD_INDEX = 1;
     private static final int OLD_KEYWORD_INDEX = 2;
     private static final int CORRECT_LENGTH_DELETE_KEYWORD = 2;
@@ -66,7 +71,14 @@ public class FlexiParser {
     private static final int CORRECT_LENGTH_CLEAR_ATTR = 2;
     private static final int CORRECT_LENGTH_MARK_TASK = 2;
     private static final int CORRECT_LENGTH_ADD_TEMPLATE = 4;
-
+    private static final int CORRECT_LENGTH =2;
+    private static final int CORRECT_LENGTH_ADD_KEYWORD =3;
+    
+    private static final int CONSTANT_START = 0;
+    private static final int CONSTANT_EXIST = 1;
+    private static final int CONSTANT_SHIFT = 1;
+    private static final int CONSTANT_NO_LIMIT = -1;
+    
     private static final String DATE_FROM = "from";
     private static final String DATE_TO = "to";
     private static final String DATE_ON = "on";
@@ -117,17 +129,17 @@ public class FlexiParser {
     public static final int KEYWORD_LENGTH = 3;
     public static final int CHANGE_LOCATION_LENGTH = 2;
     public static final int HELP_LENGTH = 1;
-    private KeywordManager keywords;
+   // private KeywordManager keywords;
 
-    public FlexiParser(KeywordManager keywords) {
-        this.keywords = keywords;
+    public FlexiParser(/*KeywordManager keywords*/) {
+        //this.keywords = keywords;
     }
 
     //@author A0116514N
     public String[] parseText(String userInput) throws IllegalArgumentException {
         inputArray = userInput.split("\\s+");
         String command = inputArray[COMMAND_TYPE_INDEX];
-        command = keywords.keywordMatching(command);
+        //command = keywords.keywordMatching(command);
 
         if(command == NOT_EXIST) {
             throw new IllegalArgumentException(String.format(MSG_ERR_UNRECOGNIZED_COMMAND, inputArray[COMMAND_TYPE_INDEX]));
@@ -254,8 +266,8 @@ public class FlexiParser {
 
         outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
 
-        for(int i = 2; i < KEYWORDS_TWO_TASK.length; i++) {
-            for(int j = 0; j < inputArray.length; j++) {
+        for(int i = KEYWORD_DATE_FROM_INDEX; i < KEYWORDS_TWO_TASK.length; i++) {
+            for(int j = CONSTANT_START; j < inputArray.length; j++) {
                 int indexOfOne = indexOfKey(KEYWORDS_ONE_TASK,inputArray[j],KEYWORDS_ONE_TASK[i]);
                 int indexOfTwo = indexOfKey(KEYWORDS_TWO_TASK,inputArray[j],KEYWORDS_TWO_TASK[i]);
 
@@ -289,8 +301,8 @@ public class FlexiParser {
 
         outputArray[TASK_ID_INDEX] = tempName;	
         outputArray[TASK_NAME_INDEX] = NOT_EXIST;
-        for(int i = 2; i < KEYWORDS_ONE_TASK.length; i++) {
-            int j = i + 1;
+        for(int i = KEYWORD_DATE_FROM_INDEX; i < KEYWORDS_ONE_TASK.length; i++) {
+            int j = i + CONSTANT_SHIFT;
             String valueTemplate = extractAttribute(inputArray, i,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
             if(isDateTime(i,valueTemplate) && !isClearAttribute(valueTemplate)) {
                 valueTemplate = flipDate(valueTemplate);
@@ -321,8 +333,8 @@ public class FlexiParser {
 
         outputArray[TASK_ID_INDEX] = templateTitle;	
         outputArray[TASK_NAME_INDEX] = NOT_EXIST;
-        for(int i = 2; i < KEYWORDS_ONE_TASK.length; i++) {
-            int j = i + 1;
+        for(int i = KEYWORD_NAME_INDEX; i < KEYWORDS_ONE_TASK.length; i++) {
+            int j = i + CONSTANT_SHIFT;
             String valueTemplate = extractAttribute(inputArray, i,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
             if(isDateTime(i,valueTemplate) && !isClearAttribute(valueTemplate)) {
                 valueTemplate = flipDate(valueTemplate);
@@ -392,19 +404,17 @@ public class FlexiParser {
      */
     //@author A0116514N
     private void addKeyword(String[] outputArray) throws IllegalArgumentException {
-        for(int i = 0; i < inputArray.length;i++) {
-            if(inputArray[i].equals(KEYWORD_KEYWORD) && inputArray.length>3){
-                outputArray[NEW_KEYWORD_INDEX] = inputArray[i-1];
-                outputArray[OLD_KEYWORD_INDEX] = inputArray[i+1];
+        for(int i = CONSTANT_START; i < inputArray.length;i++) {
+            if(inputArray[i].equals(KEYWORD_KEYWORD) && inputArray.length > CORRECT_LENGTH_ADD_KEYWORD){
+                outputArray[NEW_KEYWORD_INDEX] = inputArray[i-CONSTANT_SHIFT];
+                outputArray[OLD_KEYWORD_INDEX] = inputArray[i+CONSTANT_SHIFT];
             }
         }
-
-        //Ma Cong what is 1 and 2
-        if(outputArray[1] == NOT_EXIST && outputArray[2] == NOT_EXIST ) {
+        if(outputArray[NEW_KEYWORD_INDEX] == NOT_EXIST && outputArray[OLD_KEYWORD_INDEX] == NOT_EXIST ) {
             throw new IllegalArgumentException(MSG_ERR_ID_ADD_KEYWORD);
         }
     }
-
+   
     /**
      * Function to parse user input requesting to search available tasks, in desired format
      * @param outputArray
@@ -412,7 +422,7 @@ public class FlexiParser {
     //@author A0116514N
     private void searchTask(String[] outputArray) throws IllegalArgumentException {
         outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
-        if(inputArray.length < 2) {
+        if(inputArray.length < CORRECT_LENGTH) {
             throw new IllegalArgumentException(MSG_ERR_ID_SEARCH);
         }
 
@@ -434,7 +444,7 @@ public class FlexiParser {
             outputArray[TASK_NAME_INDEX] = searchTerm;	
         }
 
-        for(int i = 3; i < KEYWORDS_ONE_TASK.length; i++) {
+        for(int i = KEYWORD_DATE_TO_INDEX; i < KEYWORDS_ONE_TASK.length; i++) {
             outputArray[i] = NOT_EXIST;
         }
     }
@@ -445,11 +455,10 @@ public class FlexiParser {
      */
     //@author A0116514N
     private void viewTask(String[] outputArray) {
-        //WARNING: NO CHECKING VALIDITY
         String viewTitle = NOT_EXIST;
         outputArray[TASK_ID_INDEX] = TID_NOT_EXIST;
-        if(inputArray.length <= 1 || inputArray[START_TITLE_INDEX].equals(VIEW_BY) || inputArray.length <= 1) {
-            //MA CONG  what is this if doing here. it has no body
+        if(inputArray.length <= CONSTANT_EXIST || inputArray[START_TITLE_INDEX].equals(VIEW_BY) || inputArray.length <= CONSTANT_EXIST) {
+            
         } else if(inputArray[START_TITLE_INDEX].contains(DOUBLE_QUOTE_STRING)) {
             viewTitle = extractTextWithQuotes(inputArray,START_TITLE_INDEX);
         } else {
@@ -457,7 +466,7 @@ public class FlexiParser {
         }
 
         outputArray[TASK_STATUS_INDEX] = viewTitle;
-        String value =extractAttribute(inputArray,START_TITLE_INDEX,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
+        String value = extractAttribute(inputArray,START_TITLE_INDEX,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
         if(value!=(NOT_EXIST)) {
             outputArray[TASK_NAME_INDEX] = value.trim();
         } else {
@@ -472,14 +481,13 @@ public class FlexiParser {
      */
     //@author A0116514N
     private void deleteTask(String[] outputArray) throws IllegalArgumentException {
-        //WARNING: NO CHECKING VALIDITY
-        if(inputArray.length<2) {
+        if(inputArray.length < CORRECT_LENGTH) {
             throw new IllegalArgumentException(MSG_ERR_ID_DELETE_TASK);
         }
 
-        outputArray[TASK_ID_INDEX] = inputArray[1];
-        for(int i = 1; i < KEYWORDS_ONE_TASK.length; i++) {
-            int j = i + 1;
+        outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
+        for(int i = KEYWORD_NAME_INDEX; i < KEYWORDS_ONE_TASK.length; i++) {
+            int j = i + CONSTANT_SHIFT;
             outputArray[j] = NOT_EXIST;
         }
     }
@@ -497,8 +505,8 @@ public class FlexiParser {
 
         outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
         outputArray[TASK_NAME_INDEX] = NOT_EXIST;
-        for(int i = 1; i < KEYWORDS_ONE_TASK.length; i++) {
-            int j = i + 1;
+        for(int i = KEYWORD_NAME_INDEX; i < KEYWORDS_ONE_TASK.length; i++) {
+            int j = i + TASK_ID_INDEX;
             String value = extractAttribute(inputArray, i,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
 
             if(isDateTime(i,value) && !isClearAttribute(value)) {
@@ -532,8 +540,8 @@ public class FlexiParser {
 
         outputArray[TASK_NAME_INDEX] = title;
 
-        for(int i = 2; i < KEYWORDS_ONE_TASK.length; i++) {
-            int j = i + 1;
+        for(int i = KEYWORD_DATE_FROM_INDEX; i < KEYWORDS_ONE_TASK.length; i++) {
+            int j = i + CONSTANT_SHIFT;
             String value = extractAttribute(inputArray, i,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
 
             if(isDateTime(i,value)) {
@@ -547,12 +555,12 @@ public class FlexiParser {
 
     //@author A0116514N
     private int indexOfKey(String[] keyWords,String input,String matched) {
-        for(int i = 0; i < keyWords.length; i++) {
+        for(int i = CONSTANT_START; i < keyWords.length; i++) {
             if(matched.equals(input.toLowerCase()) && keyWords[i].equals(matched)) {
                 return i;
             }
-        }//Ma Cong what is this -1??
-        return -1;
+        }
+        return INDEX_NOT_EXIST;
     }
 
     //@author A0116514N
@@ -568,8 +576,8 @@ public class FlexiParser {
 
     //@author A0116514N
     private int getCommandIndex(String command) {
-        int index = -1;;
-        for(int i = 0; i < commandArray.length; i++) {
+        int index = INDEX_NOT_EXIST;
+        for(int i = CONSTANT_START; i < commandArray.length; i++) {
             if(command.equals(commandArray[i])) {
                 index = i;
                 break;
@@ -595,7 +603,7 @@ public class FlexiParser {
     private String extractText(String[] inputArr,String[] keyArrOne,String[] keyArrTwo) {
         StringBuilder strb = new StringBuilder();
         
-        for(int i=1;i<inputArr.length;i++) {
+        for(int i=CONSTANT_EXIST;i<inputArr.length;i++) {
             if(!isKeyWord(inputArr[i],keyArrOne,keyArrTwo) && i < inputArr.length ) { //tempArr = keyword
                 strb.append(inputArr[i]);
                 strb.append(" ");
@@ -607,20 +615,20 @@ public class FlexiParser {
             }
         }
         
-        return strb.toString().trim() ;   	
+        return strb.toString().trim();   	
     }
 
     //@author A0116514N
     private String extractTextWithQuotes(String[] input,int index) {
         String attribute = NOT_EXIST;
         StringBuilder strb = new StringBuilder();
-        int start = -1;
-        int end = -1;
+        int start = INDEX_NOT_EXIST;
+        int end = INDEX_NOT_EXIST;
         int i = index;
-        int j = 0;
+        int j = CONSTANT_START;
         
-        while(start < 0) {
-            if(input[i].split(DOUBLE_QUOTE_STRING, -1).length > 2) {
+        while(start < CONSTANT_EXIST) {
+            if(input[i].split(DOUBLE_QUOTE_STRING, CONSTANT_NO_LIMIT).length > CORRECT_LENGTH) {
                 start = i;
                 end = i;
             }
@@ -630,8 +638,8 @@ public class FlexiParser {
             i++;
         }
         
-        j = start+1;
-        while(end < 0) {
+        j = start + CONSTANT_SHIFT;
+        while(end < CONSTANT_EXIST) {
             if(input[j].contains(DOUBLE_QUOTE_STRING)) {
                 end = j;
             }
@@ -669,10 +677,9 @@ public class FlexiParser {
         String attribute = NOT_EXIST;
         boolean openQuote = false;
         
-        for(int i = 0; i < input.length; i++) {
+        for(int i = CONSTANT_START; i < input.length; i++) {
             String checkWord = input[i].toLowerCase(); 
             if(input[i].contains(DOUBLE_QUOTE_STRING)) {
-                //if quote is already open(true) close it
                 if(openQuote) {
                     openQuote = false;
                 } else {
@@ -685,7 +692,7 @@ public class FlexiParser {
             }
 
             if(checkWord.equals(keyword1) || checkWord.equals(keyword2) && checkWord!= NOT_EXIST) {
-                int index = i+1;
+                int index = i + CONSTANT_SHIFT;
 
                 if((checkWord.equals("by") || checkWord.equals("taskname") || checkWord.equals("det") || checkWord.equals("at") || checkWord.equals("details") || checkWord.equals("location")) && input[index].contains(DOUBLE_QUOTE_STRING)) {
 
@@ -734,8 +741,8 @@ public class FlexiParser {
      */
     //@author A0116514N
     private String extractFromSingleQuote(String preprocessed) {
-        int start = 1;
-        return preprocessed.substring(start,preprocessed.length()-2).trim();
+        int start = CONSTANT_EXIST;
+        return preprocessed.substring(start,preprocessed.length()-CORRECT_LENGTH).trim();
     }
 
     /**
@@ -747,7 +754,7 @@ public class FlexiParser {
      */
     //@author A0116514N
     private void storeDateTime(String[] outputArr,String value,int index) {
-        int j = index + 1;
+        int j = index + CONSTANT_SHIFT;
         String keyword = EMPTY_STRING;
         
         if((KEYWORDS_ONE_TASK[index].equals(DATE_FROM) || KEYWORDS_ONE_TASK[index].equals(DATE_TO) || KEYWORDS_ONE_TASK[index].equals(DATE_ON)) && value != NOT_EXIST) {
@@ -758,7 +765,7 @@ public class FlexiParser {
                 throw new  NullPointerException(String.format(MSG_ERR_NOT_DATE,keyword));
             }
 
-            outputArr[j] = dateConverter(dateList.get(0)).trim();
+            outputArr[j] = dateConverter(dateList.get(CONSTANT_START)).trim();
         } 
     }
 
@@ -801,7 +808,7 @@ public class FlexiParser {
         ArrayList<Date> dateList = new ArrayList<Date>();
 
         for(DateGroup group:groups)  {
-            Date dates = group.getDates().get(0);   
+            Date dates = group.getDates().get(CONSTANT_START);   
             dateList.add(dates);        
         }
         
@@ -829,7 +836,7 @@ public class FlexiParser {
      */
     //@author A0116514N
     private boolean isKeyWord(String str,String[] keywordsOne,String[] keywordsTwo) {
-        for(int i = 0; i < keywordsOne.length; i++) {
+        for(int i = CONSTANT_START; i < keywordsOne.length; i++) {
             str = str.toLowerCase();
             if(str.equals(keywordsOne[i]) || str.equals(keywordsTwo[i])) {
                 return true;
@@ -837,5 +844,32 @@ public class FlexiParser {
         }
         
         return false;
+    }
+    
+ public static void main(String[] args) {
+    
+    	
+    	
+    	FlexiParser test1 = new FlexiParser();
+    	
+    	
+    	String[] temp = test1.parseText("searchTask adad ");
+    
+    	
+    	
+    	
+    		
+    	for(int i=0;i<temp.length;i++) {
+    		
+    		System.out.print(temp[i]+"|");
+    		
+    	}
+    	//System.out.println();
+    	//System.out.println();
+    	
+
+    
+
+    	
     }
 }
