@@ -457,7 +457,7 @@ public class TaskManager implements TaskManagerInterface {
 
         //sets previously overdue tasks back to normal priority
         if(isTaskStatusOverdue(taskToEdit) && !isTaskOverdue(taskToEdit)) {
-            taskToEdit.setPriority(NORMAL);
+            taskToEdit.setStatus(NORMAL);
         }
 
         if(inputs[DATE_FROM] != null && inputs[DATE_FROM] != CLEAR_INFO_INDICATOR) {
@@ -501,7 +501,7 @@ public class TaskManager implements TaskManagerInterface {
 
     private void editTaskPriority(String[] inputs, Task task) {
         int newPriority = convertToIntType(inputs[STATUS]);
-        task.setPriority(newPriority);
+        task.setStatus(newPriority);
     }
 
     private void editTaskDetails(String[] inputs, Task task) {
@@ -635,11 +635,11 @@ public class TaskManager implements TaskManagerInterface {
     }
 
     private void clearTaskPriority(Task task) {
-        task.setPriority(NORMAL);
+        task.setStatus(NORMAL);
     }
 
     private boolean isTaskStatusOverdue(Task task) {
-        return task.getPriority() == OVERDUE;
+        return task.getStatus() == OVERDUE;
     }
     //----------Edit method ends----------
 
@@ -666,7 +666,7 @@ public class TaskManager implements TaskManagerInterface {
     private void changeIncompleteTaskStatusToOverdue() {
         for(Task task: tasks) {
             if(isTaskOverdue(task) && !isTaskComplete(task)) {
-                task.setPriority(OVERDUE);
+                task.setStatus(OVERDUE);
             }
         }
     }
@@ -688,7 +688,7 @@ public class TaskManager implements TaskManagerInterface {
         } else {
             int filterType = getFileterOption(inputs);
             for(Task task: tasks) {
-                if(task.getPriority() == filterType)
+                if(task.getStatus() == filterType)
                     returningTasks.add(task.clone());
             }
         }
@@ -1168,7 +1168,7 @@ public class TaskManager implements TaskManagerInterface {
             strArray[DETAILS] = null;
         }
 
-        strArray[STATUS] = convertToStringFromInt(task.getPriority());
+        strArray[STATUS] = convertToStringFromInt(task.getStatus());
     }
 
     /**
@@ -1315,7 +1315,7 @@ public class TaskManager implements TaskManagerInterface {
 
 
     private boolean isTaskComplete(Task task) {
-        return task.getPriority() == COMPLETE;
+        return task.getStatus() == COMPLETE;
     }
 
     /**

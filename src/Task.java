@@ -30,14 +30,9 @@ public class Task {
     public static final int INDEX_DATE_TO = 3;
     public static final int INDEX_LOCATION = 4;
     public static final int INDEX_DETAILS = 5;
-    public static final int INDEX_PRIORITY = 6;
     public static final int INDEX_STATUS = 6;
     public static final int DEFAULT_STRING_SIZE = 7;
     private static final String ZERO_TIME = " 00:00";
-
-	private static final int COMPLETE_TASK = 1;
-	private static final int INCOMPLETE_TASK = 2;
-	private static final int DISCARDED_TASK = 3;
 	
 	private int TID;
 	private String taskName;
@@ -46,14 +41,12 @@ public class Task {
 	private Date deadline;
 	private String location;
 	private String details;
-	private int priority; //To be replaced by status
 	private int status;
 	
 
 	//Constructor 
-	//To be updated - remove priority
 	public Task(int TID, String taskName, Date dateFrom, 
-			Date dateTo, Date deadline, String location, String details, int priority) {
+			Date dateTo, Date deadline, String location, String details, int status) {
 		this.TID = TID;
 		this.taskName = taskName;
 		this.dateFrom = dateFrom;
@@ -61,8 +54,7 @@ public class Task {
 		this.deadline = deadline;
 		this.location = location;
 		this.details = details;
-		this.priority = priority;
-		this.status = priority;
+		this.status = status;
 	}
 	
 	
@@ -102,18 +94,12 @@ public class Task {
 		this.details = details;
 	}
 
-	//Should be removed use setter below instead
-	
-	public void setPriority(int priority) {
-		this.priority = priority;
-	}
-
-	public void setStatue(int status) {
+	public void setStatus(int status) {
 		this.status = status;
 	}
 	
 	//Update Status ************************
-	 
+	//might need to remove later
 	public void setUrgent() {
 		this.status = INDEX_STATUS_URGENT;
 	}
@@ -147,7 +133,7 @@ public class Task {
 	public void setCasual() {
 		this.status = INDEX_STATUS_CASUAL;
 	}
-		
+	//might need to remove later
 	//GETTER ***********************************
 
 	 
@@ -214,18 +200,13 @@ public class Task {
 	}
 
 	 
-	public int getPriority() {
-		return priority;
-	}
-
-	 
 	public int getStatus() {
 		return status;
 	}
 
 	 
 	public String getStatusString() {
-		switch(priority) {
+		switch(status) {
 			case INDEX_STATUS_URGENT:
 				return STRING_STATUS_URGENT;
 			case INDEX_STATUS_MAJOR:
@@ -271,16 +252,13 @@ public class Task {
 		if(task.getTID() != TID) {
 			return false;
 		}
-		if(task.getPriority() != priority) {
-			return false;
-		}
 		if(!stringEqual(task.getLocation(), location)) {
 			return false;
 		}
 		if(!stringEqual(task.getDetails(), details)) {
 			return false;
 		}
-		if(status != task.getStatus()) {
+		if(task.getStatus() != status) {
 			return false;
 		}
 		return true;
@@ -331,16 +309,10 @@ public class Task {
 			return str1.equals(str2);
 		}
 	}
-
-	 
-	/* 
-	 * 
-	 * (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	*/
+	
 	public Task clone() {
 		return new Task(TID,taskName, cloneDate(dateFrom), cloneDate(dateTo), 
-				cloneDate(deadline), location, details, priority);
+				cloneDate(deadline), location, details, status);
 	}
 
 	//@author A0118892U

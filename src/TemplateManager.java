@@ -27,7 +27,7 @@ public class TemplateManager {
 	private static final int INDEX_DEADLINE = 5;
 	private static final int INDEX_LOCATION = 6;
 	private static final int INDEX_DETAILS = 7;
-    private static final int INDEX_PRIORITY = 8;
+    private static final int INDEX_STATUS = 8;
     
     //MA CONG which to use? status or priority
     private static final int STATUS_OVERDUE = 7;
@@ -252,7 +252,7 @@ public class TemplateManager {
 				convertToDateObject(command[INDEX_DATE_TO]), 
 				convertToDateObject(command[INDEX_DEADLINE]), 
 				command[INDEX_LOCATION], command[INDEX_DETAILS],
-				Integer.parseInt(command[INDEX_PRIORITY]));
+				Integer.parseInt(command[INDEX_STATUS]));
 	}
 	
 
@@ -356,8 +356,8 @@ public class TemplateManager {
 				task.setDetails(command);
 				break;
 				
-			case INDEX_PRIORITY:
-				task.setPriority(Integer.parseInt(command));
+			case INDEX_STATUS:
+				task.setStatus(Integer.parseInt(command));
 				break;
 				
 		}
@@ -473,8 +473,8 @@ public class TemplateManager {
 		template.setDateTo(null);
 		template.setDeadline(null);
 		//MA CONG which to use, priority or status
-		if(template.getPriority() == STATUS_OVERDUE) {
-		    template.setPriority(STATUS_NORMAL);
+		if(template.getStatus() == STATUS_OVERDUE) {
+		    template.setStatus(STATUS_NORMAL);
 		}
 		//MA CONG
 	}
@@ -551,7 +551,7 @@ public class TemplateManager {
 					return task.getLocation();
 				case INDEX_DETAILS: 
 					return task.getDetails();
-				case INDEX_PRIORITY: 
+				case INDEX_STATUS: 
 					return task.getStatusString();
 				default:
 					throw new IllegalArgumentException(MSG_INVALID_GET_FIELD);

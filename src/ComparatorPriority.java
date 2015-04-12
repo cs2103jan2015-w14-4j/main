@@ -4,9 +4,9 @@ import java.util.Comparator;
 public class ComparatorPriority implements Comparator<Task> {
 
     public int compare(Task task1, Task task2) {
-        if(task1.getPriority() < task2.getPriority()) {
+        if(task1.getStatus() < task2.getStatus()) {
             return -1;
-        } else if(task1.getPriority() > task2.getPriority()) {
+        } else if(task1.getStatus() > task2.getStatus()) {
             return 1;
         } else {
             if(task1.getTID() < task2.getTID()) {
