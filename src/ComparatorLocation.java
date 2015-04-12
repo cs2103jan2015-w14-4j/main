@@ -1,5 +1,10 @@
 import java.util.Comparator;
 
+/**
+ * This comparator compares tasks by their location in terms of alphabetical order.
+ * When there is a tie, tasks will be compared by their IDs.
+ *
+ */
 //@author A0118892U
 public class ComparatorLocation implements Comparator<Task>{
 
