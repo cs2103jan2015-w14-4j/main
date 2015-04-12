@@ -28,11 +28,11 @@ public class TaskManager implements TaskManagerInterface {
     public static final int VIEW_TYPE = 2;
     public static final int FILTER_TYPE = 8;
 
-    private static final String MSG_ERR_NO_SUCH_ID = "The Task ID does not exist";
+    private static final String MSG_ERR_NO_SUCH_ID = "The Task ID does not exist.";
     private static final String MSG_ERR_NO_SUCH_COMMAND = "Flexi Tracker does not recognize this command.";
     private static final String MSG_ERR_LENGTH = "%s allows a maximum length of 30.";
     private static final String MSG_ERR_WRONG_DATE_NUMBER = "The date entered is invalid.";
-    private static final String MSG_ERR_WRONG_DATE_DURATION = "The duration entered is invalid. Start Date must be before End Date";
+    private static final String MSG_ERR_WRONG_DATE_DURATION = "The duration entered is invalid. Start Date must be before End Date.";
     private static final String MSG_ERR_EMPTY_TASK_NAME = "Task name cannot be empty.";
     private static final String MSG_ERR_UNDO = "There is no operation to undo.";
     private static final String MSG_ERR_REDO = "There is no operation to redo.";
@@ -41,7 +41,7 @@ public class TaskManager implements TaskManagerInterface {
     private static final String MSG_ERR_INVALID_CLEAR = "The clear command was invalid. Nothing has been cleared.";
     private static final String MSG_ERR_NO_SUCH_FILTER = "Tasks cannot be filtered in the requested manner.";
     private static final String MSG_ERR_NO_SUCH_ARRANGE = "The tasks cannot be sorted in this order.";
-    private static final String MSG_ERR_FAIL_TO_EDIT = "Failed to edit the task";
+    private static final String MSG_ERR_FAIL_TO_EDIT = "Failed to edit the task.";
     
     private static final int URGENT = 1;
     private static final int MAJOR = 2;
