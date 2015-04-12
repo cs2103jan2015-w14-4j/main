@@ -587,7 +587,7 @@ public class TemplateManager {
 	/**
 	 * MA CONG
 	 */
-	//@author A0118892U
+	//@author A0118892U-reused
 	private Date getDate(String date) {
 		try {
 			DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
@@ -602,7 +602,7 @@ public class TemplateManager {
 	/**
 	 * MA CONG
 	 */
-	//@author A0118892U
+	//@author A0118892U-reused
 	private Date convertToDateObject(String dateString) {
 		try {
 			Date date = null;

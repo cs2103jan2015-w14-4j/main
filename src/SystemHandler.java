@@ -7,6 +7,8 @@ import java.text.ParseException;
 //@author A0108385B
 public class SystemHandler {
 	
+
+	
 	private static final String MSG_LOG_USER_COMMAND = "user enters: %s";
 	
 	private static final String MSG_LOG_PARSER = "Parser understood the command as the following: \"%s\"";
@@ -15,6 +17,7 @@ public class SystemHandler {
 	private static final String MSG_ERR_INIT_TASK = "File has been corrupted, some tasks might be lost.";
 	private static final String MSG_ERR_ID_UNDEFINED = "This ID does not exist, please check again";
 	private static final String MSG_ERR_NO_SUCH_COMMAND = "SystemHandler does not recognize this command.";
+	private static final String MSG_ERR_UNKNOWN = "Something goes wrong in the system. Please try again.";
 
 	private static final String COMMAND_DELETE_TEMPLATE = "deleteTemplate";
 	private static final String COMMAND_SAVE_TO = "saveTo";
@@ -31,6 +34,8 @@ public class SystemHandler {
 	public static final int LENGTH_COMMAND_TASK_MANAGER = 9;
 	public static final int LENGTH_COMMAND_KEYWORD = 3;
 	public static final int LENGTH_COMMAND_TEMPLATE = 9;
+	private static final int LENGTH_COMMAND_SAVE = 2;
+	private static final int LENGTH_COMMAND_HELP = 1;
 
 	private static final int INDEX_COMMAND_TYPE = 0;
 	private static final int INDEX_TEMP_NAME = 1;
@@ -48,14 +53,18 @@ public class SystemHandler {
 	
 	private CentralizedLog 	logfile;
 	private TaskManager 	myTaskList;
-	private TemplateManager 		myTemplates;
+	private TemplateManager 	myTemplates;
 	private KeywordManager 		myKeyword;
 	private FileStorage 	externalStorage;
 	private UserInterface 	window;
 	private FlexiParser 	parser;
 	private DisplayProcessor displayProcessor;
+
+	//@author A0108385B
+	//Singleton Pattern on Systemhandler
 	public static SystemHandler system;
 
+	//@author A0108385B
 	public static SystemHandler getSystemHandler() {
 		if(system == null) {
 			system = new SystemHandler();
@@ -63,7 +72,8 @@ public class SystemHandler {
 		}
 		return system;
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * Booting the system and set the path to be called back.
 	 * @param args	Parameter from input - not applicable
@@ -73,9 +83,9 @@ public class SystemHandler {
 		system = getSystemHandler();
 		
 		system.activateUI();
-//		system.externalStorage.saveToAnotherLocation("../new/");
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * It activates user interface window by calling the Runnable user interface 
 	 */
@@ -91,7 +101,8 @@ public class SystemHandler {
 			}
 		});
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * This method is called by storage to set the keyword manager to default 
 	 * once it detects no keyword is being initialized
@@ -100,7 +111,8 @@ public class SystemHandler {
 		myKeyword.processKeywordCommand(COMMAND_RESET_KEYWORD);
 	}
 	
-	
+
+	//@author A0108385B
 	/**
 	 * This method function as the communication line between different components to ensure
 	 * intermediate results directed correctly. 
@@ -165,13 +177,13 @@ public class SystemHandler {
 			displayProcessor.displayErrorToUI(e.getMessage());
 			logfile.warning(e.getMessage());
 		} catch(Exception e) {
-			displayProcessor.displayErrorToUI("Something goes wrong in the system. Please try again.");
+			displayProcessor.displayErrorToUI(MSG_ERR_UNKNOWN);
 			logfile.severe(e.getMessage());
 		}
 		
 	}
 	
-	
+	//@author A0108385B
 	/**
 	 * This method is called to get the Task through the Task ID
 	 * @param id		Task ID
@@ -181,7 +193,8 @@ public class SystemHandler {
 	public Task requestTaskInformationfromTM(int id) throws NoSuchElementException {
 		return myTaskList.getTaskFromTID(id);
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * @param fetchedTask A strings array that follows the format of TM strictly.
 	 * Refer to Task Manager to find out the length and meaning of each string by checking the index constant.
@@ -195,7 +208,8 @@ public class SystemHandler {
 			logfile.warning(String.format(MSG_LOG_PARSER , e.getMessage()));
 		}
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * This method calls storage to write out the data from task manager to storage
 	 * @param taskList		ArrayList of tasks stored by task manager
@@ -203,7 +217,8 @@ public class SystemHandler {
 	public void writeToFile(ArrayList<Task> taskList) {
 		externalStorage.writeTaskToFile(taskList);
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * This method calls storage to write out the data from keyword manager to storage
 	 * @param keywords		Array of strings arrays that represent the customized keywords 
@@ -211,7 +226,8 @@ public class SystemHandler {
 	public void writeKeywordToFile(String[][] keywords) {
 		externalStorage.writeKeywordToFile(keywords);
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * This method calls storage to write out the data from template manager to storage
 	 * @param templates		ArrayList of task templates stored by template manager
@@ -220,7 +236,8 @@ public class SystemHandler {
 	public void writeTemplateToFile(ArrayList<Task> templates,ArrayList<String> matchingName) {
 		externalStorage.writeTemplateToFile(templates, matchingName);
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * @param commandType	Command type
 	 * @return				Index of the command belongs to. Task(1), Keyword(2), Template(3)
@@ -257,7 +274,8 @@ public class SystemHandler {
 			
 	}
 	
-	
+
+	//@author A0108385B
 	/**
 	 * This method construct all the related classes required for the software
 	 * @param fileName File location
@@ -285,6 +303,7 @@ public class SystemHandler {
 		}
 	}
 
+	//@author A0108385B
 	/**
 	 * It calls File Storage to load data into task manager, keyword and template.
 	 */
@@ -310,7 +329,8 @@ public class SystemHandler {
 			logfile.warning(MSG_ERR_INIT_TEMPLATE);
 		}
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * @param parsedCommand		Strings array of command parsed by parser
 	 * @return					String converted from a strings array to be logged.
@@ -336,7 +356,8 @@ public class SystemHandler {
 		return str;
 	}
 
-	
+
+	//@author A0108385B
 	/**
 	 * @param parsedCommand		Strings array of command parsed by parser
 	 * @param type				index of type of command - Task(1), Keyword(2), Template(3)
@@ -356,17 +377,18 @@ public class SystemHandler {
 				break;
 				
 			case INDEX_COMMAND_HELP:
-				assert(parsedCommand.length == 1);
+				assert(parsedCommand.length == LENGTH_COMMAND_HELP);
 				break;
 				
 			case INDEX_COMMAND_SAVE:
-				assert(parsedCommand.length == 2);
+				assert(parsedCommand.length == LENGTH_COMMAND_SAVE);
 				break;
 				
 		}
 		
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * @param command	String array in the format where keyword manager understands. Refer to developer 
 	 * 					manual under Keyword for more information 
@@ -383,6 +405,7 @@ public class SystemHandler {
 			
 	}
 
+	//@author A0108385B
 	/**
 	 * @param command	String array in the format where keyword manager understands. Refer to developer 
 	 * 					manual under Keyword for more information 
@@ -398,6 +421,7 @@ public class SystemHandler {
 		
 	}
 
+	//@author A0108385B
 	/**
 	 * @param command	String array in the format where template manager understands. Refer to developer 
 	 * 					manual under Template for more information 
