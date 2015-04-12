@@ -542,7 +542,7 @@ public class FileStorage {
      * @param template  Template to call its processCustomizingCommand method
      */
     //@author A0116514N
-    public void readTemplateFromFile(Template template) {
+    public void readTemplateFromFile(TemplateManager template) {
         if(templateFile.exists()) {
 
             try {

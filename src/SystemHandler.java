@@ -48,7 +48,7 @@ public class SystemHandler {
 	
 	private CentralizedLog 	logfile;
 	private TaskManager 	myTaskList;
-	private Template 		myTemplates;
+	private TemplateManager 		myTemplates;
 	private KeywordManager 		myKeyword;
 	private FileStorage 	externalStorage;
 	private UserInterface 	window;
@@ -266,7 +266,7 @@ public class SystemHandler {
 		
 		myKeyword = new KeywordManager();
 		logfile =  new CentralizedLog();
-		myTemplates = new Template();
+		myTemplates = new TemplateManager();
 		myTaskList = new TaskManager();
 		parser = new FlexiParser(myKeyword);
 		externalStorage = new FileStorage();

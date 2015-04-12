@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.NoSuchElementException;
 
 //@author A0108385B
-public class Template {
+public class TemplateManager {
 
 	private static final String MSG_ERR_INVALID_TEMP_LENGTH = "Invalid length for template's name: \"%s\"";
 	private static final String MSG_ERR_DUPLICATE_NAME = "Template name:\"%s\" has been used by another template.";
@@ -29,7 +29,7 @@ public class Template {
 	private static final int INDEX_DETAILS = 7;
     private static final int INDEX_PRIORITY = 8;
     
-    //MA CONG
+    //MA CONG which to use? status or priority
     private static final int STATUS_OVERDUE = 7;
     private static final int STATUS_NORMAL = 3;
     //MA CONG
@@ -51,12 +51,14 @@ public class Template {
 	private ArrayList<Task> templates;
 	private ArrayList<String> tempNames;
 	private SystemHandler system;
-	
-	public Template() {
+
+	//@author A0108385B
+	public TemplateManager() {
 		templates = new ArrayList<Task>();
 		tempNames = new ArrayList<String>();
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * It set the system path so that it can call the system Handler that governs it to 
 	 * fetch data from other components when required
@@ -66,8 +68,7 @@ public class Template {
 		this.system = system;
 	}
 	
-	
-	
+	//@author A0108385B
 	/**
 	 * @param command	The string array of command to be executed
 	 * @return			ArrayList of Tasks that are demanded by command
@@ -123,6 +124,7 @@ public class Template {
 		return result;
 	}
 
+	//@author A0108385B
 	/**
 	 * @param command	The string array of command to be executed
 	 */
@@ -132,10 +134,10 @@ public class Template {
 		addTemplateToArray(command[INDEX_TEMPLATE_NAME], taskToBeAddedInit);
 	}
 
+	//@author A0108385B
 	/**
 	 * @param command	The string array of command to be executed
-	 * @param result	
-	 * @return
+	 * @return	ArrayList of task with the added template in it
 	 */
 	private ArrayList<Task> addTemplate(String[] command) {
 		Task taskToBeAdded = system.requestTaskInformationfromTM(Integer.parseInt(command[1]));	
@@ -149,7 +151,8 @@ public class Template {
 		return result;
 	}
 	
-	
+
+	//@author A0108385B
 	/**
 	 * @param name							Name of the template
 	 * @param template						Template to be created
@@ -178,7 +181,12 @@ public class Template {
 		
 		}
 	}
-	
+
+	//@author A0108385B
+	/**
+	 * @param template 	template to be added
+	 * @return			True if such template already exist, otherwise false
+	 */
 	private boolean hasSameTemplate(Task template) {
 		clearTaskDateField(template);
 		for(int i = 0; i < templates.size(); ++i) {
@@ -189,10 +197,16 @@ public class Template {
 		return false;
 	}
 
+	//@author A0108385B
+	/**
+	 * @param name		name to be used for a template
+	 * @return			True if the length of name is acceptable, otherwise false
+	 */
 	private boolean validNameLength(String name) {
 		return name.length() > LENGTH_TEMP_NAME_MINIMUM && name.length() < LENGTH_TEMP_NAME_MAXIMUM;
 	}
 
+	//@author A0108385B
 	/**
 	 * This method construct an ArrayList of names that match the templates given
 	 * @param templates		ArrayList of template
@@ -209,6 +223,7 @@ public class Template {
 		return result;
 	}
 
+	//@author A0108385B
 	/**
 	 * This method returns the name of the template
 	 * @param task							A Template object
@@ -217,7 +232,6 @@ public class Template {
 	 */
 	private String getMatchingName(Task task) throws NoSuchElementException {
 		for(int i = 0; i < templates.size(); ++i) {
-			Task abd = templates.get(i);
 			if(task.isEqual(templates.get(i))) {
 				return tempNames.get(i);
 			}
@@ -227,6 +241,7 @@ public class Template {
 		throw new NoSuchElementException(MSG_ERR_NO_SUCH_TEMPLATE);
 	}
 
+	//@author A0108385B
 	/**
 	 * @param command	The string array of command to be executed
 	 * @return			Task object created by following the command parameter.
@@ -240,7 +255,8 @@ public class Template {
 				Integer.parseInt(command[INDEX_PRIORITY]));
 	}
 	
-	
+
+	//@author A0108385B
 	/**
 	 * 	This method calls system handler to initiate write out to storage. 
 	 *  It is called when there are changes made to templates' data
@@ -251,6 +267,7 @@ public class Template {
 		
 	}
 
+	//@author A0108385B
 	/**
 	 * @param name		Template name 
 	 * @return			Index of the template stored in ArrayList, -1 if not found.
@@ -264,7 +281,8 @@ public class Template {
 		}
 		return INDEX_NOT_FOUND;
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * @param name	Template name 
 	 * @return		Template that matches the name, null if not found.
@@ -279,7 +297,8 @@ public class Template {
 		}
 	}
 
-	
+
+	//@author A0108385B
 	/**
 	 * @param command 					The string array of command to be executed
 	 * @return							ArrayList of template with the edited template in the list. 
@@ -303,6 +322,7 @@ public class Template {
 		return result;
 	}
 
+	//@author A0108385B
 	/**
 	 * @param command		The string array of command to be executed
 	 * @param task			Template to be edited
@@ -343,6 +363,7 @@ public class Template {
 		}
 	}
 
+	//@author A0108385B
 	/**
 	 * This method checks if the command demands the field to be edited.
 	 * @param command		The string array of command to be executed
@@ -354,20 +375,9 @@ public class Template {
 	}
 		
 
-	/**
-	 * MA CONG
-	 */
-	private Date getDate(String date) {
-		try {
-			DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
-			return format.parse(date);
-			
-		} catch (ParseException e) {
-			assert(true);
-		}
-		return null;
-	}
+	
 
+	//@author A0108385B
 	/**
 	 * This method assert the correct length of command to be executed.
 	 * @param command		The string array of command to be executed
@@ -394,7 +404,8 @@ public class Template {
 			case editTemplate:
 		}
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * @param command	The string array of command to be executed
 	 * @return			The command type to be executed
@@ -408,7 +419,8 @@ public class Template {
         			e.getMessage().substring(STRING_POSITION_INVALID_COMMAND)));
         }
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * @param tempName					Name of the template to be deleted
 	 * @return							The deleted template in an ArrayList
@@ -426,6 +438,7 @@ public class Template {
 		}
 	}
 
+	//@author A0108385B
 	/**
 	 * @param tempName		Name of the template to be deleted
 	 * @return				Deleted template, null if template does not exist
@@ -439,7 +452,8 @@ public class Template {
 			return templates.remove(index);
 		}
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * @return		Return the templates list in ArrayList
 	 */
@@ -449,9 +463,7 @@ public class Template {
 		return templates;
 	}
 	
-	
-	
-	
+	//@author A0108385B
 	/**
 	 * This method clears all the date related fields in template before saving the template.
 	 * @param template	Template to be added into templates list
@@ -460,13 +472,14 @@ public class Template {
 		template.setDateFrom(null);
 		template.setDateTo(null);
 		template.setDeadline(null);
-		//MA CONG
+		//MA CONG which to use, priority or status
 		if(template.getPriority() == STATUS_OVERDUE) {
 		    template.setPriority(STATUS_NORMAL);
 		}
 		//MA CONG
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * 	This method clear all the templates.
 	 */
@@ -474,7 +487,8 @@ public class Template {
 		templates.clear();
 		tempNames.clear();
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * This method adds the template as well as the name corresponds to the template into the list.
 	 * @param name		Name of the template
@@ -484,7 +498,8 @@ public class Template {
 		templates.add(template);
 		tempNames.add(name);
 	}
-	
+
+	//@author A0108385B
 	/**
 	 * @param name	Name of the template
 	 * @return	True if there is a template with same name
@@ -493,7 +508,7 @@ public class Template {
 		return getTemplateIndex(name) != INDEX_NOT_FOUND;
 	}
 	
-	
+	//@author A0108385B
 	/**
 	 * @param name						Name of the template to be fetched	
 	 * @return							The template that corresponds to the name
@@ -511,8 +526,10 @@ public class Template {
 		}
 		
 	}
-	
+
+	//@author A0108385B
 	/**
+	 * This method extract the correct data based on the existing data and user input
 	 * @param task							Template with the information to be extracted
 	 * @param index							Index of information to be extracted
 	 * @param change						Changes demanded by user to overwrite the template
@@ -543,8 +560,10 @@ public class Template {
 			return change;
 		}
 	}
-	
+
+	//@author A0108385B
 	/**	
+	 * This method convert to be used template into task manager command sturcture
 	 * @param task							Task to be added into Tasks List
 	 * @param changes						Changes demanded by user to overwrite the template
 	 * @return								String array that follows task manager command format
@@ -564,9 +583,26 @@ public class Template {
 		return converted;
 	}
 	
+	
 	/**
 	 * MA CONG
 	 */
+	//@author A0118892U
+	private Date getDate(String date) {
+		try {
+			DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+			return format.parse(date);
+			
+		} catch (ParseException e) {
+			assert(true);
+		}
+		return null;
+	}
+	
+	/**
+	 * MA CONG
+	 */
+	//@author A0118892U
 	private Date convertToDateObject(String dateString) {
 		try {
 			Date date = null;

@@ -270,7 +270,7 @@ public class SystemTest {
  
 	@Test
 	public void testCustomizedManager() {
-		Template template = new Template();
+		TemplateManager template = new TemplateManager();
 		try {
 			//TC1 - test adding
 			Task temp = new Task(1000, "NEW",

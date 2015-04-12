@@ -267,7 +267,7 @@ public class DisplayProcessor {
 	private String[] constructTempMessage(String[] command, ArrayList<Task> result) {
 		String[] message = new String[LENGTH_MESSAGE_DEFAULT];
 		
-		switch(Template.getCommandType(command[INDEX_COMMAND_TYPE])) {
+		switch(TemplateManager.getCommandType(command[INDEX_COMMAND_TYPE])) {
 			case viewTemplate:
 				if(noTemplateToView(result)) {
 					message[MESSAGE_NUMBER_ONE] = MSG_TEMP_NO_TEMPLATE;
