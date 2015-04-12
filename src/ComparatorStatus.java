@@ -1,5 +1,9 @@
 import java.util.Comparator;
 
+/**
+ * This comparator compares tasks by their status.
+ * When there is a tie between two tasks, the tasks' IDs will be compared
+ */
 //@author A0118892U
 public class ComparatorStatus implements Comparator<Task> {
 
