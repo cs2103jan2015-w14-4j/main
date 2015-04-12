@@ -3,7 +3,9 @@ import java.util.ArrayList;
 //@author A0108385B
 public class DisplayProcessor {
 
-    private static final String MSG_SAVE_SUCCESS = "The save path has been changed to \"%s\" successfully";
+    private static final String CMD_TASK_VIEW = "viewTask";
+	private static final String CMD_TASK_SEARCH = "searchTask";
+	private static final String MSG_SAVE_SUCCESS = "The save path has been changed to \"%s\" successfully";
     private static final String MSG_TASK_STATUS = "The task:\"%s\" has been marked as %s";
     private static final String MSG_TASK_REDO = "The last task operation has been redone.";
     private static final String MSG_TASK_SEARCH = " %s task(s) have been found.";
@@ -186,13 +188,13 @@ public class DisplayProcessor {
      * @return				Index of execution status, success/error/clashed
      */
     private int getTaskManagerExecutionStatus(String[] command, ArrayList<Task> result) {
-        if(command[INDEX_COMMAND_TYPE] == "viewTask") {
+        if(command[INDEX_COMMAND_TYPE].equals(CMD_TASK_VIEW)) {
             if(result != null) {
                 return INDEX_EXECUTION_SUCCESS;
             } else {
                 return INDEX_EXECUTION_ERROR;
             }
-        } else if(command[INDEX_COMMAND_TYPE] == "searchTask") {
+        } else if(command[INDEX_COMMAND_TYPE].equals(CMD_TASK_SEARCH)) {
             if(result != null) {
                 return INDEX_EXECUTION_SUCCESS;
             } else {
@@ -334,7 +336,7 @@ public class DisplayProcessor {
      * This method calls UI to display help list to user
      */
     public void displayHelptoUser() {
-        window.displayText(window.HELP, true);
+        window.displayText(UserInterface.HELP, true);
 
     }
 }
