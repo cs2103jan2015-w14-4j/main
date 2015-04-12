@@ -1,21 +1,12 @@
 import java.util.NoSuchElementException;
 import java.util.ArrayList;
 import java.awt.EventQueue;
+import java.io.IOException;
 import java.text.ParseException;
 
 //@author A0108385B
 public class SystemHandler {
 	
-
-
-	private static final int INDEX_TEMP_NAME = 1;
-
-	private static final String CMD_DELETE_TEMPLATE = "deleteTemplate";
-
-	private static final int INDEX_COMMAND_TYPE = 0;
-
-	private static final String SAVE_LOCATION_DEFAULT = "default.txt";
-
 	private static final String MSG_LOG_USER_COMMAND = "user enters: %s";
 	
 	private static final String MSG_LOG_PARSER = "Parser understood the command as the following: \"%s\"";
@@ -25,6 +16,7 @@ public class SystemHandler {
 	private static final String MSG_ERR_ID_UNDEFINED = "This ID does not exist, please check again";
 	private static final String MSG_ERR_NO_SUCH_COMMAND = "SystemHandler does not recognize this command.";
 
+	private static final String COMMAND_DELETE_TEMPLATE = "deleteTemplate";
 	private static final String COMMAND_SAVE_TO = "saveTo";
 	private static final String COMMAND_HELP = "help";
 	private static final String[] COMMAND_GET_TASK_LIST = {"viewTask",null,null,null,null,null,null,null,null};
@@ -40,6 +32,8 @@ public class SystemHandler {
 	public static final int LENGTH_COMMAND_SHORTCUT = 3;
 	public static final int LENGTH_COMMAND_TEMPLATE = 9;
 
+	private static final int INDEX_COMMAND_TYPE = 0;
+	private static final int INDEX_TEMP_NAME = 1;
 	private static final int INDEX_SAVE_NEW_PATH = 1;
 	
 	private static final int INDEX_COMMAND_TASK_MANAGER = 0;
@@ -48,18 +42,9 @@ public class SystemHandler {
 	private static final int INDEX_COMMAND_SAVE = 3;
 	private static final int INDEX_COMMAND_HELP = 4;
 	
-	private static final int INDEX_EXECUTION_ERROR = 0;
-	private static final int INDEX_EXECUTION_SUCCESS = 1;
-	private static final int INDEX_EXECUTION_CLASH = 2;
-	
 	private static final int ERROR_INIT = 1;
-	private static final boolean EXECUTION_SUCCESS = true;
 
 	private static final int SIZE_ZERO = 0;
-
-
-	
-
 	
 	private CentralizedLog 	logfile;
 	private TaskManager 	myTaskList;
@@ -156,6 +141,7 @@ public class SystemHandler {
 				
 				case INDEX_COMMAND_SAVE:
 					externalStorage.saveToAnotherLocation(parsedCommand[INDEX_SAVE_NEW_PATH]);
+					displayProcessor.displayMoveFileResultToUI(parsedCommand[INDEX_SAVE_NEW_PATH]);
 					break;
 					
 			}
@@ -175,7 +161,13 @@ public class SystemHandler {
 		} catch(IllegalStateException e) {
 			displayProcessor.displayErrorToUI(e.getMessage());
 			logfile.warning(e.getMessage());
-		} 
+		} catch(IOException e) {
+			displayProcessor.displayErrorToUI(e.getMessage());
+			logfile.warning(e.getMessage());
+		} catch(Exception e) {
+			displayProcessor.displayErrorToUI("Something goes wrong in the system. Please try again.");
+			logfile.severe(e.getMessage());
+		}
 		
 	}
 	
@@ -419,7 +411,7 @@ public class SystemHandler {
 		ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
 		if(result != null) {
 			ArrayList<String> tempNames = new ArrayList<String>();
-			if(command[INDEX_COMMAND_TYPE].equals(CMD_DELETE_TEMPLATE)) {
+			if(command[INDEX_COMMAND_TYPE].equals(COMMAND_DELETE_TEMPLATE)) {
 				tempNames.add(command[INDEX_TEMP_NAME]);		
 			} else {
 				tempNames = myTemplates.getTemplateNames(result);		

@@ -134,20 +134,20 @@ public class Shortcut {
 				verifyCommand(command, ADD_SHORTCUT_ARRAY_USED_SIZE);
 				results[RESULT_FIRST] = insertShortcut(command[INDEX_NEW_SHORTCUT],
 											command[INDEX_REFERED_SHORTCUT]);
-				//writeOutToFile();
+				writeOutToFile();
 				break;
 				
 			case deleteShortcut:
 				verifyCommand(command, DELETE_SHORTCUT_ARRAY_USED_SIZE);
 				results[RESULT_FIRST] = removeShortcut(command[INDEX_DELETING_SHORTCUT]);
-				//writeOutToFile();
+				writeOutToFile();
 				break;
 				
 			case resetShortcut:
 				verifyCommand(command, RESET_SHORTCUT_ARRAY_USED_SIZE);
 				resetShortcut();
 				results = viewShortcuts();
-				//writeOutToFile();
+				writeOutToFile();
 				break;
 				
 			case viewShortcut:

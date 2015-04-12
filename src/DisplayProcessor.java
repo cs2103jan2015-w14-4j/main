@@ -3,6 +3,7 @@ import java.util.ArrayList;
 //@author A0108385B
 public class DisplayProcessor {
 	
+	private static final String MSG_SAVE_SUCCESS = "The save path has been changed to \"%s\" successfully";
 	private static final String MSG_TASK_STATUS = "The task:\"%s\" has been marked as %s";
 	private static final String MSG_TASK_REDO = "The last task operation has been redone.";
 	private static final String MSG_TASK_SEARCH = " %s task(s) have been found.";
@@ -64,8 +65,19 @@ public class DisplayProcessor {
 		window.displayMsg(message, INDEX_EXECUTION_ERROR);
 	}
 	
+	/**
+	 * This method calls UI to display tasks list saved from last login
+	 * @param taskList Tasks list to be shown to user 
+	 */
 	public void displayTaskfromLastLogin(ArrayList<Task> taskList) {
 		window.displayTaskTable(taskList, taskList, INDEX_EXECUTION_SUCCESS);
+	}
+	
+	/**
+	 * This method calls UI to display the result of changing save location
+	 */
+	public void displayMoveFileResultToUI(String savePath) {
+		window.displayMsg(String.format(MSG_SAVE_SUCCESS, savePath), INDEX_EXECUTION_SUCCESS);
 	}
 	
 	/**
