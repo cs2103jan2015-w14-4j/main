@@ -50,10 +50,10 @@ public class FlexiParser {
     private static final int TASK_DEADLINE_INDEX = 5;
     private static final int TASK_LOCATION_INDEX = 6;
     private static final int TASK_DETAILS_INDEX = 7;
-    private static final int TASK_PRIORITY_INDEX = 8;
+    private static final int TASK_STATUS_INDEX = 8;
     
     private static final int START_TITLE_INDEX = 1;
-    private static final int START_PRIORITY_INDEX = 7;
+    private static final int START_STATUS_INDEX = 7;
     private static final int TO_ADD_INDEX = 1;
     private static final int DATE_INDEX = 0;
     private static final int KEYWORD_KEY = 1;
@@ -231,7 +231,7 @@ public class FlexiParser {
     }
     
     /**
-     * This function is called to parse user input if the user wishes to change priority
+     * This function is called to parse user input if the user wishes to change status
      * @param outputArray
      * @throws IllegalArgumentException	throws when not enough arguments are giving through user parsing
      */
@@ -241,12 +241,12 @@ public class FlexiParser {
 			throw new IllegalArgumentException(MSG_ERR_ID_MARK_TASK);
 		}
 		outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
-		String prior = extractAttribute(inputArray,START_PRIORITY_INDEX,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
+		String prior = extractAttribute(inputArray,START_STATUS_INDEX,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
 		if(prior!=(NOT_EXIST)) {
-			outputArray[TASK_PRIORITY_INDEX] = prior.trim();
+			outputArray[TASK_STATUS_INDEX] = prior.trim();
 		}
 		else {
-			outputArray[TASK_PRIORITY_INDEX] = prior;
+			outputArray[TASK_STATUS_INDEX] = prior;
 		}
 	}
     
@@ -378,7 +378,7 @@ public class FlexiParser {
 		}
 		
 		outputArray[TASK_ID_INDEX] = inputArray[TASK_ID_INDEX];
-		String extractedValue = extractAttribute(inputArray,START_PRIORITY_INDEX,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);	
+		String extractedValue = extractAttribute(inputArray,START_STATUS_INDEX,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);	
 		if(extractedValue != NOT_EXIST) {
 			outputArray[TASK_NAME_INDEX] = extractedValue.trim();
 		}
@@ -466,7 +466,7 @@ public class FlexiParser {
 		else {
 			viewTitle = extractText(inputArray,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
 		}
-		outputArray[TASK_PRIORITY_INDEX] = viewTitle;
+		outputArray[TASK_STATUS_INDEX] = viewTitle;
 		String value =extractAttribute(inputArray,START_TITLE_INDEX,KEYWORDS_ONE_TASK,KEYWORDS_TWO_TASK);
 		
 		if(value!=(NOT_EXIST)) {

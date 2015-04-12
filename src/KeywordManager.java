@@ -25,7 +25,7 @@ public class KeywordManager {
 	
 	//Default commands
 	private static final String[] RESERVED_WORDS = {"at","location","from","datefrom","to","dateto","on",
-													"before","by","detail","priority","name","title"};
+													"before","by","detail","status","name","title"};
 	
 	private static final String[] DEFAULT_HELP = {"help"};
 	private static final String[] DEFAULT_RESET_TEMP = {"resetTemplate", "resetTemp"};

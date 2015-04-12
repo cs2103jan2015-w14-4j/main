@@ -29,10 +29,8 @@ public class TemplateManager {
 	private static final int INDEX_DETAILS = 7;
     private static final int INDEX_STATUS = 8;
     
-    //MA CONG which to use? status or priority
     private static final int STATUS_OVERDUE = 7;
     private static final int STATUS_NORMAL = 3;
-    //MA CONG
     
 	private static final int STARTING_INDEX_CHANGEABLE_FIELD = 2;
 	private static final int STRING_POSITION_INVALID_COMMAND = 39;
@@ -472,11 +470,9 @@ public class TemplateManager {
 		template.setDateFrom(null);
 		template.setDateTo(null);
 		template.setDeadline(null);
-		//MA CONG which to use, priority or status
 		if(template.getStatus() == STATUS_OVERDUE) {
 		    template.setStatus(STATUS_NORMAL);
 		}
-		//MA CONG
 	}
 
 	

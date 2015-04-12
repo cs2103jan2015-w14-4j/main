@@ -76,7 +76,7 @@ public class TaskManager implements TaskManagerInterface {
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
     private static final String ID_STRING = "id";
     private static final String TASK_NAME_STRING = "title";
-    private static final String PRIORITY_STRING = "status";
+    private static final String STATUS_STRING = "status";
     private static final String DATE_STRING = "date";
     private static final String DEADLINE_STRING = "deadline";
     private static final String LOCATION_STRING = "location";
@@ -455,7 +455,7 @@ public class TaskManager implements TaskManagerInterface {
             }
         }
 
-        //sets previously overdue tasks back to normal priority
+        //sets previously overdue tasks back to normal status
         if(isTaskStatusOverdue(taskToEdit) && !isTaskOverdue(taskToEdit)) {
             taskToEdit.setStatus(NORMAL);
         }
@@ -495,13 +495,13 @@ public class TaskManager implements TaskManagerInterface {
         case DEADLINE: editTaskDeadline(inputs, task); break;
         case LOCATION: editTaskLocation(inputs, task); break;
         case DETAILS: editTaskDetails(inputs, task); break;
-        case STATUS: editTaskPriority(inputs, task); break;
+        case STATUS: editTaskStatus(inputs, task); break;
         }
     }
 
-    private void editTaskPriority(String[] inputs, Task task) {
-        int newPriority = convertToIntType(inputs[STATUS]);
-        task.setStatus(newPriority);
+    private void editTaskStatus(String[] inputs, Task task) {
+        int newStatus = convertToIntType(inputs[STATUS]);
+        task.setStatus(newStatus);
     }
 
     private void editTaskDetails(String[] inputs, Task task) {
@@ -583,7 +583,7 @@ public class TaskManager implements TaskManagerInterface {
         case DEADLINE: clearTaskDeadline(task); break;
         case LOCATION: clearTaskLocation(task); break;
         case DETAILS: clearTaskDetails(task); break;
-        case STATUS: clearTaskPriority(task); break;
+        case STATUS: clearTaskStatus(task); break;
         default: throw new NoSuchElementException(MSG_ERR_INVALID_CLEAR);
         }
     }
@@ -634,7 +634,7 @@ public class TaskManager implements TaskManagerInterface {
         task.setDetails(null);
     }
 
-    private void clearTaskPriority(Task task) {
+    private void clearTaskStatus(Task task) {
         task.setStatus(NORMAL);
     }
 
@@ -763,7 +763,7 @@ public class TaskManager implements TaskManagerInterface {
         case DATE_STRING: return DATE_FROM;
         case DEADLINE_STRING: return DEADLINE;
         case LOCATION_STRING: return LOCATION;
-        case PRIORITY_STRING: return STATUS;
+        case STATUS_STRING: return STATUS;
         default: throw new NoSuchElementException(MSG_ERR_NO_SUCH_ARRANGE);
         }
     }
