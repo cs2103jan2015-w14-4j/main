@@ -346,6 +346,7 @@ public class SystemTest {
 		return taskA.isEqual(taskB);
 	}
 
+	//@author A0118892U-reused
 	private Date convertToDateObject(String dateString) {
 		try {
 			Date date = null;

@@ -1,6 +1,6 @@
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+//@author A0108385B
 public class Task {
 	
 	public static final int MINIMUM_LENGTH_TASK_NAME = 1;
@@ -68,112 +68,112 @@ public class Task {
 	
 	
 	//Setter ********************************
-	//@author A0108385B
+	 
 	public void setTID(int TID) {
 		this.TID = TID;
 	}
 
-	//@author A0108385B
+	 
 	public void setTaskName(String taskName) {
 		this.taskName = taskName;
 	}
 
-	//@author A0108385B
+	 
 	public void setDateFrom(Date dateFrom) {
 		this.dateFrom = dateFrom;
 	}
 
-	//@author A0108385B
+	 
 	public void setDateTo(Date dateTo) {
 		this.dateTo = dateTo;
 	}
 
-	//@author A0108385B
+	 
 	public void setDeadline(Date deadline) {
 		this.deadline = deadline;
 	}
 
-	//@author A0108385B
+	 
 	public void setLocation(String location) {
 		this.location = location;
 	}
 
-	//@author A0108385B
+	 
 	public void setDetails(String details) {
 		this.details = details;
 	}
 
 	//Should be removed use setter below instead
-	//@author A0108385B
+	 
 	public void setPriority(int priority) {
 		this.priority = priority;
 	}
 
 	
 	//Update Status ************************
-	//@author A0108385B
+	 
 	public void setUrgent() {
 		this.status = INDEX_STATUS_URGENT;
 	}
 	
-	//@author A0108385B
+	 
 	public void setMajor() {
 		this.status = INDEX_STATUS_MAJOR;
 	}
 
-	//@author A0108385B
+	 
 	public void setNormal() {
 		this.status = INDEX_STATUS_NORMAL;
 	}
 
-	//@author A0108385B
+	 
 	public void setOverdue() {
 		this.status = INDEX_STATUS_OVERDUE;
 	}
 
-	//@author A0108385B
+	 
 	public void setComplate() {
 		this.status = INDEX_STATUS_COMPLETE;
 	}
 
-	//@author A0108385B
+	 
 	public void setMinor() {
 		this.status = INDEX_STATUS_MINOR;
 	}
 
-	//@author A0108385B
+	 
 	public void setCasual() {
 		this.status = INDEX_STATUS_CASUAL;
 	}
 		
 	//GETTER ***********************************
 
-	//@author A0108385B
+	 
 	public int getTID() {
 		return TID;
 	}
 
-	//@author A0108385B
+	 
 	public String getTaskName() {
 		return taskName;
 	}
 
-	//@author A0108385B
+	 
 	public Date getDateFrom() {
 		return dateFrom;
 	}
 
-	//@author A0108385B
+	 
 	public Date getDateTo() {
 		return dateTo;
 	}
 
-	//@author A0108385B
+	 
 	public Date getDeadline() {
 		return deadline;
 	}
 
-	//@author A0108385B
+	 
 	public String getDateFromString() {
 		if(dateFrom != null) {
 			return convertToStringFromDate(dateFrom);
@@ -183,7 +183,7 @@ public class Task {
 		
 	}
 
-	//@author A0108385B
+	 
 	public String getDateToString() {
 		if(dateTo != null) {
 			return convertToStringFromDate(dateTo);
@@ -192,7 +192,7 @@ public class Task {
 		}
 	}
 
-	//@author A0108385B
+	 
 	public String getDeadlineString() {
 		if(deadline != null) {
 			return convertToStringFromDate(deadline);
@@ -201,27 +201,27 @@ public class Task {
 		}
 	}
 
-	//@author A0108385B
+	 
 	public String getLocation() {
 		return location;
 	}
 
-	//@author A0108385B
+	 
 	public String getDetails() {
 		return details;
 	}
 
-	//@author A0108385B
+	 
 	public int getPriority() {
 		return priority;
 	}
 
-	//@author A0108385B
+	 
 	public int getStatus() {
 		return status;
 	}
 
-	//@author A0108385B
+	 
 	public String getStatusString() {
 		switch(priority) {
 			case INDEX_STATUS_URGENT:
@@ -244,7 +244,7 @@ public class Task {
 	}
 	
 
-	//@author A0108385B
+	 
 	/**
 	 * This method provide equality comparison of task object.
 	 * @param task Task to be compared with
@@ -284,7 +284,7 @@ public class Task {
 		return true;
 	}
 
-	//@author A0108385B
+	 
 	/**
 	 * This method compares equality of date and allows compared date object to be null.
 	 * If both date are null, they are considered as equal.
@@ -307,7 +307,7 @@ public class Task {
 		}
 	}
 
-	//@author A0108385B
+	 
 	/**
 	 * This method compares equality of string and allows compared string object to be null.
 	 * If both string are null, they are considered as equal.
@@ -330,7 +330,7 @@ public class Task {
 		}
 	}
 
-	//@author A0108385B
+	 
 	/* 
 	 * 
 	 * (non-Javadoc)

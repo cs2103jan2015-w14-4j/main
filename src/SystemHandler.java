@@ -60,11 +60,11 @@ public class SystemHandler {
 	private FlexiParser 	parser;
 	private DisplayProcessor displayProcessor;
 
-	//@author A0108385B
+	 
 	//Singleton Pattern on Systemhandler
 	public static SystemHandler system;
 
-	//@author A0108385B
+	 
 	public static SystemHandler getSystemHandler() {
 		if(system == null) {
 			system = new SystemHandler();
@@ -73,7 +73,7 @@ public class SystemHandler {
 		return system;
 	}
 
-	//@author A0108385B
+	 
 	/**
 	 * Booting the system and set the path to be called back.
 	 * @param args	Parameter from input - not applicable
@@ -85,7 +85,7 @@ public class SystemHandler {
 		system.activateUI();
 	}
 
-	//@author A0108385B
+	 
 	/**
 	 * It activates user interface window by calling the Runnable user interface 
 	 */
@@ -102,7 +102,7 @@ public class SystemHandler {
 		});
 	}
 
-	//@author A0108385B
+	 
 	/**
 	 * This method is called by storage to set the keyword manager to default 
 	 * once it detects no keyword is being initialized
@@ -112,7 +112,7 @@ public class SystemHandler {
 	}
 	
 
-	//@author A0108385B
+	 
 	/**
 	 * This method function as the communication line between different components to ensure
 	 * intermediate results directed correctly. 
@@ -183,7 +183,7 @@ public class SystemHandler {
 		
 	}
 	
-	//@author A0108385B
+	 
 	/**
 	 * This method is called to get the Task through the Task ID
 	 * @param id		Task ID
@@ -194,7 +194,7 @@ public class SystemHandler {
 		return myTaskList.getTaskFromTID(id);
 	}
 
-	//@author A0108385B
+	 
 	/**
 	 * @param fetchedTask A strings array that follows the format of TM strictly.
 	 * Refer to Task Manager to find out the length and meaning of each string by checking the index constant.
@@ -209,7 +209,7 @@ public class SystemHandler {
 		}
 	}
 
-	//@author A0108385B
+	 
 	/**
 	 * This method calls storage to write out the data from task manager to storage
 	 * @param taskList		ArrayList of tasks stored by task manager
@@ -218,7 +218,7 @@ public class SystemHandler {
 		externalStorage.writeTaskToFile(taskList);
 	}
 
-	//@author A0108385B
+	 
 	/**
 	 * This method calls storage to write out the data from keyword manager to storage
 	 * @param keywords		Array of strings arrays that represent the customized keywords 
@@ -227,7 +227,7 @@ public class SystemHandler {
 		externalStorage.writeKeywordToFile(keywords);
 	}
 
-	//@author A0108385B
+	 
 	/**
 	 * This method calls storage to write out the data from template manager to storage
 	 * @param templates		ArrayList of task templates stored by template manager
@@ -237,7 +237,7 @@ public class SystemHandler {
 		externalStorage.writeTemplateToFile(templates, matchingName);
 	}
 
-	//@author A0108385B
+	 
 	/**
 	 * @param commandType	Command type
 	 * @return				Index of the command belongs to. Task(1), Keyword(2), Template(3)
@@ -275,7 +275,7 @@ public class SystemHandler {
 	}
 	
 
-	//@author A0108385B
+	 
 	/**
 	 * This method construct all the related classes required for the software
 	 * @param fileName File location
@@ -303,7 +303,7 @@ public class SystemHandler {
 		}
 	}
 
-	//@author A0108385B
+	 
 	/**
 	 * It calls File Storage to load data into task manager, keyword and template.
 	 */
@@ -330,7 +330,7 @@ public class SystemHandler {
 		}
 	}
 
-	//@author A0108385B
+	 
 	/**
 	 * @param parsedCommand		Strings array of command parsed by parser
 	 * @return					String converted from a strings array to be logged.
@@ -357,7 +357,7 @@ public class SystemHandler {
 	}
 
 
-	//@author A0108385B
+	 
 	/**
 	 * @param parsedCommand		Strings array of command parsed by parser
 	 * @param type				index of type of command - Task(1), Keyword(2), Template(3)
@@ -388,7 +388,7 @@ public class SystemHandler {
 		
 	}
 
-	//@author A0108385B
+	 
 	/**
 	 * @param command	String array in the format where keyword manager understands. Refer to developer 
 	 * 					manual under Keyword for more information 
@@ -405,7 +405,7 @@ public class SystemHandler {
 			
 	}
 
-	//@author A0108385B
+	 
 	/**
 	 * @param command	String array in the format where keyword manager understands. Refer to developer 
 	 * 					manual under Keyword for more information 
@@ -421,7 +421,7 @@ public class SystemHandler {
 		
 	}
 
-	//@author A0108385B
+	 
 	/**
 	 * @param command	String array in the format where template manager understands. Refer to developer 
 	 * 					manual under Template for more information 

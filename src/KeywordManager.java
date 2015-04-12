@@ -98,7 +98,7 @@ public class KeywordManager {
 	private ArrayList<ArrayList<String>> userKeywords;
 	private SystemHandler system;
 	
-	//@author A0108385B
+	
 	public KeywordManager() {
 		userKeywords = new ArrayList<ArrayList<String>>();
 		for(int i = 0; i < KEYWORDS.length; ++i) {
@@ -107,7 +107,7 @@ public class KeywordManager {
 	}
 	
 
-	//@author A0108385B
+	
 	/**
 	 * It set the system path so that it can call the system Handler that governs it to 
 	 * fetch data from other components when required
@@ -118,7 +118,7 @@ public class KeywordManager {
 	}
 	
 
-	//@author A0108385B
+	
 	/**
 	 * This method receives commands and process them accordingly
 	 * @param command	The string array of command to be executed
@@ -171,7 +171,7 @@ public class KeywordManager {
 	}
 	
 
-	//@author A0108385B
+	
 	/**
 	 * 	This method calls system handler to initiate write out to storage. 
 	 *  It is called when there are changes made to keywords' data
@@ -187,7 +187,7 @@ public class KeywordManager {
 		
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * This method initialize keyword by executing commands issued by storage
 	 * @param command					The string array of command to be executed
@@ -204,7 +204,7 @@ public class KeywordManager {
 		toBeAddedInto.add(command[INDEX_NEW_KEYWORD]);
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * This method returns the system keyword that matches the input command
 	 * @param command	Customized Command to be matched with system recognized command
@@ -220,7 +220,7 @@ public class KeywordManager {
 		}
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * This method returns keyword command type that matches the string command 
 	 * @param command					String of Command type to be executed
@@ -238,7 +238,7 @@ public class KeywordManager {
         
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * 	This method reset keyword list to default set
 	 */
@@ -249,7 +249,7 @@ public class KeywordManager {
 		}
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * This method reads keywords from default set and build them
 	 * @param index		Index of keyword default set
@@ -264,7 +264,7 @@ public class KeywordManager {
 		return customizedWord;
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @return	The cloned list of keywords
 	 */
@@ -272,7 +272,7 @@ public class KeywordManager {
 		return cloneKeywords();
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param keyword					Keyword to be removed
 	 * @return							Keyword that function the same as the removed shortcut
@@ -300,7 +300,7 @@ public class KeywordManager {
 		
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param index		Index of system keyword where the keyword to be removed lies in
 	 * @param keyword	Keyword to be removed
@@ -317,7 +317,7 @@ public class KeywordManager {
 		return false;
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param keyword	Shortcut to be matched with keyword
 	 * @return			Index of keyword where the shortcut corresponds to, -1 if not found
@@ -334,7 +334,7 @@ public class KeywordManager {
 		return INDEX_NOT_FOUND;
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param newKeyword				New keyword to represent the keyword
 	 * @param originKeyword				Original keyword to let new keyword matches with the same keyword
@@ -354,7 +354,7 @@ public class KeywordManager {
 		
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * This method verify all restrictions before allowing actions on the keyword
 	 * @param newKeyword				New keyword to represent the keyword
@@ -388,7 +388,7 @@ public class KeywordManager {
 		
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * This method construct the output as following: First index is the index of System keyword, 
 	 * second index is the deleted keyword
@@ -401,7 +401,7 @@ public class KeywordManager {
 		return result;
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * This method construct the output string to be read by UI component.
 	 * The format is as follow: First index will be the index of System Keyword, followed by customized keyword
@@ -420,22 +420,22 @@ public class KeywordManager {
 		return result;
 	}
 
-	//@author A0108385B
+	
 	private boolean isWordLengthInappropriate(String newKeyword) {
 		return newKeyword.length() < MINIMUM_LENGTH || newKeyword.length() > MAXIMUM_LENGTH;
 	}
 
-	//@author A0108385B
+	
 	private boolean isKeywordAtMaximumCapacity(int index) {
 		return userKeywords.get(index).size() > MAXIMUM_CAPACITY;
 	}
 
-	//@author A0108385B
+	
 	private boolean isKeywordAtMinimumCapacity(int index) {
 		return userKeywords.get(index).size() < MINIMUM_CAPACITY;
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param newKeyword		Keyword to be added
 	 * @param belongTo			Index of keyword where new keyword to be added to.
@@ -446,7 +446,7 @@ public class KeywordManager {
 		
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param index		Index that matches the keywords
 	 * @return			True if the index matches to a keyword
@@ -455,7 +455,7 @@ public class KeywordManager {
 		return (index > INDEX_NOT_FOUND);
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param keyword	Keyword to match the keyword
 	 * @return			True if the keyword matches a system keyword
@@ -465,7 +465,7 @@ public class KeywordManager {
 		return matchingIndex > INDEX_NOT_FOUND;
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param command	Keyword to match the default keyword
 	 * @return			True if the keyword matches a default keyword
@@ -486,7 +486,7 @@ public class KeywordManager {
 		return false;
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param index			Index of keyword to be manipulated 
 	 * @return				True if it is a unchangeable keyword
@@ -500,7 +500,7 @@ public class KeywordManager {
 		return false;
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param keyword	Shortcut to be matched with keyword
 	 * @return				Index of keywords where the shortcut matches with
@@ -520,7 +520,7 @@ public class KeywordManager {
 		return INDEX_NOT_FOUND;
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param keyword			Keyword to be matched to
 	 * @param matching			Keyword to be matched with
@@ -530,7 +530,7 @@ public class KeywordManager {
 		return keyword.equalsIgnoreCase(matching);
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @param keyword			keyword to be checked
 	 * @return					True if the keyword is a reserved keyword
@@ -544,7 +544,7 @@ public class KeywordManager {
 		return false;
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * @return	A clone of keyword list
 	 */
@@ -568,7 +568,7 @@ public class KeywordManager {
 		return cloneList;
 	}
 
-	//@author A0108385B
+	
 	/**
 	 * This method verify the command field by check any invalid fields used for particular type of command
 	 * @param command			Keyword command to be verified
