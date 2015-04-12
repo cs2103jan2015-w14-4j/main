@@ -277,21 +277,21 @@ public class SystemTest {
 					null,
 					null, null, "ABC", null, 0);
 			String[] cmd1 = {"addTemplate","1000","task1", null, null, null, null, null, null};
-			ArrayList<Task> result1 = template.processCustomizingCommand(cmd1);
+			ArrayList<Task> result1 = template.processTemplateCommand(cmd1);
 			ArrayList<Task> expected1 = new ArrayList<Task>();
 			expected1.add(temp);
 			assertTaskArrayListEquals(expected1, result1);
 			
 			//TC2 - test view
 			String[] cmd2 = {"viewTemplates", null, null, null, null, null, null, null, null};
-			ArrayList<Task> result2 = template.processCustomizingCommand(cmd2);
+			ArrayList<Task> result2 = template.processTemplateCommand(cmd2);
 			ArrayList<Task> expected2 = new ArrayList<Task>();
 			expected2.add(temp);
 			assertTaskArrayListEquals(expected2, result2);
 			
 			//TC3 - test delete
 			String[] cmd3 = {"deleteTemplate", "task1", null, null, null, null, null, null, null};
-			ArrayList<Task> result3 = template.processCustomizingCommand(cmd3);
+			ArrayList<Task> result3 = template.processTemplateCommand(cmd3);
 			ArrayList<Task> expected3 = new ArrayList<Task>();
 			expected3.add(temp);
 			assertTaskArrayListEquals(expected3, result3);
@@ -303,7 +303,7 @@ public class SystemTest {
 		//TC4 - try delete invalid template
 		String[] cmd4 = {"deleteTemplate", "task0", null, null, null, null, null, null, null};
 		try {
-			template.processCustomizingCommand(cmd4);
+			template.processTemplateCommand(cmd4);
 			
 		} catch(NoSuchElementException e) {
 			Assert.assertEquals(e.getMessage(), "No such template exists.");
@@ -316,7 +316,7 @@ public class SystemTest {
 		//TC5 - try reset
 		try {
 			String[] cmd5 = {"resetTemplates", null, null, null, null, null, null, null, null};
-			ArrayList<Task> result5 = template.processCustomizingCommand(cmd5);
+			ArrayList<Task> result5 = template.processTemplateCommand(cmd5);
 			assertTaskArrayListEquals(result5,new ArrayList<Task>());
 			
 		} catch(NoSuchElementException e) {

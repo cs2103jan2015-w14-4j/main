@@ -565,7 +565,7 @@ public class FileStorage {
                     }
 
                     try {
-                        template.processCustomizingCommand(inputs);     
+                        template.processTemplateCommand(inputs);     
                     } catch(Exception e) {
                     }
                 }

@@ -408,7 +408,7 @@ public class SystemHandler {
 	private void executeTemplateManager(String[] command) 
 			throws IllegalArgumentException, NoSuchElementException {
 
-		ArrayList<Task> result = myTemplates.processCustomizingCommand(command);
+		ArrayList<Task> result = myTemplates.processTemplateCommand(command);
 		if(result != null) {
 			ArrayList<String> tempNames = new ArrayList<String>();
 			if(command[INDEX_COMMAND_TYPE].equals(COMMAND_DELETE_TEMPLATE)) {

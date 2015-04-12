@@ -76,7 +76,7 @@ public class TemplateManager {
 	 * 										the constraints set by template manager
 	 * @throws NoSuchElementException		Demanded template from command does not exist
 	 */
-	public ArrayList<Task> processCustomizingCommand(String[] command) 
+	public ArrayList<Task> processTemplateCommand(String[] command) 
 			throws IllegalArgumentException, NoSuchElementException {
 		
 		
