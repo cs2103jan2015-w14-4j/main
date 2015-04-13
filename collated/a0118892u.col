@@ -863,7 +863,7 @@ public class FileStorage {
 	 */
 
 public class TaskManager implements TaskManagerInterface {
-    public static final int COMMAND_TYPE = 0;
+	public static final int COMMAND_TYPE = 0;
     public static final int TID = 1;
     public static final int TASK_NAME = 2;
     public static final int DATE_FROM = 3;
@@ -876,6 +876,7 @@ public class TaskManager implements TaskManagerInterface {
     public static final int VIEW_TYPE = 2;
     public static final int FILTER_TYPE = 8;
 
+    private static final String MSG_ERR_OVERDUE = "Sorry, your task is still overdue.";
     private static final String MSG_ERR_NO_SUCH_ID = "The Task ID does not exist.";
     private static final String MSG_ERR_LENGTH = "%s allows a maximum length of 30.";
     private static final String MSG_ERR_WRONG_DATE_NUMBER = "The date entered is invalid.";
@@ -1312,6 +1313,10 @@ public class TaskManager implements TaskManagerInterface {
         //sets previously overdue tasks back to normal status
         if (isTaskStatusOverdue(taskToEdit) && !isTaskOverdue(taskToEdit)) {
             taskToEdit.setStatus(NORMAL);
+        }
+        
+        if (!isTaskStatusOverdue(taskToEdit) && !isTaskComplete(taskToEdit) && isTaskOverdue(taskToEdit)) {
+            throw new IllegalArgumentException(MSG_ERR_OVERDUE);
         }
 
         if (inputs[DATE_FROM] != null && inputs[DATE_FROM] != CLEAR_INFO_INDICATOR) {

@@ -267,9 +267,9 @@ public class UserInterface {
     private static final String HEADER_SC_2 = "User-Defined Keywords";
 
     private static final String HEADER_TASK_1 = "Task";
-    private static final String HEADER_TASK_2 = "Task Title";
-    private static final String HEADER_TASK_3 = "Start Date";
-    private static final String HEADER_TASK_4 = "End Date";
+    private static final String HEADER_TASK_2 = "Title";
+    private static final String HEADER_TASK_3 = "DateFrom";
+    private static final String HEADER_TASK_4 = "DateTo";
     private static final String HEADER_TASK_5 = "Location";
     private static final String HEADER_TASK_6 = "Remarks";
     private static final String HEADER_TASK_7 = "Status";
@@ -299,12 +299,12 @@ public class UserInterface {
         {"GETTING STARTED:"+newline},
         {"  Start adding new tasks by using the keyword \"add [task title]\" followed by the task details."},	
 
-        {"      eg. \"add Meeting at room 303 on 27/2/2015 from 2pm to 4pm\"   OR"},
-        {"      eg. \"add Meeting from 1400 to 1600 on 27th July at room 302\""},
+        {"      eg. \"add Meeting at room 303 from 27/2/2015 2pm to 27/2/2015 4pm\"   OR"},
+        {"      eg. \"add Meeting from 27th July 1400 to 27th July 1600 at room 302\""},
         {"  Both inputs are accepted and will create a task with the same details."},
         {newline},
         {"Accepted field markers are  (non-case-sensitive):"},
-        {"     \"On, By, Before\" for deadlines,"},
+        {"     \"On, Before\" for deadlines,"},
         {"     \"From and To \" for durations,"},
         {"     \"At\" for locations, and"},
         {"     \"Remarks\" to add any additional remarks or details."},
@@ -314,9 +314,9 @@ public class UserInterface {
         {newline},
         {"VIEWING THE TASK LIST"},
         {"  If you enter an empty line, the default view mode  will be displayed, where all ongoing tasks will be sorted by date."},
-        {"  To view a specific range of tasks, type \"view [status] by [sort order]\"."},
+        {"  To view a specific range of tasks, type \"view [status] by \"[sort order]\"\"."},
         {"  If the sort order does not matter, you can just type \"view [status]\", or "},
-        {"  if you want to sort the list without filtering, type \"view by [sort order]\"."}, 
+        {"  if you want to sort the list without filtering, type \"view by \"[sort order]\"\"."}, 
         {newline},
         {"UPDATING TASKS"},
         {"  New Tasks are set to the \"Normal\" status by default."},
@@ -347,7 +347,7 @@ public class UserInterface {
         {"  When you use a template to create a new task, all you need to do is input " + 
         "\"useTemplate [template name] [date]\" to duplicate the task."},
         {newline},
-        {"For the full list of available keywords and functions, type \"viewShortcut\"."},
+        {"For the full list of available keywords and functions, type \"viewKeyword\"."},
         { "Please consult the User Guide for additional help and functionality."}
     };
 
@@ -435,6 +435,7 @@ public class UserInterface {
         }
 
         model_.refreshTable(outputDataString);
+        taskTable_.scrollRectToVisible(taskTable_.getCellRect(0, 0, true));
     }
 
     /**
