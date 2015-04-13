@@ -13,10 +13,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-/**
- * @author Ma Cong (A0118892U)
- *
- */
+//@author A0118892U
 public class TaskManagerTest {
     private static final String[] DELETE_TASK_10 = {"deleteTask", "10", null, null, null, 
         null, null, null, null};    
