@@ -1,0 +1,41 @@
+//@author: a0101735r-reused
+
+
+
+	/**
+	 * origin: ../src/\UserInterface.java
+	 */
+
+    /**
+     * Sets table column widths according to percentage.
+     */
+    private static void setJTableColumnsWidth(JTable table, int tablePreferredWidth,
+            double[] percentages) {
+        double total = 0;
+
+        for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
+            total += percentages[i];
+        }
+
+        for (int i = 0; i < table.getColumnModel().getColumnCount(); i++) {
+            TableColumn column = table.getColumnModel().getColumn(i);
+            column.setPreferredWidth((int)
+                    (tablePreferredWidth * (percentages[i] / total)));
+        }
+    }
+
+
+    /**
+     * *For testing purposes*
+     * 
+     * Creates dummy tasks and shortcuts to test display.
+     */
+    private ArrayList<Task> dummyArray;
+    private ArrayList<Task> dummy2;
+
+	// End of segment: ../src/\UserInterface.java
+
+
+
+
+

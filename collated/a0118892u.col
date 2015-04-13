@@ -1,0 +1,3806 @@
+//@author: a0118892u
+
+
+
+	/**
+	 * origin: ../src/\ComparatorDate.java
+	 */
+
+public class ComparatorDate implements Comparator<Task> {
+
+    public int compare(Task task1, Task task2) {
+        Date date1 = null, date2 = null;
+
+        //get date1 from task1
+        if (isDurationalTask(task1) || isForeverTask(task1)) {
+            date1 = task1.getDateFrom();
+        }
+
+        if (isOnlyDateToTask(task1)) {
+            date1 = task1.getDateTo();
+        }
+
+        if (isDeadlineTask(task1)) {
+            date1 = task1.getDeadline();
+        }
+
+
+        //get date2 from task2
+        if (isDurationalTask(task2) || isForeverTask(task2)) {
+            date2 = task2.getDateFrom();
+        }
+
+        if (isOnlyDateToTask(task2)) {
+            date2 = task2.getDateTo();
+        }
+
+        if (isDeadlineTask(task2)) {
+            date2 = task2.getDeadline();
+        }
+
+
+        if (date1 != null && date2 != null) {
+            if (date1.compareTo(date2) == 0) {
+                if (task1.getTID() < task2.getTID()) {
+                    return -1;
+                } else if (task1.getTID() > task2.getTID()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            } else {
+                return date1.compareTo(date2);
+            }
+        } else if (date1 == null && date2 != null) {
+            return 1;
+        } else if (date1 != null && date2 == null) {
+            return -1;
+        } else {
+            if (task1.getTID() < task2.getTID()) {
+                return -1;
+            } else if (task1.getTID() > task2.getTID()) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    private boolean isDurationalTask(Task task) {
+        return task.getDateFrom() != null && task.getDateTo() != null &&
+                task.getDeadline() == null;
+    }
+
+    private boolean isDeadlineTask(Task task) {
+        return task.getDateFrom() == null && task.getDateTo() == null &&
+                task.getDeadline() != null; 
+    }
+
+    private boolean isForeverTask(Task task) {
+        return task.getDateFrom() != null && task.getDateTo() == null &&
+                task.getDeadline() == null;
+    }
+
+    private boolean isOnlyDateToTask(Task task) {
+        return task.getDateFrom() == null && task.getDateTo() != null &&
+                task.getDeadline() == null; 
+    }
+}
+
+	// End of segment: ../src/\ComparatorDate.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\ComparatorDateAndStatus.java
+	 */
+
+public class ComparatorDateAndStatus implements Comparator<Task> {
+    private final int STATUS_COMPLETE = 6;
+
+    @Override
+    public int compare(Task task1, Task task2) {
+        if (task1.getStatus() == STATUS_COMPLETE && task2.getStatus() == STATUS_COMPLETE) {
+            Date date1 = null, date2 = null;
+
+            //get date1 from task1
+            if (isDurationalTask(task1) || isForeverTask(task1)) {
+                date1 = task1.getDateFrom();
+            } 
+
+            if (isOnlyDateToTask(task1)) {
+                date1 = task1.getDateTo();
+            } 
+
+            if (isDeadlineTask(task1)) {
+                date1 = task1.getDeadline();
+            }
+
+
+            //get date2 from task2
+            if (isDurationalTask(task2) || isForeverTask(task2)) {
+                date2 = task2.getDateFrom();
+            }
+
+            if (isOnlyDateToTask(task2)) {
+                date2 = task2.getDateTo();
+            } 
+
+            if (isDeadlineTask(task2)) {
+                date2 = task2.getDeadline();
+            }
+
+
+            if (date1 != null && date2 != null) {
+                if (date1.compareTo(date2) == 0) {
+                    if (task1.getTID() < task2.getTID()) {
+                        return -1;
+                    } else if (task1.getTID() > task2.getTID()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                } else {
+                    return date1.compareTo(date2);
+                }
+            } else if (date1 == null && date2 != null) {
+                return 1;
+            } else if (date1 != null && date2 == null) {
+                return -1;
+            } else {
+                if (task1.getTID() < task2.getTID()) {
+                    return -1;
+                } else if (task1.getTID() > task2.getTID()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        } else if (task1.getStatus() != STATUS_COMPLETE && task2.getStatus() == STATUS_COMPLETE) {
+            return -1;
+        } else if (task1.getStatus() == STATUS_COMPLETE && task2.getStatus() != STATUS_COMPLETE) {
+            return 1;
+        } else {
+            Date date1 = null, date2 = null;
+
+            //get date1 from task1
+            if (isDurationalTask(task1) || isForeverTask(task1)) {
+                date1 = task1.getDateFrom();
+            }
+
+            if (isOnlyDateToTask(task1)) {
+                date1 = task1.getDateTo();
+            }
+
+            if (isDeadlineTask(task1)) {
+                date1 = task1.getDeadline();
+            }
+
+
+            //get date2 from task2
+            if (isDurationalTask(task2) || isForeverTask(task2)) {
+                date2 = task2.getDateFrom();
+            }
+
+            if (isOnlyDateToTask(task2)) {
+                date2 = task2.getDateTo();
+            } 
+
+            if (isDeadlineTask(task2)) {
+                date2 = task2.getDeadline();
+            }
+
+            if (date1 != null && date2 != null) {
+                if (date1.compareTo(date2) == 0) {
+                    if (task1.getTID() < task2.getTID()) {
+                        return -1;
+                    } else if (task1.getTID() > task2.getTID()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                } else {
+                    return date1.compareTo(date2);
+                }
+            } else if (date1 == null && date2 != null) {
+                return 1;
+            } else if (date1 != null && date2 == null) {
+                return -1;
+            } else {
+                if (task1.getTID() < task2.getTID()) {
+                    return -1;
+                } else if (task1.getTID() > task2.getTID()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        }
+    }
+
+    private boolean isDurationalTask(Task task) {
+        return task.getDateFrom() != null && task.getDateTo() != null &&
+                task.getDeadline() == null;
+    }
+
+    private boolean isDeadlineTask(Task task) {
+        return task.getDateFrom() == null && task.getDateTo() == null &&
+                task.getDeadline() != null; 
+    }
+
+    private boolean isForeverTask(Task task) {
+        return task.getDateFrom() != null && task.getDateTo() == null &&
+                task.getDeadline() == null;
+    }
+
+    private boolean isOnlyDateToTask(Task task) {
+        return task.getDateFrom() == null && task.getDateTo() != null &&
+                task.getDeadline() == null; 
+    }
+
+}
+
+	// End of segment: ../src/\ComparatorDateAndStatus.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\ComparatorID.java
+	 */
+
+public class ComparatorID implements Comparator<Task> {
+
+    public int compare(Task task1, Task task2) {
+        if (task1.getTID() < task2.getTID()) {
+            return -1;
+        } else if (task1.getTID() > task2.getTID()) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+}
+
+	// End of segment: ../src/\ComparatorID.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\ComparatorLocation.java
+	 */
+
+public class ComparatorLocation implements Comparator<Task>{
+
+    public int compare(Task task1, Task task2) {
+        String location1 = task1.getLocation();
+        String location2 = task2.getLocation();
+
+        if (location1 != null && location2 != null) {
+            if (location1.compareTo(location2) == 0) {
+                if (task1.getTID() < task2.getTID()) {
+                    return -1;
+                } else if (task1.getTID() > task2.getTID()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            } else {
+                return location1.compareTo(location2);
+            }
+        } else if (location1 == null && location2 != null) {
+            return 1;
+        } else if (location1 != null && location2 == null) {
+            return -1;
+        } else {
+            if (task1.getTID() < task2.getTID()) {
+                return -1;
+            } else if (task1.getTID() > task2.getTID()) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+}
+	// End of segment: ../src/\ComparatorLocation.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\ComparatorStatus.java
+	 */
+
+public class ComparatorStatus implements Comparator<Task> {
+
+    public int compare(Task task1, Task task2) {
+        if (task1.getStatus() < task2.getStatus()) {
+            return -1;
+        } else if (task1.getStatus() > task2.getStatus()) {
+            return 1;
+        } else {
+            if (task1.getTID() < task2.getTID()) {
+                return -1;
+            } else if (task1.getTID() > task2.getTID()) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+}
+
+	// End of segment: ../src/\ComparatorStatus.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\ComparatorTaskName.java
+	 */
+
+public class ComparatorTaskName implements Comparator<Task> {
+
+    public int compare(Task task1, Task task2) {
+        String taskName1 = task1.getTaskName();
+        String taskName2 = task2.getTaskName();
+
+        if (taskName1 != null && taskName2 != null) {
+            if (taskName1.compareTo(taskName2) == 0) {
+                if (task1.getTID() < task2.getTID()) {
+                    return -1;
+                } else if (task1.getTID() > task2.getTID()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            } else {
+                return taskName1.compareTo(taskName2);
+            }
+        } else if (taskName1 == null && taskName2 != null) {
+            return 1;
+        } else if (taskName1 != null && taskName2 == null) {
+            return -1;
+        } else {
+            if (task1.getTID() < task2.getTID()) {
+                return -1;
+            } else if (task1.getTID() > task2.getTID()) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+}
+
+	// End of segment: ../src/\ComparatorTaskName.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\FileStorage.java
+	 */
+
+public class FileStorage {
+
+    private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
+    
+    private static final int COMMAND_TYPE_INDEX = 0;
+    private static final int INDEX_TASK_ID_READ_TASK_FROM_FILE = 1;
+    //The indexes for how a task object is stored in String array of size 8
+    private static final int TASK_ID_INDEX = 0;
+    private static final int TEMPLATE_NAME_INDEX = 0;
+    private static final int TASK_NAME_INDEX = 1;
+    private static final int TASK_DATE_FROM_INDEX = 2;
+    private static final int TASK_DATE_TO_INDEX = 3;
+    private static final int TASK_DEADLINE_INDEX = 4;
+    private static final int TASK_LOCATION_INDEX = 5;
+    private static final int TASK_DETAILS_INDEX = 6;
+    private static final int TASK_STATUS_INDEX = 7;
+    
+    
+    private static final String ADD_TASK_COMMAND = "addTask";
+    private static final String ADD_TEMPLATE_INIT_COMMAND = "addTemplateInit";
+    
+    //for file location
+    private static final char SLASH = '/';
+    private static final char BACKSLASH = '\\';
+    
+    //Error message
+    private static final String MSG_ERR_MOVE_FILE = "File is not moved successfully, "
+            + "please try again with another location or a different file name.";
+        
+    private static final int SHORTCUT_NAME_INDEX = 1;
+    private static final int SHORTCUT_ID_INDEX = 2;
+    private static final String DEFAULT_DELIMITER = "||";
+    private static final int DEFAULT_STRING_SIZE = 9;
+    private static final int TEMP_STRING_SIZE = 8;
+    
+    private static final String NULL_INPUT = "null";
+    private static final String DEFAULT_TASK_FILE_NAME = "default.txt";
+    private static final String DEFAULT_TEMPLATE_FILE_NAME = "template";
+    private static final String DEFAULT_SHORTCUT_FILE_NAME = "shortcut";
+    private static final String DEFAULT_LOCATION_FILE_NAME = "location";
+
+    private final File location = new File(DEFAULT_LOCATION_FILE_NAME);
+
+    private File taskFile;
+    private File templateFile;
+    private File shortcutFile;
+    private String taskFileLocation;
+    private String path;
+
+    
+    //--------------------constructor method starts-----------------
+    /**
+     * This constructor reads the location of task file from a file named location; 
+     * then it creates File object for tasks, templates and shortcuts.
+     * If location file does not exist, it will be created with default contents.
+     */
+    public FileStorage() {
+        if (!location.exists()){
+            initializeFileStorageDefault();
+        } else {
+            initializeFileStorageFromALocation();
+        }
+    }
+
+    /**
+     * This method initializes File object for tasks, templates and shortcuts 
+     * from their default locations.
+     */
+    private void initializeFileStorageDefault() {
+        try {
+            writeNewFileLocationToFile(DEFAULT_TASK_FILE_NAME);
+
+            createTaskFile(DEFAULT_TASK_FILE_NAME);
+            createTemplateFile(DEFAULT_TEMPLATE_FILE_NAME);
+            createShortcutFile(DEFAULT_SHORTCUT_FILE_NAME);      
+        } catch (IOException e) {
+
+        }
+    }
+
+    /**
+     * This method creates a File object for tasks with the given file name.
+     * If the file with that name is not found, it creates a file.
+     * @param taskFileName  the file name for the task file
+     * @throws IOException
+     */
+    private void createTaskFile(String taskFileName) throws IOException {
+        taskFile = new File(taskFileName);
+        if (!taskFile.exists()) {
+            taskFile.createNewFile();           
+        }
+    }
+
+    /**
+     * This method creates a File object for templates with the given file name.
+     * If the file with that name is not found, it creates a file.
+     * @param templateFileName  the file name for the template file
+     * @throws IOException
+     */
+    private void createTemplateFile(String templateFileName) throws IOException {
+        templateFile = new File(templateFileName);
+        if (!templateFile.exists()) {
+            templateFile.createNewFile();
+        }
+    }
+
+    /**
+     * This method creates a File object for shortcuts with the given file name.
+     * If the file with that name is not found, it creates a file.
+     * @param shortcutFileName  the file name for the shortcut file
+     * @throws IOException
+     */
+    private void createShortcutFile(String shortcutFileName) throws IOException {
+        shortcutFile = new File(shortcutFileName);
+        if (!shortcutFile.exists()) {
+            shortcutFile.createNewFile();
+        }
+    }
+
+    /**
+     * This method reads the location where task file is saved from the location file.
+     */
+    private void getTaskFileLocation() {
+        try {
+            Scanner sc = new Scanner(location);
+            taskFileLocation = sc.nextLine();
+            sc.close();
+        } catch (FileNotFoundException e) {
+            assert (true);
+        } 
+    }
+
+    /**
+     * This method initializes File object for tasks, templates and shortcuts 
+     * from location stores in the location file.
+     */
+    private void initializeFileStorageFromALocation() {
+        getTaskFileLocation();
+        path = getPath(taskFileLocation);
+
+        try {
+            createTaskFile(taskFileLocation);
+            createTemplateFile(path + DEFAULT_TEMPLATE_FILE_NAME);
+            createShortcutFile(path + DEFAULT_SHORTCUT_FILE_NAME);
+            taskFile = new File(taskFileLocation);
+        } catch (IOException e) {
+
+        }
+    }
+    //--------------------constructor method ends-----------------
+
+
+    //--------------------other methods-----------------
+    /**
+     * This method moves tasks, templates and shortcuts file to the new path
+     * specified in the new file name for tasks
+     * @param newFileName  The new file name where user wants to save it
+     * @throw IOException  Unsuccessful move of files
+     */
+    public void saveToAnotherLocation(String newFileName) throws IOException {
+        boolean isSaveSuccessful = taskFile.renameTo(new File(newFileName));
+
+        if (isSaveSuccessful) {
+            writeNewFileLocationToFile(newFileName);
+            taskFile = new File(newFileName);
+            path = getPath(newFileName);
+
+            templateFile.renameTo(new File(path + DEFAULT_TEMPLATE_FILE_NAME));
+            templateFile = new File(path + DEFAULT_TEMPLATE_FILE_NAME);
+
+            shortcutFile.renameTo(new File(path + DEFAULT_SHORTCUT_FILE_NAME));
+            shortcutFile = new File(path + DEFAULT_SHORTCUT_FILE_NAME);
+        } else {
+            throw new IOException(MSG_ERR_MOVE_FILE);
+        }
+    }
+
+    /**
+     * This method extracts the path form the location where tasks file is saved
+     * @param fileName  the path and name the task file is saved
+     * @return          the path where task file is saved
+     */
+    private String getPath(String fileName) {
+        String path = "";
+        
+        if (isSlashInFileName(fileName)) {
+            int indexAfterLastSlash = fileName.lastIndexOf(SLASH) + 1;
+            path = fileName.substring(0, indexAfterLastSlash);
+        } else if (isBackslashInFileName(fileName)) {
+            int indexAfterLastBackSlash = fileName.lastIndexOf(BACKSLASH) + 1;
+            path = fileName.substring(0, indexAfterLastBackSlash);
+        }
+        
+        return path;
+    }
+
+    /**
+     * This method checks whether fileName contains slash("/")
+     * @param fileName  file name and its path
+     * @return          true if input contains slash("/")
+     */
+    private boolean isSlashInFileName(String fileName) {
+        return fileName.indexOf(SLASH) != -1;
+    }
+
+    /**
+     * This method checks whether fileName contains backslash("\")
+     * @param fileName  file name and its path
+     * @return          true if input contains backslash("\")
+     */
+    private boolean isBackslashInFileName(String fileName) {
+        return fileName.indexOf(BACKSLASH) != -1;
+    }
+
+    /**
+     * This methods writes the new location and file name where tasks file is store 
+     * into the location file
+     * @param fileName  the file name where tasks file is stored
+     */
+    private void writeNewFileLocationToFile(String fileName) {
+        try {
+            location.delete();
+            location.createNewFile();
+            BufferedWriter bw = new BufferedWriter(new FileWriter(location));
+            bw.write(fileName);
+            bw.close();
+        } catch (IOException e) {
+
+        }
+    }
+
+
+    //----------tasks read and write methods starts----------
+    /**
+     * This method extracts each line from specified file as String array
+     * and passes it as parameter to processInitialization method in TaskManager.
+     * @param tm  TaskManager object to call its processInitialization method
+     */    
+    public void readTaskFromFile(TaskManager tm) {
+        if (taskFile.exists()) {
+            try {
+                Scanner sc = new Scanner(taskFile);
+
+                while (sc.hasNextLine()) {
+                    String[] inputs = new String[DEFAULT_STRING_SIZE];
+                    inputs[COMMAND_TYPE_INDEX] = ADD_TASK_COMMAND;
+                    int index = INDEX_TASK_ID_READ_TASK_FROM_FILE;
+                    StringTokenizer st = new StringTokenizer(sc.nextLine(), DEFAULT_DELIMITER);
+
+                    while (st.hasMoreElements()) {
+                        String nextStr = st.nextElement().toString();
+                        if (isEmptyInput(nextStr)) {
+                            inputs[index] = null;
+                        } else {
+                            inputs[index] = nextStr;
+                        }
+                        ++index;
+                    }
+
+                    tm.processInitialization(inputs);
+                }
+
+                sc.close();      
+            } catch (FileNotFoundException e) {
+                assert (true);
+            }
+        }   
+    }
+
+    /**
+     * If the string read is "null", this means the data should be set to null
+     * @param str  string from task file or template file
+     * @return     true if string is null, else false
+     */
+    private boolean isEmptyInput(String str) {
+        if (str.equals(NULL_INPUT)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * This method writes tasks back to the specified file with specific format
+     * @param taskList  ArrayList of tasks to be written to file
+     */
+	// End of segment: ../src/\FileStorage.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\Task.java
+	 */
+
+    private Date cloneDate(Date date) {
+        if (date == null) {
+            return null;
+        } else {
+            return new Date(date.getTime());
+        }
+    }
+
+	// End of segment: ../src/\Task.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\Task.java
+	 */
+
+    public String[] toStringArray() {
+        String[] taskStringArray = new String[DEFAULT_STRING_SIZE];
+
+        taskStringArray[INDEX_TASK_ID] = Integer.toString(TID);
+
+        if (taskName != null) {
+            taskStringArray[INDEX_TASK_NAME] = taskName;
+        } else {
+            taskStringArray[INDEX_TASK_NAME] = null;
+        }
+
+        if (isDurationalTask()) {
+            taskStringArray[INDEX_DATE_FROM] = removeTimePartFromDate(convertToStringFromDate(dateFrom));
+            taskStringArray[INDEX_DATE_TO] = removeTimePartFromDate(convertToStringFromDate(dateTo));
+        }
+
+        if (isDeadlineTask()) {
+            taskStringArray[INDEX_DATE_FROM] = null;
+            if (dateTo != null) {
+                taskStringArray[INDEX_DATE_TO] = removeTimePartFromDate(convertToStringFromDate(dateTo));
+            }
+            if (deadline != null) {
+                taskStringArray[INDEX_DATE_TO] = removeTimePartFromDate(convertToStringFromDate(deadline));
+            }
+        }
+
+        if (isFloatingTask()) {
+            taskStringArray[INDEX_DATE_FROM] = null;
+            taskStringArray[INDEX_DATE_TO] = null;
+        }
+
+        if (isForeverTask()) {
+            taskStringArray[INDEX_DATE_FROM] = removeTimePartFromDate(convertToStringFromDate(dateFrom));
+            taskStringArray[INDEX_DATE_TO] = null;
+        }
+
+        if (location != null) {
+            taskStringArray[INDEX_LOCATION] = location;
+        } else {
+            taskStringArray[INDEX_LOCATION] = null;
+        }
+
+        if (details != null) {
+            taskStringArray[INDEX_DETAILS] = details;
+        } else {
+            taskStringArray[INDEX_DETAILS] = null;
+        }
+
+        taskStringArray[INDEX_STATUS] = getStatusString();
+
+        return taskStringArray;
+    }
+
+	// End of segment: ../src/\Task.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\Task.java
+	 */
+
+    private boolean isDurationalTask() {
+        return getDateFrom() != null && getDateTo() != null &&
+                getDeadline() == null;
+    }
+
+	// End of segment: ../src/\Task.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\Task.java
+	 */
+
+    private boolean isFloatingTask() {
+        return getDateFrom() == null && getDateTo() == null &&
+                getDeadline() == null;
+    }
+
+	// End of segment: ../src/\Task.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\Task.java
+	 */
+
+    private boolean isDeadlineTask() {
+        return (getDateFrom() == null && getDateTo() == null &&
+                getDeadline() != null) || 
+                (getDateFrom() == null && getDateTo() != null &&
+                getDeadline() == null); 
+    }
+
+	// End of segment: ../src/\Task.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\Task.java
+	 */
+
+    //Same as floating task
+    private boolean isForeverTask() {
+        return getDateFrom() != null && getDateTo() == null &&
+                getDeadline() == null;
+    }
+
+	// End of segment: ../src/\Task.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\Task.java
+	 */
+
+    private String removeTimePartFromDate(String dateString) {
+        return dateString.replace(ZERO_TIME, "");
+    }
+
+	// End of segment: ../src/\Task.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\Task.java
+	 */
+
+    private String convertToStringFromDate(Date dateObject) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+        String dateString = dateFormat.format(dateObject);
+        return dateString;
+    }
+}
+
+	// End of segment: ../src/\Task.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\TaskManager.java
+	 */
+
+public class TaskManager implements TaskManagerInterface {
+    public static final int COMMAND_TYPE = 0;
+    public static final int TID = 1;
+    public static final int TASK_NAME = 2;
+    public static final int DATE_FROM = 3;
+    public static final int DATE_TO = 4;
+    public static final int DEADLINE = 5;
+    public static final int LOCATION = 6;
+    public static final int DETAILS = 7;
+    public static final int STATUS = 8;
+    public static final int DEFAULT_STRING_SIZE = 9;
+    public static final int VIEW_TYPE = 2;
+    public static final int FILTER_TYPE = 8;
+
+    private static final String MSG_ERR_NO_SUCH_ID = "The Task ID does not exist.";
+    private static final String MSG_ERR_LENGTH = "%s allows a maximum length of 30.";
+    private static final String MSG_ERR_WRONG_DATE_NUMBER = "The date entered is invalid.";
+    private static final String MSG_ERR_WRONG_DATE_DURATION = "The duration entered is invalid. Start Date must be before End Date.";
+    private static final String MSG_ERR_EMPTY_TASK_NAME = "Task name cannot be empty.";
+    private static final String MSG_ERR_UNDO = "There is no operation to undo.";
+    private static final String MSG_ERR_REDO = "There is no operation to redo.";
+    private static final String MSG_ERR_SEARCH = "Search query cannot be empty.";
+    private static final String MSG_ERR_NO_SUCH_STATUS = "Flexi Tracker does not recognize this status.";
+    private static final String MSG_ERR_INVALID_CLEAR = "The clear command was invalid. Nothing has been cleared.";
+    private static final String MSG_ERR_NO_SUCH_FILTER = "Tasks cannot be filtered in the requested manner.";
+    private static final String MSG_ERR_NO_SUCH_ARRANGE = "The tasks cannot be sorted in this order.";
+    private static final String MSG_ERR_FAIL_TO_EDIT = "Failed to edit the task.";
+    private static final String MSG_ERR_NO_SUCH_COMMAND = "No such command exists in Task Manager.";
+
+
+    private static final int URGENT = 1;
+    private static final int MAJOR = 2;
+    private static final int NORMAL = 3;
+    private static final int MINOR = 4;
+    private static final int CASUAL = 5;
+    private static final int COMPLETE = 6;
+    private static final int OVERDUE = 7;
+
+    private static final String URGENT_STRING = "urgent";
+    private static final String MAJOR_STRING = "major";
+    private static final String NORMAL_STRING = "normal";
+    private static final String MINOR_STRING = "minor";
+    private static final String CASUAL_STRING = "casual";
+    private static final String COMPLETE_STRING = "complete";
+    private static final String OVERDUE_STRING = "overdue";
+
+    private static final int INITIAL_TID = 10;
+    private static final int NUM_ATTRIBUTE_FOR_DATE_OBJECT = 5;
+    private static final int DAY_INDEX = 0;
+    private static final int MONTH_INDEX = 1;
+    private static final int YEAR_INDEX = 2;
+    private static final int HOUR_INDEX = 3;
+    private static final int MINUTE_INDEX = 4;
+    private static final int SEARCH_INDEX = 2;
+    private static final String CLEAR_INFO_INDICATOR = "";
+    private static final int INDEX_AFFECTED_TASK = 0;
+    private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
+    private static final String ID_STRING = "id";
+    private static final String TITLE_STRING = "title";
+    private static final String STATUS_STRING = "status";
+    private static final String DATE_STRING = "date";
+    private static final String DEADLINE_STRING = "deadline";
+    private static final String LOCATION_STRING = "location";
+    private static final String TASK_TITLE_STRING = "task title";
+    private static final int MAXIMUM_LENGTH_TASKNAME_LOCATION = 30;
+
+
+    private ArrayList<Task> tasks;
+    private int IDCounter;
+    private Stack<String[]> undoStack = new Stack<String[]>();
+    private Stack<String[]> redoStack = new Stack<String[]>();
+    private HashSet<Integer> TaskIDs = new HashSet<Integer>();
+
+
+
+    //--------------------constructor-----------------
+    public TaskManager() {
+        tasks = new ArrayList<Task>();
+        IDCounter = INITIAL_TID;
+    }
+
+
+
+    //--------------------getter----------------------
+    //This method is for testing purpose
+    protected ArrayList<Task> getTasks() {
+        return tasks;
+    }
+
+    //This method is for testing purpose
+    protected Stack<String[]> getUndoStack() {
+        return undoStack;
+    }
+
+    //This method is for testing purpose
+    protected Stack<String[]> getRedoStack() {
+        return redoStack;
+    }
+
+
+
+    //--------------------other methods-----------------------------------
+    //--------------------Initialization method starts--------------------
+    public void processInitialization(String[] inputs) {
+        Task newTask;
+
+        if (isInputsHavingTID(inputs)) {
+            newTask = processInitializationWithID(inputs);
+        } else {  
+            newTask = processInitializationWithoutID(inputs);
+        }
+
+        assertTaskIDIsBiggerThanTen(newTask);
+        assertDurationalTaskIsValid(newTask);
+        assertTaskDateNumberIsvalid(newTask);
+
+        updateTaskIDs(newTask.getTID());
+        tasks.add(newTask);
+        defaultSortTaskByCompleteAndDate();
+    }
+
+    private Task processInitializationWithID(String[] inputs) {
+        return processAddWithID(inputs);
+    }
+
+    private Task processInitializationWithoutID(String[] inputs) {
+        return processAddWithoutID(inputs);
+    }
+    //--------------------Initialization method ends--------------------
+
+
+
+    public ArrayList<Task> processTM(String[] inputs) 
+            throws NoSuchElementException, IllegalArgumentException {
+        COMMAND_TYPE_TASK_MANAGER commandObtained = getCommand(inputs[COMMAND_TYPE]);
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
+
+        switch (commandObtained) {
+        case addTask:
+            returningTasks = addATask(inputs);
+            updateUndoStackFromTask(returningTasks.get(INDEX_AFFECTED_TASK), inputs[COMMAND_TYPE]);
+            saveTasksToFile();
+            break;
+
+        case editTask: 
+        case clearAttr: 
+        case markTask:
+            returningTasks = processEditCommand(inputs);
+            saveTasksToFile();
+            break;
+
+        case viewTask:
+            returningTasks = viewTasks(inputs); 
+            saveTasksToFile();
+            break;
+
+        case deleteTask:
+            returningTasks = processDeleteCommand(inputs);
+            saveTasksToFile();
+            break;
+
+        case searchTask:
+            returningTasks = processSearchCommand(inputs);
+            break;
+
+        case undoTask:
+            returningTasks = undoAnOperation();
+            saveTasksToFile();
+            break;
+
+        case redoTask:
+            returningTasks = redoAnOperation();
+            saveTasksToFile();
+            break;
+
+        }
+
+        return returningTasks;
+    }
+
+    /**
+     * This method converts command to COMMAND_TYPE_TASK_MANAGER. 
+     * If the command does not exist, returns an invalidTask command
+     * @param command  a String received from FlexiParser
+     * @return         a COMMAND_TYPE_TASK_MANAGER type of the String command
+     */
+    public static COMMAND_TYPE_TASK_MANAGER getCommand (String command) {
+        COMMAND_TYPE_TASK_MANAGER commandObtained;
+
+        try {
+            commandObtained = COMMAND_TYPE_TASK_MANAGER.valueOf(command);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(MSG_ERR_NO_SUCH_COMMAND);
+        }
+
+        return commandObtained;
+    }
+
+
+
+    //--------------------Add method starts--------------------
+    /**
+     * This method adds a task from the inputs received from SystemHandler.
+     * It also updates taskIDs to prevent clashing ID.
+     * @param inputs  a parsed command received from SystemHandler
+     * @return        affected tasks in an ArrayList with clashing tasks
+     */
+    private ArrayList<Task> addATask(String[] inputs) {
+        Task newTask;
+
+        if (!isStatusAnInt(inputs[STATUS])) {
+            changeStatusToIntString(inputs);
+        }
+
+        if (isInputsHavingTID(inputs)) {
+            newTask = processAddWithID(inputs);       
+        } else {
+            newTask = processAddWithoutID(inputs);
+        }
+
+        checkTaskDetails(newTask.clone());
+
+        if (isTaskOverdue(newTask)) {
+            newTask.setStatus(OVERDUE);
+        }
+
+        assertDurationalTaskIsValid(newTask);
+        assertTaskDateNumberIsvalid(newTask);
+
+
+        updateTaskIDs(newTask.getTID());
+        tasks.add(newTask);
+
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
+        returningTasks.add(newTask.clone());
+
+        addClashingDurationalTask(newTask, returningTasks);
+        defaultSortTaskByCompleteAndDate();
+
+        return returningTasks;
+    }
+
+    private boolean isStatusAnInt(String status) {
+        if (status != null) {
+            for (char c: status.toCharArray()) {
+                if (!Character.isDigit(c)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isInputsHavingTID(String[] inputs) {
+        return inputs[TID] != null;
+    }
+
+    /**
+     * This method deals with adding task with an ID. If there is a ID clash, it will
+     * get a new task ID.
+     * @param inputs  a parsed command received from SystemHandler with
+     *                status changed to an int type
+     * @return        the newly added task
+     */
+    private Task processAddWithID(String[] inputs) {
+        if (isIDClashing(inputs[TID])) {
+            inputs[TID] = convertToStringFromInt(getNewTID());
+        }
+
+        if (isIDLessThanTen(inputs[TID])) {
+            inputs[TID] = convertToStringFromInt(getNewTID());
+        }
+
+        Task newTask = new Task(convertToIntType(inputs[TID]), inputs[TASK_NAME], 
+                convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
+                convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
+                convertToIntType(inputs[STATUS]));
+
+        updateIDCounter(inputs[TID]);
+
+        return newTask;
+    }
+
+    /**
+     * This method updates IDCounter. It makes sure IDCounter is always equal to
+     * the largest ID for the purpose of getting a new ID.
+     * @param currentID
+     */
+    private void updateIDCounter(String currentID) {
+        if (IDCounter < convertToIntType(currentID)) {
+            IDCounter = convertToIntType(currentID);
+        }
+    }
+
+    private boolean isIDLessThanTen(String TID) {
+        return convertToIntType(TID) < INITIAL_TID;
+    }
+
+    /**
+     * This method deals with adding task without an ID.
+     * @param inputs  a parsed command received from SystemHandler with
+     *                status changed to an int type
+     * @return        the newly added task
+     */
+    private Task processAddWithoutID(String[] inputs) {
+        Task newTask = new Task(getNewTID(), inputs[TASK_NAME], 
+                convertToDateObject(inputs[DATE_FROM]), convertToDateObject(inputs[DATE_TO]), 
+                convertToDateObject(inputs[DEADLINE]), inputs[LOCATION], inputs[DETAILS], 
+                convertToIntType(inputs[STATUS]));
+
+        if (inputs[DATE_FROM] != null) {
+            assertDateObjectIsValid(newTask.getDateFrom());
+        }
+        if (inputs[DATE_TO] != null) {
+            assertDateObjectIsValid(newTask.getDateTo());
+        }
+        if (inputs[DEADLINE] != null) {
+            assertDateObjectIsValid(newTask.getDeadline());
+        }
+
+        return newTask;
+    }
+
+    /**
+     * This method update TaskIDs HashSet to for checking clashing IDs
+     * @param TID  Task ID from a task
+     */
+    private void updateTaskIDs(int TID) {
+        TaskIDs.add(TID);
+    }
+
+    /**
+     * This method generates a new Task ID for a task
+     * @return  a new task ID
+     */
+    private int getNewTID() {
+        int newTID;
+
+        if (tasks.isEmpty()) {
+            newTID = INITIAL_TID;
+        } else {
+            ++IDCounter;
+            newTID = IDCounter;
+        }
+
+        return newTID;
+    }
+    //--------------------Add method ends--------------------
+
+
+    //--------------------Edit method starts-----------------
+    /**
+     * This method edits a task. It throws error if edit is unable to be performed.
+     * @param inputs  a parsed command received from SystemHandler
+     * @return        affected tasks in an ArrayList with clashing tasks
+     */
+    private ArrayList<Task> processEditCommand(String[] inputs) {
+        if (!isAbleToEdit(inputs[TID])) {
+            throw new NoSuchElementException(MSG_ERR_NO_SUCH_ID);
+        }
+
+        checkEditIsValid(inputs);
+
+        processInformationBeforeEdit(inputs);
+
+        Task taskToEdit = getTaskToEdit(inputs);
+        Task taskAfterEditing = editATask(taskToEdit.clone(), inputs).get(INDEX_AFFECTED_TASK);
+        checkTaskDetails(taskAfterEditing);
+
+        //update undo stack before performing edit, so it is possible to recover it
+        updateStackForEdit(taskToEdit, inputs, undoStack);
+
+        return editATask(taskToEdit, inputs);
+    }
+
+    /**
+     * If there is a ID clash, it means TaskID is found
+     * @param TaskID
+     * @return        true if able to edit; else false
+     */
+    private boolean isAbleToEdit(String TaskID) {
+        return isIDClashing(TaskID);
+    }
+
+    /**
+     * This methods checks the there is at least one field of the data to be edited
+     * @param inputs  parsed command received from SystemHandler
+     */
+    private void checkEditIsValid(String[] inputs) {
+        boolean isValid = false;
+
+        for (int i = TASK_NAME; i < inputs.length; ++i) {
+            if (inputs[i] != null) {
+                isValid = true;
+            }
+        }
+
+        if (!isValid) {
+            throw new IllegalArgumentException(MSG_ERR_FAIL_TO_EDIT);
+        }
+    }
+
+    /**
+     * This method does the necessary changes before process editing a task
+     * @param inputs  a parsed command received from SystemHandler
+     */
+    private void processInformationBeforeEdit(String[] inputs) {
+        inputs[COMMAND_TYPE] = changeCommandToEditTask();
+
+        if (inputs[STATUS] != null) {
+            changeStatusToIntString(inputs);
+        }
+    }
+
+    /**
+     * This method changes clearAttr and markTask command to editTask
+     * @return  String type of editTask
+     */
+    private String changeCommandToEditTask() {
+        return COMMAND_TYPE_TASK_MANAGER.editTask.toString();
+    }
+
+    private Task getTaskToEdit(String[] inputs) {
+        return getTaskFromTIDString(inputs);
+    }
+
+    /**
+     * This method edit a task, clear attributes of a task or mark status of a task.
+     * @param taskToEdit  the task to be edited
+     * @param inputs      a String array indicates the changes. null means there is 
+     *                    no change to this attribute, "" means to clear that attribute,
+     *                    else means to update it with the new information. 
+     * @return            affected task with clashing duration task
+     */
+    private ArrayList<Task> editATask(Task taskToEdit, String[] inputs) {
+        for (int i = TASK_NAME; i < inputs.length; ++i) {
+            if (isTaskInfoChanged(inputs, i)) {
+                editTaskInfo(inputs, taskToEdit, i);
+            }
+
+            if (isTaskInfoToClear(inputs, i)) {
+                clearTaskInfo(taskToEdit, i);
+            }
+        }
+
+        //sets previously overdue tasks back to normal status
+        if (isTaskStatusOverdue(taskToEdit) && !isTaskOverdue(taskToEdit)) {
+            taskToEdit.setStatus(NORMAL);
+        }
+
+        if (inputs[DATE_FROM] != null && inputs[DATE_FROM] != CLEAR_INFO_INDICATOR) {
+            assertDateObjectIsValid(taskToEdit.getDateFrom());
+        }
+        if (inputs[DATE_TO] != null && inputs[DATE_TO] != CLEAR_INFO_INDICATOR) {
+            assertDateObjectIsValid(taskToEdit.getDateTo());
+        }
+        if (inputs[DEADLINE] != null && inputs[DEADLINE] != CLEAR_INFO_INDICATOR) {
+            assertDateObjectIsValid(taskToEdit.getDeadline());
+        }
+
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
+        returningTasks.add(taskToEdit.clone());
+        addClashingDurationalTask(taskToEdit, returningTasks);
+
+        return returningTasks;
+    }
+
+    private boolean isTaskInfoChanged(String[] inputs, int i) {
+        return inputs[i] != null;
+    }
+
+    /**
+     * This method edits the task information
+     * @param inputs  parsed String array
+     * @param task    the task to be edited
+     * @param i       index in the String array to be changed in the task to be edited
+     */
+    private void editTaskInfo(String[] inputs, Task task, int i) {
+        switch (i) {
+        case TASK_NAME: 
+            editTaskName(inputs, task); 
+            break;
+
+        case DATE_FROM: 
+            editTaskDateFrom(inputs, task); 
+            break;
+
+        case DATE_TO: 
+            editTaskDateTo(inputs, task); 
+            break;
+
+        case DEADLINE: 
+            editTaskDeadline(inputs, task); 
+            break;
+
+        case LOCATION: 
+            editTaskLocation(inputs, task); 
+            break;
+
+        case DETAILS: 
+            editTaskDetails(inputs, task); 
+            break;
+
+        case STATUS: 
+            editTaskStatus(inputs, task); 
+            break;
+        }
+    }
+
+    private void editTaskStatus(String[] inputs, Task task) {
+        int newStatus = convertToIntType(inputs[STATUS]);
+
+        task.setStatus(newStatus);
+    }
+
+    private void editTaskDetails(String[] inputs, Task task) {
+        task.setDetails(inputs[DETAILS]);
+    }
+
+    private void editTaskLocation(String[] inputs, Task task) {
+        task.setLocation(inputs[LOCATION]);
+
+    }
+
+    /**
+     * Due to UI combines dateTo and deadline, more checks are needed to ensure 
+     * correct data information is edited.
+     * @param inputs
+     * @param task
+     */
+    private void editTaskDeadline(String[] inputs, Task task) {
+        if (task.getDeadline() != null) {
+            Date newDeadline = convertToDateObject(inputs[DEADLINE]);
+            task.setDeadline(newDeadline);
+        }
+        if (task.getDeadline() == null && task.getDateTo() != null) {
+            Date newDateTo = convertToDateObject(inputs[DEADLINE]);
+            task.setDeadline(newDateTo);
+        }
+        if (task.getDeadline() == null && task.getDateTo() == null) {
+            Date newDeadline = convertToDateObject(inputs[DEADLINE]);
+            task.setDeadline(newDeadline);
+        }
+    }
+
+    /**
+     * Due to UI combines dateTo and deadline, more checks are needed to ensure 
+     * correct data information is edited.
+     * @param inputs
+     * @param task
+     */
+    private void editTaskDateTo(String[] inputs, Task task) {
+        if (task.getDateTo() != null) {
+            Date newDateTo = convertToDateObject(inputs[DATE_TO]);
+            task.setDateTo(newDateTo);
+        }
+        if (task.getDateTo() == null && task.getDeadline() != null) {
+            Date newDeadline = convertToDateObject(inputs[DATE_TO]);
+            task.setDeadline(newDeadline);
+        }
+        if (task.getDateTo() == null && task.getDeadline() == null) {
+            Date newDateTo = convertToDateObject(inputs[DATE_TO]);
+            task.setDateTo(newDateTo);
+        }
+    }
+
+    private void editTaskDateFrom(String[] inputs, Task task) {
+        Date newDateFrom = convertToDateObject(inputs[DATE_FROM]);
+        task.setDateFrom(newDateFrom);
+    }
+
+    private void editTaskName(String[] inputs, Task task) {
+        if (inputs[TASK_NAME].trim() == "") {
+            throw new IllegalArgumentException(MSG_ERR_EMPTY_TASK_NAME);
+        }
+        task.setTaskName(inputs[TASK_NAME]);
+    }
+
+    private boolean isTaskInfoToClear(String[] inputs, int i) {
+        return inputs[i] != null && inputs[i].equals(CLEAR_INFO_INDICATOR);
+    }
+
+    /**
+     * This method clears the task information
+     * @param task  task to clear its information
+     * @param i     the index tells which information to clear
+     */
+    private void clearTaskInfo(Task task, int i) {
+        switch (i) {
+        case DATE_FROM: 
+            clearTaskDateFrom(task); 
+            break;
+
+        case DATE_TO: 
+            clearTaskDateTo(task); 
+            break;
+
+        case DEADLINE: 
+            clearTaskDeadline(task); 
+            break;
+
+        case LOCATION: 
+            clearTaskLocation(task); 
+            break;
+
+        case DETAILS: 
+            clearTaskDetails(task); 
+            break;
+
+        case STATUS: 
+            clearTaskStatus(task); 
+            break;
+
+        default: 
+            throw new NoSuchElementException(MSG_ERR_INVALID_CLEAR);
+        }
+    }
+
+    private void clearTaskDateFrom(Task task) {
+        task.setDateFrom(null);
+    }
+
+    /**
+     * Due to UI combines dateTo and deadline, more checks are needed to ensure 
+     * correct information is cleared.
+     * @param task
+     */
+    private void clearTaskDateTo(Task task) {
+        if (task.getDateTo() != null) {
+            task.setDateTo(null);
+        }
+        if (task.getDateTo() == null && task.getDeadline() != null) {
+            task.setDeadline(null);
+        }
+        if (task.getDateTo() == null && task.getDeadline() == null) {
+            task.setDateTo(null);
+        }
+    }
+
+    /**
+     * Due to UI combines dateTo and deadline, more checks are needed to ensure 
+     * correct information is cleared.
+     * @param task
+     */
+    private void clearTaskDeadline(Task task) {
+        if (task.getDeadline() != null) {
+            task.setDeadline(null);
+        }
+        if (task.getDeadline() == null && task.getDateTo() != null) {
+            task.setDateTo(null);
+        }
+        if (task.getDeadline() == null && task.getDateTo() == null) {
+            task.setDeadline(null);
+        }
+    }
+
+    private void clearTaskLocation(Task task) {
+        task.setLocation(null);
+    }
+
+    private void clearTaskDetails(Task task) {
+        task.setDetails(null);
+    }
+
+    private void clearTaskStatus(Task task) {
+        task.setStatus(NORMAL);
+    }
+
+    private boolean isTaskStatusOverdue(Task task) {
+        return task.getStatus() == OVERDUE;
+    }
+    //----------Edit method ends----------
+
+
+
+    //----------View method starts----------
+    /**
+     * This method returns the task in the filter and sort option specified
+     * @param inputs  parsed command indicates filter and sort option
+     * @return        filtered sorted tasks
+     */
+    private ArrayList<Task> viewTasks(String[] inputs) {
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
+
+        changeIncompleteTaskStatusToOverdue();
+        performFilterOnTasks(inputs, returningTasks);
+
+        return performViewOptionOnTasks(inputs, returningTasks);
+    }
+
+    /**
+     * This method compares incomplete tasks with current time and change their status
+     */
+    private void changeIncompleteTaskStatusToOverdue() {
+        for (Task task: tasks) {
+            if (isTaskOverdue(task) && !isTaskComplete(task)) {
+                task.setStatus(OVERDUE);
+            }
+        }
+    }
+
+    /**
+     * This method performs filter on the tasks to be displayed, the default filter
+     * is everything.
+     * @param inputs          parsed command with index 8 being the filter
+     * @param returningTasks  selected tasks based on the filter type
+     */
+    private void performFilterOnTasks(String[] inputs,
+            ArrayList<Task> returningTasks) {
+        if (isFilterOptionDefault(inputs)) {
+            for (Task task: tasks) {
+                if (!isTaskComplete(task.clone())) {
+                    returningTasks.add(task.clone());
+                }
+            }
+        } else {
+            int filterType = getFileterOption(inputs);
+            for (Task task: tasks) {
+                if (task.getStatus() == filterType)
+                    returningTasks.add(task.clone());
+            }
+        }
+    }
+
+    private int getFileterOption(String[] inputs) {
+        int filterType = getFilterTypeInt(inputs[FILTER_TYPE]);
+
+        return filterType;
+    }
+
+    /**
+     * This methods get the int type of the filter type from its String type
+     * @param filterType  String type of filter type
+     * @return            int type of filter type
+     */
+    private int getFilterTypeInt(String filterType) {
+        filterType = filterType.toLowerCase();
+
+        switch (filterType) {
+        case URGENT_STRING: 
+            return URGENT;
+
+        case MAJOR_STRING: 
+            return MAJOR;
+
+        case NORMAL_STRING: 
+            return NORMAL;
+
+        case MINOR_STRING: 
+            return MINOR;
+
+        case CASUAL_STRING: 
+            return CASUAL;
+
+        case COMPLETE_STRING: 
+            return COMPLETE;
+
+        case OVERDUE_STRING: 
+            return OVERDUE;
+
+        default: 
+            throw new NoSuchElementException(MSG_ERR_NO_SUCH_FILTER);
+        }
+    }
+
+    private boolean isFilterOptionDefault(String[] inputs) {
+        return inputs[FILTER_TYPE] == null;
+    }
+
+    /**
+     * This methods perform sorting on the tasks to be displayed. Default sorting
+     * is by date
+     * @param inputs
+     * @param returningTasks
+     * @return
+     */
+    private ArrayList<Task> performViewOptionOnTasks(String[] inputs,
+            ArrayList<Task> returningTasks) {
+        if (isViewOptionDefault(inputs)) {
+            sortTasks(returningTasks, DATE_FROM);
+            return returningTasks;
+        } else {
+            int viewType = getViewOption(inputs);
+            sortTasks(returningTasks, viewType);
+            return returningTasks;
+        }
+    }
+
+    private boolean isViewOptionDefault(String[] inputs) {
+        return inputs[VIEW_TYPE] == null;
+    }
+
+    private int getViewOption(String[] inputs) {
+        int viewType = getViewTypeInt(inputs[VIEW_TYPE]);
+        return viewType;
+    }
+
+    /**
+     * This methods get the int type of the view option from its String type
+     * @param viewType  String type of view option
+     * @return          int type of view option
+     */
+    private int getViewTypeInt(String viewType) {
+        viewType = viewType.toLowerCase();
+
+        switch (viewType) {
+        case ID_STRING: 
+            return TID;
+
+        case TITLE_STRING: 
+            return TASK_NAME;
+
+        case DATE_STRING: 
+            return DATE_FROM;
+
+        case DEADLINE_STRING: 
+            return DEADLINE;
+
+        case LOCATION_STRING: 
+            return LOCATION;
+
+        case STATUS_STRING: 
+            return STATUS;
+
+        default: throw new NoSuchElementException(MSG_ERR_NO_SUCH_ARRANGE);
+        }
+    }
+    //--------------------View method ends--------------------
+
+
+
+    //--------------------Delete method starts----------------
+    /**
+     * This method deletes the task
+     * @param inputs  parsed command with index 1 being the ID to be deleted
+     * @return
+     */
+    private ArrayList<Task> processDeleteCommand(String[] inputs) {
+        if (!isAbleToDelete(inputs[TID])) {
+            throw new NoSuchElementException(MSG_ERR_NO_SUCH_ID);
+        }
+
+        int TIDToDelete = getTaskTID(inputs);
+        Task taskToDelete = getTaskToDelete(inputs);
+        updateUndoStackFromTask(taskToDelete, inputs[COMMAND_TYPE]);
+
+        return deleteATask(TIDToDelete);
+    }
+
+    private boolean isAbleToDelete(String TaskID) {
+        return isIDClashing(TaskID);
+    }
+
+    private Task getTaskToDelete(String[] inputs) {
+        return getTaskFromTIDString(inputs);
+    }
+
+    private ArrayList<Task> deleteATask(int TID) {
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
+        Iterator<Task> i = tasks.iterator();
+
+        while (i.hasNext()) {
+            Task nextTask = (Task) i.next();
+            if (TID == nextTask.getTID()) {
+                returningTasks.add(nextTask.clone());
+                i.remove();
+            }
+        }
+        removeIDFromTaskIDs(TID);
+
+        return returningTasks;
+    }
+
+    private void removeIDFromTaskIDs(int TID) {
+        TaskIDs.remove(TID);
+    }
+    //--------------------Delete method ends--------------------
+
+
+
+    //--------------------Search method starts--------------------
+    /**
+     * This method searches tasks from the user input
+     * @param inputs  parsed command with index 2 being the thing to search
+     * @return
+     */
+    private ArrayList<Task> processSearchCommand(String[] inputs) {
+        if (isStringEmpty(inputs[SEARCH_INDEX])) {
+            throw new IllegalArgumentException(MSG_ERR_SEARCH);
+        }
+
+        if (isSearchADateObject(inputs[SEARCH_INDEX])) {
+            Date searchDate = convertToDateWithoutPrintException(inputs[SEARCH_INDEX]);
+            return searchTaskDateObject(searchDate);
+        } else {
+            return searchTaskNonDateObject(inputs[SEARCH_INDEX]);
+        }
+    }
+
+    private boolean isSearchADateObject(String search) {
+        if (convertToDateWithoutPrintException(search) == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * This method is only for isSearchADateObject(String)
+     * @param str  item to search
+     * @return     date object if the item to search is a date, else null
+     */
+    private Date convertToDateWithoutPrintException(String str) {
+        Date date = null;
+
+        try {
+            if (str != null && !str.equals(CLEAR_INFO_INDICATOR)) {
+                DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+                date = format.parse(str);
+            }
+        } catch (ParseException ex) {
+            assert(true);
+        }
+
+        return date;
+    }
+
+    /**
+     * This method adds tasks with date to search in its duration. For tasks with only
+     * one date, it adds tasks with date is same as searchDate
+     * @param searchDate  date to search
+     * @return            tasks matches the search criteria
+     */
+    private ArrayList<Task> searchTaskDateObject(Date searchDate) {
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
+
+        for (Task task: tasks) {
+            if (isDurationalTask(task)) {
+                if (compareTwoDateOnly(searchDate, task.getDateFrom()) >= 0 && 
+                        compareTwoDateOnly(searchDate, task.getDateTo()) <= 0) {
+                    returningTasks.add(task.clone());
+                }
+            } else if (isDeadlineTask(task)) {
+                if (compareTwoDateOnly(searchDate, task.getDeadline()) == 0) {
+                    returningTasks.add(task.clone());
+                }
+            } else if (isForeverTask(task)) {
+                if (compareTwoDateOnly(searchDate, task.getDateFrom()) == 0) {
+                    returningTasks.add(task.clone());
+                }
+            } else if (isOnlyDateToTask(task)) {
+                if (compareTwoDateOnly(searchDate, task.getDateTo()) == 0) {
+                    returningTasks.add(task.clone());
+                }
+            }
+        }
+
+        return returningTasks;
+    }
+
+    /**
+     * This method compares only the date part of two date object
+     * @param searchDate  date to search
+     * @param dateInTask  date in the task
+     * @return            -1 if searchDate < dateInTask; 0 if equals; 
+     *                    and 1 if searchDate > dateInTask
+     */
+    private int compareTwoDateOnly(Date searchDate, Date dateInTask) {
+        return DateTimeComparator.getDateOnlyInstance().compare(searchDate,
+                dateInTask);
+    }
+
+    private boolean isDurationalTask(Task task) {
+        return task.getDateFrom() != null && task.getDateTo() != null &&
+                task.getDeadline() == null;
+    }
+
+    private boolean isDeadlineTask(Task task) {
+        return task.getDateFrom() == null && task.getDateTo() == null &&
+                task.getDeadline() != null; 
+    }
+
+    private boolean isForeverTask(Task task) {
+        return task.getDateFrom() != null && task.getDateTo() == null &&
+                task.getDeadline() == null;
+    }
+
+    private boolean isOnlyDateToTask(Task task) {
+        return task.getDateFrom() == null && task.getDateTo() != null &&
+                task.getDeadline() == null; 
+    }
+
+    /**
+     * This method searches in all tasks
+     * @param search  thing to search
+     * @return        tasks matches with the search
+     */
+    private ArrayList<Task> searchTaskNonDateObject(String search) {
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
+
+        for (Task task: tasks) {
+            if (isSearchFound(task, search)) {
+                returningTasks.add(task.clone());
+            }
+        }
+
+        return returningTasks;
+    }
+
+    private boolean isSearchFound(Task task, String search) {
+        boolean isSearchFound = false;
+        String[] strForSearch = new String[DEFAULT_STRING_SIZE];
+        strForSearch[COMMAND_TYPE] = null;
+
+        getStringArrayFromTask(task, strForSearch);
+
+        for (String str: strForSearch) {
+            if (str != null && str.toLowerCase().contains(search.toLowerCase())) {
+                isSearchFound = true;
+                break;
+            }
+        }
+
+        return isSearchFound;
+    }
+    //--------------------Search method ends--------------------
+
+
+
+    //--------------------Undo method starts--------------------
+    /**
+     * This operation undos an operation. (addTask, deleteTask, editTask, markTask and clearAttr)
+     * @return  affected tasks
+     */
+    private ArrayList<Task> undoAnOperation() {
+        if (isStackEmpty(undoStack)) {
+            throw new NoSuchElementException(MSG_ERR_UNDO);
+        }
+
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
+
+        if (!undoStack.isEmpty()) {
+            String[] undoOperation = undoStack.peek();
+            COMMAND_TYPE_TASK_MANAGER commandUndo = getCommand(undoOperation[COMMAND_TYPE]);
+
+            switch (commandUndo) {
+            case addTask: 
+                int TIDToDelete = getTaskTID(undoOperation);
+                returningTasks = deleteATask(TIDToDelete);
+                break;
+
+            case deleteTask:
+                returningTasks = addATask(undoOperation);
+                break;
+
+            case editTask:
+                int TIDToEdit = getTaskTID(undoOperation);
+                Task taskToEdit = getNonCloneTaskFromTID(TIDToEdit);
+                returningTasks = editATaskForUndo(taskToEdit, undoOperation);
+                break;
+
+            default:
+                break;
+            }
+            updateRedoStack();
+        }
+
+        return returningTasks;
+    }
+
+    /**
+     * This method updates the undo stack with the task information before proceeding
+     * for the undo action. So that further redo is possible to recover it.
+     * @param taskToEdit  task to be edited
+     * @param inputs      undo operation from undo stack
+     * @return            affected tasks
+     */
+    private ArrayList<Task> editATaskForUndo(Task taskToEdit, String[] inputs) {
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
+
+        updateStackForEditUnderUndoRedo(taskToEdit, inputs, undoStack);
+        returningTasks = editATask(taskToEdit, inputs);
+
+        return returningTasks;
+    }
+
+    private void updateRedoStack() {
+        redoStack.push(undoStack.pop());
+    }
+    //--------------------Undo method ends----------------------
+
+
+
+    //--------------------Redo method starts--------------------
+    /**
+     * This operation redos an undo operation.
+     * @return  affected tasks
+     */
+    private ArrayList<Task> redoAnOperation() {
+        if (isStackEmpty(redoStack)) {
+            throw new NoSuchElementException(MSG_ERR_REDO);
+        }
+
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
+
+        if (!redoStack.isEmpty()) {
+            String[] redoOperation = redoStack.peek();
+            COMMAND_TYPE_TASK_MANAGER commandUndo = getCommand(redoOperation[COMMAND_TYPE]);
+
+            switch (commandUndo) {
+            case addTask:
+                returningTasks = addATask(redoOperation);
+                break;
+
+            case deleteTask:
+                int TIDToDelete = getTaskTID(redoOperation);
+                returningTasks = deleteATask(TIDToDelete);
+                break;
+
+            case editTask:
+                int TIDToEdit = getTaskTID(redoOperation);
+                Task taskToEdit = getNonCloneTaskFromTID(TIDToEdit);
+                returningTasks = editATaskForRedo(taskToEdit, redoOperation);
+                break;
+
+            default:
+                break;
+            }
+            updateUndoStackFromRedoOperation();
+        }
+
+        return returningTasks;
+    }
+
+    /**
+     * This method updates the redo stack with the task information before proceeding
+     * for the redo action. So that further undo is possible to recover it.
+     * @param taskToEdit  task to be edited
+     * @param inputs      redo operation from redo stack
+     * @return            affected tasks
+     */
+    private ArrayList<Task> editATaskForRedo(Task taskToEdit, String[] inputs) {
+        ArrayList<Task> returningTasks = new ArrayList<Task>();
+
+        updateStackForEditUnderUndoRedo(taskToEdit, inputs, redoStack);
+        returningTasks = editATask(taskToEdit, inputs);
+
+        return returningTasks;
+    }
+
+    private void updateUndoStackFromRedoOperation() {
+        undoStack.push(redoStack.pop());
+    }
+    //--------------------Redo method ends--------------------
+
+
+
+    //--------------------Methods used more than once start----------------------
+    /**
+     * This method updates undo or redo stack before performing edit operation
+     * This method is used by updateStackForEditUnderUndoRedo() and processEditCommand()
+     * @param taskToEdit  task to be edited
+     * @param inputs      inputs String array from the stack
+     * @param stack       stack to be updated
+     */
+    private void updateStackForEdit(Task taskToEdit, String[] inputs, 
+            Stack<String[]> stack) {
+        String[] strForStack = new String[DEFAULT_STRING_SIZE];
+
+        strForStack[COMMAND_TYPE] = inputs[COMMAND_TYPE];
+        getStringArrayFromTask(taskToEdit, strForStack);
+
+        for (int i = TASK_NAME; i < DEFAULT_STRING_SIZE; ++i) {
+            if (strForStack[i] == null && inputs[i] != null) {
+                strForStack[i] = CLEAR_INFO_INDICATOR;
+            }
+        }
+
+        stack.push(strForStack);
+    }
+
+    /**
+     * This methods removes the edit entry from the stack before performing edit operation 
+     * This method is used by editATaskForUndo() and editATaskForRedo()
+     * @param taskToEdit  task to be edited
+     * @param inputs      inputs array string from the stack
+     * @param stack       the stack to update
+     */
+    private void updateStackForEditUnderUndoRedo(Task taskToEdit, String[] inputs, 
+            Stack<String[]> stack) {
+        stack.pop();
+        updateStackForEdit(taskToEdit, inputs, stack);
+    }
+
+    /**
+     * This method converts task to a string array
+     * This method is used by updateUndoStackFromTask(), isSearchFound() and updateStackForEdit()
+     * @param task      task to be converted
+     * @param strArray  String array generated from task
+     */
+    private void getStringArrayFromTask(Task task, String[] strArray) {
+        strArray[TID] = convertToStringFromInt(task.getTID());
+        strArray[TASK_NAME] = task.getTaskName();
+
+        if (task.getDateFrom() != null) {
+            strArray[DATE_FROM] = convertToStringFromDate(task.getDateFrom());
+        } else {
+            strArray[DATE_FROM] = null;
+        }
+
+        if (task.getDateTo() != null) {
+            strArray[DATE_TO] = convertToStringFromDate(task.getDateTo());
+        } else {
+            strArray[DATE_TO] = null;
+        }
+
+        if (task.getDeadline() != null) {
+            strArray[DEADLINE] = convertToStringFromDate(task.getDeadline());
+        } else {
+            strArray[DEADLINE] = null;
+        }
+
+        if (task.getLocation() != null) {
+            strArray[LOCATION] = task.getLocation();
+        } else {
+            strArray[LOCATION] = null;
+        }
+
+        if (task.getDetails() != null) {
+            strArray[DETAILS] = task.getDetails();
+        } else {
+            strArray[DETAILS] = null;
+        }
+
+        strArray[STATUS] = convertToStringFromInt(task.getStatus());
+    }
+
+    /**
+     * This method converts date object to a default date format string ("dd/MM/yyyy HH:mm")
+     * @param dateObject  date object to be converted
+     * @return            String type of that date object
+     */
+    private String convertToStringFromDate(Date dateObject) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+        String dateString = dateFormat.format(dateObject);
+
+        return dateString;
+    }
+
+    private String convertToStringFromInt(int intType) {
+        String intString = Integer.toString(intType);
+
+        return intString;
+    }
+
+    /**
+     * This method gets task ID from the String array
+     * This method is used by getTaskFromTIDString(), processDeleteCommand(), 
+     * undoAnOperation() and redoAnOperation()
+     * @param inputs
+     * @return
+     */
+    private int getTaskTID(String[] inputs) {
+        int TaskTID = convertToIntType(inputs[TID]);
+
+        return TaskTID;
+    }
+
+    /**
+     * This method updates undo stack from task with command type
+     * This method is used by addTask case in processTM() and processDeleteCommand()
+     * @param task
+     * @param commandType
+     */
+    private void updateUndoStackFromTask(Task task, String commandType) {
+        String[] strForUndoStack = new String[DEFAULT_STRING_SIZE];
+
+        strForUndoStack[COMMAND_TYPE] = commandType;
+        getStringArrayFromTask(task, strForUndoStack);
+
+        undoStack.push(strForUndoStack);
+    }
+
+
+    private Task getTaskFromTIDString(String[] inputs) {
+        int TID = getTaskTID(inputs);
+        return getNonCloneTaskFromTID(TID);
+    }
+
+    private Task getNonCloneTaskFromTID(int TID) {
+        Task taskFound = null;
+
+        for (Task task : tasks) {
+            if (task.getTID() == TID) {
+                taskFound = task;
+                break;
+            }
+        }
+
+        return taskFound;
+    }
+
+    public Task getTaskFromTID(int TID) {
+        Task taskFound = null;
+
+        for (Task task : tasks) {
+            if (task.getTID() == TID) {
+                taskFound = task.clone();
+                break;
+            }
+        }
+
+        return taskFound;
+    }
+
+    /**
+     * This method converts a dateString in default format ("dd/MM/yyyy HH:mm") to a date object
+     * @param dateString  assume dateString is in this format "dd/MM/yyyy HH:mm"
+     * @return            date object converted
+     */
+    private Date convertToDateObject(String dateString) {
+        Date date = null;
+
+        try {
+            if (dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
+                DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+                date = format.parse(dateString);
+            }
+        } catch (ParseException ex) {
+            assert(true);            
+        }
+
+        return date;
+    }
+
+    private int convertToIntType(String intString) {
+        int intType = 0;
+
+        if (intString != null) {
+            intType = Integer.parseInt(intString);
+        }
+
+        return intType;
+    }
+
+    /**
+     * This method checks whether ID is clashing or not.
+     * @param TID  task ID in string type
+     * @return     true if task ID is found, else false
+     */
+    private boolean isIDClashing(String TID) {
+        return TaskIDs.contains(convertToIntType(TID));
+    }
+
+    private void addClashingDurationalTask(Task newTask,
+            ArrayList<Task> returningTasks) {
+        if (isDurationalTask(newTask)) {
+            addClashingTasksForReturning(newTask, returningTasks);
+        }
+    }
+
+    private void addClashingTasksForReturning(Task newTask, 
+            ArrayList<Task> returningTasks) {
+        for (Task existingTask : tasks) {
+            if (isDurationalTask(existingTask) &&
+                    !isTaskComplete(existingTask) &&
+                    isNewTaskClashedWithExistingTask(newTask, existingTask) && 
+                    newTask.getTID() != existingTask.getTID()) {
+                returningTasks.add(existingTask.clone());
+            }
+        }
+    }
+
+    private boolean isNewTaskClashedWithExistingTask(Task newTask, Task existing) {
+        if (existing.getDateTo().compareTo(newTask.getDateFrom()) <= 0 || 
+                existing.getDateFrom().compareTo(newTask.getDateTo()) >= 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    private boolean isTaskComplete(Task task) {
+        return task.getStatus() == COMPLETE;
+    }
+
+    /**
+     * This method sorts tasks based on the type
+     * @param tasks  tasks ArrayList to be sorted
+     * @param type   how to sort the task
+     */
+    private void sortTasks(ArrayList<Task> tasks, int type) {
+        switch (type) {
+        case TID: 
+            Collections.sort(tasks, new ComparatorID()); 
+            break;
+
+        case TASK_NAME: 
+            Collections.sort(tasks, new ComparatorTaskName()); 
+            break;
+
+        case DATE_FROM: 
+            Collections.sort(tasks, new ComparatorDate()); 
+            break;
+
+        case LOCATION: 
+            Collections.sort(tasks, new ComparatorLocation()); 
+            break;
+
+        case STATUS: 
+            Collections.sort(tasks, new ComparatorStatus()); 
+            break;
+        }
+    }
+
+    /**
+     * This method calls SystemHandler to save tasks to the file
+     */
+    private void saveTasksToFile() {
+        SystemHandler handler = SystemHandler.getSystemHandler();
+        handler.writeToFile(tasks);
+    }
+
+    /**
+     * This method checks whether the task is a valid task
+     * @param task  task to be checked
+     */
+    private void checkTaskDetails(Task task) {
+        if (!isStringLengthLessThanThirty(task.getTaskName())) {
+            throw new IllegalArgumentException(String.format(MSG_ERR_LENGTH, 
+                    TASK_TITLE_STRING));
+        }
+
+        if (!isStringLengthLessThanThirty(task.getLocation())) {
+            throw new IllegalArgumentException(String.format(MSG_ERR_LENGTH, 
+                    LOCATION_STRING));
+        }
+
+        if (!isTaskDateNumberValid(task)) {
+            throw new IllegalArgumentException(MSG_ERR_WRONG_DATE_NUMBER);
+        }
+
+        if (!isDateFromBeforeDateTo(task)) {
+            throw new IllegalArgumentException(MSG_ERR_WRONG_DATE_DURATION);
+        }
+
+        if (isStringEmpty(task.getTaskName())) {
+            throw new IllegalArgumentException(MSG_ERR_EMPTY_TASK_NAME);
+        }
+    }
+
+    private boolean isStringEmpty(String str) {
+        if (str == null) {
+            return true;
+        }
+        str = str.trim();
+        return str.isEmpty();
+    }
+
+    private boolean isStringLengthLessThanThirty(String str) {
+        if (str != null) {
+            return str.length() <= MAXIMUM_LENGTH_TASKNAME_LOCATION;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * This method sorts the incomplete tasks in front of complete tasks,
+     * both categories of tasks will be sorted by date.
+     */
+    private void defaultSortTaskByCompleteAndDate() {
+        Collections.sort(tasks, new ComparatorDateAndStatus());
+    }
+
+    private boolean isTaskOverdue(Task task) {
+        boolean isOverdue = false;
+        Date current = new Date();
+
+        if (isOnlyDateToTask(task) || isDurationalTask(task)) {
+            if (task.getDateTo().compareTo(current) == -1) {
+                isOverdue = true;
+            }
+        }
+
+        if (isDeadlineTask(task)) {
+            if (task.getDeadline().compareTo(current) == -1) {
+                isOverdue = true;
+            } 
+        }
+
+        return isOverdue;
+    }
+
+    /**
+     * This method changes the status to be represented by number
+     * @param inputs  parsed command containing status to be changed
+     */
+    private void changeStatusToIntString(String[] inputs) {
+        if (inputs[STATUS] == null) {
+            inputs[STATUS] = convertToStringFromInt(NORMAL);
+        } else {
+            String temp = inputs[STATUS].toLowerCase();
+            switch (temp) {
+            case URGENT_STRING: 
+                inputs[STATUS] = convertToStringFromInt(URGENT); 
+                break;
+
+            case MAJOR_STRING: 
+                inputs[STATUS] = convertToStringFromInt(MAJOR); 
+                break;
+
+            case NORMAL_STRING: 
+                inputs[STATUS] = convertToStringFromInt(NORMAL); 
+                break;
+
+            case MINOR_STRING: 
+                inputs[STATUS] = convertToStringFromInt(MINOR); 
+                break;
+
+            case CASUAL_STRING: 
+                inputs[STATUS] = convertToStringFromInt(CASUAL); 
+                break;
+
+            case COMPLETE_STRING: 
+                inputs[STATUS] = convertToStringFromInt(COMPLETE); 
+                break;
+
+            case OVERDUE_STRING: 
+                inputs[STATUS] = convertToStringFromInt(OVERDUE); 
+                break;
+
+            default: 
+                throw new NoSuchElementException(MSG_ERR_NO_SUCH_STATUS);
+            }
+        }
+    }
+
+    private boolean isStackEmpty(Stack<String[]> stack) {
+        return stack.isEmpty();
+    }
+    //--------------------Methods used more than once end----------------------
+
+
+
+    //--------------------Assertion methods start----------------------
+    private void assertTaskIDIsBiggerThanTen(Task task) {
+        assert task.getTID() >= INITIAL_TID;
+    }
+
+    private void assertDateObjectIsValid(Date dateObject) {
+        String dateString = convertToStringFromDate(dateObject);
+        assert isDateValid(dateString);
+    }
+
+    protected boolean isDateValid(String date) {
+        boolean isDateValid = true;
+
+        Matcher m = Pattern.compile("\\d+").matcher(date);
+        int[] numbers = new int[NUM_ATTRIBUTE_FOR_DATE_OBJECT];
+        int i = 0;
+
+        //assume date objects always have five attributes
+        while (m.find()) {
+            numbers[i] = Integer.parseInt(m.group());
+            if (numbers[i] < 0)
+                isDateValid = false;
+            ++i;
+        }
+
+        if (isDateValid && numbers[HOUR_INDEX] > 23) {
+            isDateValid = false;
+        }
+
+        if (isDateValid && numbers[MINUTE_INDEX] > 59) {
+            isDateValid = false;
+        }
+
+        if (isDateValid) {
+            switch (numbers[MONTH_INDEX]) {
+
+            case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+                if (numbers[DAY_INDEX] == 0 || numbers[DAY_INDEX] > 31) {
+                    isDateValid = false;
+                }
+                break;
+
+            case 4: case 6: case 9: case 11:
+                if (numbers[DAY_INDEX] == 0 || numbers[DAY_INDEX] > 30) {
+                    isDateValid = false;
+                }
+                break;
+
+            case 2:
+                if (isLeapYear(numbers[YEAR_INDEX])) {
+                    if (numbers[DAY_INDEX] == 0 || numbers[DAY_INDEX] > 29) {
+                        isDateValid = false;
+                    }
+                } else {
+                    if (numbers[DAY_INDEX] == 0 || numbers[DAY_INDEX] > 28) {
+                        isDateValid = false;
+                    }
+                }
+                break;
+
+            default:
+                isDateValid = false;
+                break;
+            }
+        }
+
+        return isDateValid;
+    }
+
+    private boolean isLeapYear(int year) {
+        boolean isLeapYear = true;
+        if (year % 100 == 0) {
+            if (year % 400 != 0) {
+                isLeapYear = false;
+            }
+        } else {
+            if (year % 4 != 0) {
+                isLeapYear = false;
+            }
+        }
+
+        return isLeapYear;
+    }
+
+    private void assertDurationalTaskIsValid(Task task) {
+        assert isDateFromBeforeDateTo(task);
+    }
+
+    protected boolean isDateFromBeforeDateTo(Task task) {
+        Date dateFrom = task.getDateFrom();
+        Date dateTo = task.getDateTo();
+
+        if (dateFrom == null || dateTo == null) {
+            return true;
+        }
+
+        if (dateFrom.compareTo(dateTo) < 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void assertTaskDateNumberIsvalid(Task task) {
+        assert isTaskDateNumberValid(task);
+    }
+
+    protected boolean isTaskDateNumberValid(Task task) {
+        //durational task
+        if (task.getDateFrom() != null && task.getDateTo() != null && 
+                task.getDeadline() == null) {
+            return true;
+        }
+
+        //forever task
+        if (task.getDateFrom() != null && task.getDateTo() == null && 
+                task.getDeadline() == null) {
+            return true;
+        }
+
+        //deadline task
+        if (task.getDateFrom() == null && task.getDateTo() == null && 
+                task.getDeadline() != null) {
+            return true;
+        }
+
+        //another form of deadline task
+        if (task.getDateFrom() == null && task.getDateTo() != null && 
+                task.getDeadline() == null) {
+            return true;
+        }
+
+        //floating task
+        if (task.getDateFrom() == null && task.getDateTo() == null && 
+                task.getDeadline() == null) {
+            return true;
+        }
+
+        return false;
+    }
+    //--------------------Assertion methods ends----------------------
+}
+	// End of segment: ../src/\TaskManager.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\TaskManagerInterface.java
+	 */
+
+public interface TaskManagerInterface {
+
+    /**
+     * This method adds tasks from file once the program starts before user entering commands
+     * If the task does not have an ID, call getNewTID()
+     * @param inputs  a parsed command received from FileStorage, with command type
+     *                being "addTask"
+     */
+    public void processInitialization(String[] inputs);
+
+
+    /**
+     * This method process parsed command received from SystemHandler, it also calls
+     * SystemHandler to save changes to the task file.
+     * @param inputs  a parsed command received from SystemHandler
+     * @return        affected tasks in an ArrayList
+     */
+    public ArrayList<Task> processTM(String[] inputs);
+
+
+    /**
+     * @param TID  an int type Task ID
+     * @return     if ID is found, a Task with that ID; else null
+     */
+    public Task getTaskFromTID(int TID);
+}
+
+	// End of segment: ../src/\TaskManagerInterface.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\TaskManagerTest.java
+	 */
+
+public class TaskManagerTest {
+    private static final String[] DELETE_TASK_10 = {"deleteTask", "10", null, null, null, 
+        null, null, null, null};    
+    private static final String[] DELETE_TASK_11 = {"deleteTask", "11", null, null, null, 
+        null, null, null, null};
+    private static final String[] DELETE_TASK_9999 = {"deleteTask", "9999", null, null, null, 
+        null, null, null, null};
+    private static final String[] UNDO_OPERATION = {"undoTask", null, null, null, null, null, 
+        null, null, null};
+    private static final String[] REDO_OPERATION = {"redoTask", null, null, null, null, null, 
+        null, null, null};
+    private static final String[] EDIT_TASK_11 = {"editTask", "11", null, null, 
+        "20/07/2015 15:30", null, "LT108", null, null};
+    private static final String[] EDIT_TASK_9999 = {"editTask", "9999", null, null, 
+        "20/03/2015 15:30", null, null, null, null};
+
+    private static final int TASK10 = 0;
+    private static final int TASK11 = 1;
+    private static final int TASK12 = 2;
+    private static final int COMMAND_TYPE = 0;
+    private static final String COMMAND_ADD = "addTask";
+    private static final String COMMAND_DELETE = "deleteTask";
+    private static final String COMMAND_EDIT = "editTask";
+
+
+    private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
+    private static final String CLEAR_INFO_INDICATOR = "";
+    private static TaskManager myTaskManager;
+
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+        //SystemHandler handler = SystemHandler.getSystemHandler("testTaskManager.txt");
+    }
+
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+    }
+
+    @Before
+    public void setUp() throws Exception {
+    }
+
+    @After
+    public void tearDown() throws Exception {
+    }
+
+
+
+    //--------------------testing initialization starts-------------------
+    @Test
+    public void testProcessInitialization() {
+        String[] addTask7 = {"addTask", "7", "CS3103T Tutorial", 
+                "18/07/2015 12:00", "18/07/2015 15:00", null, "SOC", null, "3"};
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, "3"};
+        String[] addTask17 = {"addTask", "17", "CS2331 Reflection", null, 
+                null, "21/07/2015 23:59", null, "name the file properly", "1"};
+        String[] addTask18 = {"addTask", null, "CS2211 Reflection", null, 
+                null, "21/07/2015 23:59", null, "name the file properly", "3"};
+
+        myTaskManager = new TaskManager();
+        myTaskManager.processInitialization(addTask7);
+        myTaskManager.processInitialization(addTask10);
+        myTaskManager.processInitialization(addTask10);
+        myTaskManager.processInitialization(addTask17);
+        myTaskManager.processInitialization(addTask18);
+
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS3103T Tutorial", convertToDateObject("18/07/2015 12:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask11 = new Task(11, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask12 = new Task(12, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask17 = new Task(17, "CS2331 Reflection", null, null, 
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 1);
+        Task expectTask18 = new Task(18, "CS2211 Reflection", null, null, 
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 3);
+        expectTasks.add(expectTask10);
+        expectTasks.add(expectTask11);
+        expectTasks.add(expectTask12);
+        expectTasks.add(expectTask17);
+        expectTasks.add(expectTask18);
+
+        //test the ArrayList
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+    }
+    //--------------------testing initialization ends---------------------
+
+
+
+    //--------------------testing add command starts----------------------
+    @Test
+    public void testAddCommand() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
+        String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "normal"};
+        String[] addTask12 = {"addTask", null, "CS2211 Reflection", null, 
+                null, "21/07/2015 23:59", null, "name the file properly", "normal"};
+
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+        myTaskManager.processTM(addTask11);
+        myTaskManager.processTM(addTask12);
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/07/2015 12:00"), 
+                convertToDateObject("20/07/2015 13:30"), null, "LT27", null, 3);
+        Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 3);
+        expectTasks.add(expectTask10);
+        expectTasks.add(expectTask11);
+        expectTasks.add(expectTask12);
+
+        //test the ArrayList
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);   
+    }
+
+    @Test
+    public void testAddWithIDLessThanTen() {
+        String[] addTask7 = {"addTask", "7", "CS3103T Tutorial", 
+                "18/07/2015 12:00", "18/07/2015 15:00", null, "SOC", null, "normal"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask7);
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS3103T Tutorial", convertToDateObject("18/07/2015 12:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        expectTasks.add(expectTask10);
+
+        Assert.assertEquals(myTaskManager.getTasks().get(0).getTID(), 10);
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+    }
+
+    @Test
+    public void testAddWithClashIDs() {
+        String[] addTaskClash10 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, "normal"};
+        String[] addTaskClash11 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, "Normal"};
+        String[] addTaskClash12 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, "NORMAL"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTaskClash10);
+        myTaskManager.processTM(addTaskClash11);
+        myTaskManager.processTM(addTaskClash12);
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);        
+        Task expectTask11 = new Task(11, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask12 = new Task(12, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        expectTasks.add(expectTask10);
+        expectTasks.add(expectTask11);
+        expectTasks.add(expectTask12);
+
+        //test the ArrayList
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
+    }
+
+    @Test
+    public void testClashedTasks() {
+        String[] addTaskClash10 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, "normal"};
+        String[] addTaskClash11 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, "Normal"};
+        String[] addTaskClash12 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, "NORMAL"};
+
+        myTaskManager = new TaskManager();
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        ArrayList<Task> clashTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);        
+        Task expectTask11 = new Task(11, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask12 = new Task(12, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+
+        expectTasks.add(expectTask10);
+        clashTasks = new ArrayList<Task> ();
+        clashTasks.add(expectTask10);
+        assertTaskArrayListEquals(myTaskManager.processTM(addTaskClash10), 
+                clashTasks);
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
+
+        clashTasks = new ArrayList<Task> ();
+        clashTasks.add(expectTask11);
+        clashTasks.add(expectTask10);
+        assertTaskArrayListEquals(myTaskManager.processTM(addTaskClash11), 
+                clashTasks);
+        expectTasks.add(expectTask11);
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
+
+
+        clashTasks = new ArrayList<Task> ();
+        clashTasks.add(expectTask12);
+        clashTasks.add(expectTask10);
+        clashTasks.add(expectTask11);
+        assertTaskArrayListEquals(myTaskManager.processTM(addTaskClash12), 
+                clashTasks);
+        expectTasks.add(expectTask12);
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+    }
+
+    @Test
+    public void testAddOverdueTasks() {
+        String[] addOverdueTask10 = {"addTask", null, "CS2103T Tutorial", 
+                null, null, "18/03/2015 15:00", null, null, null};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addOverdueTask10);
+
+        Task expectOverdueTask10 = new Task(10, "CS2103T Tutorial", null, null, 
+                convertToDateObject("18/03/2015 15:00"), null, null, 7); 
+        ArrayList<Task> overdueTasks = new ArrayList<Task>();
+        overdueTasks.add(expectOverdueTask10);
+
+        assertTaskArrayListEquals(myTaskManager.getTasks(), overdueTasks);
+    }
+
+    @Test
+    public void testEmptyTaskNameEmptyInput() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
+        String[] addTask11 = {"addTask", null, "        ", 
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "normal"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+        try{
+            myTaskManager.processTM(addTask11);
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "Task name cannot be empty.");
+        }
+    }
+
+    @Test
+    public void testEmptyTaskNameNull() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, null};
+        String[] addTask11 = {"addTask", null, null, 
+                "20/03/2015 12:00", "20/03/2015 13:30", null, "LT27", null, "normal"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+
+        try{
+            myTaskManager.processTM(addTask11);
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "Task name cannot be empty.");
+        }
+    }
+
+    @Test
+    public void testTaskNameLengthMoreThan30() {
+        String[] addTask10 = {"addTask", null, "this task name is definitely gonna"
+                + "be more than thirtykadgakhga", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, null};
+        myTaskManager = new TaskManager();
+        try{
+            myTaskManager.processTM(addTask10);
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "task title allows a maximum length of 30.");
+        }
+    }
+
+    @Test
+    public void testTaskLocationMoreThan30() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, null};
+        String[] addTask11 = {"addTask", null, "null", 
+                "20/03/2015 12:00", "20/03/2015 13:30", null, "LT27 in Science Faculty"
+                        + "National University of Singapore, Singapore, Earth", null,
+        "normal"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+        try{
+            myTaskManager.processTM(addTask11);
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "location allows a maximum length of 30.");
+        }
+    }
+
+    @Test
+    public void testTaskDateDuration() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/02/2015 15:00", null, "SOC", null, null};
+
+        myTaskManager = new TaskManager();
+        try{
+            myTaskManager.processTM(addTask10);
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "The duration entered is invalid. "
+                    + "Start Date must be before End Date.");
+        }
+    }
+
+    @Test
+    public void testInvalidStatus() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "important"};
+        myTaskManager = new TaskManager();
+        try{
+            myTaskManager.processTM(addTask10);
+        } catch (NoSuchElementException e) {
+            Assert.assertEquals(e.getMessage(), "Flexi Tracker does not recognize this status.");
+        }
+    }
+    //--------------------testing add command ends-----------------------
+
+
+
+    //--------------------testing edit command starts--------------------
+    @Test
+    public void testUnableToEdit() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/05/2015 15:00", null, "SOC", null, null};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+
+        try {
+            myTaskManager.processTM(EDIT_TASK_9999);
+        } catch (NoSuchElementException e) {
+            Assert.assertEquals(e.getMessage(), "The Task ID does not exist.");
+        }
+    }
+
+    @Test
+    public void testEditCommand() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
+        String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "normal"};
+        String[] addTask12 = {"addTask", null, "CS2211 Reflection", null, 
+                null, "21/07/2015 23:59", null, "name the file properly", "normal"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+        myTaskManager.processTM(addTask11);
+        myTaskManager.processTM(addTask12);
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/07/2015 12:00"), 
+                convertToDateObject("20/07/2015 13:30"), null, "LT27", null, 3);
+        Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 3);
+        expectTasks.add(expectTask10);
+        expectTasks.add(expectTask11);
+        expectTasks.add(expectTask12);
+
+        //test the ArrayList before edit
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+
+
+        ArrayList<Task> expectEdit = new ArrayList<Task>();
+        Date newDateTo = convertToDateObject("20/07/2015 15:30");
+        expectTasks.get(TASK11).setDateTo(newDateTo);
+        expectTasks.get(TASK11).setLocation("LT108");;
+        expectEdit.add(expectTasks.get(TASK11));
+
+        //test the return of processTM for edit
+        assertTaskArrayListEquals(myTaskManager.processTM(EDIT_TASK_11), expectEdit);
+
+        //test the ArrayList after edit
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+    }
+
+    @Test
+    public void testEditWithEmptyTaskName() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+
+        String[] editTask10 = {"editTask", "10", "        ", null, 
+                null, null, null, null, null};
+
+        try {
+            myTaskManager.processTM(editTask10);
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "Task name cannot be empty.");
+        }
+    }
+
+    @Test
+    public void testEditWithTaskNameMoreThan30() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, null};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+
+        String[] editTask10 = {"editTask", "10", "I want to meet my best friend on"
+                + "next Monday but I don't know what to do how", null, 
+                null, null, null, null, null};
+
+        try {
+            myTaskManager.processTM(editTask10);
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "task title allows a maximum length of 30.");
+        }
+    }
+
+    @Test
+    public void testEditWithDateDurationWrong() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, null};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+
+        String[] editTask10 = {"editTask", "10", null, null, 
+                "18/02/2015 15:00", null, null, null, null};
+
+        try {
+            myTaskManager.processTM(editTask10);
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "The duration entered is invalid. "
+                    + "Start Date must be before End Date.");
+        }
+    }
+
+    @Test
+    public void testEditWithDateNumberWrong() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, null};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+
+        String[] editTask10 = {"editTask", "10", null, null, 
+                "18/04/2015 15:00", "18/04/2015 15:00", null, null, null};
+
+        try {
+            myTaskManager.processTM(editTask10);
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "The date entered is invalid.");
+        }
+    }
+
+    @Test
+    public void testClearAttribute() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
+        String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "normal"};
+        String[] addTask12 = {"addTask", null, "CS2211 Reflection", null, 
+                null, "21/07/2015 23:59", null, "name the file properly", "normal"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+        myTaskManager.processTM(addTask11);
+        myTaskManager.processTM(addTask12);
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/07/2015 12:00"), 
+                convertToDateObject("20/07/2015 13:30"), null, "LT27", null, 3);
+        Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 3);
+        expectTasks.add(expectTask10);
+        expectTasks.add(expectTask11);
+        expectTasks.add(expectTask12);
+
+        //test the ArrayList before edit
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
+        expectTasks.get(TASK12).setLocation(null);
+        expectTasks.get(TASK12).setDetails(null);
+        ArrayList<Task> expectEdit = new ArrayList<Task>();
+        expectEdit.add(expectTasks.get(TASK12));
+
+        String[] clearAttrTask12 = {"clearAttr", "12", null, null,
+                null, null, "", "", null};
+
+        //test the return of processTM for edit
+        assertTaskArrayListEquals(myTaskManager.processTM(clearAttrTask12), expectEdit);
+        //test the ArrayList after edit
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+    }
+
+    @Test
+    public void testEditWithTimeclash() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
+        String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "normal"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+        myTaskManager.processTM(addTask11);
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/07/2015 12:00"), 
+                convertToDateObject("20/07/2015 13:30"), null, "LT27", null, 3);
+        expectTasks.add(expectTask10);
+        expectTasks.add(expectTask11);
+
+        //test the ArrayList before edit
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
+
+        Date newDateTo = convertToDateObject("27/07/2015 15:30");
+        expectTasks.get(TASK10).setDateTo(newDateTo);
+        ArrayList<Task> expectEdit = new ArrayList<Task>();
+        expectEdit.add(expectTasks.get(TASK10));
+        expectEdit.add(expectTask11);
+
+        String[] EDIT_TASK10_CLASH = {"editTask", "10", null, null, 
+                "27/07/2015 15:30", null, null, null, null};
+
+        //test the ArrayList after edit
+        assertTaskArrayListEquals(myTaskManager.processTM(EDIT_TASK10_CLASH), expectEdit); 
+    }
+    //--------------------testing edit command ends----------------------
+
+
+
+    //--------------------testing delete command starts------------------
+    @Test
+    public void testDeleteCommand() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
+        String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "normal"};
+        String[] addTask12 = {"addTask", null, "CS2211 Reflection", null, 
+                null, "21/07/2015 23:59", null, "name the file properly", "normal"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+        myTaskManager.processTM(addTask11);
+        myTaskManager.processTM(addTask12);
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/07/2015 12:00"), 
+                convertToDateObject("20/07/2015 13:30"), null, "LT27", null, 3);
+        Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 3);
+        expectTasks.add(expectTask10);
+        expectTasks.add(expectTask11);
+        expectTasks.add(expectTask12);
+
+        //test the ArrayList before delete
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks); 
+
+        expectTasks = new ArrayList<Task>();
+        expectTasks.add(expectTask10);
+        expectTasks.add(expectTask12);
+
+        ArrayList<Task> expectDelete = new ArrayList<Task>();
+        expectDelete.add(expectTask11);
+
+        //test the return of processTM for delete
+        assertTaskArrayListEquals(myTaskManager.processTM(DELETE_TASK_11), expectDelete);
+        //test the ArrayList after delete
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+    }
+
+    @Test
+    public void testUnableToDelete() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, null};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+
+        try {
+            myTaskManager.processTM(DELETE_TASK_9999);
+        } catch (NoSuchElementException e) {
+            Assert.assertEquals(e.getMessage(), "The Task ID does not exist.");
+        }
+    }
+    //--------------------testing delete command ends--------------------
+
+
+
+    //--------------------testing search command starts------------------
+    @Test
+    public void testSearchEmptyString() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+
+        String[] searchEmptyString = {"searchTask", null, "   ", null, null, null, 
+                null, null, null};
+
+        try{
+            myTaskManager.processTM(searchEmptyString);
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "Search query cannot be empty.");
+        }
+    }
+
+    @Test
+    public void testSearchTaskNonDateObject() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
+        String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "normal"};
+        String[] addTask12 = {"addTask", null, "CS2211 Reflection", null, 
+                null, "21/07/2015 23:59", null, "name the file properly", null};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+        myTaskManager.processTM(addTask11);
+        myTaskManager.processTM(addTask12);
+
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        /*Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
+                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 1);*/
+        Task expectTask12 = new Task(12, "CS2211 Reflection", null, null,
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 3);
+
+        ArrayList<Task> expectSearch = new ArrayList<Task>();
+        String[] search_CS2 = {"searchTask", null, "CS2", null, null, null, 
+                null, null, null};
+        expectSearch.add(expectTask10);
+        expectSearch.add(expectTask12);
+        assertTaskArrayListEquals(myTaskManager.processTM(search_CS2), expectSearch);
+
+        expectSearch = new ArrayList<Task>();
+        String[] search_tutorial = {"searchTask", null, "tutorial", null, null, null, 
+                null, null, null};
+        expectSearch.add(expectTask10);
+        assertTaskArrayListEquals(myTaskManager.processTM(search_tutorial), expectSearch);
+
+        expectSearch = new ArrayList<Task>();
+        String[] searchNotFound = {"searchTask", null, "cannot find", null, null, null, 
+                null, null, null};
+        assertTaskArrayListEquals(myTaskManager.processTM(searchNotFound), expectSearch);
+    }
+
+    @Test
+    public void testSearchTaskDateObject() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, null};
+        String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "normal"};
+        String[] addTask12 = {"addTask", null, "CS2211 Reflection", null, 
+                null, "21/07/2015 23:59", null, "name the file properly", "normal"};
+
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+        myTaskManager.processTM(addTask11);
+        myTaskManager.processTM(addTask12);
+
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        /*Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
+                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 3);*/
+        Task expectTask12 = new Task(12, "CS2211 Reflection", null, null,
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 3);
+
+        ArrayList<Task> expectSearch = new ArrayList<Task>();
+        String[] search_18072015 = {"searchTask", null, "18/07/2015 15:00", null, null, null, 
+                null, null, null};
+        expectSearch.add(expectTask10);
+        assertTaskArrayListEquals(myTaskManager.processTM(search_18072015), expectSearch);
+
+
+        expectSearch = new ArrayList<Task>();
+        String[] search_21072015 = {"searchTask", null, "21/07/2015 15:00", null, null, null, 
+                null, null, null};
+        expectSearch.add(expectTask12);
+        assertTaskArrayListEquals(myTaskManager.processTM(search_21072015), expectSearch);
+
+
+        expectSearch = new ArrayList<Task>();
+        String[] search_27072015 = {"searchTask", null, "27/07/2015 15:00", null, null, null, 
+                null, null, null};
+        assertTaskArrayListEquals(myTaskManager.processTM(search_27072015), expectSearch);
+
+
+        String[] addTaskForSearch = {"addTask", null, "CS2103T Tutorial", 
+                "18/07/2015 14:00", "20/07/2015 15:00", null, "SOC", null, "normal"};
+        myTaskManager.processTM(addTaskForSearch);
+        Task expectTask13 = new Task(13, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("20/07/2015 15:00"), null, "SOC", null, 3);
+        expectSearch = new ArrayList<Task>();
+        expectSearch.add(expectTask10);
+        expectSearch.add(expectTask13);
+        assertTaskArrayListEquals(myTaskManager.processTM(search_18072015), expectSearch);
+    }
+
+    @Test
+    public void testSearchTaskDateObjectAgain() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, null, null, null};
+        String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
+                "18/07/2015 12:00", null, null, null, null, "normal"};
+        String[] addTask12 = {"addTask", null, "LAG3203 MidTerm", 
+                null, "18/07/2015 12:00", null, null, null, "normal"};
+        String[] addTask13 = {"addTask", null, "CS2211 Reflection", null, 
+                null, "18/07/2015 23:59", null, null, "normal"};
+        String[] addTask14 = {"addTask", null, "CS2211 Reflection", null, 
+                null, null, null, null, "normal"};
+
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+        myTaskManager.processTM(addTask11);
+        myTaskManager.processTM(addTask12);
+        myTaskManager.processTM(addTask13);
+        myTaskManager.processTM(addTask14);
+
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, null, null, 3);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("18/07/2015 12:00"), 
+                null, null, null, null, 3);
+        Task expectTask12 = new Task(12, "LAG3203 MidTerm", null, 
+                convertToDateObject("18/07/2015 12:00"), null, null, null, 3);
+        Task expectTask13 = new Task(13, "CS2211 Reflection", null, null, 
+                convertToDateObject("18/07/2015 23:59"), null, null, 3);
+        ArrayList<Task> expectSearch = new ArrayList<Task>();
+
+        expectSearch.add(expectTask11);
+        expectSearch.add(expectTask12);
+        expectSearch.add(expectTask10);
+        expectSearch.add(expectTask13);    
+
+        String[] search_18072015 = {"searchTask", null, "18/07/2015 15:00", null, null, null, 
+                null, null, null};
+        assertTaskArrayListEquals(myTaskManager.processTM(search_18072015), expectSearch);
+    }
+    //--------------------testing search command ends--------------------
+
+
+
+    //--------------------testing undo and redo command starts------------------
+    @Test
+    public void testUndoAndRedoForAdd() {
+        String[] addTask10 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, "3"};
+        String[] addTask11 = {"addTask", "11", "LAG3203 MidTerm", 
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "3"};
+        String[] addTask12 = {"addTask", "12", "CS2211 Reflection", null, 
+                null, "21/07/2015 23:59", null, "name the file properly", "normal"};
+
+        myTaskManager = new TaskManager();
+        myTaskManager.processInitialization(addTask10);
+        myTaskManager.processInitialization(addTask11);
+        myTaskManager.processTM(addTask12);
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/07/2015 12:00"), 
+                convertToDateObject("20/07/2015 13:30"), null, "LT27", null, 3);
+        Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 3);
+        expectTasks.add(expectTask10);
+        expectTasks.add(expectTask11);
+        expectTasks.add(expectTask12);
+
+        //test before doing any undo and redo
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+
+        ArrayList<Task> expectUndo = new ArrayList<Task>();
+        expectUndo.add(expectTask12);
+        expectTasks = new ArrayList<Task>();
+        expectTasks.add(expectTask10);
+        expectTasks.add(expectTask11);
+
+        //test the return of processTM for undo (undo for add is delete)
+        assertTaskArrayListEquals(myTaskManager.processTM(UNDO_OPERATION), expectUndo);
+        //test the ArrayList after undo
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 1);
+        //test undo one more time
+
+
+        ArrayList<Task> expectRedo = new ArrayList<Task>();
+        expectRedo.add(expectTask12);
+        expectTasks.add(expectTask12);
+        //test the return of processTM for redo (redo for delete is add)
+        assertTaskArrayListEquals(myTaskManager.processTM(REDO_OPERATION), expectRedo);
+        //test the ArrayList after redo
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+    }
+
+    @Test
+    public void testUndoRedoForDelete() {
+        String[] addTask10 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, "3"};
+        String[] addTask11 = {"addTask", "11", "LAG3203 MidTerm", 
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "3"};
+        String[] addTask12 = {"addTask", "12", "CS2211 Reflection", null, 
+                null, "21/07/2015 23:59", null, "name the file properly", "3"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processInitialization(addTask10);
+        myTaskManager.processInitialization(addTask11);
+        myTaskManager.processInitialization(addTask12);
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/07/2015 12:00"), 
+                convertToDateObject("20/07/2015 13:30"), null, "LT27", null, 3);
+        Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 3);
+        expectTasks.add(expectTask10);
+        expectTasks.add(expectTask11);
+        expectTasks.add(expectTask12);
+
+        //test before doing any undo and redo
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+
+        ArrayList<Task> expectUndo = new ArrayList<Task>();
+        expectUndo.add(expectTasks.get(1));
+        myTaskManager.processTM(DELETE_TASK_11);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+
+        //test the return of processTM for undo (undo for delete is add)
+        assertTaskArrayListEquals(myTaskManager.processTM(UNDO_OPERATION), expectUndo);
+        expectTasks = new ArrayList<Task>();
+        expectTasks.add(expectTask10);
+        expectTasks.add(expectTask11);
+        expectTasks.add(expectTask12);
+        //test the ArrayList after undo
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 1);
+
+        ArrayList<Task> expectRedo = new ArrayList<Task>();
+        expectRedo.add(expectTask11);
+        //test the return of processTM for redo (redo for add is delete)
+        assertTaskArrayListEquals(myTaskManager.processTM(REDO_OPERATION), expectRedo);
+        expectTasks = new ArrayList<Task>();
+        expectTasks.add(expectTask10);
+        expectTasks.add(expectTask12);
+        //test the ArrayList after redo
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+    }
+
+
+    @Test
+    public void testUndoRedoForEdit() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, "3"};
+        String[] addTask11 = {"addTask", null, "LAG3203 MidTerm", 
+                "20/07/2015 12:00", "20/07/2015 13:30", null, "LT27", null, "3"};
+        String[] addTask12 = {"addTask", null, "CS2211 Reflection", null, 
+                null, "21/07/2015 23:59", null, "name the file properly", "3"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processInitialization(addTask10);
+        myTaskManager.processInitialization(addTask11);
+        myTaskManager.processInitialization(addTask12);
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 3);
+        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/07/2015 12:00"), 
+                convertToDateObject("20/07/2015 13:30"), null, "LT27", null, 3);
+        Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
+                convertToDateObject("21/07/2015 23:59"), null, "name the file properly", 3);
+        expectTasks.add(expectTask10);
+        expectTasks.add(expectTask11);
+        expectTasks.add(expectTask12);
+
+        //test before doing any undo and redo
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+
+        myTaskManager.processTM(EDIT_TASK_11);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+
+        ArrayList<Task> expectUndo = new ArrayList<Task>();
+        expectUndo.add(expectTask11);
+        //test the return of processTM for undo (undo for edit is edit)
+        assertTaskArrayListEquals(myTaskManager.processTM(UNDO_OPERATION), expectUndo);
+        //test the ArrayList after undo
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 1);
+
+
+        ArrayList<Task> expectRedo = new ArrayList<Task>();
+        Date newDateTo = convertToDateObject("20/07/2015 15:30");
+        expectTasks.get(TASK11).setDateTo(newDateTo);
+        expectTasks.get(TASK11).setLocation("LT108");;
+        expectRedo.add(expectTasks.get(TASK11));        
+
+        assertTaskArrayListEquals(myTaskManager.processTM(REDO_OPERATION), expectRedo);
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+    }
+
+    @Test
+    public void testUndoRedoForEdit_V2() {
+        String[] addTask10 = {"addTask", "10", "CS2331 Reflection", null, 
+                null, null, "SOC", null, "1"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processInitialization(addTask10);
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2331 Reflection", null, 
+                null, null, "SOC", null, 1);
+        expectTasks.add(expectTask10);
+
+        //test before doing any undo and redo
+        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
+
+        String[] clear = {"clearAttr", "10", null, "", 
+                "", "", "", "", null};
+        expectTasks.get(TASK10).setLocation(null);
+        ArrayList<Task> expectEdit = new ArrayList<Task>();
+        expectEdit.add(expectTasks.get(0));    
+        assertTaskArrayListEquals(myTaskManager.processTM(clear), expectEdit);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], COMMAND_EDIT);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+
+        expectTasks.get(TASK10).setLocation("SOC");
+        ArrayList<Task> expectUndo = new ArrayList<Task>();
+        expectUndo.add(expectTasks.get(0));
+        assertTaskArrayListEquals(myTaskManager.processTM(UNDO_OPERATION), expectUndo);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getRedoStack().peek()[COMMAND_TYPE], COMMAND_EDIT);
+
+
+        expectTasks.get(TASK10).setLocation(null);
+        ArrayList<Task> expectRedo = new ArrayList<Task>();
+        expectRedo.add(expectTasks.get(0));
+        assertTaskArrayListEquals(myTaskManager.processTM(REDO_OPERATION), expectRedo);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], COMMAND_EDIT);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+    }
+
+    @Test
+    public void testUndoWithoutChangesToCache() {
+        String[] addTask10 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "3"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processInitialization(addTask10);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+
+        try{
+            myTaskManager.processTM(UNDO_OPERATION);
+        } catch (NoSuchElementException e) {
+            Assert.assertEquals(e.getMessage(), "There is no operation to undo.");
+        }
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+    }
+
+    @Test
+    public void testRedoWithoutUndo() {
+        String[] addTask10 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "3"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processInitialization(addTask10);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+
+        try{
+            myTaskManager.processTM(REDO_OPERATION);
+        } catch (NoSuchElementException e) {
+            Assert.assertEquals(e.getMessage(), "There is no operation to redo.");
+        }
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+    }
+
+    @Test
+    public void testUndoWithNoMoreUndoForAdd() {
+        String[] addTask10 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, "urgent"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+        Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], 
+                COMMAND_ADD);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+
+        ArrayList<Task> expectTasks = new ArrayList<Task>();
+        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/07/2015 14:00"), 
+                convertToDateObject("18/07/2015 15:00"), null, "SOC", null, 1);
+        expectTasks.add(expectTask10);
+
+        myTaskManager.processTM(UNDO_OPERATION);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 1);
+
+        try{
+            myTaskManager.processTM(UNDO_OPERATION);
+        } catch (NoSuchElementException e) {
+            Assert.assertEquals(e.getMessage(), "There is no operation to undo.");
+        }
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 0);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 1);
+
+
+        //test the undo redo cycle
+        assertTaskArrayListEquals(myTaskManager.processTM(REDO_OPERATION), expectTasks);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+        try{
+            myTaskManager.processTM(REDO_OPERATION);
+        } catch (NoSuchElementException e) {
+            Assert.assertEquals(e.getMessage(), "There is no operation to redo.");
+        }        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+    }
+
+    @Test
+    public void testUndoWithNoMoreUndoForDelete() {
+        String[] addTask10 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/07/2015 14:00", "18/07/2015 15:00", null, "SOC", null, "urgent"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+        Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], 
+                COMMAND_ADD);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+
+        myTaskManager.processTM(DELETE_TASK_10);
+        Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], 
+                COMMAND_DELETE);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 2);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+
+        myTaskManager.processTM(UNDO_OPERATION);
+        Assert.assertNotEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], 
+                COMMAND_DELETE);
+        Assert.assertEquals(myTaskManager.getRedoStack().peek()[COMMAND_TYPE], 
+                COMMAND_DELETE);
+        Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], 
+                COMMAND_ADD);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 1);
+
+        //test the undo redo cycle
+        myTaskManager.processTM(REDO_OPERATION);
+        Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], 
+                COMMAND_DELETE);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 2);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+
+        try{
+            myTaskManager.processTM(REDO_OPERATION);
+        } catch (NoSuchElementException e) {
+            Assert.assertEquals(e.getMessage(), "There is no operation to redo.");
+        }
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 2);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+    }
+
+    @Test
+    public void testUndoWithNoMoreUndoForEdit() {
+        String[] addTask10 = {"addTask", "10", "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "urgent"};
+        myTaskManager = new TaskManager();
+        myTaskManager.processTM(addTask10);
+
+        String[] editTask10 = {"editTask", "10", null, 
+                null, null, null, "COM11", null, "urgent"};
+
+        myTaskManager.processTM(editTask10);
+        Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], 
+                COMMAND_EDIT);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 2);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+
+        myTaskManager.processTM(UNDO_OPERATION);
+        Assert.assertNotEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], 
+                COMMAND_EDIT);
+        Assert.assertEquals(myTaskManager.getRedoStack().peek()[COMMAND_TYPE], 
+                COMMAND_EDIT);
+        Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], 
+                COMMAND_ADD);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 1);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 1);
+
+        //test the undo redo cycle
+        myTaskManager.processTM(REDO_OPERATION);
+        Assert.assertEquals(myTaskManager.getUndoStack().peek()[COMMAND_TYPE], 
+                COMMAND_EDIT);
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 2);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+        try{
+            myTaskManager.processTM(REDO_OPERATION);
+        } catch (NoSuchElementException e) {
+            Assert.assertEquals(e.getMessage(), "There is no operation to redo.");
+        }
+        Assert.assertEquals(myTaskManager.getUndoStack().size(), 2);
+        Assert.assertEquals(myTaskManager.getRedoStack().size(), 0);
+    }
+    //--------------------testing undo and redo command ends--------------------
+
+
+    //--------------------testing others starts---------------------------------
+    @Test
+    public void testIsDateValid() {
+        myTaskManager = new TaskManager();
+        String date1 = "22/03/2015 23:59";
+        String date2 = "29/02/2000 23:59";
+        String date3 = "29/02/2012 23:59";
+        //boundary case for date in February that is not in leap year
+        String invalidDate1 = "29/02/2015 23:59";
+        //boundary case for date in February that is not in leap year
+        String invalidDate2 = "29/02/1900 23:59";
+        //boundary case for date
+        String invalidDate3 = "32/01/2013 23:59";
+        //boundary case for month
+        String invalidDate4 = "25/13/2013 23:59";
+        //boundary case for hour
+        String invalidDate5 = "25/01/2013 24:59";
+        //boundary case for minute
+        String invalidDate6 = "25/01/2013 23:60";
+        //boundary case for date
+        String invalidDate7 = "00/01/2013 23:41";
+        //boundary case for month
+        String invalidDate8 = "01/00/2013 23:41";
+
+        Assert.assertEquals(myTaskManager.isDateValid(date1), true);
+        Assert.assertEquals(myTaskManager.isDateValid(date2), true);
+        Assert.assertEquals(myTaskManager.isDateValid(date3), true);
+        Assert.assertEquals(myTaskManager.isDateValid(invalidDate1), false);
+        Assert.assertEquals(myTaskManager.isDateValid(invalidDate2), false);
+        Assert.assertEquals(myTaskManager.isDateValid(invalidDate3), false);
+        Assert.assertEquals(myTaskManager.isDateValid(invalidDate4), false);
+        Assert.assertEquals(myTaskManager.isDateValid(invalidDate5), false);
+        Assert.assertEquals(myTaskManager.isDateValid(invalidDate6), false);
+        Assert.assertEquals(myTaskManager.isDateValid(invalidDate7), false);
+        Assert.assertEquals(myTaskManager.isDateValid(invalidDate8), false);
+    }
+
+
+    @Test
+    public void testIsDateFromSmallerThanDateTo() {
+        myTaskManager = new TaskManager();
+
+        Task test1 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/02/2015 14:00"), 
+                convertToDateObject("18/03/2016 15:00"), null, "SOC", null, 3);
+        Assert.assertTrue(myTaskManager.isDateFromBeforeDateTo(test1));
+
+        Task test2 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/02/2015 14:00"), 
+                convertToDateObject("18/02/2015 14:00"), null, "SOC", null, 3);
+        Assert.assertFalse(myTaskManager.isDateFromBeforeDateTo(test2));
+
+        Task test3 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/02/2015 14:00"), 
+                convertToDateObject("18/02/2010 14:00"), null, "SOC", null, 3);
+        Assert.assertFalse(myTaskManager.isDateFromBeforeDateTo(test3));
+    }
+
+    @Test
+    public void testClone() {
+        String[] addTask10 = {"addTask", null, "CS2103T Tutorial", 
+                "18/03/2015 14:00", "18/03/2015 15:00", null, "SOC", null, "normal"};
+        myTaskManager = new TaskManager();
+        ArrayList<Task> tks = myTaskManager.processTM(addTask10);
+        tks.get(0).setTID(5000);
+        Assert.assertFalse(assertTaskEqual(tks.get(0), myTaskManager.getTasks().get(0)));
+
+    }
+
+    @Test
+    public void testTaskToStringArray() {
+        Task durationalTask = new Task(10, "durationalTask", convertToDateObject("18/03/2015 12:00"), 
+                convertToDateObject("18/03/2015 00:00"), null, null, null, 0);
+        Task deadlineTaskDateTo = new Task(11, "deadlineTaskDateTo", null, 
+                convertToDateObject("18/03/2015 15:00"), null, null, null, 0);
+        Task deadlineTaskDeadline = new Task(12, "deadlineTaskDeadline", null, null, 
+                convertToDateObject("18/03/2015 00:00"), null, null, 0);
+        Task foreverTask = new Task(17, "foreverTask", null, 
+                convertToDateObject("21/03/2015 23:59"), null, null, null, 0);
+        Task floatingTask = new Task(18, "floatingTask", null, null, null, null, null, 0);
+
+        Assert.assertEquals("[10, durationalTask, 18/03/2015 12:00, 18/03/2015, null, "
+                + "null, Normal]", Arrays.toString(durationalTask.toStringArray()));
+        Assert.assertEquals("[11, deadlineTaskDateTo, null, 18/03/2015 15:00, null, "
+                + "null, Normal]", Arrays.toString(deadlineTaskDateTo.toStringArray()));
+        Assert.assertEquals("[12, deadlineTaskDeadline, null, 18/03/2015, null, "
+                + "null, Normal]", Arrays.toString(deadlineTaskDeadline.toStringArray()));
+        Assert.assertEquals("[17, foreverTask, null, 21/03/2015 23:59, null, "
+                + "null, Normal]", Arrays.toString(foreverTask.toStringArray()));
+        Assert.assertEquals("[18, floatingTask, null, null, null, "
+                + "null, Normal]", Arrays.toString(floatingTask.toStringArray()));
+    }
+    //--------------------testing others ends-----------------------------------
+
+
+	// End of segment: ../src/\TaskManagerTest.java
+
+
+
+
+

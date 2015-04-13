@@ -1,0 +1,58 @@
+//@author: a0108385b-reused
+
+
+
+	/**
+	 * origin: ../src/\TaskManagerTest.java
+	 */
+
+    public boolean assertTaskArrayListEquals(ArrayList<Task> test, 
+            ArrayList<Task> expected) {
+        if (test != null) {
+            Assert.assertEquals(test.size(), expected.size());
+            for (int i = 0; i < test.size(); ++i) {
+                Assert.assertTrue(assertTaskEqual(test.get(i), expected.get(i)));
+            }
+        } else {
+            Assert.assertTrue(test == null);
+            Assert.assertTrue(expected == null);
+        }
+        return true;
+    }
+
+	// End of segment: ../src/\TaskManagerTest.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\TaskManagerTest.java
+	 */
+
+    public boolean assertTaskEqual(Task taskA, Task taskB) {
+        return taskA.isEqual(taskB);
+    }
+
+    public Date convertToDateObject(String dateString) {
+        try{
+            Date date = null;
+            if (dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
+                DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+                date = format.parse(dateString);
+            }
+            return date;
+        }
+        catch (ParseException e) {
+            System.out.println(e);
+            return null;
+        } 
+    }
+}
+
+	// End of segment: ../src/\TaskManagerTest.java
+
+
+
+
+

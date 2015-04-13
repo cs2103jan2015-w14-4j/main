@@ -1,0 +1,514 @@
+//@author: a0101735r-unused
+
+
+
+	/**
+	 * origin: ../src/\UserInterface.java
+	 */
+
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					UserInterface window = new UserInterface();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+     */
+
+    /**
+     * Calls the functions to initialize the contents of the frame,
+     * initialize variables and creates tables.
+     */
+    private void initialize() {
+        outputArrayString_ = new ArrayList<String[]>();
+        shortcutArrayString_ = new ArrayList<String[]>();
+        mainHandler = SystemHandler.getSystemHandler();
+
+        createShortcutTable(shortcutArrayString_);
+        createTaskTable(outputArrayString_);
+        initFrame();
+        initDisplay();
+        initTextAreaListeners();
+
+        displayText(HELP,true);
+        textField_.requestFocus();
+    }
+
+    /**
+     * Initialize the frame
+     */
+    private void initFrame() {
+        frame_ = new JFrame(APP_NAME);
+        frame_.getContentPane().setBackground(new Color(25, 25, 112));
+        frame_.setBounds(100, 100, 1200, 400);
+        frame_.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        gridBagLayout.columnWidths = new int[] {1200};
+        gridBagLayout.rowHeights = new int[]{300, 40, 40, 0};
+        gridBagLayout.columnWeights = new double[]{1.0};
+        gridBagLayout.rowWeights = new double[]{1.0, 0.0, 0.0, Double.MIN_VALUE};
+        frame_.getContentPane().setLayout(gridBagLayout);	
+    }
+
+    /**
+     * Calls the functions to initialize containers and frame content
+     */
+    private void initDisplay() {
+        initOutputArea();
+        initSysFBArea();
+        initInputArea();
+        String[] welcome  = {MSG_WELCOME};
+        displayMsg(welcome, 0);
+    }
+
+    /**
+     * Initialize text input box
+     */
+    private void initInputArea() {
+        textField_ = new JTextField();
+        textField_.setBackground(INPUT);
+        textField_.setForeground(INPUT_FONT_COLOR);
+        textField_.setFont(TEXTBOX_FONT);
+        textField_.setBorder(new BevelBorder(BevelBorder.RAISED, new Color(255, 200, 0),
+                new Color(255, 200, 0), Color.ORANGE, Color.ORANGE));
+        scrollPaneInput_ = new JScrollPane(textField_);
+        scrollPaneInput_.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPaneInput_.setViewportBorder(null);
+
+        GridBagConstraints gbc_textField = new GridBagConstraints();
+        gbc_textField.fill = GridBagConstraints.BOTH;
+        gbc_textField.gridx = 0;
+        gbc_textField.gridy = 2;
+        frame_.getContentPane().add(scrollPaneInput_, gbc_textField);
+
+    }
+
+    /**
+     * Initialize message display text pane
+     */
+    private void initSysFBArea() {
+        sysFeedbackArea_ = new JTextPane();
+        sysFeedbackArea_.setEditable(false);	
+        sysFeedbackArea_.setFont(FEEDBACK_FONT);
+        sysFeedbackArea_.setForeground(FEEDBACK_FONT_COLOR);
+        sysFeedbackArea_.setBackground(FEEDBACK);
+        sysFeedbackArea_.setBorder(null);
+
+        GridBagConstraints gbc_sysFeedbackArea = new GridBagConstraints();
+        gbc_sysFeedbackArea.fill = GridBagConstraints.BOTH;
+        gbc_sysFeedbackArea.gridx = 0;
+        gbc_sysFeedbackArea.gridy = 1;
+        frame_.getContentPane().add(sysFeedbackArea_, gbc_sysFeedbackArea);
+    }
+
+    /**
+     * Initialize text area for displaying large paragraphs of text, eg. help page.
+     */
+    private void initOutputArea() {
+        outputArea_ = new JTextArea();	
+        outputArea_.setBackground(Color.WHITE);
+        outputArea_.setEditable(false);
+        outputArea_.setFont(TEXTBOX_FONT);
+        outputArea_.setColumns(30);
+        outputArea_.setTabSize(10);
+        outputArea_.setRows(10);
+        outputArea_.setLineWrap(true);
+        outputArea_.setBackground(OUTPUT_BG);
+        outputArea_.setForeground(OUTPUT_FONT_COLOR);
+        outputArea_.setBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 200, 0), Color.ORANGE));
+        DefaultCaret caret = (DefaultCaret)outputArea_.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+
+        scrollPaneMain_ = new JScrollPane(); 
+        scrollPaneMain_.setBackground(Color.WHITE);
+        scrollPaneMain_.setViewportBorder(null);
+        scrollPaneMain_.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPaneMain_.setViewportView(outputArea_);
+
+        GridBagConstraints gbc_outputArea = new GridBagConstraints();
+        gbc_outputArea.fill = GridBagConstraints.BOTH;
+        gbc_outputArea.gridx = 0;
+        gbc_outputArea.gridy = 0;
+        frame_.getContentPane().add(scrollPaneMain_, gbc_outputArea);
+    }
+
+
+    /**
+     * Initialize action listeners for input area
+     */
+    private void initTextAreaListeners() {
+        inputListener listener = new inputListener();
+        textField_.addActionListener(listener);
+
+        //pressing up restores previous input in textField
+        Action lastInput = new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                textField_.setText(prevInput_);			
+            }		
+        };
+
+        textField_.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+        .put(KeyStroke.getKeyStroke("UP"), "lastInput");
+        textField_.getActionMap().put("lastInput", lastInput );
+
+        Action undo = new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                mainHandler.rawUserInput(FN_UNDO);
+            }
+
+        };
+
+        textField_.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+        .put(KeyStroke.getKeyStroke("ctrl Z"), "undoTask");
+        textField_.getActionMap().put("undoTask", undo );
+
+        Action redo = new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                mainHandler.rawUserInput(FN_REDO);
+            }
+
+        };
+
+        textField_.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+        .put(KeyStroke.getKeyStroke("ctrl Y"), "redoTask");
+        textField_.getActionMap().put("redoTask", redo );
+
+        Action view = new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                mainHandler.rawUserInput(FN_VIEW);
+            }
+
+        };
+
+        textField_.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+        .put(KeyStroke.getKeyStroke("alt D"), "viewTask");
+        textField_.getActionMap().put("viewTask", view );
+    }
+
+    /**
+     * Gets input from text input box and passes it to mainHandler to be processed
+     * Sets default command to display ongoing tasks if no input is detected
+     *
+     */
+    private class inputListener implements ActionListener {
+
+        public void actionPerformed(ActionEvent e) {
+
+            clearFeedbackArea();
+            String input = textField_.getText().trim();
+            prevInput_ = input;
+            System.out.println("input = " + input);
+            clearInput();	
+
+            if (input.length() == 0) {
+                mainHandler.rawUserInput("viewTask");
+            } else {
+                mainHandler.rawUserInput(input);
+            }
+
+	// End of segment: ../src/\UserInterface.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\UserInterface.java
+	 */
+
+            //Tests code for making sure UI displays correctly
+            /*		
+			String[] dummyMsg = {"dummymsg",
+			 					"test line one test line one test line one test line one test line one test line one ",
+			 					"testlinetwotestlinetwotestlinetwotestlinetwotestlinetwotestlinetwotestlinetwotestlinetwo"};
+				 	if ( input.equals("1")) {
+						displayMsg(dummyMsg,1);
+						addDummyShortcut();
+
+					}else{
+						addDummyTask();
+						addDummy2();
+						displayTaskTable( dummy2, outputArray, 1);
+						displayMsg("adding dummies", 1);
+					}
+             */	
+        }
+    }
+
+    /**
+     * Creates a table that displays an ArrayList of String[].
+     * Renders rows in alternating colors.
+     * 
+     * @param outputArrayString
+     * @return
+     */
+    private JScrollPane createTaskTable(ArrayList<String[]> outputArrayString) {
+        ArrayList<String> columnNamesTaskTable = new ArrayList<String>();
+
+        columnNamesTaskTable.add(HEADER_TASK_1);
+        columnNamesTaskTable.add(HEADER_TASK_2);
+        columnNamesTaskTable.add(HEADER_TASK_3);
+        columnNamesTaskTable.add(HEADER_TASK_4);
+        columnNamesTaskTable.add(HEADER_TASK_5);
+        columnNamesTaskTable.add(HEADER_TASK_6);
+        columnNamesTaskTable.add(HEADER_TASK_7);
+
+        model_ = new TaskTableModel(outputArrayString, columnNamesTaskTable, String[].class );
+        taskTable_ = new JTable (model_) {
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component c = super.prepareRenderer(renderer, row, column);
+                if (!isNumeric((String) model_.getValueAt(row, 0))) {
+                    c.setBackground(row % 2 == 0 ? getBackground() : TASK_TEMPLATE);
+                } else if (!isRowSelected(row)) {
+                    c.setBackground(row % 2 == 0 ? getBackground() : TASK_BG);
+                }
+
+                if (model_.getRowCount() > 0 && (model_.getValueAt(row,getColumnCount()-1)).equals(OVERDUE)
+                        && !isRowSelected(row)) {
+                    c.setBackground(TASK_OVERDUE);
+                }
+
+                if ((model_.getValueAt(row, 0).equals(EMPTY))) {				
+                    c.setBackground(TASK_FONT_COLOR);
+                }	
+                if (isRowSelected(row)) {
+
+                    String remarks = (String) model_.getValueAt(row,5);
+                    if (remarks == null)
+                        remarks  = "";
+                    displayMsg(remarks, 0);			
+                }	
+                return c;
+            }		
+        };
+
+        setJTableColumnsWidth(taskTable_, WINDOW_WIDTH, TASK_PREFERRED_COLUMN_WIDTHS );
+        taskTable_.setRowHeight(25);
+        taskTable_.setFont(TABLE_FONT);
+        taskTable_.setGridColor(TASK_GRID);
+        taskTable_.setForeground(TASK_FONT_COLOR);
+        taskTable_.setBackground(TASK_BG2);
+        taskTable_.setBorder(null);
+        taskTable_.setRowSelectionAllowed(true);
+        taskTable_.setColumnSelectionAllowed(false);
+
+        taskHeader_ = taskTable_.getTableHeader();
+        taskHeader_.setBackground(TABLE_HEADER_BG);
+        taskHeader_.setForeground(TABLE_HEADER_FONT);
+        taskHeader_.setFont(TABLE_FONT);
+
+        for (int i = 0; i < taskTable_.getColumnCount(); i++) {
+            // remove cell editor
+            Class<?> col_class = taskTable_.getColumnClass(i);
+            taskTable_.setDefaultEditor(col_class, null);        
+        }
+
+        //binds ctrl D to delete action
+        Action delete = new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int row  = taskTable_.getSelectedRow();
+                String input  = String.format(FN_DELETE, model_.getValueAt(row, 0));
+                mainHandler.rawUserInput(input);
+            }
+        };
+
+        taskTable_.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+        .put(KeyStroke.getKeyStroke("ctrl D"), "delete");
+        taskTable_.getActionMap().put("delete", delete );
+
+        //binds D to mark as complete
+        Action done = new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int row  = taskTable_.getSelectedRow();
+                String input  =String.format(FN_MARK, model_.getValueAt(row, 0));
+                mainHandler.rawUserInput(input);
+            }
+        };
+
+        taskTable_.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(" D"), "done");
+        taskTable_.getActionMap().put("done", done );
+
+        //binds ctrl E to edit action 	
+        Action edit = new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                int row  = taskTable_.getSelectedRow();
+                String input  = String.format(FN_EDIT, model_.getValueAt(row, 0));
+                textField_.setText(input);
+                textField_.setCaretPosition(input.length());
+                textField_.requestFocus();
+            }
+        };
+
+        taskTable_.getInputMap(JPanel.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+        .put(KeyStroke.getKeyStroke("ctrl E"), "edit");
+        taskTable_.getActionMap().put("edit", edit );
+
+        return scrollPaneMain_;
+    }
+
+    /**
+     * Creates a table to display user defined keywords.
+     * 
+     * @param shortcutArrayString
+     * @return
+     */
+    private JScrollPane createShortcutTable(ArrayList<String[]> shortcutArrayString) {
+        ArrayList<String>columnNamesST = new ArrayList<String>();
+        columnNamesST.add(HEADER_SC_1);
+        columnNamesST.add(HEADER_SC_2);
+
+        model_ = new TaskTableModel(shortcutArrayString, columnNamesST, String[].class );
+        shortcutTable_ = new JTable (model_) {
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component c = super.prepareRenderer(renderer, row, column);
+
+                if (!isRowSelected(row)) {
+                    c.setBackground(row % 2 == 0 ? getBackground() : SHORTCUT_BG2);
+                }
+                return c;
+            }
+        };
+
+        setJTableColumnsWidth(shortcutTable_, WINDOW_WIDTH, SHORTCUT_PREFERRED_COLUMN_WIDTHS);
+        shortcutTable_.setRowHeight(25);
+        shortcutTable_.setFont(TABLE_FONT);
+        shortcutTable_.setGridColor(SHORTCUT_GRID);
+        shortcutTable_.setForeground(SHORTCUT_FONT_COLOR);
+        shortcutTable_.setBackground(SHORTCUT_BG);
+        shortcutHeader_ = shortcutTable_.getTableHeader();
+        shortcutHeader_.setBackground(TABLE_HEADER_BG);
+        shortcutHeader_.setForeground(TABLE_HEADER_FONT);
+        shortcutHeader_.setFont(TABLE_FONT);
+
+        for (int i = 0; i < shortcutTable_.getColumnCount(); i++) {	
+            // remove cell editor
+            Class<?> col_class = shortcutTable_.getColumnClass(i);
+            shortcutTable_.setDefaultEditor(col_class, null);        
+        }
+        return scrollPaneMain_;
+    }
+
+    private void viewTextPane() {
+        scrollPaneMain_.setViewportView(outputArea_);
+    }
+
+    private void viewTaskTable() {
+        scrollPaneMain_.setViewportView(taskTable_);
+    }
+
+    private void viewShortcutTable() {
+        scrollPaneMain_.setViewportView(shortcutTable_);
+    }
+
+    private void clearInput() {
+        textField_.selectAll();
+        textField_.setText("");
+    }
+
+    private void clearTextPane() {
+        outputArea_.setText("");	
+    }
+
+    private void clearFeedbackArea() {
+        sysFeedbackArea_.setText("");
+    }
+
+    private static boolean isNumeric(String s) {
+        try{ 
+            Integer.parseInt(s);
+            return true; 
+        } catch (NumberFormatException er) { 
+            return false; 
+        }
+    }
+
+	// End of segment: ../src/\UserInterface.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\UserInterface.java
+	 */
+
+    private void addDummyTask() {
+        dummyArray  =  new ArrayList<Task>();
+
+        for (int tid = 1000; tid<1020;  tid++) {
+            Task testTask = new Task( tid  , " (The rest are dummies)", new Date(115,3,8,14,0) , 
+                    new Date(115,3,8,17,0), new Date(113,2,8,17,0), "HOME",null, 6);
+            dummyArray.add(testTask);
+        }
+    }
+
+	// End of segment: ../src/\UserInterface.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\UserInterface.java
+	 */
+
+    private void addDummy2() {
+        dummy2 = new ArrayList<Task>();
+
+        for (int tid = 1005; tid<1010;  tid++) {
+            Task testTask = new Task( tid  , " (The rest are dummies)", new Date(115,3,8,14,0) , 
+                    new Date(115,3,8,17,0), new Date(113,2,8,17,0), "HOME", null, 0);
+            dummy2.add(testTask);
+        }
+    }
+
+	// End of segment: ../src/\UserInterface.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\UserInterface.java
+	 */
+
+    private void addDummyShortcut() {
+        String[][] keywordArray = new String[SYS_KEYWORDS.length][5];
+
+        for ( int i = 0 ; i < SYS_KEYWORDS.length ; i++) {
+            for ( int j = 0; j<5 ; j ++) {
+                keywordArray[i][j] = i + "shortcut" + j ;
+            }
+        }				
+        displayKeywords(keywordArray, true);
+    }
+}
+
+
+
+	// End of segment: ../src/\UserInterface.java
+
+
+
+
+

@@ -1,0 +1,116 @@
+//@author: a0118892u-reused
+
+
+
+	/**
+	 * origin: ../src/\FileStorage.java
+	 */
+
+    private String convertToStringFromInt(int integer) {
+        return Integer.toString(integer);
+    }
+
+    /**
+     * This method converts an Date type data to a String type with this default format 
+     * ("dd/MM/yyyy HH:mm")
+     * @param date  date type data to be converted
+     * @return      String type data of the input with this format "dd/MM/yyyy HH:mm"
+     */
+	// End of segment: ../src/\FileStorage.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\FileStorage.java
+	 */
+
+    private String convertToStringFromDate(Date date) {
+        Format formatter = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+        String dateString = formatter.format(date);
+        
+        return dateString;
+    }
+
+    /**
+     * This method extracts each line from specified file as String array
+     * and passes it as parameter to processCustomizingCommand method in Template.     
+     * @param template  Template to call its processCustomizingCommand method
+     */
+	// End of segment: ../src/\FileStorage.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\SystemTest.java
+	 */
+
+    private Date convertToDateObject(String dateString) {
+        try {
+            Date date = null;
+            if (dateString != null && !dateString.equals("")) {
+                DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                date = format.parse(dateString);
+            }
+            return date;
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+}
+
+	// End of segment: ../src/\SystemTest.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\TemplateManager.java
+	 */
+
+    private Date getDate(String date) {
+        try {
+            DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+            return format.parse(date);
+        } catch (ParseException e) {
+            assert(true);
+        }
+
+        return null;
+    }
+
+	// End of segment: ../src/\TemplateManager.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\TemplateManager.java
+	 */
+
+    private Date convertToDateObject(String dateString) {
+        try {
+            Date date = null;
+            if (dateString != null && !dateString.equals("")) {
+                DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+                date = format.parse(dateString);
+            }
+
+            return date;
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+}
+
+	// End of segment: ../src/\TemplateManager.java
+
+
+
+
+

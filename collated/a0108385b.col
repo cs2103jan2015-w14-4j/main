@@ -1,0 +1,2710 @@
+//@author: a0108385b
+
+
+
+	/**
+	 * origin: ../src/\CentralizedLog.java
+	 */
+
+public class CentralizedLog {
+
+    private static final String LOGGER_NAME = "log";
+    private static final String LOG_FILE_NAME = "log.txt";
+    private Logger logfile;
+
+    public CentralizedLog() {
+        logfile = buildLogger();
+    }
+
+
+    /**
+     * This method builds a log file under file name log.txt
+     * @return logfile under file handler called log.txt;
+     */
+    private static Logger buildLogger() {
+        Logger logfile = Logger.getLogger(LOGGER_NAME);
+
+        try {
+
+            FileHandler fh = new FileHandler(LOG_FILE_NAME, true);
+            logfile.addHandler(fh);
+            SimpleFormatter formatter = new SimpleFormatter();  
+            fh.setFormatter(formatter);
+            logfile.setLevel(Level.CONFIG);
+        } catch (Exception e) {
+
+        }
+        return logfile;
+    }
+
+    /**
+     * This method changes the level of severity to be logged for debugging purposes.
+     * @param newLvl	Level to be set to
+     */
+    public void setLevel(Level newLvl) {
+        logfile.setLevel(newLvl);
+    }
+
+    /**
+     * This method logs the message under the severity level Severe
+     * @param msg Message to be logged
+     */
+    public void severe(String msg) {
+        logfile.severe(msg);
+    }
+
+    /**
+     * This method logs the message under the severity level Info
+     * @param msg Message to be logged
+     */
+    public void info(String msg) {
+        logfile.info(msg);
+    }
+
+    /**
+     * This method logs the message under the severity level Warning
+     * @param msg Message to be logged
+     */ 
+    public void warning(String msg) {
+        logfile.warning(msg);
+    }
+
+    /**
+     * This method logs the message under the severity level Config
+     * @param msg Message to be logged
+     */
+    public void config(String msg) {
+        logfile.config(msg);
+    }
+
+    /**
+     * This method logs the message under the severity level Fine
+     * @param msg Message to be logged
+     */
+    public void fine(String msg) {
+        logfile.fine(msg);
+    }
+
+    /**
+     * This method logs the message under the severity level Finer
+     * @param msg Message to be logged
+     */
+    public void finer(String msg) {
+        logfile.finer(msg);
+    }
+
+    /**
+     * This method logs the message under the severity level Finest
+     * @param msg Message to be logged
+     */
+    public void finest(String msg) {
+        logfile.finest(msg);
+    }
+}
+
+	// End of segment: ../src/\CentralizedLog.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\DisplayProcessor.java
+	 */
+
+public class DisplayProcessor {
+
+    private static final String CMD_TASK_VIEW = "viewTask";
+    private static final String CMD_TASK_SEARCH = "searchTask";
+    private static final String MSG_SAVE_SUCCESS = "The save path has been changed to \"%s\" successfully";
+    private static final String MSG_TASK_STATUS = "The task:\"%s\" has been marked as %s";
+    private static final String MSG_TASK_REDO = "The last task operation has been redone.";
+    private static final String MSG_TASK_SEARCH = " %s task(s) have been found.";
+    private static final String MSG_TASK_UNDO = "The last task operation has been undone.";
+    private static final String MSG_TASK_DELETE = "The task:\"%s\" has been deleted.";
+    private static final String MSG_TASK_CLASH_TASK = "%s (Task ID: %s),";
+    private static final String MSG_TASK_CLASH = "The newly added task has clashed with the following task(s): ";
+    private static final String MSG_TASK_UPDATE = "The task:\"%s\" (Task ID: %s), has been updated.";
+    private static final String MSG_TASK_VIEW = "The tasks list has been retrieved.";
+
+    private static final String MSG_TEMP_DELETE = "The template:\"%s\" has been deleted.";
+    private static final String MSG_TEMP_UPDATE = "The template:\"%s\" has been updated. ";
+    private static final String MSG_TEMP_VIEW = "The template list has been retrieved.";
+    private static final String MSG_TEMP_NO_TEMPLATE = "There are no saved templates.";
+    private static final String MSG_TEMP_RESET = "All Templates have been cleared.";
+
+    private static final String MSG_KEYWORD_DELETED = "The keyword \"%s\" has been deleted.";
+    private static final String MSG_KEYWORD_RESET = "All keywords have been reset to the list of defaults above.";
+
+    private static final String MSG_KEYWORD_VIEW = "Displaying all Keywords";
+    private static final String MSG_KEYWORD_ADDED_NEW = "New keyword \"%s\" has been added to the \"%s\" function.";
+
+    private static final int SIZE_ZERO = 0;
+
+
+    private static final int INDEX_EXECUTION_ERROR = 0;
+    private static final int INDEX_EXECUTION_SUCCESS = 1;
+    private static final int INDEX_EXECUTION_CLASH = 2;
+
+    private static final int INDEX_COMMAND_TYPE = 0;
+
+    private static final int INDEX_TEMP_NEW_NAME = 2;
+    private static final int INDEX_TEMP_NAME = 1;
+
+    private static final int NUM_TASK_SINGLE = 1;
+
+
+    private static final int INDEX_KEYWORD_DELETE = 1;
+    private static final int INDEX_KEYWORD_OLD = 2;
+    private static final int INDEX_KEYWORD_NEW = 1;
+
+    private static final boolean EXECUTION_SUCCESS = true;
+
+    private static final int LENGTH_MESSAGE_DEFAULT = 1;
+    private static final int MESSAGE_NUMBER_ONE = 0;
+    private static final int MESSAGE_NUMBER_TWO = 1;
+    private static final int MESSAGE_SIZE_ONE = 1;
+    private static final int MESSAGE_SIZE_TWO = 2;
+    private static final int RESULT_SIZE_ONE = 1;
+    private static final int INDEX_TASK_AFFECTED = 0;
+
+    private UserInterface window;
+
+
+    public DisplayProcessor(UserInterface window) {
+        this.window = window;
+    }
+
+
+    /**
+     * This method calls UI to display the error message to user
+     * @param message	Error message to be displayed to user
+     */
+    public void displayErrorToUI(String message) {
+        window.displayMsg(message, INDEX_EXECUTION_ERROR);
+    }
+
+
+    /**
+     * This method calls UI to display tasks list saved from last login
+     * @param taskList Tasks list to be shown to user 
+     */
+    public void displayTaskfromLastLogin(ArrayList<Task> taskList) {
+        window.displayTaskTable(taskList, taskList, INDEX_EXECUTION_SUCCESS);
+    }
+
+
+    /**
+     * This method calls UI to display the result of changing save location
+     */
+    public void displayMoveFileResultToUI(String savePath) {
+        window.displayMsg(String.format(MSG_SAVE_SUCCESS, savePath), INDEX_EXECUTION_SUCCESS);
+    }
+
+
+    /**
+     * @param command		Command that has been executed
+     * @param result		Affected tasks by the executed command
+     * @param fullList		Full list of tasks stored in task manager
+     */
+    public void displayTMResult(String[] command, ArrayList<Task> result,
+            ArrayList<Task> fullList) {
+        String[] message = constructTMMessage(command, result);
+
+        if (command[0].equals("deleteTask")) {
+            window.displayTaskTable(null, fullList, INDEX_EXECUTION_SUCCESS);
+        } else {
+            window.displayTaskTable(result, fullList, INDEX_EXECUTION_SUCCESS);
+        }
+
+        if (hasMessage(message)) {
+            window.displayMsg(message, getTaskManagerExecutionStatus(command,result));
+        }
+
+    }
+
+    /**
+     * 
+     * @param command		Command that has been executed
+     * @param result		Affected tasks by the executed command
+     * @return				String array of messages to be displayed
+     */
+    private String[] constructTMMessage(String[] command, ArrayList<Task> result) {
+        String[] message = null;
+
+        switch (TaskManager.getCommand(command[INDEX_COMMAND_TYPE])) {
+        case viewTask:
+            message = new String[MESSAGE_SIZE_ONE];
+            message[MESSAGE_NUMBER_ONE] = MSG_TASK_VIEW;
+            break;
+
+        case addTask: 
+        case editTask:
+            if (result.size() > RESULT_SIZE_ONE) {
+                message = new String[MESSAGE_SIZE_TWO];
+                message[MESSAGE_NUMBER_ONE] = String.format(MSG_TASK_UPDATE,
+                        result.get(INDEX_TASK_AFFECTED).getTaskName(), result.get(INDEX_TASK_AFFECTED).getTID());
+                message[MESSAGE_NUMBER_TWO] = MSG_TASK_CLASH;
+                for(int i = 1; i < result.size(); ++i) {
+                    message[MESSAGE_NUMBER_TWO] += String.format(MSG_TASK_CLASH_TASK, 
+                            result.get(i).getTaskName(), result.get(i).getTID());
+                }
+                message[MESSAGE_NUMBER_TWO] = message[MESSAGE_SIZE_ONE].substring(0, message[MESSAGE_NUMBER_ONE].length() - 1) + ".";
+            } else {
+                message = new String[MESSAGE_SIZE_ONE];
+                message[MESSAGE_NUMBER_ONE] = String.format(MSG_TASK_UPDATE,
+                        result.get(INDEX_TASK_AFFECTED).getTaskName(), result.get(INDEX_TASK_AFFECTED).getTID());
+            }
+            break;
+
+        case deleteTask:
+            message = new String[MESSAGE_SIZE_ONE];
+            message[MESSAGE_NUMBER_ONE] = String.format(MSG_TASK_DELETE,
+                    result.get(INDEX_TASK_AFFECTED).getTaskName());
+            break;
+
+        case searchTask:
+            message = new String[MESSAGE_SIZE_ONE];
+            message[MESSAGE_NUMBER_ONE] = String.format(MSG_TASK_SEARCH, result.size());
+            break;
+
+        case undoTask:
+            message = new String[MESSAGE_SIZE_ONE];
+            message[MESSAGE_NUMBER_ONE] = MSG_TASK_UNDO;
+            break;
+
+        case redoTask:
+            message = new String[MESSAGE_SIZE_ONE];
+            message[MESSAGE_NUMBER_ONE] = MSG_TASK_REDO;
+            break;
+
+        case clearAttr:
+            message = new String[MESSAGE_SIZE_ONE];
+            message[MESSAGE_NUMBER_ONE] = String.format(MSG_TASK_UPDATE,
+                    result.get(INDEX_TASK_AFFECTED).getTaskName(), result.get(INDEX_TASK_AFFECTED).getTID());
+            break;
+
+        case markTask:
+            message = new String[MESSAGE_SIZE_ONE];
+            message[MESSAGE_NUMBER_ONE] = String.format(MSG_TASK_STATUS, 
+                    result.get(INDEX_TASK_AFFECTED).getTaskName(), result.get(INDEX_TASK_AFFECTED).getStatusString());
+            break;
+        }
+        return message;
+    }
+
+
+    /**
+     * @param command		Command that has been executed
+     * @param result		Affected tasks by the executed command
+     * @return				Index of execution status, success/error/clashed
+     */
+    private int getTaskManagerExecutionStatus(String[] command, ArrayList<Task> result) {
+        if (command[INDEX_COMMAND_TYPE].equals(CMD_TASK_VIEW)) {
+            if (result != null) {
+                return INDEX_EXECUTION_SUCCESS;
+            } else {
+                return INDEX_EXECUTION_ERROR;
+            }
+        } else if (command[INDEX_COMMAND_TYPE].equals(CMD_TASK_SEARCH)) {
+            if (result != null) {
+                return INDEX_EXECUTION_SUCCESS;
+            } else {
+                return INDEX_EXECUTION_ERROR;
+            }
+        } else {	//For other task types that are not view or search
+            if (result == null) {
+                return INDEX_EXECUTION_ERROR;
+            } else if (result.size() == NUM_TASK_SINGLE) {
+                return INDEX_EXECUTION_SUCCESS;
+            } else {
+                return INDEX_EXECUTION_CLASH;
+            }
+        }
+    }
+
+
+    /**
+     * @param command	Command that has been executed
+     * @param result	Affected keywords by the executed command
+     */
+    public void displayKeywordResult(String[] command, String[][] result) {
+        window.displayKeywords(result, EXECUTION_SUCCESS);
+        String[] message = constructKeywordMessage(command, result);
+
+        if (hasMessage(message)) {
+            window.displayMsg(message, INDEX_EXECUTION_SUCCESS);
+        }
+
+    }
+
+
+    /**
+     * @param command	Command that has been executed
+     * @param result	Affected keywords by the executed command
+     * @return			String array of messages to be displayed, null if no messages to be displayed
+     */
+    private String[] constructKeywordMessage(String[] command,
+            String[][] result) {
+        String[] message = new String[LENGTH_MESSAGE_DEFAULT];
+
+        switch (KeywordManager.getCommandType(command[INDEX_COMMAND_TYPE])) {
+        case addKeyword:
+            message[MESSAGE_NUMBER_ONE] = String.format(MSG_KEYWORD_ADDED_NEW, 
+                    command[INDEX_KEYWORD_NEW], command[INDEX_KEYWORD_OLD]);
+            break;
+
+        case viewKeyword:
+            message[MESSAGE_NUMBER_ONE] = MSG_KEYWORD_VIEW;
+            break;
+
+        case deleteKeyword:
+            message[MESSAGE_NUMBER_ONE] = String.format(MSG_KEYWORD_DELETED, command[INDEX_KEYWORD_DELETE]);
+            break;
+
+        case resetKeyword:
+            message[MESSAGE_NUMBER_ONE] = MSG_KEYWORD_RESET;
+            break;
+
+        case addKeywordInit:
+            message = null;
+        }
+        return message;
+    }
+
+
+    /**
+     * @param command	Command that has been executed
+     * @param result	Affected templates by the executed command
+     */
+    public void displayTemplateResult(String[] command, ArrayList<String> names, ArrayList<Task> result) {
+
+        window.displayTemplate(result, names, EXECUTION_SUCCESS);
+        String[] message = constructTempMessage(command, result);
+
+        if (hasMessage(message)) {
+            window.displayMsg(message,INDEX_EXECUTION_SUCCESS);
+        }
+    }
+
+
+    /**
+     * @param message	Message to be displayed
+     * @return			True if no message is null
+     */
+    private boolean hasMessage(String[] message) {
+        return message != null;
+    }
+
+
+    /**
+     * @param command	Command that has been executed
+     * @param result	Affected templates by the executed command
+     * @return			String array of messages to be displayed, null if no messages to be displayed
+     */
+    private String[] constructTempMessage(String[] command, ArrayList<Task> result) {
+        String[] message = new String[LENGTH_MESSAGE_DEFAULT];
+
+        switch (TemplateManager.getCommandType(command[INDEX_COMMAND_TYPE])) {
+        case viewTemplate:
+            if (noTemplateToView(result)) {
+                message[MESSAGE_NUMBER_ONE] = MSG_TEMP_NO_TEMPLATE;
+            } else {
+                message[MESSAGE_NUMBER_ONE] = MSG_TEMP_VIEW;
+            }
+            break;
+
+        case addTemplate:
+            message[MESSAGE_NUMBER_ONE] = String.format(MSG_TEMP_UPDATE, command[INDEX_TEMP_NEW_NAME]);
+            break;
+
+        case editTemplate:
+            message[MESSAGE_NUMBER_ONE] = String.format(MSG_TEMP_UPDATE, command[INDEX_TEMP_NAME]);
+            break;
+
+        case deleteTemplate:
+            message[MESSAGE_NUMBER_ONE] = String.format(MSG_TEMP_DELETE, command[INDEX_TEMP_NAME]);
+            break;
+
+        case resetTemplate:
+            message[MESSAGE_NUMBER_ONE] = String.format(MSG_TEMP_RESET);
+            break;
+
+        case useTemplate: 
+        case addTemplateInit: 
+            message = null;
+
+        }
+        return message;
+    }
+
+
+    /**
+     * @param result	ArrayList of templates to be viewed
+     * @return			True if there are some templates to view
+     */
+    private boolean noTemplateToView(ArrayList<Task> result) {
+        return result.size() == SIZE_ZERO;
+    }
+
+
+    /**
+     * This method calls UI to display help list to user
+     */
+    public void displayHelptoUser() {
+        window.displayText(UserInterface.HELP, true);
+    }
+}
+	// End of segment: ../src/\DisplayProcessor.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\KeywordManager.java
+	 */
+
+public class KeywordManager {
+
+    private static final String MSG_ERR_UNCHANGEABLE_KEYWORD = "This keyword cannot be edited.";
+    private static final String MSG_ERR_CORRUPTED_SAVED_FILE = "Keyword saved file has been corrupted";
+    private static final String MSG_ERR_MINIMUM_LENGTH = "\"%s\"is too short. Please choose a word that is at least 3 characters long to be used as a keyword.";
+    private static final String MSG_ERR_MAX_CAPACITY = "\"%s\" cannot be added to this function as each function can only have a maximum of 10 keywords. Please delete one of the keywords if you want to add another one.";
+    private static final String MSG_ERR_KEYWORD_EXIST = "\"%s\" is already being used as a keyword by Flexi Tracker.";
+    private static final String MSG_ERR_NO_SUCH_COMMAND = "No such command exists in Keyword Manager: %1$s";
+    private static final String MSG_ERR_DEFAULT_KEYWORD_DELETE = "\"%s\" is a default system-defined keyword. It cannot be changed or deleted.";
+    private static final String MSG_ERR_MINIMUM_KEYWORD_NUMBER = "Each function must have at least one keyword. \"%s\" cannot be removed.";
+    private static final String MSG_ERR_KEYWORD_NOT_EXIST = "\"%s\" does not exist in the keyword list";
+
+    //Command that are recognized by system 
+    private static final String[] KEYWORDS = {	"addTask", 		"editTask",		"viewTask",
+        "deleteTask", 	"clearAttr", 	"searchTask", 
+        "undoTask", 	"redoTask", 	"markTask",
+        "addKeyword", 	"viewKeyword", "deleteKeyword",
+        "resetKeyword", "addTemplate", "editTemplate", 
+        "viewTemplate", "useTemplate", 	"deleteTemplate", 
+        "resetTemplate", "help", "saveTo"}; 
+
+    //Default commands
+    private static final String[] RESERVED_WORDS = {"at","location","from","datefrom","to","dateto","on",
+        "before","by","detail","status","name","title"};
+
+    private static final String[] DEFAULT_HELP = {"help"};
+    private static final String[] DEFAULT_RESET_TEMP = {"resetTemplate", "resetTemp"};
+    private static final String[] DEFAULT_DELETE_TEMP = {"deleteTemplate","deleteTemp"};
+    private static final String[] DEFAULT_USE_TEMP = {"useTemplate", "useTemp"};
+    private static final String[] DEFAULT_VIEW_TEMP = {"viewTemplate","viewTemp"};
+    private static final String[] DEFAULT_EDIT_TEMP = {"editTemplate","editTemp"};
+    private static final String[] DEFAULT_ADD_TEMP = {"addTemplate","addTemp"};
+    private static final String[] DEFAULT_RESET_KEYWORD = {"resetShortcut","resetKeyword"};
+    private static final String[] DEFAULT_DELETE_KEYWORD = {"deleteShortcut","deleteKeyword"};
+    private static final String[] DEFAULT_VIEW_KEYWORD = {"viewShortcut","viewKeyword"};
+    private static final String[] DEFAULT_ADD_KEYWORD = {"addShortcut","addKeyword"};
+    private static final String[] DEFAULT_MARK_TASK = {"mark","markTask"};
+    private static final String[] DEFAULT_REDO_TASK = {"redo","redoTask"};
+    private static final String[] DEFAULT_UNDO_TASK = {"undo","undoTask"};
+    private static final String[] DEFAULT_SEARCH_TASK = {"search", "searchTask"};
+    private static final String[] DEFAULT_CLEAR_ATTR = {"clear","clearAttr"};
+    private static final String[] DEFAULT_DELETE_TASK = {"delete","deleteTask"};
+    private static final String[] DEFAULT_VIEW_TASK = {"view","viewTask"};
+    private static final String[] DEFAULT_EDIT_TASK = {"edit","editTask"};
+    private static final String[] DEFAULT_ADD_TASK = {"add","addTask"};
+    public static final String[] DEFAULT_SET_PATH = {"saveTo"};
+
+    private static final String[][] DEFAULT_WORD_SET = {	DEFAULT_ADD_TASK, 		DEFAULT_EDIT_TASK,
+        DEFAULT_VIEW_TASK, 		DEFAULT_DELETE_TASK,
+        DEFAULT_CLEAR_ATTR,		DEFAULT_SEARCH_TASK, 
+        DEFAULT_UNDO_TASK, 		DEFAULT_REDO_TASK,
+        DEFAULT_MARK_TASK, 		DEFAULT_ADD_KEYWORD, 
+        DEFAULT_VIEW_KEYWORD, 	DEFAULT_DELETE_KEYWORD, 
+        DEFAULT_RESET_KEYWORD, DEFAULT_ADD_TEMP, 
+        DEFAULT_EDIT_TEMP, 		DEFAULT_VIEW_TEMP, 
+        DEFAULT_USE_TEMP, 		DEFAULT_DELETE_TEMP, 
+        DEFAULT_RESET_TEMP, 	DEFAULT_HELP,
+        DEFAULT_SET_PATH
+    };
+
+    private static final int RESULT_FIRST = 0;
+    private static final int RESULT_SIZE_DEFAULT = 1;
+
+    private static final int INDEX_HELP = 19;
+    private static final int INDEX_SET_PATH = 20;
+    private static final int INDEX_RESET_KEYWORD = 12;
+
+    private static final int[] UNCHANGEABLE_KEYWORD = { 	INDEX_HELP, 
+        INDEX_RESET_KEYWORD, 
+        INDEX_SET_PATH
+    };
+
+    private static final int ARRAY_SIZE_KEYWORD = 3;
+    private static final int ADD_KEYWORD_ARRAY_USED_SIZE = 3;
+    private static final int ADD_KEYWORD_INIT_ARRAY_USED_SIZE = 3;
+    private static final int VIEW_KEYWORD_ARRAY_USED_SIZE = 1;
+    private static final int DELETE_KEYWORD_ARRAY_USED_SIZE = 2;
+    private static final int RESET_KEYWORD_ARRAY_USED_SIZE = 1;
+
+    private static final int INDEX_DELETING_KEYWORD = 1;
+    private static final int INDEX_REFERED_KEYWORD = 2;
+    private static final int INDEX_NEW_KEYWORD = 1;
+    private static final int INDEX_INIT_REFERED_ROW = 2;
+
+    private static final int MINIMUM_LENGTH = 3;
+    private static final int MAXIMUM_LENGTH = 15;
+    private static final int MINIMUM_CAPACITY = 1;
+    private static final int MAXIMUM_CAPACITY = 10;
+
+    private static final int INDEX_NOT_FOUND = -1;
+    private static final int INDEX_COMMAND = 0;
+
+
+    private ArrayList<ArrayList<String>> userKeywords;
+    private SystemHandler system;
+
+
+    public KeywordManager() {
+        userKeywords = new ArrayList<ArrayList<String>>();
+        for (int i = 0; i < KEYWORDS.length; ++i) {
+            userKeywords.add(new ArrayList<String>());
+        }
+    }
+
+
+
+    /**
+     * It set the system path so that it can call the system Handler that governs it to 
+     * fetch data from other components when required
+     * @param system	The system handler that governs this keyword manager
+     */
+    public void setSystemPath(SystemHandler system) {
+        this.system = system;
+    }
+
+
+
+    /**
+     * This method receives commands and process them accordingly
+     * @param command	The string array of command to be executed
+     * @return			Arrays of string arrays that are demanded by command
+     * @throws IllegalArgumentException		Invalid instruction has been demanded or command violates 
+     * 										the constraints set by keyword manager
+     * @throws NoSuchElementException		Demanded keyword from command does not exist
+     */
+    public String[][] processKeywordCommand(String[] command) 
+            throws NoSuchElementException, IllegalArgumentException {
+        String[][] results = new String[RESULT_SIZE_DEFAULT][];
+
+        switch (getCommandType(command[INDEX_COMMAND])) {
+        case addKeyword:
+            verifyCommand(command, ADD_KEYWORD_ARRAY_USED_SIZE);
+            results[RESULT_FIRST] = insertKeyword(command[INDEX_NEW_KEYWORD],
+                    command[INDEX_REFERED_KEYWORD]);
+            writeOutToFile();
+            break;
+
+        case deleteKeyword:
+            verifyCommand(command, DELETE_KEYWORD_ARRAY_USED_SIZE);
+            results[RESULT_FIRST] = removeKeyword(command[INDEX_DELETING_KEYWORD]);
+            writeOutToFile();
+            break;
+
+        case resetKeyword:
+            verifyCommand(command, RESET_KEYWORD_ARRAY_USED_SIZE);
+            resetKeyword();
+            results = viewKeywords();
+            writeOutToFile();
+            break;
+
+        case viewKeyword:
+            verifyCommand(command, VIEW_KEYWORD_ARRAY_USED_SIZE);
+            results = cloneKeywords();
+            break;
+
+        case addKeywordInit:
+            try {
+                verifyCommand(command, ADD_KEYWORD_INIT_ARRAY_USED_SIZE);
+                addKeywordInit(command);
+                break;
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(MSG_ERR_CORRUPTED_SAVED_FILE);
+            }
+        }
+
+        return results; 
+    }
+
+
+
+    /**
+     * 	This method calls system handler to initiate write out to storage. 
+     *  It is called when there are changes made to keywords' data
+     */
+    private void writeOutToFile() {
+        String[][] keywords = new String[KEYWORDS.length][];
+
+        for (int i = 0; i < KEYWORDS.length; ++i) {
+            keywords[i] = new String[userKeywords.get(i).size()];
+            userKeywords.get(i).toArray(keywords[i]);
+        }
+
+        system.writeKeywordToFile(keywords);
+    }
+
+
+    /**
+     * This method initialize keyword by executing commands issued by storage
+     * @param command					The string array of command to be executed
+     * @throws NumberFormatException 	The save file is corrupted and the index to be referred is not identified
+     */
+    private void addKeywordInit(String[] command) throws NumberFormatException {
+        int row = Integer.parseInt(command[INDEX_INIT_REFERED_ROW]);
+
+        assert(row < KEYWORDS.length);
+        assert(row >= 0);
+
+        ArrayList<String> toBeAddedInto = userKeywords.get(row);
+
+        toBeAddedInto.add(command[INDEX_NEW_KEYWORD]);
+    }
+
+
+    /**
+     * This method returns the system keyword that matches the input command
+     * @param command	Customized Command to be matched with system recognized command
+     * @return			The command that matches the customized command, null if not exist
+     */
+    public String keywordMatching(String command) {
+        int matchingIndex = searchMatching(command);
+
+        if (matchingIndex > -1) {
+            return KEYWORDS[matchingIndex];
+        } else {
+            return null;
+        }
+    }
+
+
+    /**
+     * This method returns keyword command type that matches the string command 
+     * @param command					String of Command type to be executed
+     * @return							Type of command to be executed by keyword manager
+     * @throws IllegalArgumentException	Type of command entered is not recognized by keyword manager
+     */
+    public static COMMAND_TYPE_KEYWORD getCommandType(String command) 
+            throws IllegalArgumentException {
+        try{
+            return COMMAND_TYPE_KEYWORD.valueOf(command);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(String.format(MSG_ERR_NO_SUCH_COMMAND, 
+                    e.getMessage().substring(39)));
+        }   
+    }
+
+
+    /**
+     * 	This method reset keyword list to default set
+     */
+    private void resetKeyword() {
+        userKeywords = new ArrayList<ArrayList<String>>();
+
+        for (int i = 0; i < KEYWORDS.length; ++i) {
+            userKeywords.add(buildDefaultKeyword(i));
+        }
+    }
+
+
+    /**
+     * This method reads keywords from default set and build them
+     * @param index		Index of keyword default set
+     * @return			Default Keywords that correspond to the index 
+     */
+    private ArrayList<String> buildDefaultKeyword(int index) {
+        ArrayList<String> customizedWord = new ArrayList<String>();
+        String[] defaultwords = DEFAULT_WORD_SET[index];
+
+        for (int i = 0; i < defaultwords.length; ++i) {
+            customizedWord.add(defaultwords[i]);
+        }
+
+        return customizedWord;
+    }
+
+
+    /**
+     * @return	The cloned list of keywords
+     */
+    private String[][] viewKeywords() {
+        return cloneKeywords();
+    }
+
+
+    /**
+     * @param keyword					Keyword to be removed
+     * @return							Keyword that function the same as the removed shortcut
+     * @throws NoSuchElementException	The keyword to be deleted is not found	
+     * @throws IllegalArgumentException	The keyword to be deleted is a default or the corresponded keyword is at minimum capacity
+     */
+    private String[] removeKeyword(String keyword) throws NoSuchElementException, IllegalArgumentException {
+        int index = getShortcutMatchingIndex(keyword);
+
+        if (index == INDEX_NOT_FOUND) {
+            throw new NoSuchElementException(String.format(MSG_ERR_KEYWORD_NOT_EXIST, keyword));
+
+        } else if (isKeywordAtMinimumCapacity(index)) {
+            throw new IllegalArgumentException(String.format(MSG_ERR_MINIMUM_KEYWORD_NUMBER, keyword));
+
+        } else if (isDefaultKeyword(keyword)) {
+            throw new IllegalArgumentException(String.format(MSG_ERR_DEFAULT_KEYWORD_DELETE, keyword));
+        } else {
+            removeKeywordfromUserList(index, keyword);
+
+            String[] result = constructOutputString(index, keyword);
+            return result;
+        }
+    }
+
+
+    /**
+     * @param index		Index of system keyword where the keyword to be removed lies in
+     * @param keyword	Keyword to be removed
+     * @return			True if the keyword has been removed successfully
+     */
+    private boolean removeKeywordfromUserList(int index, String keyword) {
+        ArrayList<String> userDefinedKeyword = userKeywords.get(index);
+
+        for (int i = 0; i < userDefinedKeyword.size(); ++i) {
+            if (userDefinedKeyword.get(i).equals(keyword)) {
+                userDefinedKeyword.remove(i);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    /**
+     * @param keyword	Shortcut to be matched with keyword
+     * @return			Index of keyword where the shortcut corresponds to, -1 if not found
+     */
+    private int getShortcutMatchingIndex(String keyword) {
+        for (int i = 0; i < userKeywords.size(); ++i) {
+            ArrayList<String> customizedKeyword = userKeywords.get(i);
+            for (int j = 0; j < customizedKeyword.size(); ++j) {
+                if (keyword.equals(customizedKeyword.get(j))) {
+                    return i;
+                }
+            }
+        }
+
+        return INDEX_NOT_FOUND;
+    }
+
+
+    /**
+     * @param newKeyword				New keyword to represent the keyword
+     * @param originKeyword				Original keyword to let new keyword matches with the same keyword
+     * @return							Output result after successfully added, null if fail to add
+     * @throws NoSuchElementException	The keyword to match with is not found.
+     * @throws IllegalArgumentException	There are some violations in constraints of keywords
+     */
+    private String[] insertKeyword(String newKeyword, String originKeyword) 
+            throws NoSuchElementException, IllegalArgumentException {
+        int indexBelongTo = searchMatching(originKeyword);
+
+        verifyInputApprioriateness(newKeyword, originKeyword, indexBelongTo);
+
+        addKeyword(newKeyword, indexBelongTo);
+        String[] result = constructOutputString(indexBelongTo, originKeyword, newKeyword);
+
+        return result;	
+    }
+
+
+    /**
+     * This method verify all restrictions before allowing actions on the keyword
+     * @param newKeyword				New keyword to represent the keyword
+     * @param originKeyword				Original keyword to let new keyword matches with the same keyword
+     * @param indexBelongTo				Index of keyword to be matched
+     * @throws NoSuchElementException	There is no keywords where original keyword can match to
+     * @throws IllegalArgumentException	There are some violations in constraints of keywords
+     */
+    private void verifyInputApprioriateness(String newKeyword, String originKeyword,
+            int indexBelongTo) throws NoSuchElementException, IllegalArgumentException {
+        if (!isKeyWords(indexBelongTo)) {
+            throw new NoSuchElementException(String.format(MSG_ERR_KEYWORD_NOT_EXIST, originKeyword));
+        } else if (isKeyWords(newKeyword)) {
+            throw new IllegalArgumentException(String.format(MSG_ERR_KEYWORD_EXIST, newKeyword));
+        } else if (isReservedWord(newKeyword)) {
+            throw new IllegalArgumentException(String.format(MSG_ERR_DEFAULT_KEYWORD_DELETE, newKeyword));
+        } else if (isUnchangeable(indexBelongTo)) {
+            throw new IllegalArgumentException(MSG_ERR_UNCHANGEABLE_KEYWORD);
+        } else if (isWordLengthInappropriate(newKeyword)) {
+            throw new IllegalArgumentException(String.format(MSG_ERR_MINIMUM_LENGTH, newKeyword));
+        } else if (isKeywordAtMaximumCapacity(indexBelongTo)) {
+            throw new IllegalArgumentException(String.format(MSG_ERR_MAX_CAPACITY, newKeyword));
+        }
+    }
+
+
+    /**
+     * This method construct the output as following: First index is the index of System keyword, 
+     * second index is the deleted keyword
+     * @param index		Index of keyword to be matched with
+     * @param deleted	Deleted keyword
+     * @return			Array of string that shows the index of deleted and deleted keyword 
+     */
+    private String[] constructOutputString(int index, String deleted) {
+        String[] result = {Integer.toString(index), deleted};
+
+        return result;
+    }
+
+
+    /**
+     * This method construct the output string to be read by UI component.
+     * The format is as follow: First index will be the index of System Keyword, followed by customized keyword
+     * @param index			Index of keyword to be matched with
+     * @param originalKey		Original Keyword that corresponds to the system keyword
+     * @param newlyAddedKey	New keyword that corresponds to original
+     * @return				Array of string that shows the index of keywords
+     */
+    private String[] constructOutputString(int index, String originalKey, String newlyAddedKey) {
+        ArrayList<String> shortcuts = userKeywords.get(index);
+        String[] result = new String[shortcuts.size() + 1];
+        result[0] = Integer.toString(index);
+
+        for (int i = 0 ; i < shortcuts.size(); ++i) {
+            result[i + 1] = shortcuts.get(i);
+        }
+
+        return result;
+    }
+
+
+    private boolean isWordLengthInappropriate(String newKeyword) {
+        return newKeyword.length() < MINIMUM_LENGTH || newKeyword.length() > MAXIMUM_LENGTH;
+    }
+
+
+    private boolean isKeywordAtMaximumCapacity(int index) {
+        return userKeywords.get(index).size() > MAXIMUM_CAPACITY;
+    }
+
+
+    private boolean isKeywordAtMinimumCapacity(int index) {
+        return userKeywords.get(index).size() < MINIMUM_CAPACITY;
+    }
+
+
+    /**
+     * @param newKeyword		Keyword to be added
+     * @param belongTo			Index of keyword where new keyword to be added to.
+     */
+    private void addKeyword(String newKeyword, int belongTo) {
+        ArrayList<String> toBeAddedInto = userKeywords.get(belongTo);
+        toBeAddedInto.add(newKeyword);
+    }
+
+
+    /**
+     * @param index		Index that matches the keywords
+     * @return			True if the index matches to a keyword
+     */
+    private boolean isKeyWords(int index) {
+        return (index > INDEX_NOT_FOUND);
+    }
+
+
+    /**
+     * @param keyword	Keyword to match the keyword
+     * @return			True if the keyword matches a system keyword
+     */
+    private boolean isKeyWords(String keyword) {
+        int matchingIndex = searchMatching(keyword);
+        return matchingIndex > INDEX_NOT_FOUND;
+    }
+
+
+    /**
+     * @param command	Keyword to match the default keyword
+     * @return			True if the keyword matches a default keyword
+     */
+    private boolean isDefaultKeyword(String keyword) {
+        for (int i = 0; i < DEFAULT_WORD_SET.length; ++i) {
+            String[] defaultWords = DEFAULT_WORD_SET[i];
+
+            for (int j = 0; j < defaultWords.length; ++j) {
+                if (keyword.equalsIgnoreCase(defaultWords[j])) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+    /**
+     * @param index			Index of keyword to be manipulated 
+     * @return				True if it is a unchangeable keyword
+     */
+    private boolean isUnchangeable(int index) {
+        for (int i = 0; i < UNCHANGEABLE_KEYWORD.length; ++i) {
+            if (index == UNCHANGEABLE_KEYWORD[i]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    /**
+     * @param keyword	Shortcut to be matched with keyword
+     * @return				Index of keywords where the shortcut matches with
+     */
+    private int searchMatching (String keyword) {
+        for (int index = 0; index < userKeywords.size(); ++index) {
+            ArrayList<String> keywordsList = userKeywords.get(index);
+
+            for (int j = 0; j < keywordsList.size(); ++j) {
+                if (isTheMatchingWord(keyword, keywordsList.get(j))) {
+                    return index;
+                }
+            }
+        }
+
+        return INDEX_NOT_FOUND;
+    }
+
+
+    /**
+     * @param keyword			Keyword to be matched to
+     * @param matching			Keyword to be matched with
+     * @return					True if both are the same keyword
+     */
+    private boolean isTheMatchingWord(String keyword, String matching) {
+        return keyword.equalsIgnoreCase(matching);
+    }
+
+
+    /**
+     * @param keyword			keyword to be checked
+     * @return					True if the keyword is a reserved keyword
+     */
+    private boolean isReservedWord(String keyword) {
+        for (int i = 0; i < RESERVED_WORDS.length; ++i) {
+            if (keyword.equalsIgnoreCase(RESERVED_WORDS[i])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    /**
+     * @return	A clone of keyword list
+     */
+    private String[][] cloneKeywords() {
+        String[][] cloneList = new String[KEYWORDS.length][];
+
+        for (int i = 0; i < userKeywords.size(); ++i) {
+            ArrayList<String> keywords = userKeywords.get(i);
+
+            String[] clonedArray = new String[keywords.size() + 1];
+            clonedArray[0] = Integer.toString(i);
+
+            for (int j = 0; j < keywords.size(); ++j) {
+                clonedArray[j + 1] = keywords.get(j);
+            }
+            cloneList[i] = clonedArray;
+        }
+
+        return cloneList;
+    }
+
+
+    /**
+     * This method verify the command field by check any invalid fields used for particular type of command
+     * @param command			Keyword command to be verified
+     * @param lengthToCheck		Number of field to be checked
+     */
+    private void verifyCommand(String[] command, int lengthToCheck) {
+        assert(command.length == ARRAY_SIZE_KEYWORD);
+
+        for (int i = 0; i < lengthToCheck; ++i) {
+            assert(command[i] != null);
+        }
+    }
+}
+	// End of segment: ../src/\KeywordManager.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\SystemHandler.java
+	 */
+
+public class SystemHandler {
+    private static final String MSG_LOG_USER_COMMAND = "user enters: %s";
+
+    private static final String MSG_LOG_PARSER = "Parser understood the command as the following: \"%s\"";
+    private static final String MSG_ERR_INIT_TEMPLATE = "File has been corrupted, some templates might be lost.";
+    private static final String MSG_ERR_INIT_KEYWORD = "File has been corrupted, some keyword data might be lost.";
+    private static final String MSG_ERR_INIT_TASK = "File has been corrupted, some tasks might be lost.";
+    private static final String MSG_ERR_ID_UNDEFINED = "This ID does not exist, please check again";
+    private static final String MSG_ERR_NO_SUCH_COMMAND = "SystemHandler does not recognize this command.";
+    private static final String MSG_ERR_UNKNOWN = "Something goes wrong in the system. Please try again.";
+
+    private static final String COMMAND_DELETE_TEMPLATE = "deleteTemplate";
+    private static final String COMMAND_SAVE_TO = "saveTo";
+    private static final String COMMAND_HELP = "help";
+    private static final String[] COMMAND_GET_TASK_LIST = {"viewTask",null,null,null,null,null,null,null,null};
+    private static final String[] COMMAND_RESET_KEYWORD = {"resetKeyword", null, null};
+
+    //Symbol used to construct string from parsed command to log message
+    private static final String STRING_INIT_EMPTY = "";
+    private static final String STRING_SEPERATOR = "|";
+    private static final String STRING_EMPTY = "_";
+    private static final String STRING_NULL = "null";
+
+    public static final int LENGTH_COMMAND_TASK_MANAGER = 9;
+    public static final int LENGTH_COMMAND_KEYWORD = 3;
+    public static final int LENGTH_COMMAND_TEMPLATE = 9;
+    private static final int LENGTH_COMMAND_SAVE = 2;
+    private static final int LENGTH_COMMAND_HELP = 1;
+
+    private static final int INDEX_COMMAND_TYPE = 0;
+    private static final int INDEX_TEMP_NAME = 1;
+    private static final int INDEX_SAVE_NEW_PATH = 1;
+
+    private static final int INDEX_COMMAND_TASK_MANAGER = 0;
+    private static final int INDEX_COMMAND_KEYWORD = 1;
+    private static final int INDEX_COMMAND_TEMPLATE = 2;
+    private static final int INDEX_COMMAND_SAVE = 3;
+    private static final int INDEX_COMMAND_HELP = 4;
+
+    private static final int ERROR_INIT = 1;
+
+    private static final int SIZE_ZERO = 0;
+
+    private CentralizedLog 	logfile;
+    private TaskManager 	myTaskList;
+    private TemplateManager 	myTemplates;
+    private KeywordManager 		myKeyword;
+    private FileStorage 	externalStorage;
+    private UserInterface 	window;
+    private FlexiParser 	parser;
+    private DisplayProcessor displayProcessor;
+
+    //Singleton Pattern on Systemhandler
+    public static SystemHandler system;
+
+
+    public static SystemHandler getSystemHandler() {
+        if (system == null) {
+            system = new SystemHandler();
+            system.initializeSystem();
+        }
+
+        return system;
+    }
+
+
+    /**
+     * Booting the system and set the path to be called back.
+     * @param args	Parameter from input - not applicable
+     */
+    public static void main(String[] args) {
+        system = getSystemHandler();
+
+        system.activateUI();
+    }
+
+
+    /**
+     * It activates user interface window by calling the Runnable user interface 
+     */
+    private void activateUI() {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    window.frame_.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+
+    /**
+     * This method is called by storage to set the keyword manager to default 
+     * once it detects no keyword is being initialized
+     */
+    public void resetKeywordToDefault() {
+        myKeyword.processKeywordCommand(COMMAND_RESET_KEYWORD);
+    }
+
+
+
+    /**
+     * This method function as the communication line between different components to ensure
+     * intermediate results directed correctly. 
+     * The sequence is from UI -> parser -> logic -> displayProcessor 
+     * This is the place where error thrown from different component is responded to the User through user interface
+     * @param userInput
+     */
+    public void rawUserInput(String userInput) {
+        try {
+            logfile.info(String.format(MSG_LOG_USER_COMMAND, userInput));
+
+            String[] parsedCommand = parser.parseText(userInput);
+
+            logfile.info(String.format(MSG_LOG_PARSER , parsedCommandtoString(parsedCommand)));
+
+            int commandGroupType = SystemHandler.getCommandGroupType(parsedCommand[0]);
+
+            validateParsedCommandLength(parsedCommand, commandGroupType);
+
+            switch (commandGroupType) {
+            case INDEX_COMMAND_TASK_MANAGER:
+                executeTaskManager(parsedCommand);
+                break;
+
+            case INDEX_COMMAND_KEYWORD:
+                executeKeywordManager(parsedCommand);
+                break;
+
+            case INDEX_COMMAND_TEMPLATE:
+                executeTemplateManager(parsedCommand);
+                break;
+
+            case INDEX_COMMAND_HELP:
+                displayProcessor.displayHelptoUser();
+                break;
+
+            case INDEX_COMMAND_SAVE:
+                externalStorage.saveToAnotherLocation(parsedCommand[INDEX_SAVE_NEW_PATH]);
+                displayProcessor.displayMoveFileResultToUI(parsedCommand[INDEX_SAVE_NEW_PATH]);
+                break;		
+            }
+        } catch(ParseException e) {
+            displayProcessor.displayErrorToUI(e.getMessage());
+            logfile.warning(String.format(e.getMessage()));
+        } catch(NumberFormatException e) {
+            displayProcessor.displayErrorToUI(MSG_ERR_ID_UNDEFINED);
+            logfile.warning(MSG_ERR_ID_UNDEFINED);
+        } catch(IllegalArgumentException e) {
+            displayProcessor.displayErrorToUI(e.getMessage());
+            logfile.warning(e.getMessage());
+        } catch(NoSuchElementException e) {
+            displayProcessor.displayErrorToUI(e.getMessage());
+            logfile.warning(e.getMessage());
+        } catch(IllegalStateException e) {
+            displayProcessor.displayErrorToUI(e.getMessage());
+            logfile.warning(e.getMessage());
+        } catch(IOException e) {
+            displayProcessor.displayErrorToUI(e.getMessage());
+            logfile.warning(e.getMessage());
+        } catch(Exception e) {
+            displayProcessor.displayErrorToUI(MSG_ERR_UNKNOWN);
+            logfile.severe(e.getMessage());
+        }
+    }
+
+
+    /**
+     * This method is called to get the Task through the Task ID
+     * @param id		Task ID
+     * @return			A task object correspond to the ID requested
+     * @throws NoSuchElementException	Task ID requested is not found in Task Manager
+     */
+    public Task requestTaskInformationfromTM(int id) throws NoSuchElementException {
+        return myTaskList.getTaskFromTID(id);
+    }
+
+
+    /**
+     * @param fetchedTask A strings array that follows the format of TM strictly.
+     * Refer to Task Manager to find out the length and meaning of each string by checking the index constant.
+     */
+    public void addTaskFromTemplate(String[] fetchedTask) {
+        try {		
+            executeTaskManager(fetchedTask);
+        } catch (Exception e) {
+            displayProcessor.displayErrorToUI(e.getMessage());
+            logfile.warning(String.format(MSG_LOG_PARSER , e.getMessage()));
+        }
+    }
+
+
+    /**
+     * This method calls storage to write out the data from task manager to storage
+     * @param taskList		ArrayList of tasks stored by task manager
+     */
+    public void writeToFile(ArrayList<Task> taskList) {
+        externalStorage.writeTaskToFile(taskList);
+    }
+
+
+    /**
+     * This method calls storage to write out the data from keyword manager to storage
+     * @param keywords		Array of strings arrays that represent the customized keywords 
+     */
+    public void writeKeywordToFile(String[][] keywords) {
+        externalStorage.writeKeywordToFile(keywords);
+    }
+
+
+    /**
+     * This method calls storage to write out the data from template manager to storage
+     * @param templates		ArrayList of task templates stored by template manager
+     * @param matchingName	ArrayList of string that match to the templates.
+     */
+    public void writeTemplateToFile(ArrayList<Task> templates,ArrayList<String> matchingName) {
+        externalStorage.writeTemplateToFile(templates, matchingName);
+    }
+
+
+    /**
+     * @param commandType	Command type
+     * @return				Index of the command belongs to. Task(1), Keyword(2), Template(3)
+     * @throws IllegalArgumentException		The command is not defined in the system
+     */
+    private static int getCommandGroupType(String commandType) throws IllegalArgumentException {
+        if (commandType.equals(COMMAND_HELP)) {
+            return INDEX_COMMAND_HELP;
+        } else if (commandType.equals(COMMAND_SAVE_TO)) {
+            return INDEX_COMMAND_SAVE;
+        } else {
+            for (COMMAND_TYPE_TASK_MANAGER command : COMMAND_TYPE_TASK_MANAGER.values()) {
+                if (command.name().equals(commandType)) {
+                    return INDEX_COMMAND_TASK_MANAGER;
+                }
+            }
+
+            for (COMMAND_TYPE_KEYWORD command : COMMAND_TYPE_KEYWORD.values()) {
+                if (command.name().equals(commandType)) {
+                    return INDEX_COMMAND_KEYWORD;
+                }
+            }
+
+            for (COMMAND_TYPE_TEMPLATE command : COMMAND_TYPE_TEMPLATE.values()) {
+                if (command.name().equals(commandType)) {
+                    return INDEX_COMMAND_TEMPLATE;
+                }
+            }
+
+            throw new IllegalArgumentException(MSG_ERR_NO_SUCH_COMMAND);
+        }	
+    }
+
+
+
+    /**
+     * This method construct all the related classes required for the software
+     * @param fileName File location
+     */
+    private void initializeSystem() {
+        myKeyword = new KeywordManager();
+        logfile =  new CentralizedLog();
+        myTemplates = new TemplateManager();
+        myTaskList = new TaskManager();
+        parser = new FlexiParser(myKeyword);
+        externalStorage = new FileStorage();
+        window = new UserInterface();
+        displayProcessor = new DisplayProcessor(window);
+
+        system = this;
+        myTemplates.setSystemPath(system);
+        myKeyword.setSystemPath(system);
+
+        readDataFromFile();
+
+        ArrayList<Task> fullList = myTaskList.processTM(COMMAND_GET_TASK_LIST);
+        if (fullList != null && fullList.size() > 0) {
+            displayProcessor.displayTaskfromLastLogin(fullList);
+        }
+    }
+
+
+    /**
+     * It calls File Storage to load data into task manager, keyword and template.
+     */
+    private void readDataFromFile() {
+        try{
+            externalStorage.readTaskFromFile(myTaskList);
+        } catch(Exception e) {
+            window.displayMsg(MSG_ERR_INIT_TASK, ERROR_INIT);
+            logfile.warning(MSG_ERR_INIT_TASK);
+        }
+
+        try{
+            externalStorage.readKeywordFromFile(myKeyword);
+        } catch(Exception e) {
+            window.displayMsg(MSG_ERR_INIT_KEYWORD, ERROR_INIT);
+            logfile.warning(MSG_ERR_INIT_KEYWORD);
+        }
+
+        try{
+            externalStorage.readTemplateFromFile(myTemplates);
+        } catch(Exception e) {
+            window.displayMsg(MSG_ERR_INIT_TEMPLATE, ERROR_INIT);
+            logfile.warning(MSG_ERR_INIT_TEMPLATE);
+        }
+    }
+
+
+    /**
+     * @param parsedCommand		Strings array of command parsed by parser
+     * @return					String converted from a strings array to be logged.
+     */
+    private String parsedCommandtoString(String[] parsedCommand) {
+        String str = STRING_INIT_EMPTY;
+
+        for (int i = 0; i < parsedCommand.length; ++i) {
+            if (parsedCommand[i] == null) {
+                str += STRING_NULL;
+            } else if (parsedCommand[i].length() == SIZE_ZERO) {
+                str += STRING_EMPTY;
+            } else {
+                str += parsedCommand[i];	
+            }
+            str += STRING_SEPERATOR;
+        }
+
+        return str;
+    }
+
+
+
+    /**
+     * @param parsedCommand		Strings array of command parsed by parser
+     * @param type				index of type of command - Task(1), Keyword(2), Template(3)
+     */
+    private void validateParsedCommandLength(String[] parsedCommand, int type) {
+        switch (type) {
+        case INDEX_COMMAND_TASK_MANAGER:
+            assert(parsedCommand.length == LENGTH_COMMAND_TASK_MANAGER);
+            break;
+
+        case INDEX_COMMAND_KEYWORD:
+            assert(parsedCommand.length == LENGTH_COMMAND_KEYWORD);
+            break;
+
+        case INDEX_COMMAND_TEMPLATE:
+            assert(parsedCommand.length == LENGTH_COMMAND_TEMPLATE);
+            break;
+
+        case INDEX_COMMAND_HELP:
+            assert(parsedCommand.length == LENGTH_COMMAND_HELP);
+            break;
+
+        case INDEX_COMMAND_SAVE:
+            assert(parsedCommand.length == LENGTH_COMMAND_SAVE);
+            break;		
+        }
+    }
+
+
+    /**
+     * @param command	String array in the format where keyword manager understands. Refer to developer 
+     * 					manual under Keyword for more information 
+     * @throws ParseException		INPUT FROM MA CONG
+     */
+    private void executeTaskManager(String[] command) 
+            throws ParseException {
+        ArrayList<Task> result = myTaskList.processTM(command);
+
+        ArrayList<Task> fullList = myTaskList.processTM(COMMAND_GET_TASK_LIST);
+        if (result != null) {
+            displayProcessor.displayTMResult(command, result, fullList);
+        }	
+    }
+
+
+    /**
+     * @param command	String array in the format where keyword manager understands. Refer to developer 
+     * 					manual under Keyword for more information 
+     * @throws NoSuchElementException		Requested keyword is not found in keyword list
+     * 										or violation of restriction by keyword manager
+     * @throws IllegalArgumentException		There are some error in format understood by keyword manager
+     */
+    private void executeKeywordManager(String[] command) 
+            throws NoSuchElementException, IllegalArgumentException {
+        String[][] result = myKeyword.processKeywordCommand(command);
+
+        displayProcessor.displayKeywordResult(command, result);
+    }
+
+
+    /**
+     * @param command	String array in the format where template manager understands. Refer to developer 
+     * 					manual under Template for more information 
+     * @throws IllegalArgumentException		There are some error in format understood by template manager
+     * 										or violation of restriction by template manager
+     * @throws NoSuchElementException		Requested template is not found in template list
+     */
+    private void executeTemplateManager(String[] command) 
+            throws IllegalArgumentException, NoSuchElementException {
+        ArrayList<Task> result = myTemplates.processTemplateCommand(command);
+
+        if (result != null) {
+            ArrayList<String> tempNames = new ArrayList<String>();
+            if (command[INDEX_COMMAND_TYPE].equals(COMMAND_DELETE_TEMPLATE)) {
+                tempNames.add(command[INDEX_TEMP_NAME]);		
+            } else {
+                tempNames = myTemplates.getTemplateNames(result);		
+            }
+            displayProcessor.displayTemplateResult(command, tempNames, result);
+        }	
+    }
+}
+
+	// End of segment: ../src/\SystemHandler.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\SystemTest.java
+	 */
+
+public class SystemTest {
+    private static final String[] DEFAULT_HELP = {"help"};
+    private static final String[] DEFAULT_RESET_TEMP = {"resetTemplate", "resetTemp"};
+    private static final String[] DEFAULT_DELETE_TEMP = {"deleteTemplate","deleteTemp"};
+    private static final String[] DEFAULT_USE_TEMP = {"useTemplate", "useTemp"};
+    private static final String[] DEFAULT_VIEW_TEMP = {"viewTemplate","viewTemp"};
+    private static final String[] DEFAULT_EDIT_TEMP = {"editTemplate","editTemp"};
+    private static final String[] DEFAULT_ADD_TEMP = {"addTemplate","addTemp"};
+    private static final String[] DEFAULT_RESET_SHORTCUT = {"resetShortcut","resetKeyword"};
+    private static final String[] DEFAULT_DELETE_SHORTCUT = {"deleteShortcut","deleteKeyword"};
+    private static final String[] DEFAULT_VIEW_SHORTCUT = {"viewShortcut","viewKeyword"};
+    private static final String[] DEFAULT_ADD_SHORTCUT = {"addShortcut","addKeyword"};
+    private static final String[] DEFAULT_MARK_TASK = {"mark","markTask"};
+    private static final String[] DEFAULT_REDO_TASK = {"redo","redoTask"};
+    private static final String[] DEFAULT_UNDO_TASK = {"undo","undoTask"};
+    private static final String[] DEFAULT_SEARCH_TASK = {"search", "searchTask"};
+    private static final String[] DEFAULT_CLEAR_ATTR = {"clear","clearAttr"};
+    private static final String[] DEFAULT_DELETE_TASK = {"delete","deleteTask"};
+    private static final String[] DEFAULT_VIEW_TASK = {"view","viewTask"};
+    private static final String[] DEFAULT_EDIT_TASK = {"edit","editTask"};
+    private static final String[] DEFAULT_ADD_TASK = {"add","addTask"};
+    public static final String[] DEFAULT_SET_PATH = {"saveTo"};
+
+    private static final String[][] DEFAULT_WORD_SET = {	DEFAULT_ADD_TASK, 		DEFAULT_EDIT_TASK,
+        DEFAULT_VIEW_TASK, 		DEFAULT_DELETE_TASK,
+        DEFAULT_CLEAR_ATTR,		DEFAULT_SEARCH_TASK, 
+        DEFAULT_UNDO_TASK, 		DEFAULT_REDO_TASK,
+        DEFAULT_MARK_TASK, 		DEFAULT_ADD_SHORTCUT, 
+        DEFAULT_VIEW_SHORTCUT, 	DEFAULT_DELETE_SHORTCUT, 
+        DEFAULT_RESET_SHORTCUT, DEFAULT_ADD_TEMP, 
+        DEFAULT_EDIT_TEMP, 		DEFAULT_VIEW_TEMP, 
+        DEFAULT_USE_TEMP, 		DEFAULT_DELETE_TEMP, 
+        DEFAULT_RESET_TEMP, 	DEFAULT_HELP,
+        DEFAULT_SET_PATH
+    };
+
+
+    public static SystemHandler mySystem;
+
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+
+    }
+
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        mySystem = SystemHandler.getSystemHandler();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        File myfile = new File("assert.txt");
+        myfile.deleteOnExit();
+    }
+
+
+
+    //@Test
+    // Full System is not testable at production phase due to switching of return statement to void
+    // To test, changes on return statement needs to be done
+    public void testFullSystem() {
+        // TC 1 - simple multiple add
+        ArrayList<Task> expect1 = new ArrayList<Task>();
+        expect1.add(new Task(10, "NEW",
+                convertToDateObject("10/04/2015 19:00"),
+                convertToDateObject("10/05/2015 19:00"), null, "ABC", null, 0));
+        String test1 = "addTask 'NEW' from 10th April evening to 10th May evening at ABC";
+
+        //assertTaskArrayListEquals(mySystem.rawUserInput(test1), expect1);
+
+        // TC2 - continue -- multiple add same inputs then view
+        expect1.add(new Task(11, "NEW",
+                convertToDateObject("10/04/2015 19:00"),
+                convertToDateObject("10/05/2015 19:00"), null, "ABC", null, 0));
+        expect1.add(new Task(12, "NEW",
+                convertToDateObject("10/04/2015 19:00"),
+                convertToDateObject("10/05/2015 19:00"), null, "ABC", null, 0));
+        expect1.add(new Task(13, "NEW",
+                convertToDateObject("10/04/2015 19:00"),
+                convertToDateObject("10/05/2015 19:00"), null, "ABC", null, 0));
+        mySystem.rawUserInput("addTask 'NEW' from 10th April evening to 10th May evening at ABC");
+        mySystem.rawUserInput("addTask 'NEW' from 10th April evening to 10th May evening at ABC");
+        mySystem.rawUserInput("addTask 'NEW' from 10th April evening to 10th May evening at ABC");
+
+        //assertTaskArrayListEquals(mySystem.rawUserInput("view"), expect1);
+
+        // TC3 - continue -- delete and get deleted task
+        ArrayList<Task> expect2 = new ArrayList<Task>();
+        expect2.add(new Task(14, "TO BE DELETED",
+                convertToDateObject("16/04/2015 19:00"),
+                convertToDateObject("17/05/2015 19:00"), null, "XYZ", null, 0));
+        mySystem.rawUserInput("add 'TO BE DELETED' at XYZ from 16th April evening to 17th May evening");
+        //assertTaskArrayListEquals(mySystem.rawUserInput("delete 14"), expect2);
+
+        // TC4 - continue -- edit and get back result
+        ArrayList<Task> expect3 = new ArrayList<Task>();
+        expect3.add(new Task(15, "EDITED",
+                convertToDateObject("24/08/2015 19:00"),
+                convertToDateObject("24/08/2015 20:00"), null, "NUS", null, 0));
+        mySystem.rawUserInput("add 'TO BE DELETED' at XYZ from 24th August evening to 24th August 8pm");
+        //assertTaskArrayListEquals(mySystem.rawUserInput("edit 15 title EDITED at NUS"), expect3);
+
+    }
+
+    @Test
+    public void testTaskManager() {
+        // TC1 - test add normal result
+        ArrayList<Task> test1 = new ArrayList<Task>();
+        ArrayList<Task> expect1 = new ArrayList<Task>();
+        test1.add(new Task(123, "NEW", convertToDateObject("12/09/2015 22:00"),
+                convertToDateObject("15/09/2015 12:00"),
+                convertToDateObject("15/09/2015 14:00"), "ABC", "NO DETAIL", 1));
+        expect1.add(new Task(123, "NEW",
+                convertToDateObject("12/09/2015 22:00"),
+                convertToDateObject("15/09/2015 12:00"),
+                convertToDateObject("15/09/2015 14:00"), "ABC", "NO DETAIL", 1));
+        assertTaskArrayListEquals(test1, expect1);
+
+        // TC2 - test empty array
+        ArrayList<Task> test2 = new ArrayList<Task>();
+        ArrayList<Task> expect2 = new ArrayList<Task>();
+        assertTaskArrayListEquals(test2, expect2);
+
+        // TC3 - test result with null
+        ArrayList<Task> test3 = new ArrayList<Task>();
+        ArrayList<Task> expect3 = new ArrayList<Task>();
+        test3.add(new Task(123, "ABC", convertToDateObject("12/09/2015 22:00"),
+                convertToDateObject("15/09/2015 12:00"), null, null, null, 1));
+        expect3.add(new Task(123, "ABC",
+                convertToDateObject("12/09/2015 22:00"),
+                convertToDateObject("15/09/2015 12:00"), null, null, null, 1));
+        assertTaskArrayListEquals(test3, expect3);
+
+    }
+
+    @Test
+    public void testMatchingShortcut() {
+        KeywordManager myshortcut = new KeywordManager();
+        String[] cmd0 = {"resetShortcut", null, null};
+        myshortcut.processKeywordCommand(cmd0);
+
+        //TC0 - test keyword matching working
+        String result = myshortcut.keywordMatching("add");
+        Assert.assertEquals(result, "addTask");
+        result = myshortcut.keywordMatching("deleteShortcut");
+        Assert.assertEquals(result, "deleteShortcut");
+
+        String[] cmd2 = {"addShortcut", "addM", "add"};
+        myshortcut.processKeywordCommand(cmd2);
+
+        result = myshortcut.keywordMatching("addM");
+        Assert.assertEquals(result, "addTask");
+
+    }
+
+    @Test
+    public void testShortcutManager() {
+        KeywordManager myshortcut = new KeywordManager();
+        String[] cmd0 = {"resetShortcut", null, null};
+        myshortcut.processKeywordCommand(cmd0);
+
+
+        //TC1 - test view and initialize shortcut list
+        String[] cmd = {"viewShortcut", null, null};
+        String[][] results = myshortcut.processKeywordCommand(cmd);
+        String[][] expected1 = DEFAULT_WORD_SET;
+        for (int i = 0; i < expected1.length; ++i) {
+            Assert.assertArrayEquals(Arrays.copyOfRange(results[i], 1, results[i].length), expected1[i]);
+        }
+
+        //TC2 - add a shortcut
+        String[] cmd2 = {"addShortcut", "addM", "add"};
+        String[][] results2 = myshortcut.processKeywordCommand(cmd2);
+        String[][] expected2 = {{"add","addTask","addM"}};
+        for (int i = 0; i < results2.length; ++i) {
+            Assert.assertArrayEquals(Arrays.copyOfRange(results2[i], 1, results2[i].length), expected2[i]);
+        }
+
+        //TC3 - add another shortcut
+        String[] cmd3 = {"addShortcut", "eTemp", "editTemplate"};
+        String[][] results3 = myshortcut.processKeywordCommand(cmd3);
+        String[][] expected3 = {{"editTemplate","editTemp","eTemp"}};
+        for (int i = 0; i < expected3.length; ++i) {
+            Assert.assertArrayEquals(Arrays.copyOfRange(results3[i], 1, results3[i].length), expected3[i]);
+        }
+
+        //TC4 - use added shortcut to do something
+        String[] cmd4 = {"addShortcut", "addS", "eTemp"};
+        String[][] results4 = myshortcut.processKeywordCommand(cmd4);
+        String[][] expected4 = {{"editTemplate", "editTemp", "eTemp", "addS"}};
+        for (int i = 0; i < expected4.length; ++i) {
+            Assert.assertArrayEquals(Arrays.copyOfRange(results4[i], 1, results4[i].length), expected4[i]);
+        }
+
+        //TC5 - view all changes
+        String[] cmd5 = {"viewShortcut", null, null};
+        String[][] results5 = myshortcut.processKeywordCommand(cmd5);
+        String[][] expected5 = DEFAULT_WORD_SET;
+        String[] changes1 = {"add", "addTask", "addM"};
+        expected5[0] = changes1;
+        String[] changes2= {"editTemplate","editTemp","eTemp","addS"};
+        expected5[14] = changes2;
+        for (int i = 0; i < expected5.length; ++i) { 
+            Assert.assertArrayEquals(Arrays.copyOfRange(results5[i], 1, results5[i].length), expected5[i]);
+        }
+        String[] revert1 = {"add","addTask"};
+        expected5[0] = revert1;
+        String[] revert2= {"editTemplate","editTemp"};
+        expected5[14] = revert2;
+
+        //TC6 - delete shortcut
+        String[] cmd6 = {"deleteShortcut", "eTemp", null};
+        String[][] results6 = myshortcut.processKeywordCommand(cmd6);
+        String[][] expected6 = {{"eTemp"}};
+        for (int i = 0; i < expected6.length; ++i) {
+            Assert.assertArrayEquals(Arrays.copyOfRange(results6[i], 1, results6[i].length), expected6[i]);
+        }
+
+        //TC7 - reset
+        String[] cmd7 = {"resetShortcut", null, null};
+        String[][] results7 = myshortcut.processKeywordCommand(cmd7);
+        String[][] expected7 = DEFAULT_WORD_SET;
+        for (int i = 0; i < expected7.length; ++i) {
+            Assert.assertArrayEquals(Arrays.copyOfRange(results7[i], 1, results7[i].length), expected7[i]);
+        }
+    }
+
+    @Test
+    public void testFileStorage() {
+        System.out.println("File Storage Test Not yet implemented");
+    }
+
+    @Test
+    public void testCustomizedManager() {
+        TemplateManager template = new TemplateManager();
+        try {
+            //TC1 - test adding
+            Task temp = new Task(1000, "NEW", null, null, null, "ABC", null, 0);
+            String[] cmd1 = {"addTemplate","1000","task1", null, null, null, null, null, null};
+            ArrayList<Task> result1 = template.processTemplateCommand(cmd1);
+            ArrayList<Task> expected1 = new ArrayList<Task>();
+            expected1.add(temp);
+            assertTaskArrayListEquals(expected1, result1);
+
+            //TC2 - test view
+            String[] cmd2 = {"viewTemplates", null, null, null, null, null, null, null, null};
+            ArrayList<Task> result2 = template.processTemplateCommand(cmd2);
+            ArrayList<Task> expected2 = new ArrayList<Task>();
+            expected2.add(temp);
+            assertTaskArrayListEquals(expected2, result2);
+
+            //TC3 - test delete
+            String[] cmd3 = {"deleteTemplate", "task1", null, null, null, null, null, null, null};
+            ArrayList<Task> result3 = template.processTemplateCommand(cmd3);
+            ArrayList<Task> expected3 = new ArrayList<Task>();
+            expected3.add(temp);
+            assertTaskArrayListEquals(expected3, result3);
+        } catch (Exception e) {
+
+        }
+
+
+        //TC4 - try delete invalid template
+        String[] cmd4 = {"deleteTemplate", "task0", null, null, null, null, null, null, null};
+        try {
+            template.processTemplateCommand(cmd4);
+
+        } catch (NoSuchElementException e) {
+            Assert.assertEquals(e.getMessage(), "No such template exists.");
+        } catch (IllegalArgumentException e) {
+
+        } catch (Exception e) {
+
+        }
+
+        //TC5 - try reset
+        try {
+            String[] cmd5 = {"resetTemplates", null, null, null, null, null, null, null, null};
+            ArrayList<Task> result5 = template.processTemplateCommand(cmd5);
+            assertTaskArrayListEquals(result5,new ArrayList<Task>());
+
+        } catch (NoSuchElementException e) {
+
+        } catch (IllegalArgumentException e) {
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean assertTaskArrayListEquals(ArrayList<Task> test,
+            ArrayList<Task> expect) {
+        Assert.assertEquals(test.size(), expect.size());
+
+        for (int i = 0; i < test.size(); ++i) {
+            Assert.assertTrue(assertTaskEqual(test.get(i), expect.get(i)));
+        }
+
+        return true;
+    }
+
+
+    public boolean assertTaskEqual(Task taskA, Task taskB) {
+        return taskA.isEqual(taskB);
+    }
+
+	// End of segment: ../src/\SystemTest.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\Task.java
+	 */
+
+public class Task {
+
+    public static final int MINIMUM_LENGTH_TASK_NAME = 1;
+    public static final int MAXIMUM_LENGTH_TASK_NAME = 30;
+    public static final int MAXIMUM_LENGTH_LOCATION = 30;
+
+    public static final String STRING_STATUS_URGENT = "Urgent";
+    public static final String STRING_STATUS_MAJOR = "Major";
+    public static final String STRING_STATUS_NORMAL = "Normal";
+    public static final String STRING_STATUS_MINOR = "Minor";
+    public static final String STRING_STATUS_CASUAL = "Casual";
+    public static final String STRING_STATUS_COMPLETE 	= "Complete";
+    public static final String STRING_STATUS_OVERDUE 	= "Overdue";
+
+    public static final int INDEX_STATUS_URGENT = 1;
+    public static final int INDEX_STATUS_MAJOR = 2;
+    public static final int INDEX_STATUS_NORMAL = 3;
+    public static final int INDEX_STATUS_MINOR = 4;
+    public static final int INDEX_STATUS_CASUAL = 5;
+    public static final int INDEX_STATUS_COMPLETE 	= 6;
+    public static final int INDEX_STATUS_OVERDUE 	= 7;
+
+    private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
+    public static final int INDEX_TASK_ID = 0;
+    public static final int INDEX_TASK_NAME = 1;
+    public static final int INDEX_DATE_FROM = 2;
+    public static final int INDEX_DATE_TO = 3;
+    public static final int INDEX_LOCATION = 4;
+    public static final int INDEX_DETAILS = 5;
+    public static final int INDEX_STATUS = 6;
+    public static final int DEFAULT_STRING_SIZE = 7;
+    private static final String ZERO_TIME = " 00:00";
+
+    private int TID;
+    private String taskName;
+    private Date dateFrom;
+    private Date dateTo;
+    private Date deadline;
+    private String location;
+    private String details;
+    private int status;
+
+
+    //Constructor 
+    public Task(int TID, String taskName, Date dateFrom, 
+            Date dateTo, Date deadline, String location, String details, int status) {
+        this.TID = TID;
+        this.taskName = taskName;
+        this.dateFrom = dateFrom;
+        this.dateTo = dateTo;
+        this.deadline = deadline;
+        this.location = location;
+        this.details = details;
+        this.status = status;
+    }
+
+
+    //Setter ********************************
+
+    public void setTID(int TID) {
+        this.TID = TID;
+    }
+
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+
+    public void setDateFrom(Date dateFrom) {
+        this.dateFrom = dateFrom;
+    }
+
+
+    public void setDateTo(Date dateTo) {
+        this.dateTo = dateTo;
+    }
+
+
+    public void setDeadline(Date deadline) {
+        this.deadline = deadline;
+    }
+
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    //Update Status ************************
+    //might need to remove later
+    public void setUrgent() {
+        this.status = INDEX_STATUS_URGENT;
+    }
+
+
+    public void setMajor() {
+        this.status = INDEX_STATUS_MAJOR;
+    }
+
+
+    public void setNormal() {
+        this.status = INDEX_STATUS_NORMAL;
+    }
+
+
+    public void setOverdue() {
+        this.status = INDEX_STATUS_OVERDUE;
+    }
+
+
+    public void setComplate() {
+        this.status = INDEX_STATUS_COMPLETE;
+    }
+
+
+    public void setMinor() {
+        this.status = INDEX_STATUS_MINOR;
+    }
+
+
+    public void setCasual() {
+        this.status = INDEX_STATUS_CASUAL;
+    }
+    //might need to remove later
+    //GETTER ***********************************
+
+
+    public int getTID() {
+        return TID;
+    }
+
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+
+    public Date getDateFrom() {
+        return dateFrom;
+    }
+
+
+    public Date getDateTo() {
+        return dateTo;
+    }
+
+
+    public Date getDeadline() {
+        return deadline;
+    }
+
+
+    public String getDateFromString() {
+        if (dateFrom != null) {
+            return convertToStringFromDate(dateFrom);
+        } else {
+            return null;
+        }
+
+    }
+
+
+    public String getDateToString() {
+        if (dateTo != null) {
+            return convertToStringFromDate(dateTo);
+        } else {
+            return null;
+        }
+    }
+
+
+    public String getDeadlineString() {
+        if (deadline != null) {
+            return convertToStringFromDate(deadline);
+        } else {
+            return null;
+        }
+    }
+
+
+    public String getLocation() {
+        return location;
+    }
+
+
+    public String getDetails() {
+        return details;
+    }
+
+
+    public int getStatus() {
+        return status;
+    }
+
+
+    public String getStatusString() {
+        switch (status) {
+        case INDEX_STATUS_URGENT:
+            return STRING_STATUS_URGENT;
+
+        case INDEX_STATUS_MAJOR:
+            return STRING_STATUS_MAJOR;
+
+        case INDEX_STATUS_NORMAL:
+            return STRING_STATUS_NORMAL;
+
+        case INDEX_STATUS_MINOR:
+            return STRING_STATUS_MINOR;
+
+        case INDEX_STATUS_CASUAL:
+            return STRING_STATUS_CASUAL;
+
+        case INDEX_STATUS_COMPLETE:
+            return STRING_STATUS_COMPLETE;
+
+        case INDEX_STATUS_OVERDUE:
+            return STRING_STATUS_OVERDUE;
+
+        default:
+            return STRING_STATUS_NORMAL;
+        }
+    }
+
+
+
+    /**
+     * This method provide equality comparison of task object.
+     * @param task Task to be compared with
+     * @return	True if both task are equal in all fields, false otherwise.
+     */
+    public boolean isEqual(Task task) {
+        if (task == null) {
+            return false;
+        }
+        if (!dateEqual(task.getDateFrom(), dateFrom)) {
+            return false;
+        }
+        if (!dateEqual(task.getDateTo(), dateTo)) {
+            return false;
+        }
+        if (!dateEqual(task.getDeadline(), deadline)) {
+            return false;
+        }
+        if (!stringEqual(task.getTaskName(), taskName)) {
+            return false;
+        }
+        if (task.getTID() != TID) {
+            return false;
+        }
+        if (!stringEqual(task.getLocation(), location)) {
+            return false;
+        }
+        if (!stringEqual(task.getDetails(), details)) {
+            return false;
+        }
+        if (task.getStatus() != status) {
+            return false;
+        }
+        return true;
+    }
+
+
+    /**
+     * This method compares equality of date and allows compared date object to be null.
+     * If both date are null, they are considered as equal.
+     * @param date1		Date 1 to be compared
+     * @param date2 	Date 1 to be compared
+     * @return			True if both date are equal, false otherwise.
+     */
+    private static boolean dateEqual(Date date1, Date date2) {
+        if (date1 == null && date2 == null) {
+            return true;
+        } else if (date1 != null && date2 == null) {
+            return false;
+        } else if (date1 == null && date2 != null) {
+            return false;
+        } else {
+            return date1.equals(date2);
+        }
+    }
+
+
+    /**
+     * This method compares equality of string and allows compared string object to be null.
+     * If both string are null, they are considered as equal.
+     * @param str1	String 1 to be compared
+     * @param str2	String 2 to be compared
+     * @return		True if both string are equal, false otherwise.
+     */
+    private static boolean stringEqual(String str1, String str2) {
+        if (str1 == null && str2 == null) {
+            return true;
+        } else if (str1 != null && str2 == null) {
+            return false;
+        } else if (str1 == null && str2 != null) {
+            return false;
+        } else {
+            return str1.equals(str2);
+        }
+    }
+
+    public Task clone() {
+        return new Task(TID,taskName, cloneDate(dateFrom), cloneDate(dateTo), 
+                cloneDate(deadline), location, details, status);
+    }
+
+	// End of segment: ../src/\Task.java
+
+
+
+
+
+	/**
+	 * origin: ../src/\TemplateManager.java
+	 */
+
+public class TemplateManager {
+
+    private static final String MSG_ERR_INVALID_TEMP_LENGTH = "Invalid length for template's name: \"%s\"";
+    private static final String MSG_ERR_DUPLICATE_NAME = "Template name:\"%s\" has been used by another template.";
+    private static final String MSG_ERR_TASK_NUMBER_NOT_EXIST = "Task number: %s does not exist.";
+    private static final String MSG_INVALID_GET_FIELD = "No such field value to get from.";
+    private static final String MSG_ERR_NO_SUCH_COMMAND = "No such command in Template Manager: %1$s";
+    public static final String MSG_ERR_NO_SUCH_TEMPLATE = "No such template exists.";
+    private static final String MSG_ERR_TEMP_EXIST = "You have a template that is exactly the same.";
+
+
+    private static final int INDEX_NOT_FOUND = -1;
+    private static final int INDEX_COMMAND = 0;
+    private static final int INDEX_TEMPLATE_NAME = 1;
+    private static final int INDEX_NEW_TEMPLATE_NAME = 2;
+    private static final int INDEX_TASK_NAME = 2;
+    private static final int INDEX_DATE_FROM = 3;
+    private static final int INDEX_DATE_TO = 4;
+    private static final int INDEX_DEADLINE = 5;
+    private static final int INDEX_LOCATION = 6;
+    private static final int INDEX_DETAILS = 7;
+    private static final int INDEX_STATUS = 8;
+
+    private static final int STATUS_OVERDUE = 7;
+    private static final int STATUS_NORMAL = 3;
+
+    private static final int STARTING_INDEX_CHANGEABLE_FIELD = 2;
+    private static final int STRING_POSITION_INVALID_COMMAND = 39;
+
+    private static final int LENGTH_TEMP_NAME_MAXIMUM = 30;
+    private static final int LENGTH_TEMP_NAME_MINIMUM = 0;
+
+    private static final int DUMMY_TID = 0;
+
+    private static final String COMMAND_ADD_TASK = "addTask";
+
+
+    private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
+    public static final int LENGTH_COMMAND_TEMPLATE = 9;
+
+    private ArrayList<Task> templates;
+    private ArrayList<String> tempNames;
+    private SystemHandler system;
+
+
+    public TemplateManager() {
+        templates = new ArrayList<Task>();
+        tempNames = new ArrayList<String>();
+    }
+
+
+    /**
+     * It set the system path so that it can call the system Handler that governs it to 
+     * fetch data from other components when required
+     * @param system	The system handler that governs this template manager
+     */
+    public void setSystemPath(SystemHandler system) {
+        this.system = system;
+    }
+
+
+    /**
+     * @param command	The string array of command to be executed
+     * @return			ArrayList of Tasks that are demanded by command
+     * @throws IllegalArgumentException		Invalid instruction has been demanded or command violates 
+     * 										the constraints set by template manager
+     * @throws NoSuchElementException		Demanded template from command does not exist
+     */
+    public ArrayList<Task> processTemplateCommand(String[] command) 
+            throws IllegalArgumentException, NoSuchElementException {
+
+
+        COMMAND_TYPE_TEMPLATE commandType = getCommandType(command[0]);
+        ArrayList<Task> result = null;
+
+        assertValidity(command, commandType);
+        switch (commandType) {
+        case addTemplate:
+            result = addTemplate(command);
+            writeOutToFile();
+            break;
+
+        case addTemplateInit:
+            initTemplate(command);
+            break;
+
+        case viewTemplate:
+            result = viewTemplates();
+            break;
+
+        case deleteTemplate:
+            result = removeTemplate(command[INDEX_TEMPLATE_NAME]);
+            writeOutToFile();
+            break;
+
+        case editTemplate:
+            result = editTemplate(command);
+            writeOutToFile();
+            break;
+
+        case resetTemplate:
+            resetTemplates();
+            writeOutToFile();
+            result = viewTemplates();
+            break;
+
+        case useTemplate:
+            Task fetchedTask = fetchTemplate(command[INDEX_TEMPLATE_NAME]);
+            String[] convertedTask = convertTasktoTaskManagerInput(fetchedTask, command);
+            system.addTaskFromTemplate(convertedTask);
+            break;
+        }
+
+        return result;
+    }
+
+
+    /**
+     * @param command	The string array of command to be executed
+     */
+    private void initTemplate(String[] command) {
+        Task taskToBeAddedInit = createNewTemplate(command);
+
+        addTemplateToArray(command[INDEX_TEMPLATE_NAME], taskToBeAddedInit);
+    }
+
+
+    /**
+     * @param command	The string array of command to be executed
+     * @return	ArrayList of task with the added template in it
+     */
+    private ArrayList<Task> addTemplate(String[] command) {
+        Task taskToBeAdded = system.requestTaskInformationfromTM(Integer.parseInt(command[1]));	
+        ArrayList<Task> result = new ArrayList<Task>();
+
+        if (taskToBeAdded == null) {
+            throw new NoSuchElementException(String.format(MSG_ERR_TASK_NUMBER_NOT_EXIST,command[1]));
+        } else {
+            result =  addTemplateToArray(command[INDEX_NEW_TEMPLATE_NAME], taskToBeAdded);
+        }
+
+        return result;
+    }
+
+
+    /**
+     * @param name							Name of the template
+     * @param template						Template to be created
+     * @return								ArrayList of Task with a newly created template Task
+     * @throws IllegalArgumentException		There exists a template with the same name 
+     */
+    private ArrayList<Task> addTemplateToArray(String name, Task template) throws IllegalArgumentException {
+        if (hasSameName(name)) {
+            throw new IllegalArgumentException(String.format(MSG_ERR_DUPLICATE_NAME,name));
+        } else if (!validNameLength(name)) {
+            throw new IllegalArgumentException(String.format(MSG_ERR_INVALID_TEMP_LENGTH,name));
+        } else if (hasSameTemplate(template)) {
+            throw new IllegalArgumentException(String.format(MSG_ERR_TEMP_EXIST,name));
+        } else {
+            clearTaskDateField(template);
+            if (template.getStatus() == Task.INDEX_STATUS_OVERDUE) {
+                template.setNormal();
+            }
+
+            insertTemplateIntoArray(name, template);
+
+            ArrayList<Task> result = new ArrayList<Task>();
+            result.add(template.clone());
+
+            return result;
+        }
+    }
+
+
+    /**
+     * @param template 	template to be added
+     * @return			True if such template already exist, otherwise false
+     */
+    private boolean hasSameTemplate(Task template) {
+        clearTaskDateField(template);
+
+        for (int i = 0; i < templates.size(); ++i) {
+            if (templates.get(i).isEqual(template)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    /**
+     * @param name		name to be used for a template
+     * @return			True if the length of name is acceptable, otherwise false
+     */
+    private boolean validNameLength(String name) {
+        return name.length() > LENGTH_TEMP_NAME_MINIMUM && name.length() < LENGTH_TEMP_NAME_MAXIMUM;
+    }
+
+
+    /**
+     * This method construct an ArrayList of names that match the templates given
+     * @param templates		ArrayList of template
+     * @return				ArrayList of names correspond to the templates
+     * 
+     */
+    public ArrayList<String> getTemplateNames(ArrayList<Task> templates) {
+        ArrayList<String> result = new ArrayList<String>();
+
+        for (int i = 0; i < templates.size(); ++i) {
+            result.add(getMatchingName(templates.get(i)));
+        }
+
+        return result;
+    }
+
+
+    /**
+     * This method returns the name of the template
+     * @param task							A Template object
+     * @return								String of name that matches the template object
+     * @throws NoSuchElementException		There is no such template in templates list
+     */
+    private String getMatchingName(Task task) throws NoSuchElementException {
+        for (int i = 0; i < templates.size(); ++i) {
+            if (task.isEqual(templates.get(i))) {
+                return tempNames.get(i);
+            }
+        }
+
+        throw new NoSuchElementException(MSG_ERR_NO_SUCH_TEMPLATE);
+    }
+
+
+    /**
+     * @param command	The string array of command to be executed
+     * @return			Task object created by following the command parameter.
+     */
+    private Task createNewTemplate(String[] command) {
+        return new Task(DUMMY_TID,command[INDEX_TASK_NAME], 
+                convertToDateObject(command[INDEX_DATE_FROM]), 
+                convertToDateObject(command[INDEX_DATE_TO]), 
+                convertToDateObject(command[INDEX_DEADLINE]), 
+                command[INDEX_LOCATION], command[INDEX_DETAILS],
+                Integer.parseInt(command[INDEX_STATUS]));
+    }
+
+
+
+    /**
+     * 	This method calls system handler to initiate write out to storage. 
+     *  It is called when there are changes made to templates' data
+     */
+    private void writeOutToFile() {
+        system.writeTemplateToFile(templates, tempNames);
+    }
+
+
+    /**
+     * @param name		Template name 
+     * @return			Index of the template stored in ArrayList, -1 if not found.
+     */
+    private int getTemplateIndex(String name) {
+        for (int i = 0; i < tempNames.size(); ++i) {
+            if (tempNames.get(i).equals(name)) {
+                return i;
+            }
+        }
+
+        return INDEX_NOT_FOUND;
+    }
+
+
+    /**
+     * @param name	Template name 
+     * @return		Template that matches the name, null if not found.
+     */
+    private Task getTemplate(String name) {
+        int index = getTemplateIndex(name);
+
+        if (index == INDEX_NOT_FOUND) {
+            return null;
+        } else {
+            return templates.get(index);
+        }
+    }
+
+
+
+    /**
+     * @param command 					The string array of command to be executed
+     * @return							ArrayList of template with the edited template in the list. 
+     * @throws NoSuchElementException	The template to be edited does not exist in template manager
+     */
+    private ArrayList<Task> editTemplate(String[] command) throws NoSuchElementException {
+        Task task = getTemplate(command[1]);
+        ArrayList<Task> result = new ArrayList<Task>();
+
+        if (task == null) {
+            throw new NoSuchElementException(MSG_ERR_NO_SUCH_TEMPLATE);
+        }
+
+        for (int index = 0; index < LENGTH_COMMAND_TEMPLATE; ++index) {
+            if (isFieldToBeEdited(command, index)) {
+                editRequiredField(command[index], task, index);
+            }
+        }
+
+        result.add(task.clone());
+
+        return result;
+    }
+
+
+    /**
+     * @param command		The string array of command to be executed
+     * @param task			Template to be edited
+     * @param index			Index of field to be edited in the template
+     */
+    private void editRequiredField(String command, Task task, int index) {
+        switch (index) {
+        case INDEX_TASK_NAME:
+            task.setTaskName(command);
+            break;
+
+        case INDEX_DATE_FROM:
+            Date dateFrom = getDate(command);
+            task.setDateFrom(dateFrom);
+            break;
+
+        case INDEX_DATE_TO:
+            Date dateTo = getDate(command);
+            task.setDateFrom(dateTo);
+            break;
+
+        case INDEX_DEADLINE:
+            Date deadline = getDate(command);
+            task.setDateFrom(deadline);
+            break;
+        case INDEX_LOCATION:
+            task.setLocation(command);
+            break;
+
+        case INDEX_DETAILS:
+            task.setDetails(command);
+            break;
+
+        case INDEX_STATUS:
+            task.setStatus(Integer.parseInt(command));
+            break;
+
+        }
+    }
+
+
+    /**
+     * This method checks if the command demands the field to be edited.
+     * @param command		The string array of command to be executed
+     * @param index			Index of field to be checked
+     * @return				True if there exist an instruction in the field
+     */
+    private boolean isFieldToBeEdited(String[] command, int index) {
+        return command[index] != null;
+    }
+
+
+
+    /**
+     * This method assert the correct length of command to be executed.
+     * @param command		The string array of command to be executed
+     * @param cmdType		Command Type to be executed by Template.
+     */
+    private void assertValidity(String[] command, COMMAND_TYPE_TEMPLATE cmdType) {
+        assert(command.length == LENGTH_COMMAND_TEMPLATE);
+        assert(command[INDEX_COMMAND] != null);
+
+        switch (cmdType) {
+        case viewTemplate:
+        case resetTemplate:
+            assert(command[1] == null);
+
+        case deleteTemplate:
+            assert(command[2] == null);
+
+        case addTemplate:
+            for (int i = 3; i < LENGTH_COMMAND_TEMPLATE; ++i) {
+                assert(command[i] == null);
+            }
+
+        case useTemplate:
+        case addTemplateInit:
+        case editTemplate:
+        }
+    }
+
+
+    /**
+     * @param command	The string array of command to be executed
+     * @return			The command type to be executed
+     * @throws IllegalArgumentException The command type is not recognized by Template Manager
+     */
+    public static COMMAND_TYPE_TEMPLATE getCommandType(String command) throws IllegalArgumentException {
+        try{
+            return COMMAND_TYPE_TEMPLATE.valueOf(command);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(String.format(MSG_ERR_NO_SUCH_COMMAND, 
+                    e.getMessage().substring(STRING_POSITION_INVALID_COMMAND)));
+        }
+    }
+
+
+    /**
+     * @param tempName					Name of the template to be deleted
+     * @return							The deleted template in an ArrayList
+     * @throws NoSuchElementException	The template to be removed is not found in templates list
+     */
+    private ArrayList<Task> removeTemplate(String tempName) throws NoSuchElementException {
+        Task deletedTask = removeFromArray(tempName);
+
+        if (deletedTask == null) {
+            throw new NoSuchElementException(MSG_ERR_NO_SUCH_TEMPLATE);
+        } else {
+            ArrayList<Task> result = new ArrayList<Task>();
+            result.add(deletedTask);
+            return result;
+        }
+    }
+
+
+    /**
+     * @param tempName		Name of the template to be deleted
+     * @return				Deleted template, null if template does not exist
+     */
+    private Task removeFromArray(String tempName) {
+        int index = getTemplateIndex(tempName);
+
+        if (index == INDEX_NOT_FOUND) {
+            return null;
+        } else {
+            tempNames.remove(index);
+            return templates.remove(index);
+        }
+    }
+
+
+    /**
+     * @return		Return the templates list in ArrayList
+     */
+    private ArrayList<Task> viewTemplates() {
+        System.out.println(templates);
+        System.out.println(tempNames);
+
+        return templates;
+    }
+
+
+    /**
+     * This method clears all the date related fields in template before saving the template.
+     * @param template	Template to be added into templates list
+     */
+    private void clearTaskDateField(Task template) {
+        template.setDateFrom(null);
+        template.setDateTo(null);
+        template.setDeadline(null);
+
+        if (template.getStatus() == STATUS_OVERDUE) {
+            template.setStatus(STATUS_NORMAL);
+        }
+    }
+
+
+    /**
+     * 	This method clear all the templates.
+     */
+    private void resetTemplates() {
+        templates.clear();
+        tempNames.clear();
+    }
+
+
+    /**
+     * This method adds the template as well as the name corresponds to the template into the list.
+     * @param name		Name of the template
+     * @param template	Template to be added
+     */
+    private void insertTemplateIntoArray(String name, Task template) {
+        templates.add(template);
+        tempNames.add(name);
+    }
+
+
+    /**
+     * @param name	Name of the template
+     * @return	True if there is a template with same name
+     */
+    private boolean hasSameName(String name) {
+        return getTemplateIndex(name) != INDEX_NOT_FOUND;
+    }
+
+
+    /**
+     * @param name						Name of the template to be fetched	
+     * @return							The template that corresponds to the name
+     * @throws NoSuchElementException	There is no templates called by the name given
+     */
+    private Task fetchTemplate(String name) throws NoSuchElementException {
+        int index = getTemplateIndex(name);
+
+        if (index != INDEX_NOT_FOUND) {
+            Task task = templates.get(index);
+            return task.clone();
+        } else {
+            throw new NoSuchElementException(MSG_ERR_NO_SUCH_TEMPLATE);
+        }
+
+    }
+
+
+    /**
+     * This method extract the correct data based on the existing data and user input
+     * @param task							Template with the information to be extracted
+     * @param index							Index of information to be extracted
+     * @param change						Changes demanded by user to overwrite the template
+     * @return								Final updates on the field of task to be created from template
+     * @throws IllegalArgumentException		Illegal field index
+     */
+    private String getFieldValue(Task task, int index, String change) throws IllegalArgumentException {
+        if (change == null) {
+            switch (index) {
+            case INDEX_TASK_NAME: 
+                return task.getTaskName();
+
+            case INDEX_DATE_FROM: 
+                return task.getDateFromString();
+
+            case INDEX_DATE_TO: 
+                return task.getDateToString();
+
+            case INDEX_DEADLINE: 
+                return task.getDeadlineString();
+
+            case INDEX_LOCATION: 
+                return task.getLocation();
+
+            case INDEX_DETAILS: 
+                return task.getDetails();
+
+            case INDEX_STATUS: 
+                return task.getStatusString();
+
+            default:
+                throw new IllegalArgumentException(MSG_INVALID_GET_FIELD);
+            }
+        } else {
+            return change;
+        }
+    }
+
+
+    /**	
+     * This method convert to be used template into task manager command sturcture
+     * @param task							Task to be added into Tasks List
+     * @param changes						Changes demanded by user to overwrite the template
+     * @return								String array that follows task manager command format
+     * @throws IllegalArgumentException		Invalid changes is demanded by user
+     */
+    private String[] convertTasktoTaskManagerInput(Task task, String[] changes) 
+            throws IllegalArgumentException {
+        String[] converted = new String[LENGTH_COMMAND_TEMPLATE];
+        converted[TaskManager.COMMAND_TYPE] = COMMAND_ADD_TASK;
+        converted[TaskManager.TID] = null;
+
+        for (int i = STARTING_INDEX_CHANGEABLE_FIELD; i < LENGTH_COMMAND_TEMPLATE; ++i) {
+            converted[i] = getFieldValue(task, i, changes[i]);
+        }
+
+        return converted;
+    }
+
+
+	// End of segment: ../src/\TemplateManager.java
+
+
+
+
+
