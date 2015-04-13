@@ -397,6 +397,7 @@ public class UserInterface {
 	}
      */
 
+    //@author A0101735R
     /**
      * Calls the functions to initialize the contents of the frame,
      * initialize variables and creates tables.
@@ -617,6 +618,7 @@ public class UserInterface {
         }
     }
 
+    //@author A0101735R
     /**
      * Creates a table that displays an ArrayList of String[].
      * Renders rows in alternating colors.
