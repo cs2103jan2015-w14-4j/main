@@ -250,6 +250,7 @@ public class UserInterface {
         }
 
         model_.refreshTable(outputDataString);
+        taskTable_.scrollRectToVisible(taskTable_.getCellRect(0, 0, true));
     }
 
     /**
