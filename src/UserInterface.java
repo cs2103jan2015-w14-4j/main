@@ -82,7 +82,7 @@ public class UserInterface {
     private static final String HEADER_SC_2 = "User-Defined Keywords";
 
     private static final String HEADER_TASK_1 = "Task";
-    private static final String HEADER_TASK_2 = "Title";
+    private static final String HEADER_TASK_2 = "Name";
     private static final String HEADER_TASK_3 = "DateFrom";
     private static final String HEADER_TASK_4 = "DateTo";
     private static final String HEADER_TASK_5 = "Location";
