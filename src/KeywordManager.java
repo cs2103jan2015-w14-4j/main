@@ -101,7 +101,7 @@ public class KeywordManager {
 
     public KeywordManager() {
         userKeywords = new ArrayList<ArrayList<String>>();
-        for(int i = 0; i < KEYWORDS.length; ++i) {
+        for (int i = 0; i < KEYWORDS.length; ++i) {
             userKeywords.add(new ArrayList<String>());
         }
     }
@@ -131,7 +131,7 @@ public class KeywordManager {
             throws NoSuchElementException, IllegalArgumentException {
         String[][] results = new String[RESULT_SIZE_DEFAULT][];
 
-        switch(getCommandType(command[INDEX_COMMAND])) {
+        switch (getCommandType(command[INDEX_COMMAND])) {
         case addKeyword:
             verifyCommand(command, ADD_KEYWORD_ARRAY_USED_SIZE);
             results[RESULT_FIRST] = insertKeyword(command[INDEX_NEW_KEYWORD],
@@ -165,8 +165,8 @@ public class KeywordManager {
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(MSG_ERR_CORRUPTED_SAVED_FILE);
             }
-
         }
+
         return results; 
     }
 
@@ -179,7 +179,7 @@ public class KeywordManager {
     private void writeOutToFile() {
         String[][] keywords = new String[KEYWORDS.length][];
 
-        for(int i = 0; i < KEYWORDS.length; ++i) {
+        for (int i = 0; i < KEYWORDS.length; ++i) {
             keywords[i] = new String[userKeywords.get(i).size()];
             userKeywords.get(i).toArray(keywords[i]);
         }
@@ -212,7 +212,8 @@ public class KeywordManager {
      */
     public String keywordMatching(String command) {
         int matchingIndex = searchMatching(command);
-        if(matchingIndex > -1) {
+
+        if (matchingIndex > -1) {
             return KEYWORDS[matchingIndex];
         } else {
             return null;
@@ -242,7 +243,8 @@ public class KeywordManager {
      */
     private void resetKeyword() {
         userKeywords = new ArrayList<ArrayList<String>>();
-        for(int i = 0; i < KEYWORDS.length; ++i) {
+
+        for (int i = 0; i < KEYWORDS.length; ++i) {
             userKeywords.add(buildDefaultKeyword(i));
         }
     }
@@ -257,7 +259,7 @@ public class KeywordManager {
         ArrayList<String> customizedWord = new ArrayList<String>();
         String[] defaultwords = DEFAULT_WORD_SET[index];
 
-        for(int i = 0; i < defaultwords.length; ++i) {
+        for (int i = 0; i < defaultwords.length; ++i) {
             customizedWord.add(defaultwords[i]);
         }
 
@@ -282,13 +284,13 @@ public class KeywordManager {
     private String[] removeKeyword(String keyword) throws NoSuchElementException, IllegalArgumentException {
         int index = getShortcutMatchingIndex(keyword);
 
-        if(index == INDEX_NOT_FOUND) {
+        if (index == INDEX_NOT_FOUND) {
             throw new NoSuchElementException(String.format(MSG_ERR_KEYWORD_NOT_EXIST, keyword));
 
-        } else if(isKeywordAtMinimumCapacity(index)){
+        } else if (isKeywordAtMinimumCapacity(index)) {
             throw new IllegalArgumentException(String.format(MSG_ERR_MINIMUM_KEYWORD_NUMBER, keyword));
 
-        } else if(isDefaultKeyword(keyword)) {
+        } else if (isDefaultKeyword(keyword)) {
             throw new IllegalArgumentException(String.format(MSG_ERR_DEFAULT_KEYWORD_DELETE, keyword));
         } else {
             removeKeywordfromUserList(index, keyword);
@@ -306,12 +308,14 @@ public class KeywordManager {
      */
     private boolean removeKeywordfromUserList(int index, String keyword) {
         ArrayList<String> userDefinedKeyword = userKeywords.get(index);
-        for(int i = 0; i < userDefinedKeyword.size(); ++i) {
-            if(userDefinedKeyword.get(i).equals(keyword)) {
+
+        for (int i = 0; i < userDefinedKeyword.size(); ++i) {
+            if (userDefinedKeyword.get(i).equals(keyword)) {
                 userDefinedKeyword.remove(i);
                 return true;
             }
         }
+
         return false;
     }
 
@@ -321,14 +325,15 @@ public class KeywordManager {
      * @return			Index of keyword where the shortcut corresponds to, -1 if not found
      */
     private int getShortcutMatchingIndex(String keyword) {
-        for(int i = 0; i < userKeywords.size(); ++i) {
+        for (int i = 0; i < userKeywords.size(); ++i) {
             ArrayList<String> customizedKeyword = userKeywords.get(i);
-            for(int j = 0; j < customizedKeyword.size(); ++j) {
-                if(keyword.equals(customizedKeyword.get(j))) {
+            for (int j = 0; j < customizedKeyword.size(); ++j) {
+                if (keyword.equals(customizedKeyword.get(j))) {
                     return i;
                 }
             }
         }
+
         return INDEX_NOT_FOUND;
     }
 
@@ -348,7 +353,7 @@ public class KeywordManager {
 
         addKeyword(newKeyword, indexBelongTo);
         String[] result = constructOutputString(indexBelongTo, originKeyword, newKeyword);
-        
+
         return result;	
     }
 
@@ -363,17 +368,17 @@ public class KeywordManager {
      */
     private void verifyInputApprioriateness(String newKeyword, String originKeyword,
             int indexBelongTo) throws NoSuchElementException, IllegalArgumentException {
-        if(!isKeyWords(indexBelongTo)) {
+        if (!isKeyWords(indexBelongTo)) {
             throw new NoSuchElementException(String.format(MSG_ERR_KEYWORD_NOT_EXIST, originKeyword));
-        } else if(isKeyWords(newKeyword)) {
+        } else if (isKeyWords(newKeyword)) {
             throw new IllegalArgumentException(String.format(MSG_ERR_KEYWORD_EXIST, newKeyword));
         } else if (isReservedWord(newKeyword)) {
             throw new IllegalArgumentException(String.format(MSG_ERR_DEFAULT_KEYWORD_DELETE, newKeyword));
-        } else if(isUnchangeable(indexBelongTo)) {
+        } else if (isUnchangeable(indexBelongTo)) {
             throw new IllegalArgumentException(MSG_ERR_UNCHANGEABLE_KEYWORD);
         } else if (isWordLengthInappropriate(newKeyword)) {
             throw new IllegalArgumentException(String.format(MSG_ERR_MINIMUM_LENGTH, newKeyword));
-        } else if(isKeywordAtMaximumCapacity(indexBelongTo)) {
+        } else if (isKeywordAtMaximumCapacity(indexBelongTo)) {
             throw new IllegalArgumentException(String.format(MSG_ERR_MAX_CAPACITY, newKeyword));
         }
     }
@@ -388,7 +393,7 @@ public class KeywordManager {
      */
     private String[] constructOutputString(int index, String deleted) {
         String[] result = {Integer.toString(index), deleted};
-        
+
         return result;
     }
 
@@ -405,11 +410,11 @@ public class KeywordManager {
         ArrayList<String> shortcuts = userKeywords.get(index);
         String[] result = new String[shortcuts.size() + 1];
         result[0] = Integer.toString(index);
-        
-        for(int i = 0 ; i < shortcuts.size(); ++i) {
+
+        for (int i = 0 ; i < shortcuts.size(); ++i) {
             result[i + 1] = shortcuts.get(i);
         }
-        
+
         return result;
     }
 
@@ -463,16 +468,16 @@ public class KeywordManager {
      * @return			True if the keyword matches a default keyword
      */
     private boolean isDefaultKeyword(String keyword) {
-        for(int i = 0; i < DEFAULT_WORD_SET.length; ++i) {
+        for (int i = 0; i < DEFAULT_WORD_SET.length; ++i) {
             String[] defaultWords = DEFAULT_WORD_SET[i];
 
-            for(int j = 0; j < defaultWords.length; ++j) {
-                if(keyword.equalsIgnoreCase(defaultWords[j])) {
+            for (int j = 0; j < defaultWords.length; ++j) {
+                if (keyword.equalsIgnoreCase(defaultWords[j])) {
                     return true;
                 }
             }
         }
-        
+
         return false;
     }
 
@@ -482,12 +487,12 @@ public class KeywordManager {
      * @return				True if it is a unchangeable keyword
      */
     private boolean isUnchangeable(int index) {
-        for(int i = 0; i < UNCHANGEABLE_KEYWORD.length; ++i) {
-            if(index == UNCHANGEABLE_KEYWORD[i]) {
+        for (int i = 0; i < UNCHANGEABLE_KEYWORD.length; ++i) {
+            if (index == UNCHANGEABLE_KEYWORD[i]) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -497,16 +502,16 @@ public class KeywordManager {
      * @return				Index of keywords where the shortcut matches with
      */
     private int searchMatching (String keyword) {
-        for(int index = 0; index < userKeywords.size(); ++index) {
+        for (int index = 0; index < userKeywords.size(); ++index) {
             ArrayList<String> keywordsList = userKeywords.get(index);
-            
-            for(int j = 0; j < keywordsList.size(); ++j) {
-                if(isTheMatchingWord(keyword, keywordsList.get(j))) {
+
+            for (int j = 0; j < keywordsList.size(); ++j) {
+                if (isTheMatchingWord(keyword, keywordsList.get(j))) {
                     return index;
                 }
             }
         }
-        
+
         return INDEX_NOT_FOUND;
     }
 
@@ -526,12 +531,12 @@ public class KeywordManager {
      * @return					True if the keyword is a reserved keyword
      */
     private boolean isReservedWord(String keyword) {
-        for(int i = 0; i < RESERVED_WORDS.length; ++i) {
-            if(keyword.equalsIgnoreCase(RESERVED_WORDS[i])) {
+        for (int i = 0; i < RESERVED_WORDS.length; ++i) {
+            if (keyword.equalsIgnoreCase(RESERVED_WORDS[i])) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -542,18 +547,18 @@ public class KeywordManager {
     private String[][] cloneKeywords() {
         String[][] cloneList = new String[KEYWORDS.length][];
 
-        for(int i = 0; i < userKeywords.size(); ++i) {
+        for (int i = 0; i < userKeywords.size(); ++i) {
             ArrayList<String> keywords = userKeywords.get(i);
 
             String[] clonedArray = new String[keywords.size() + 1];
             clonedArray[0] = Integer.toString(i);
 
-            for(int j = 0; j < keywords.size(); ++j) {
+            for (int j = 0; j < keywords.size(); ++j) {
                 clonedArray[j + 1] = keywords.get(j);
             }
             cloneList[i] = clonedArray;
         }
-        
+
         return cloneList;
     }
 
@@ -566,7 +571,7 @@ public class KeywordManager {
     private void verifyCommand(String[] command, int lengthToCheck) {
         assert(command.length == ARRAY_SIZE_KEYWORD);
 
-        for(int i = 0; i < lengthToCheck; ++i) {
+        for (int i = 0; i < lengthToCheck; ++i) {
             assert(command[i] != null);
         }
     }

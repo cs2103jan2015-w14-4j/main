@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
+//@author A0118892U
 public class FileStorage {
 
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy HH:mm";
@@ -51,12 +52,11 @@ public class FileStorage {
     private static final String DEFAULT_SHORTCUT_FILE_NAME = "shortcut";
     private static final String DEFAULT_LOCATION_FILE_NAME = "location";
 
+    private final File location = new File(DEFAULT_LOCATION_FILE_NAME);
 
-    
     private File taskFile;
     private File templateFile;
     private File shortcutFile;
-    private File location = new File(DEFAULT_LOCATION_FILE_NAME);
     private String taskFileLocation;
     private String path;
 
@@ -67,9 +67,8 @@ public class FileStorage {
      * then it creates File object for tasks, templates and shortcuts.
      * If location file does not exist, it will be created with default contents.
      */
-    //@author A0118892U
     public FileStorage() {
-        if(!location.exists()){
+        if (!location.exists()){
             initializeFileStorageDefault();
         } else {
             initializeFileStorageFromALocation();
@@ -80,9 +79,7 @@ public class FileStorage {
      * This method initializes File object for tasks, templates and shortcuts 
      * from their default locations.
      */
-    //@author A0118892U
     private void initializeFileStorageDefault() {
-        location = new File(DEFAULT_LOCATION_FILE_NAME);
         try {
             writeNewFileLocationToFile(DEFAULT_TASK_FILE_NAME);
 
@@ -100,10 +97,9 @@ public class FileStorage {
      * @param taskFileName  the file name for the task file
      * @throws IOException
      */
-    //@author A0118892U
     private void createTaskFile(String taskFileName) throws IOException {
         taskFile = new File(taskFileName);
-        if(!taskFile.exists()) {
+        if (!taskFile.exists()) {
             taskFile.createNewFile();           
         }
     }
@@ -114,10 +110,9 @@ public class FileStorage {
      * @param templateFileName  the file name for the template file
      * @throws IOException
      */
-    //@author A0118892U
     private void createTemplateFile(String templateFileName) throws IOException {
         templateFile = new File(templateFileName);
-        if(!templateFile.exists()) {
+        if (!templateFile.exists()) {
             templateFile.createNewFile();
         }
     }
@@ -128,10 +123,9 @@ public class FileStorage {
      * @param shortcutFileName  the file name for the shortcut file
      * @throws IOException
      */
-    //@author A0118892U
     private void createShortcutFile(String shortcutFileName) throws IOException {
         shortcutFile = new File(shortcutFileName);
-        if(!shortcutFile.exists()) {
+        if (!shortcutFile.exists()) {
             shortcutFile.createNewFile();
         }
     }
@@ -139,14 +133,13 @@ public class FileStorage {
     /**
      * This method reads the location where task file is saved from the location file.
      */
-    //@author A0118892U
     private void getTaskFileLocation() {
         try {
             Scanner sc = new Scanner(location);
             taskFileLocation = sc.nextLine();
             sc.close();
         } catch (FileNotFoundException e) {
-            assert(true);
+            assert (true);
         } 
     }
 
@@ -154,7 +147,6 @@ public class FileStorage {
      * This method initializes File object for tasks, templates and shortcuts 
      * from location stores in the location file.
      */
-    //@author A0118892U
     private void initializeFileStorageFromALocation() {
         getTaskFileLocation();
         path = getPath(taskFileLocation);
@@ -178,11 +170,10 @@ public class FileStorage {
      * @param newFileName  The new file name where user wants to save it
      * @throw IOException  Unsuccessful move of files
      */
-    //@author A0118892U
     public void saveToAnotherLocation(String newFileName) throws IOException {
         boolean isSaveSuccessful = taskFile.renameTo(new File(newFileName));
 
-        if(isSaveSuccessful) {
+        if (isSaveSuccessful) {
             writeNewFileLocationToFile(newFileName);
             taskFile = new File(newFileName);
             path = getPath(newFileName);
@@ -202,16 +193,17 @@ public class FileStorage {
      * @param fileName  the path and name the task file is saved
      * @return          the path where task file is saved
      */
-    //@author A0118892U
     private String getPath(String fileName) {
         String path = "";
-        if(isSlashInFileName(fileName)) {
+        
+        if (isSlashInFileName(fileName)) {
             int indexAfterLastSlash = fileName.lastIndexOf(SLASH) + 1;
             path = fileName.substring(0, indexAfterLastSlash);
         } else if (isBackslashInFileName(fileName)) {
             int indexAfterLastBackSlash = fileName.lastIndexOf(BACKSLASH) + 1;
             path = fileName.substring(0, indexAfterLastBackSlash);
         }
+        
         return path;
     }
 
@@ -238,7 +230,6 @@ public class FileStorage {
      * into the location file
      * @param fileName  the file name where tasks file is stored
      */
-    //@author A0118892U
     private void writeNewFileLocationToFile(String fileName) {
         try {
             location.delete();
@@ -258,9 +249,8 @@ public class FileStorage {
      * and passes it as parameter to processInitialization method in TaskManager.
      * @param tm  TaskManager object to call its processInitialization method
      */    
-    //@author A0118892U
     public void readTaskFromFile(TaskManager tm) {
-        if(taskFile.exists()) {
+        if (taskFile.exists()) {
             try {
                 Scanner sc = new Scanner(taskFile);
 
@@ -272,7 +262,7 @@ public class FileStorage {
 
                     while (st.hasMoreElements()) {
                         String nextStr = st.nextElement().toString();
-                        if(isEmptyInput(nextStr)) {
+                        if (isEmptyInput(nextStr)) {
                             inputs[index] = null;
                         } else {
                             inputs[index] = nextStr;
@@ -285,7 +275,7 @@ public class FileStorage {
 
                 sc.close();      
             } catch (FileNotFoundException e) {
-                assert(true);
+                assert (true);
             }
         }   
     }
@@ -295,9 +285,8 @@ public class FileStorage {
      * @param str  string from task file or template file
      * @return     true if string is null, else false
      */
-    //@author A0118892U
     private boolean isEmptyInput(String str) {
-        if(str.equals(NULL_INPUT)) {
+        if (str.equals(NULL_INPUT)) {
             return true;
         } else {
             return false;
@@ -318,7 +307,7 @@ public class FileStorage {
             for (int i = 0; i < taskList.size(); i++) {
                 Task tempTask = taskList.get(i);
                 String[] taskArray = convertTaskToStringArray(tempTask, null);
-                for(int j = 0; j < taskArray.length; j++) {
+                for (int j = 0; j < taskArray.length; j++) {
                     if ( j != taskArray.length - 1) {
                         taskArray[j] += (DEFAULT_DELIMITER);
                         bw.write(taskArray[j]);
@@ -347,8 +336,8 @@ public class FileStorage {
      */
     //@author A0116514N
     public void readKeywordFromFile(KeywordManager shortcut) {
-        if(shortcutFile.exists()) {
-            if(shortcutFile.length() == 0) {
+        if (shortcutFile.exists()) {
+            if (shortcutFile.length() == 0) {
                 SystemHandler system = SystemHandler.getSystemHandler();
                 system.resetKeywordToDefault();
             } else {
@@ -361,18 +350,18 @@ public class FileStorage {
                         String[] tempStringArray = new String[8];
                         inputs[COMMAND_TYPE_INDEX] = "addKeywordInit";
                         tempStringArray = sc.nextLine().split("\\s*,\\s*");
-                        for(int j = 0; j < tempStringArray.length; ++j) {
+                        for (int j = 0; j < tempStringArray.length; ++j) {
                             inputs[SHORTCUT_NAME_INDEX] = tempStringArray[j];
                             inputs[SHORTCUT_ID_INDEX] = Integer.toString(i);
                             shortcut.processKeywordCommand(inputs);    
                         }
-
+                        
                         ++i;
                     }
 
                     sc.close();
-                }catch(FileNotFoundException e) {
-                    assert(true);
+                }catch (FileNotFoundException e) {
+                    assert (true);
                 }
             }
         }
@@ -389,9 +378,10 @@ public class FileStorage {
             shortcutFile.delete();
             shortcutFile.createNewFile();
             BufferedWriter bw = new BufferedWriter(new FileWriter(shortcutFile));
+            
             //shortcut first column all the different shortcut each row is the mapped shortcuts
-            for(int i = 0; i<shortcuts.length; i++) {
-                for(int j = 0; j<shortcuts[i].length; j++) {
+            for (int i = 0; i<shortcuts.length; i++) {
+                for (int j = 0; j<shortcuts[i].length; j++) {
                     if ( j != shortcuts[i].length - 1) {
                         shortcuts[i][j] += (",");
                         bw.write(shortcuts[i][j]);
@@ -404,7 +394,7 @@ public class FileStorage {
             }
 
             bw.close();
-        } catch(Exception e) {
+        } catch (Exception e) {
 
         }
     }
@@ -429,8 +419,8 @@ public class FileStorage {
                 Task tempTask = templateList.get(i);
                 String templateName = matchingName.get(i);
                 String[] taskArray = convertTaskToStringArray(tempTask, templateName);
-                for(int j = 0; j < taskArray.length; j++) {
-
+                
+                for (int j = 0; j < taskArray.length; j++) {
                     if (j != taskArray.length - 1) {
                         taskArray[j] += (DEFAULT_DELIMITER);
                         bw.write(taskArray[j]);
@@ -438,10 +428,12 @@ public class FileStorage {
                         bw.write(taskArray[j]);
                     }
                 }
+                
                 bw.newLine();
             }
+            
             bw.close();
-        } catch(Exception e) {
+        } catch (Exception e) {
 
         }
     }
@@ -458,7 +450,7 @@ public class FileStorage {
     private String[] convertTaskToStringArray(Task tempTask, String templateName) {
         String[] strArr = new String[TEMP_STRING_SIZE];
 
-        if(templateName == null) {
+        if (templateName == null) {
             strArr[TASK_ID_INDEX] = Integer.toString(tempTask.getTID());
         } else {
             strArr[TEMPLATE_NAME_INDEX] = templateName;
@@ -467,35 +459,33 @@ public class FileStorage {
         strArr[TASK_NAME_INDEX] =	tempTask.getTaskName();
 
         Date tempDateFrom = tempTask.getDateFrom();
-
-        if(tempDateFrom != null) {
+        if (tempDateFrom != null) {
             strArr[TASK_DATE_FROM_INDEX] =	convertToStringFromDate(tempDateFrom);	
         } else {
             strArr[TASK_DATE_FROM_INDEX] = null;
         }
 
         Date tempDateTo = tempTask.getDateTo();
-
-        if(tempDateTo != null) {
+        if (tempDateTo != null) {
             strArr[TASK_DATE_TO_INDEX] = convertToStringFromDate(tempDateTo);
         } else {
             strArr[TASK_DATE_TO_INDEX] = null;
         }
 
         Date tempDeadline = tempTask.getDeadline();
-        if(tempDeadline != null) {
+        if (tempDeadline != null) {
             strArr[TASK_DEADLINE_INDEX] = convertToStringFromDate(tempDeadline);
         } else {
             strArr[TASK_DEADLINE_INDEX] = null;
         }
 
-        if(tempTask.getLocation() != null) {
+        if (tempTask.getLocation() != null) {
             strArr[TASK_LOCATION_INDEX] = tempTask.getLocation();
         } else {
             strArr[TASK_LOCATION_INDEX] = null;
         }
 
-        if(tempTask.getDetails() != null) {
+        if (tempTask.getDetails() != null) {
             strArr[TASK_DETAILS_INDEX] = tempTask.getDetails();
         } else {
             strArr[TASK_DETAILS_INDEX] = null;
@@ -503,7 +493,7 @@ public class FileStorage {
 
         int tempStatus = tempTask.getStatus();
 
-        if(convertToStringFromInt(tempStatus) != null) {
+        if (convertToStringFromInt(tempStatus) != null) {
             strArr[TASK_STATUS_INDEX] = convertToStringFromInt(tempStatus);
         } else {
             strArr[TASK_STATUS_INDEX] = null;
@@ -517,7 +507,7 @@ public class FileStorage {
      * @param integer  int type data to be converted
      * @return         String type data of the input
      */
-    //@author A0118892U
+    //@author A0118892U-reused
     private String convertToStringFromInt(int integer) {
         return Integer.toString(integer);
     }
@@ -528,10 +518,11 @@ public class FileStorage {
      * @param date  date type data to be converted
      * @return      String type data of the input with this format "dd/MM/yyyy HH:mm"
      */
-    //@author A0118892U
+    //@author A0118892U-reused
     private String convertToStringFromDate(Date date) {
         Format formatter = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
         String dateString = formatter.format(date);
+        
         return dateString;
     }
 
@@ -542,9 +533,10 @@ public class FileStorage {
      */
     //@author A0116514N
     public void readTemplateFromFile(TemplateManager template) {
-        if(templateFile.exists()) {
+        if (templateFile.exists()) {
             try {
                 Scanner sc = new Scanner(templateFile);
+                
                 while (sc.hasNextLine()) {
                     String[] inputs = new String[DEFAULT_STRING_SIZE];
 
@@ -554,7 +546,7 @@ public class FileStorage {
 
                     while (st.hasMoreElements()) {
                         String nextStr = st.nextElement().toString();
-                        if(isEmptyInput(nextStr)) {
+                        if (isEmptyInput(nextStr)) {
                             inputs[index] = null;
                         } else {
                             inputs[index] = nextStr;
@@ -564,16 +556,16 @@ public class FileStorage {
 
                     try {
                         template.processTemplateCommand(inputs);     
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         
                     }
                 }
+                
                 sc.close();
-            }catch(FileNotFoundException e) {
-                assert(true);
+            }catch (FileNotFoundException e) {
+                assert (true);
             }
         }
-
     }
     //----------template read and write methods ends----------
 }

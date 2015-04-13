@@ -8,14 +8,14 @@ import java.util.Comparator;
 public class ComparatorStatus implements Comparator<Task> {
 
     public int compare(Task task1, Task task2) {
-        if(task1.getStatus() < task2.getStatus()) {
+        if (task1.getStatus() < task2.getStatus()) {
             return -1;
-        } else if(task1.getStatus() > task2.getStatus()) {
+        } else if (task1.getStatus() > task2.getStatus()) {
             return 1;
         } else {
-            if(task1.getTID() < task2.getTID()) {
+            if (task1.getTID() < task2.getTID()) {
                 return -1;
-            } else if(task1.getTID() > task2.getTID()) {
+            } else if (task1.getTID() > task2.getTID()) {
                 return 1;
             } else {
                 return 0;

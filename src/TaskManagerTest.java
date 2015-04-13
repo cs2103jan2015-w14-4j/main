@@ -533,197 +533,6 @@ public class TaskManagerTest {
 
 
 
-    //--------------------testing view command starts--------------------
-    /*@Test
-    public void testViewCommandDefaultByID() {
-        myTaskManager = new TaskManager();
-        myTaskManager.processTM(ADD_TASK_10);
-        myTaskManager.processTM(ADD_TASK_11);
-        myTaskManager.processTM(ADD_TASK_12);
-
-        ArrayList<Task> expectTasks = new ArrayList<Task>();
-        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
-        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
-                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 1);
-        Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
-                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 1);
-        expectTasks.add(expectTask10);
-        expectTasks.add(expectTask11);
-        expectTasks.add(expectTask12);
-
-        ArrayList<Task> expectView = new ArrayList<Task>(expectTasks);
-
-        //test the ArrayList before view
-        assertTaskArrayListEquals(myTaskManager.getTasks(), expectTasks);
-        //test the return of processTM for view
-        assertTaskArrayListEquals(myTaskManager.processTM(VIEW_TASK), 
-                expectView);        
-    }
-
-    @Test
-    public void testViewByDateFrom() {
-        myTaskManager = new TaskManager();
-        myTaskManager.processTM(ADD_TASK_10);
-        myTaskManager.processTM(ADD_TASK_11);
-        myTaskManager.processTM(ADD_TASK_12);
-        myTaskManager.processTM(ADD_TASK_13);
-        myTaskManager.processTM(ADD_TASK_14);
-
-        String[] viewTaskByDateFrom = {"viewTask", null, "Date From", null, null, null, 
-                null, null, null};
-
-        ArrayList<Task> expectView = new ArrayList<Task>();
-        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
-        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
-                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 1);
-        Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
-                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 1);
-        Task expectTask13 = new Task(13, "Homework!", null, null, 
-                convertToDateObject("21/04/2015 23:59"), null, null, 3);
-        Task expectTask14 = new Task(14, "CS2107 Lecture", convertToDateObject("18/04/2015 14:00"), 
-                convertToDateObject("18/04/2015 15:00"), null, "SOC", null, 2);
-        expectView.add(expectTask10);
-        expectView.add(expectTask11);
-        expectView.add(expectTask14);
-        expectView.add(expectTask12);
-        expectView.add(expectTask13);
-
-        assertTaskArrayListEquals(myTaskManager.processTM(viewTaskByDateFrom), expectView);
-    }
-
-    @Test
-    public void testViewByDeadline() {
-        myTaskManager = new TaskManager();
-        myTaskManager.processTM(ADD_TASK_10);
-        myTaskManager.processTM(ADD_TASK_11);
-        myTaskManager.processTM(ADD_TASK_12);
-        myTaskManager.processTM(ADD_TASK_13);
-        myTaskManager.processTM(ADD_TASK_14);
-
-        String[] viewTaskByDeadline = {"viewTask", null, "Deadline", null, null, null, 
-                null, null, null};
-
-        ArrayList<Task> expectView = new ArrayList<Task>();
-        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
-        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
-                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 1);
-        Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
-                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 1);
-        Task expectTask13 = new Task(13, "Homework!", null, null, 
-                convertToDateObject("21/04/2015 23:59"), null, null, 3);
-        Task expectTask14 = new Task(14, "CS2107 Lecture", convertToDateObject("18/04/2015 14:00"), 
-                convertToDateObject("18/04/2015 15:00"), null, "SOC", null, 2);
-        expectView.add(expectTask12);
-        expectView.add(expectTask13);
-        expectView.add(expectTask10);
-        expectView.add(expectTask11);
-        expectView.add(expectTask14);
-
-        assertTaskArrayListEquals(myTaskManager.processTM(viewTaskByDeadline), expectView);
-    }
-
-    @Test
-    public void testViewByPriority() {
-        myTaskManager = new TaskManager();
-        myTaskManager.processTM(ADD_TASK_10);
-        myTaskManager.processTM(ADD_TASK_11);
-        myTaskManager.processTM(ADD_TASK_12);
-        myTaskManager.processTM(ADD_TASK_13);
-        myTaskManager.processTM(ADD_TASK_14);
-
-        String[] viewTaskByPriority = {"viewTask", null, "Priority", null, null, null, 
-                null, null, null};
-
-        ArrayList<Task> expectView = new ArrayList<Task>();
-        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
-        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
-                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 1);
-        Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
-                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 1);
-        Task expectTask13 = new Task(13, "Homework!", null, null, 
-                convertToDateObject("21/04/2015 23:59"), null, null, 3);
-        Task expectTask14 = new Task(14, "CS2107 Lecture", convertToDateObject("18/04/2015 14:00"), 
-                convertToDateObject("18/04/2015 15:00"), null, "SOC", null, 2);
-        expectView.add(expectTask10);
-        expectView.add(expectTask11);
-        expectView.add(expectTask12);
-        expectView.add(expectTask14);
-        expectView.add(expectTask13);
-
-        assertTaskArrayListEquals(myTaskManager.processTM(viewTaskByPriority), expectView);
-    }
-
-    /*@Test
-    public void testViewByTaskName() {
-        myTaskManager = new TaskManager();
-        myTaskManager.processTM(ADD_TASK_10);
-        myTaskManager.processTM(ADD_TASK_11);
-        myTaskManager.processTM(ADD_TASK_12);
-        myTaskManager.processTM(ADD_TASK_13);
-        myTaskManager.processTM(ADD_TASK_14);
-
-        String[] viewTaskByTaskName = {"viewTask", null, "Task Name", null, null, null, 
-                null, null, null};
-
-        ArrayList<Task> expectView = new ArrayList<Task>();
-        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
-        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
-                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 1);
-        Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
-                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 1);
-        Task expectTask13 = new Task(13, "Homework!", null, null, 
-                convertToDateObject("21/04/2015 23:59"), null, null, 3);
-        Task expectTask14 = new Task(14, "CS2107 Lecture", convertToDateObject("18/04/2015 14:00"), 
-                convertToDateObject("18/04/2015 15:00"), null, "SOC", null, 2);
-        expectView.add(expectTask10);
-        expectView.add(expectTask14);
-        expectView.add(expectTask12);
-        expectView.add(expectTask13);
-        expectView.add(expectTask11);
-
-        assertTaskArrayListEquals(myTaskManager.processTM(viewTaskByTaskName), expectView);
-    }
-
-    @Test
-    public void testViewByLocation() {
-        myTaskManager = new TaskManager();
-        myTaskManager.processTM(ADD_TASK_10);
-        myTaskManager.processTM(ADD_TASK_11);
-        myTaskManager.processTM(ADD_TASK_12);
-        myTaskManager.processTM(ADD_TASK_13);
-        myTaskManager.processTM(ADD_TASK_14);
-
-        String[] viewTaskByLocation = {"viewTask", null, "location", null, null, null, 
-                null, null, null};
-
-        ArrayList<Task> expectView = new ArrayList<Task>();
-        Task expectTask10 = new Task(10, "CS2103T Tutorial", convertToDateObject("18/03/2015 14:00"), 
-                convertToDateObject("18/03/2015 15:00"), null, "SOC", null, 1);
-        Task expectTask11 = new Task(11, "LAG3203 MidTerm", convertToDateObject("20/03/2015 12:00"), 
-                convertToDateObject("20/03/2015 13:30"), null, "LT27", null, 1);
-        Task expectTask12 = new Task(12, "CS2211 Reflection", null, null, 
-                convertToDateObject("21/03/2015 23:59"), null, "name the file properly", 1);
-        Task expectTask13 = new Task(13, "Homework!", null, null, 
-                convertToDateObject("21/04/2015 23:59"), null, null, 3);
-        Task expectTask14 = new Task(14, "CS2107 Lecture", convertToDateObject("18/04/2015 14:00"), 
-                convertToDateObject("18/04/2015 15:00"), null, "SOC", null, 2);
-        expectView.add(expectTask11);
-        expectView.add(expectTask10);
-        expectView.add(expectTask14);
-        expectView.add(expectTask12);
-        expectView.add(expectTask13);
-
-        assertTaskArrayListEquals(myTaskManager.processTM(viewTaskByLocation), expectView);
-    }*/
-    //--------------------testing view command ends----------------------
-
-
-
     //--------------------testing delete command starts------------------
     @Test
     public void testDeleteCommand() {
@@ -798,7 +607,6 @@ public class TaskManagerTest {
         } catch (IllegalArgumentException e) {
             Assert.assertEquals(e.getMessage(), "Search query cannot be empty.");
         }
-
     }
 
     @Test
@@ -1408,9 +1216,9 @@ public class TaskManagerTest {
     //@author A0108385B-reused
     public boolean assertTaskArrayListEquals(ArrayList<Task> test, 
             ArrayList<Task> expected) {
-        if(test != null) {
+        if (test != null) {
             Assert.assertEquals(test.size(), expected.size());
-            for(int i = 0; i < test.size(); ++i) {
+            for (int i = 0; i < test.size(); ++i) {
                 Assert.assertTrue(assertTaskEqual(test.get(i), expected.get(i)));
             }
         } else {
@@ -1425,16 +1233,16 @@ public class TaskManagerTest {
         return taskA.isEqual(taskB);
     }
 
-    public Date convertToDateObject(String dateString){
+    public Date convertToDateObject(String dateString) {
         try{
             Date date = null;
-            if(dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
+            if (dateString != null && !dateString.equals(CLEAR_INFO_INDICATOR)) {
                 DateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
                 date = format.parse(dateString);
             }
             return date;
         }
-        catch(ParseException e) {
+        catch (ParseException e) {
             System.out.println(e);
             return null;
         } 

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 public class DisplayProcessor {
 
     private static final String CMD_TASK_VIEW = "viewTask";
-	private static final String CMD_TASK_SEARCH = "searchTask";
-	private static final String MSG_SAVE_SUCCESS = "The save path has been changed to \"%s\" successfully";
+    private static final String CMD_TASK_SEARCH = "searchTask";
+    private static final String MSG_SAVE_SUCCESS = "The save path has been changed to \"%s\" successfully";
     private static final String MSG_TASK_STATUS = "The task:\"%s\" has been marked as %s";
     private static final String MSG_TASK_REDO = "The last task operation has been redone.";
     private static final String MSG_TASK_SEARCH = " %s task(s) have been found.";
@@ -100,13 +100,13 @@ public class DisplayProcessor {
             ArrayList<Task> fullList) {
         String[] message = constructTMMessage(command, result);
 
-        if(command[0].equals("deleteTask")) {
+        if (command[0].equals("deleteTask")) {
             window.displayTaskTable(null, fullList, INDEX_EXECUTION_SUCCESS);
         } else {
             window.displayTaskTable(result, fullList, INDEX_EXECUTION_SUCCESS);
         }
 
-        if(hasMessage(message)) {
+        if (hasMessage(message)) {
             window.displayMsg(message, getTaskManagerExecutionStatus(command,result));
         }
 
@@ -120,14 +120,16 @@ public class DisplayProcessor {
      */
     private String[] constructTMMessage(String[] command, ArrayList<Task> result) {
         String[] message = null;
-        switch(TaskManager.getCommand(command[INDEX_COMMAND_TYPE])) {
+
+        switch (TaskManager.getCommand(command[INDEX_COMMAND_TYPE])) {
         case viewTask:
             message = new String[MESSAGE_SIZE_ONE];
             message[MESSAGE_NUMBER_ONE] = MSG_TASK_VIEW;
             break;
-        case addTask:
+
+        case addTask: 
         case editTask:
-            if(result.size() > RESULT_SIZE_ONE) {
+            if (result.size() > RESULT_SIZE_ONE) {
                 message = new String[MESSAGE_SIZE_TWO];
                 message[MESSAGE_NUMBER_ONE] = String.format(MSG_TASK_UPDATE,
                         result.get(INDEX_TASK_AFFECTED).getTaskName(), result.get(INDEX_TASK_AFFECTED).getTID());
@@ -141,7 +143,6 @@ public class DisplayProcessor {
                 message = new String[MESSAGE_SIZE_ONE];
                 message[MESSAGE_NUMBER_ONE] = String.format(MSG_TASK_UPDATE,
                         result.get(INDEX_TASK_AFFECTED).getTaskName(), result.get(INDEX_TASK_AFFECTED).getTID());
-
             }
             break;
 
@@ -188,22 +189,22 @@ public class DisplayProcessor {
      * @return				Index of execution status, success/error/clashed
      */
     private int getTaskManagerExecutionStatus(String[] command, ArrayList<Task> result) {
-        if(command[INDEX_COMMAND_TYPE].equals(CMD_TASK_VIEW)) {
-            if(result != null) {
+        if (command[INDEX_COMMAND_TYPE].equals(CMD_TASK_VIEW)) {
+            if (result != null) {
                 return INDEX_EXECUTION_SUCCESS;
             } else {
                 return INDEX_EXECUTION_ERROR;
             }
-        } else if(command[INDEX_COMMAND_TYPE].equals(CMD_TASK_SEARCH)) {
-            if(result != null) {
+        } else if (command[INDEX_COMMAND_TYPE].equals(CMD_TASK_SEARCH)) {
+            if (result != null) {
                 return INDEX_EXECUTION_SUCCESS;
             } else {
                 return INDEX_EXECUTION_ERROR;
             }
         } else {	//For other task types that are not view or search
-            if(result == null) {
+            if (result == null) {
                 return INDEX_EXECUTION_ERROR;
-            } else if(result.size() == NUM_TASK_SINGLE) {
+            } else if (result.size() == NUM_TASK_SINGLE) {
                 return INDEX_EXECUTION_SUCCESS;
             } else {
                 return INDEX_EXECUTION_CLASH;
@@ -220,7 +221,7 @@ public class DisplayProcessor {
         window.displayKeywords(result, EXECUTION_SUCCESS);
         String[] message = constructKeywordMessage(command, result);
 
-        if(hasMessage(message)) {
+        if (hasMessage(message)) {
             window.displayMsg(message, INDEX_EXECUTION_SUCCESS);
         }
 
@@ -235,20 +236,25 @@ public class DisplayProcessor {
     private String[] constructKeywordMessage(String[] command,
             String[][] result) {
         String[] message = new String[LENGTH_MESSAGE_DEFAULT];
-        switch(KeywordManager.getCommandType(command[INDEX_COMMAND_TYPE])) {
+
+        switch (KeywordManager.getCommandType(command[INDEX_COMMAND_TYPE])) {
         case addKeyword:
             message[MESSAGE_NUMBER_ONE] = String.format(MSG_KEYWORD_ADDED_NEW, 
                     command[INDEX_KEYWORD_NEW], command[INDEX_KEYWORD_OLD]);
             break;
+
         case viewKeyword:
             message[MESSAGE_NUMBER_ONE] = MSG_KEYWORD_VIEW;
             break;
+
         case deleteKeyword:
             message[MESSAGE_NUMBER_ONE] = String.format(MSG_KEYWORD_DELETED, command[INDEX_KEYWORD_DELETE]);
             break;
+
         case resetKeyword:
             message[MESSAGE_NUMBER_ONE] = MSG_KEYWORD_RESET;
             break;
+
         case addKeywordInit:
             message = null;
         }
@@ -265,10 +271,9 @@ public class DisplayProcessor {
         window.displayTemplate(result, names, EXECUTION_SUCCESS);
         String[] message = constructTempMessage(command, result);
 
-        if(hasMessage(message)) {
+        if (hasMessage(message)) {
             window.displayMsg(message,INDEX_EXECUTION_SUCCESS);
         }
-
     }
 
 
@@ -289,9 +294,9 @@ public class DisplayProcessor {
     private String[] constructTempMessage(String[] command, ArrayList<Task> result) {
         String[] message = new String[LENGTH_MESSAGE_DEFAULT];
 
-        switch(TemplateManager.getCommandType(command[INDEX_COMMAND_TYPE])) {
+        switch (TemplateManager.getCommandType(command[INDEX_COMMAND_TYPE])) {
         case viewTemplate:
-            if(noTemplateToView(result)) {
+            if (noTemplateToView(result)) {
                 message[MESSAGE_NUMBER_ONE] = MSG_TEMP_NO_TEMPLATE;
             } else {
                 message[MESSAGE_NUMBER_ONE] = MSG_TEMP_VIEW;
@@ -314,7 +319,7 @@ public class DisplayProcessor {
             message[MESSAGE_NUMBER_ONE] = String.format(MSG_TEMP_RESET);
             break;
 
-        case useTemplate:
+        case useTemplate: 
         case addTemplateInit: 
             message = null;
 
@@ -337,6 +342,5 @@ public class DisplayProcessor {
      */
     public void displayHelptoUser() {
         window.displayText(UserInterface.HELP, true);
-
     }
 }
