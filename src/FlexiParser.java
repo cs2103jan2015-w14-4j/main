@@ -768,7 +768,7 @@ public class FlexiParser {
             value = value.trim();
             ArrayList<Date> dateList = useNatty(value);
             if (dateList.isEmpty()) {
-                throw new  NullPointerException(String.format(MSG_ERR_NOT_DATE,keyword));
+                throw new  IllegalArgumentException(String.format(MSG_ERR_NOT_DATE,keyword));
             }
             outputArr[j] = dateConverter(dateList.get(CONSTANT_START)).trim();
         } 
