@@ -129,17 +129,17 @@ public class FlexiParser {
     public static final int KEYWORD_LENGTH = 3;
     public static final int CHANGE_LOCATION_LENGTH = 2;
     public static final int HELP_LENGTH = 1;
-   // private KeywordManager keywords;
+    private KeywordManager keywords;
 
-    public FlexiParser(/*KeywordManager keywords*/) {
-        //this.keywords = keywords;
+    public FlexiParser(KeywordManager keywords) {
+        this.keywords = keywords;
     }
 
     //@author A0116514N
     public String[] parseText(String userInput) throws IllegalArgumentException {
         inputArray = userInput.split("\\s+");
         String command = inputArray[COMMAND_TYPE_INDEX];
-        //command = keywords.keywordMatching(command);
+        command = keywords.keywordMatching(command);
 
         if(command == NOT_EXIST) {
             throw new IllegalArgumentException(String.format(MSG_ERR_UNRECOGNIZED_COMMAND, inputArray[COMMAND_TYPE_INDEX]));
@@ -844,32 +844,5 @@ public class FlexiParser {
         }
         
         return false;
-    }
-    
- public static void main(String[] args) {
-    
-    	
-    	
-    	FlexiParser test1 = new FlexiParser();
-    	
-    	
-    	String[] temp = test1.parseText("searchTask adad ");
-    
-    	
-    	
-    	
-    		
-    	for(int i=0;i<temp.length;i++) {
-    		
-    		System.out.print(temp[i]+"|");
-    		
-    	}
-    	//System.out.println();
-    	//System.out.println();
-    	
-
-    
-
-    	
     }
 }
