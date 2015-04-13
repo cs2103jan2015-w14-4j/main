@@ -1,5 +1,6 @@
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 //@author A0108385B
 public class Task {
 
@@ -275,14 +276,11 @@ public class Task {
 	private static boolean dateEqual(Date date1, Date date2) {
 		if(date1 == null && date2 == null) {
 			return true;
-		}
-		else if(date1 != null && date2 == null) {
+		} else if(date1 != null && date2 == null) {
 			return false;
-		}
-		else if(date1 == null && date2 != null) {
+		} else if(date1 == null && date2 != null) {
 			return false;
-		}
-		else {
+		} else {
 			return date1.equals(date2);
 		}
 	}
@@ -298,14 +296,11 @@ public class Task {
 	private static boolean stringEqual(String str1, String str2) {
 		if(str1 == null && str2 == null) {
 			return true;
-		}
-		else if(str1 != null && str2 == null) {
+		} else if(str1 != null && str2 == null) {
 			return false;
-		}
-		else if(str1 == null && str2 != null) {
+		} else if(str1 == null && str2 != null) {
 			return false;
-		}
-		else {
+		} else {
 			return str1.equals(str2);
 		}
 	}
