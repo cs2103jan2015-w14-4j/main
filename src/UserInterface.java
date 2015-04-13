@@ -162,7 +162,7 @@ public class UserInterface {
         {"  When you use a template to create a new task, all you need to do is input " + 
         "\"useTemplate [template name] [date]\" to duplicate the task."},
         {newline},
-        {"For the full list of available keywords and functions, type \"viewShortcut\"."},
+        {"For the full list of available keywords and functions, type \"viewKeyword\"."},
         { "Please consult the User Guide for additional help and functionality."}
     };
 
